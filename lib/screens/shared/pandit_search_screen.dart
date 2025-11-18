@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/pandit_model.dart';
+import '../../providers/api_providers.dart';
 import '../../widgets/pandit_card.dart';
 
-class PanditSearchScreen extends StatefulWidget {
+class PanditSearchScreen extends ConsumerStatefulWidget {
   const PanditSearchScreen({super.key});
 
   @override
-  State<PanditSearchScreen> createState() => _PanditSearchScreenState();
+  ConsumerState<PanditSearchScreen> createState() => _PanditSearchScreenState();
 }
 
-class _PanditSearchScreenState extends State<PanditSearchScreen> {
+class _PanditSearchScreenState extends ConsumerState<PanditSearchScreen> {
   final _searchController = TextEditingController();
   String _selectedSpecialization = 'All';
   String _selectedLanguage = 'All';
@@ -44,23 +46,67 @@ class _PanditSearchScreenState extends State<PanditSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final panditFuture = ref.watch(_panditListProvider(_searchController.text));
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search Pandits'),
       ),
       body: Column(
         children: [
-          // Search Bar
+          // Enhanced Search Bar
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by name, specialization...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.filter_list),
-                  onPressed: _showFilterDialog,
+            padding: EdgeInsets.all(
+              MediaQuery.of(context).size.width * 0.04,
+            ).clamp(12.0, 20.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: AppTheme.mediumShadow,
+                border: Border.all(
+                  color: AppTheme.primaryOrange.withOpacity(0.15),
+                  width: 1.5,
+                ),
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: 'Search by name, specialization...',
+                  hintStyle: TextStyle(
+                    color: AppTheme.neutralMedium,
+                    fontSize: 15,
+                  ),
+                  prefixIcon: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.primaryGradient,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.search,
+                      color: AppTheme.white,
+                      size: 20,
+                    ),
+                  ),
+                  suffixIcon: Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryLight,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.filter_list, color: AppTheme.primaryOrange, size: 20),
+                      onPressed: _showFilterDialog,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 ),
               ),
             ),
@@ -96,62 +142,77 @@ class _PanditSearchScreenState extends State<PanditSearchScreen> {
           ),
           // Results
           Expanded(
-            child: _buildResultsList(),
+            child: panditFuture.when(
+              data: (list) {
+                // client-side filter/sort
+                List<PanditModel> filtered = List.from(list);
+                if (_selectedSpecialization != 'All') {
+                  filtered = filtered
+                      .where((p) => p.specializations
+                          .any((s) => s.toLowerCase() == _selectedNameCase(_selectedSpecialization)))
+                      .toList();
+                }
+                if (_selectedLanguage != 'All') {
+                  filtered = filtered
+                      .where((p) => p.languages
+                          .any((l) => l.toLowerCase() == _selectedNameCase(_selectedLanguage)))
+                      .toList();
+                }
+                if (_searchController.text.isNotEmpty) {
+                  final q = _searchController.text.toLowerCase();
+                  filtered = filtered.where((p) =>
+                    p.name.toLowerCase().contains(q) ||
+                    p.specializations.any((s) => s.toLowerCase().contains(q))
+                  ).toList();
+                }
+                switch (_sortBy) {
+                  case 'Price: Low to High':
+                    filtered.sort((a,b)=> a.servicePricing.values.first.compareTo(b.servicePricing.values.first));
+                    break;
+                  case 'Price: High to Low':
+                    filtered.sort((a,b)=> b.servicePricing.values.first.compareTo(a.servicePricing.values.first));
+                    break;
+                  case 'Rating':
+                    filtered.sort((a,b)=> b.rating.compareTo(a.rating));
+                    break;
+                  case 'Experience':
+                    filtered.sort((a,b)=> b.experienceYears.compareTo(a.experienceYears));
+                    break;
+                }
+
+                if (filtered.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No pandits found',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filtered.length,
+                  itemBuilder: (context, index) {
+                    final p = filtered[index];
+                    return PanditCard(
+                      pandit: p,
+                      onTap: () => context.push('/pandit/profile/${p.id}'),
+                    );
+                  },
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Text('Failed to load pandits: $e'),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResultsList() {
-    // Mock data
-    final pandits = [
-      PanditModel(
-        id: '1',
-        name: 'Pandit Ravi Shankar',
-        specializations: ['Horoscope', 'Marriage'],
-        experienceYears: 15,
-        rating: 4.8,
-        totalReviews: 234,
-        languages: ['Hindi', 'English'],
-        servicePricing: {'consultation': 500.0},
-        isVerified: true,
-      ),
-      PanditModel(
-        id: '2',
-        name: 'Pandit Priya Sharma',
-        specializations: ['Career', 'Health'],
-        experienceYears: 10,
-        rating: 4.9,
-        totalReviews: 189,
-        languages: ['Hindi', 'English', 'Sanskrit'],
-        servicePricing: {'consultation': 600.0},
-        isVerified: true,
-      ),
-      PanditModel(
-        id: '3',
-        name: 'Pandit Krishna Das',
-        specializations: ['Vastu', 'Palmistry'],
-        experienceYears: 20,
-        rating: 4.7,
-        totalReviews: 312,
-        languages: ['Hindi', 'Sanskrit'],
-        servicePricing: {'consultation': 700.0},
-        isVerified: true,
-      ),
-    ];
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: pandits.length,
-      itemBuilder: (context, index) {
-        return PanditCard(
-          pandit: pandits[index],
-          onTap: () => context.push('/pandit/profile/${pandits[index].id}'),
-        );
-      },
-    );
-  }
+  String _selectedNameCase(String v) => v.toLowerCase();
 
   void _showFilterDialog() {
     showModalBottomSheet(
@@ -176,7 +237,7 @@ class _PanditSearchScreenState extends State<PanditSearchScreen> {
         options: _specializations,
         selected: _selectedSpecialization,
         onSelect: (value) {
-          setState(() => _selectedSpecialization = value);
+          setState(() => _selectedNameCase(value));
           Navigator.pop(context);
         },
       ),
@@ -214,6 +275,11 @@ class _PanditSearchScreenState extends State<PanditSearchScreen> {
   }
 }
 
+final _panditListProvider = FutureProvider.family<List<PanditModel>, String>((ref, query) async {
+  final service = ref.read(panditServiceProvider);
+  return service.fetchPandits(query: query);
+});
+
 class _FilterChip extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -229,7 +295,7 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.saffronPrimary),
+          border: Border.all(color: AppTheme.yellowPrimary),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -304,7 +370,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   child: const Text('Cancel'),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(height: 12),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {

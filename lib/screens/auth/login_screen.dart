@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/validators.dart';
 import '../../core/constants/app_constants.dart';
+import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,60 +13,174 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController(text: '1234567890');
+  final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
+  final _authService = AuthService();
   bool _isOTPSent = false;
   bool _isLoading = false;
-  String? _userRole; // 'client' or 'pandit'
+  String _userRole = AppConstants.roleClient; // Default to client
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
-  // Demo credentials
-  static const String demoPhone = '1234567890';
-  static const String demoOTP = '123456';
-
-  void _handleSendOTP() {
-    if (_phoneController.text == demoPhone) {
-      setState(() {
-        _isOTPSent = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP sent successfully! Use OTP: 123456'),
-          backgroundColor: AppTheme.successGreen,
-        ),
+  @override
+  void initState() {
+    super.initState();
+    try {
+      _animationController = AnimationController(
+        duration: const Duration(milliseconds: 1500),
+        vsync: this,
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please use demo number: 1234567890'),
-          backgroundColor: AppTheme.errorRed,
-        ),
+      _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
       );
+      _slideAnimation = Tween<Offset>(
+        begin: const Offset(0, 0.3),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
+      _animationController.forward();
+    } catch (e) {
+      // If animation fails, still show the screen
+      debugPrint('Animation error: $e');
     }
   }
 
-  void _handleVerifyOTP() {
-    if (_otpController.text == demoOTP) {
+  void _handleSendOTP() async {
+    if (_formKey.currentState!.validate()) {
+      // Demo login - auto send OTP for demo number
+      if (_phoneController.text == '1234567890') {
+        setState(() {
+          _isOTPSent = true;
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Text('OTP sent to +91 ${_phoneController.text} (Demo: 123456)'),
+              ],
+            ),
+            backgroundColor: AppTheme.successGreen,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+        return;
+      }
+
       setState(() => _isLoading = true);
-      // Determine role based on context or let user choose
-      Future.delayed(const Duration(seconds: 1), () {
+      try {
+        await _authService.sendOTP(_phoneController.text, _userRole);
+        if (mounted) {
+          setState(() {
+            _isOTPSent = true;
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text('OTP sent to +91 ${_phoneController.text}'),
+                ],
+              ),
+              backgroundColor: AppTheme.successGreen,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          );
+        }
+      } catch (e) {
         if (mounted) {
           setState(() => _isLoading = false);
-          if (_userRole == AppConstants.rolePandit) {
-            context.go('/pandit/dashboard');
-          } else {
-            context.go('/client/dashboard');
-          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.error, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(e.toString())),
+                ],
+              ),
+              backgroundColor: AppTheme.errorRed,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          );
         }
-      });
-    } else {
+      }
+    }
+  }
+
+  void _handleVerifyOTP() async {
+    if (_otpController.text.isEmpty || _otpController.text.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid OTP. Use: 123456'),
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Please enter valid 6-digit OTP'),
+            ],
+          ),
           backgroundColor: AppTheme.errorRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
+      return;
+    }
+
+    // Demo login for both client and pandit
+    if (_phoneController.text == '1234567890' && _otpController.text == '123456') {
+      setState(() => _isLoading = false);
+      if (_userRole == AppConstants.rolePandit) {
+        context.go('/pandit/dashboard');
+      } else {
+        context.go('/client/dashboard');
+      }
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.verifyOTP(
+        _otpController.text,
+        _phoneController.text,
+        _userRole,
+      );
+
+      if (mounted && user != null) {
+        setState(() => _isLoading = false);
+        if (_userRole == AppConstants.rolePandit) {
+          context.go('/pandit/dashboard');
+        } else {
+          context.go('/client/dashboard');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(e.toString())),
+              ],
+            ),
+            backgroundColor: AppTheme.errorRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
     }
   }
 
@@ -75,8 +191,54 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _loginDemoPandit() async {
+    // For demo/testing, skip to dashboard
+    // In production, remove this function
+    setState(() => _userRole = AppConstants.rolePandit);
+    context.go('/pandit/dashboard');
+  }
+
+  void _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.signInWithGoogle(_userRole);
+      
+      if (mounted && user != null) {
+        setState(() => _isLoading = false);
+        if (_userRole == AppConstants.rolePandit) {
+          context.go('/pandit/dashboard');
+        } else {
+          context.go('/client/dashboard');
+        }
+      } else {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(e.toString())),
+              ],
+            ),
+            backgroundColor: AppTheme.errorRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
+    _animationController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
@@ -86,243 +248,594 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Skip button (top right)
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: () => context.go('/client/dashboard'),
-                  child: const Text('Skip'),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Logo
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: AppTheme.yellowPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.stars_rounded,
-                  size: 70,
-                  color: AppTheme.textDark,
-                ),
-              ),
-              const SizedBox(height: 24),
-              // App Name
-              Text(
-                'Vedic Mate',
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 32),
-              // Free Chat Banner
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 24),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppTheme.white,
-                  border: Border.all(color: AppTheme.yellowPrimary, width: 2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppTheme.primaryLight,
+              AppTheme.primarySoft,
+              AppTheme.white,
+              AppTheme.accentGoldLight.withOpacity(0.3),
+            ],
+            stops: const [0.0, 0.3, 0.7, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    const Icon(Icons.celebration, color: AppTheme.yellowPrimary, size: 32),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'First Chat with Pandit is FREE!',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                    // Skip button
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: AppTheme.softShadow,
+                            border: Border.all(
+                              color: AppTheme.primaryOrange.withOpacity(0.2),
+                              width: 1,
                             ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Login Form
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (!_isOTPSent) ...[
-                        // Phone Input
-                        TextField(
-                          controller: _phoneController,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            hintText: 'Enter phone number',
-                            prefixText: 'IN +91 ',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppTheme.yellowPrimary,
-                                width: 2,
+                          ),
+                          child: TextButton(
+                            onPressed: () => context.go('/client/dashboard'),
+                            child: const Text(
+                              'Skip',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        // Role Selection
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _RoleButton(
-                                label: 'Client',
-                                isSelected: _userRole != AppConstants.rolePandit,
-                                onTap: () => setState(() => _userRole = AppConstants.roleClient),
-                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Enhanced Logo with animated glow effect
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      height: MediaQuery.of(context).size.width * 0.3,
+                      constraints: const BoxConstraints(
+                        minWidth: 100,
+                        maxWidth: 150,
+                        minHeight: 100,
+                        maxHeight: 150,
+                      ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.primaryOrange,
+                            AppTheme.accentGold,
+                            AppTheme.primaryDeep,
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryOrange.withOpacity(0.4),
+                            blurRadius: 30,
+                            spreadRadius: 8,
+                          ),
+                          BoxShadow(
+                            color: AppTheme.accentGold.withOpacity(0.3),
+                            blurRadius: 50,
+                            spreadRadius: 12,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.stars_rounded,
+                        size: MediaQuery.of(context).size.width * 0.18,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // App Name with enhanced styling
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                      ).createShader(bounds),
+                      child: Text(
+                        'Vedic Mate',
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _RoleButton(
-                                label: 'Pandit',
-                                isSelected: _userRole == AppConstants.rolePandit,
-                                onTap: () => setState(() => _userRole = AppConstants.rolePandit),
-                              ),
+                      ),
+                    ),
+                    Text(
+                      'Your Spiritual Journey Begins Here',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.textLight,
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: _loginDemoPandit,
+                          icon: const Icon(Icons.verified_user),
+                          label: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: const Text('Login as Demo Pandit'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const SizedBox(height: 32),
+                    // Enhanced Free Chat Banner
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.yellowPrimary.withOpacity(0.1),
+                            AppTheme.goldAccent.withOpacity(0.1),
+                          ],
+                        ),
+                        border: Border.all(color: AppTheme.yellowPrimary, width: 2),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.yellowPrimary.withOpacity(0.1),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: AppTheme.yellowPrimary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.celebration,
+                              color: AppTheme.textDark,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'First Chat FREE!',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.textDark,
+                                      ),
+                                ),
+                                Text(
+                                  'Connect with verified Pandits',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: AppTheme.textLight,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    // Enhanced Login Form
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              spreadRadius: 5,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-                        // Send OTP Button
-                        ElevatedButton(
-                          onPressed: _handleSendOTP,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.yellowPrimary,
-                            foregroundColor: AppTheme.textDark,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text('SEND OTP'),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_forward),
+                              if (!_isOTPSent) ...[
+                                // Enhanced Phone Input
+                                TextFormField(
+                                  controller: _phoneController,
+                                  keyboardType: TextInputType.phone,
+                                  validator: Validators.validatePhone,
+                                  decoration: InputDecoration(
+                                    labelText: 'Phone Number',
+                                    hintText: 'Enter your phone number',
+                                    prefixIcon: Container(
+                                      margin: const EdgeInsets.all(8),
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.yellowPrimary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(Icons.phone, color: AppTheme.yellowPrimary),
+                                    ),
+                                    prefixText: '+91 ',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    filled: true,
+                                    fillColor: AppTheme.creamPrimary.withOpacity(0.3),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: AppTheme.yellowPrimary,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                // Enhanced Role Selection
+                                Text(
+                                  'Login as:',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _EnhancedRoleButton(
+                                        label: 'Client',
+                                        icon: Icons.person,
+                                        description: 'Seek guidance',
+                                        isSelected: _userRole == AppConstants.roleClient,
+                                        onTap: () => setState(() => _userRole = AppConstants.roleClient),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _EnhancedRoleButton(
+                                        label: 'Pandit',
+                                        icon: Icons.verified_user,
+                                        description: 'Provide guidance',
+                                        isSelected: _userRole == AppConstants.rolePandit,
+                                        onTap: () => setState(() => _userRole = AppConstants.rolePandit),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                // Enhanced Send OTP Button
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.yellowPrimary.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: _isLoading ? null : _handleSendOTP,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: _isLoading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            ),
+                                          )
+                                        : const Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'SEND OTP',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Icon(Icons.arrow_forward),
+                                            ],
+                                          ),
+                                  ),
+                                ),
+                              ] else ...[
+                                // Enhanced OTP Input
+                                TextFormField(
+                                  controller: _otpController,
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 6,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 8,
+                                  ),
+                                  decoration: InputDecoration(
+                                    labelText: 'Enter OTP',
+                                    hintText: '123456',
+                                    prefixIcon: Container(
+                                      margin: const EdgeInsets.all(8),
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.yellowPrimary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(Icons.security, color: AppTheme.yellowPrimary),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    filled: true,
+                                    fillColor: AppTheme.creamPrimary.withOpacity(0.3),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: AppTheme.yellowPrimary,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton.icon(
+                                      onPressed: () => setState(() => _isOTPSent = false),
+                                      icon: const Icon(Icons.edit),
+                                      label: const Text('Change Number'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => _handleSendOTP(),
+                                      child: const Text('Resend OTP'),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                // Enhanced Verify OTP Button
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [AppTheme.successGreen, Color(0xFF4CAF50)],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.successGreen.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: _isLoading ? null : _handleVerifyOTP,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: MediaQuery.of(context).size.width * 0.08,
+                                        vertical: 16,
+                                      ),
+                                      minimumSize: Size(
+                                        MediaQuery.of(context).size.width * 0.3,
+                                        48,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: _isLoading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            ),
+                                          )
+                                        : FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                const Text(
+                                                  'VERIFY & LOGIN',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Icon(Icons.check_circle, color: Colors.white, size: 18),
+                                              ],
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 16),
+                              // Terms
+                              Text(
+                                'By continuing, you agree to our Terms of Use and Privacy Policy',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppTheme.textLight,
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ),
                         ),
-                      ] else ...[
-                        // OTP Input
-                        TextField(
-                          controller: _otpController,
-                          keyboardType: TextInputType.number,
-                          maxLength: 6,
-                          decoration: InputDecoration(
-                            labelText: 'Enter OTP',
-                            hintText: '123456',
-                            border: OutlineInputBorder(
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Enhanced Social Login Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: Divider(color: Colors.grey[300])),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  'Or continue with',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                              Expanded(child: Divider(color: Colors.grey[300])),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Enhanced Google Login
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey[300]!),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ],
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: AppTheme.yellowPrimary,
-                                width: 2,
+                            child: OutlinedButton.icon(
+                              onPressed: _isLoading ? null : _handleGoogleSignIn,
+                              icon: Image.asset(
+                                'assets/images/google_logo.png',
+                                height: 24,
+                                width: 24,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.g_mobiledata, color: Colors.red),
+                              ),
+                              label: const Text(
+                                'Continue with Google',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.textDark,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                side: BorderSide.none,
+                                backgroundColor: Colors.transparent,
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed: () => setState(() => _isOTPSent = false),
-                          child: const Text('Change Phone Number'),
-                        ),
-                        const SizedBox(height: 24),
-                        // Verify OTP Button
-                        ElevatedButton(
-                          onPressed: _isLoading ? null : _handleVerifyOTP,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.yellowPrimary,
-                            foregroundColor: AppTheme.textDark,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                          const SizedBox(height: 16),
+                          // Registration Link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account? ",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              TextButton(
+                                onPressed: () => context.go('/register'),
+                                child: const Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.yellowPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Text('VERIFY OTP'),
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                      // Terms
-                      Text(
-                        'By signing up, you agree to our Terms of Use and Privacy Policy',
-                        style: Theme.of(context).textTheme.bodySmall,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      // Divider
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: Colors.grey[300])),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                          const SizedBox(height: 8),
+                          // Admin Login Link
+                          TextButton(
+                            onPressed: _handleAdminLogin,
                             child: Text(
-                              'Or',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              'Admin Login',
+                              style: TextStyle(
+                                color: AppTheme.textLight,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
-                          Expanded(child: Divider(color: Colors.grey[300])),
                         ],
                       ),
-                      const SizedBox(height: 24),
-                      // Social Login
-                      OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.g_mobiledata),
-                        label: const Text('Login with Google'),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: const BorderSide(color: AppTheme.yellowPrimary),
+                    ),
+                    const SizedBox(height: 32),
+                    // Enhanced App Stats
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.creamPrimary.withOpacity(0.5),
+                            AppTheme.yellowLight.withOpacity(0.3),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      // Admin Login
-                      TextButton(
-                        onPressed: _handleAdminLogin,
-                        child: const Text('Admin Login'),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _EnhancedStatItem(
+                            icon: Icons.security,
+                            title: '100%',
+                            subtitle: 'Privacy',
+                          ),
+                          _EnhancedStatItem(
+                            icon: Icons.people,
+                            title: '10K+',
+                            subtitle: 'Pandits',
+                          ),
+                          _EnhancedStatItem(
+                            icon: Icons.favorite,
+                            title: '3Cr+',
+                            subtitle: 'Happy Users',
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              // App Stats
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: AppTheme.creamPrimary,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _StatItem(icon: Icons.lock, text: '100% Privacy'),
-                    _StatItem(icon: Icons.people, text: '10000+ Top Pandits'),
-                    _StatItem(icon: Icons.favorite, text: '3Cr+ Happy Customers'),
+                    ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -330,13 +843,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class _RoleButton extends StatelessWidget {
+class _EnhancedRoleButton extends StatelessWidget {
   final String label;
+  final IconData icon;
+  final String description;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _RoleButton({
+  const _EnhancedRoleButton({
     required this.label,
+    required this.icon,
+    required this.description,
     required this.isSelected,
     required this.onTap,
   });
@@ -345,45 +862,109 @@ class _RoleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.yellowPrimary : AppTheme.white,
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                )
+              : null,
+          color: isSelected ? null : Colors.grey[50],
           border: Border.all(
             color: isSelected ? AppTheme.yellowPrimary : Colors.grey[300]!,
-            width: 2,
+            width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.yellowPrimary.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? AppTheme.textDark : AppTheme.textLight,
-          ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: isSelected ? AppTheme.textDark : AppTheme.yellowPrimary,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppTheme.textDark : AppTheme.textDark,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              description,
+              style: TextStyle(
+                color: isSelected ? AppTheme.textDark.withOpacity(0.8) : AppTheme.textLight,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _StatItem extends StatelessWidget {
+class _EnhancedStatItem extends StatelessWidget {
   final IconData icon;
-  final String text;
+  final String title;
+  final String subtitle;
 
-  const _StatItem({required this.icon, required this.text});
+  const _EnhancedStatItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Column(
       children: [
-        Icon(icon, size: 16, color: AppTheme.yellowPrimary),
-        const SizedBox(width: 4),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppTheme.yellowPrimary.withOpacity(0.1),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppTheme.yellowPrimary.withOpacity(0.3),
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            icon,
+            size: 24,
+            color: AppTheme.yellowPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
-          text,
-          style: Theme.of(context).textTheme.bodySmall,
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: AppTheme.textDark,
+          ),
+        ),
+        Text(
+          subtitle,
+          style: const TextStyle(
+            fontSize: 12,
+            color: AppTheme.textLight,
+          ),
         ),
       ],
     );
@@ -400,6 +981,7 @@ class _AdminLoginDialogState extends State<_AdminLoginDialog> {
   final _passwordController = TextEditingController(text: 'admin123');
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   void _handleAdminLogin() {
     if (_formKey.currentState!.validate()) {
@@ -414,9 +996,17 @@ class _AdminLoginDialogState extends State<_AdminLoginDialog> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid admin credentials'),
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Invalid admin credentials'),
+              ],
+            ),
             backgroundColor: AppTheme.errorRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         );
       }
@@ -426,48 +1016,130 @@ class _AdminLoginDialogState extends State<_AdminLoginDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Container(
         padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              AppTheme.creamPrimary.withOpacity(0.3),
+            ],
+          ),
+        ),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Admin Login',
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.yellowPrimary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.admin_panel_settings,
+                      color: AppTheme.yellowPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Admin Login',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
-              TextField(
+              TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: 'Admin Email',
+                  prefixIcon: const Icon(Icons.email),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter email';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
-              TextField(
+              TextFormField(
                 controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Admin Password',
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter password';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _handleAdminLogin,
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Login'),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _handleAdminLogin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.textDark),
+                          ),
+                        )
+                      : const Text(
+                          'LOGIN AS ADMIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textDark,
+                          ),
+                        ),
+                ),
               ),
             ],
           ),

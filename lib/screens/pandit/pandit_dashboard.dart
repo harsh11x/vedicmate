@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/booking_model.dart';
-import '../../core/utils/blocked_check.dart';
 
 class PanditDashboard extends StatefulWidget {
   const PanditDashboard({super.key});
@@ -17,11 +16,10 @@ class _PanditDashboardState extends State<PanditDashboard> {
   @override
   void initState() {
     super.initState();
-    // Check if Pandit is blocked (using mock ID '3' for demo)
-    // In production, get actual Pandit ID from auth state
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlockedCheck.checkAndRedirect(context, '3'); // Mock: change to actual ID
-    });
+    // Blocked check removed for demo - in production, get actual Pandit ID from auth state
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   BlockedCheck.checkAndRedirect(context, panditId);
+    // });
   }
 
   @override
@@ -36,12 +34,24 @@ class _PanditDashboardState extends State<PanditDashboard> {
           _ProfileTab(),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() => _currentIndex = index);
-        },
-        destinations: const [
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          boxShadow: AppTheme.mediumShadow,
+        ),
+        child: SafeArea(
+          child: NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (index) {
+              setState(() => _currentIndex = index);
+            },
+            height: MediaQuery.of(context).size.height * 0.08,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            indicatorColor: AppTheme.primaryLight,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            animationDuration: const Duration(milliseconds: 300),
+            destinations: const [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
@@ -64,6 +74,8 @@ class _PanditDashboardState extends State<PanditDashboard> {
           ),
         ],
       ),
+        ),
+      ),
     );
   }
 }
@@ -76,7 +88,7 @@ class _DashboardTab extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          expandedHeight: 120,
+          expandedHeight: 140,
           floating: false,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
@@ -84,27 +96,55 @@ class _DashboardTab extends StatelessWidget {
               'Pandit Dashboard',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: AppTheme.white,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20,
                   ),
             ),
             background: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [AppTheme.yellowPrimary, AppTheme.yellowDark],
+                  colors: [
+                    AppTheme.primaryOrange,
+                    AppTheme.primaryDeep,
+                    AppTheme.accentGold,
+                  ],
                 ),
+                boxShadow: AppTheme.glowShadow,
               ),
             ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications_outlined),
-              onPressed: () {},
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.white.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.notifications_outlined),
+                onPressed: () {},
+              ),
             ),
-            IconButton(
-              icon: const Icon(Icons.wallet_outlined),
-              onPressed: () => context.push('/payment/wallet'),
+            Container(
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                color: AppTheme.white.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.wallet_outlined),
+                onPressed: () => context.push('/payment/wallet'),
+              ),
             ),
           ],
         ),
@@ -114,6 +154,70 @@ class _DashboardTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Enhanced Welcome Card
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.primaryOrange,
+                        AppTheme.primaryDeep,
+                        AppTheme.accentGold,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: AppTheme.glowShadow,
+                    border: Border.all(
+                      color: AppTheme.white.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.white.withOpacity(0.25),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppTheme.white.withOpacity(0.3),
+                            width: 2,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.self_improvement,
+                          color: AppTheme.white,
+                          size: 36,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome back',
+                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                    color: AppTheme.white,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 22,
+                                  ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Manage your consultations and earnings',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppTheme.white.withOpacity(0.95),
+                                    fontSize: 14,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
                 // Stats Cards
                 Row(
                   children: [
@@ -173,13 +277,18 @@ class _DashboardTab extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 16),
-                GridView.count(
-                  crossAxisCount: 2,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 600;
+                    final cross = isWide ? 3 : 2;
+                    final ratio = isWide ? 2.8 : 2.5;
+                    return GridView.count(
+                  crossAxisCount: cross,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: ratio,
                   children: [
                     _QuickActionCard(
                       icon: Icons.edit,
@@ -202,6 +311,8 @@ class _DashboardTab extends StatelessWidget {
                       onTap: () {},
                     ),
                   ],
+                );
+                  },
                 ),
               ],
             ),
@@ -289,24 +400,62 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: AppTheme.mediumShadow,
+        border: Border.all(
+          color: color.withOpacity(0.1),
+          width: 1.5,
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(20),
+        child: Row(
           children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [color, color.withOpacity(0.7)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
+                ],
+              ),
+              child: Icon(icon, color: AppTheme.white, size: 26),
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 22,
+                          color: AppTheme.neutralDark,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppTheme.neutralMedium,
+                          fontSize: 12,
+                        ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -515,7 +664,7 @@ class _ProfileTab extends StatelessWidget {
         _ProfileTile(
           icon: Icons.edit,
           title: 'Edit Profile',
-          onTap: () {},
+          onTap: () => context.push('/profile/edit'),
         ),
         _ProfileTile(
           icon: Icons.schedule,
@@ -535,7 +684,7 @@ class _ProfileTab extends StatelessWidget {
         _ProfileTile(
           icon: Icons.settings_outlined,
           title: 'Settings',
-          onTap: () {},
+          onTap: () => context.push('/settings'),
         ),
         _ProfileTile(
           icon: Icons.logout,
