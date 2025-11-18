@@ -1,41 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
+import '../../services/live_service.dart';
+import '../../providers/api_providers.dart';
 
-class LiveScreen extends StatefulWidget {
+class LiveScreen extends ConsumerWidget {
   const LiveScreen({super.key});
 
   @override
-  State<LiveScreen> createState() => _LiveScreenState();
-}
-
-class _LiveScreenState extends State<LiveScreen> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final future = ref.watch(_liveProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Live Pandits'),
         actions: [
           IconButton(
             icon: const Icon(Icons.wallet),
-            onPressed: () {},
+            onPressed: () => context.push('/payment/wallet'),
             tooltip: 'Wallet Balance',
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Featured Live Stream
-          _FeaturedLiveStream(),
-          const SizedBox(height: 16),
-          // Live Pandits List
-          Expanded(
-            child: _LivePanditsList(),
-          ),
-        ],
+      body: future.when(
+        data: (items) => _LiveReels(items: items),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Failed to load live: $e')),
       ),
     );
   }
 }
+
+final _liveProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final svc = ref.read(liveServiceProvider);
+  return svc.fetchLive();
+});
 
 class _FeaturedLiveStream extends StatelessWidget {
   @override
@@ -60,7 +59,6 @@ class _FeaturedLiveStream extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Live indicator
           Positioned(
             top: 12,
             left: 12,
@@ -94,7 +92,6 @@ class _FeaturedLiveStream extends StatelessWidget {
               ),
             ),
           ),
-          // Pandit info
           Positioned(
             bottom: 0,
             left: 0,
@@ -126,36 +123,28 @@ class _FeaturedLiveStream extends StatelessWidget {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Pandit Ravi Shankar',
+                      children: const [
+                        Text(
+                          'Featured Live Session',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.people, size: 16, color: Colors.white70),
-                            const SizedBox(width: 4),
-                            Text(
-                              '1.2K watching',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+                        SizedBox(height: 4),
+                        Text(
+                          'Join now to interact and send gifts',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      // Join live stream
-                    },
+                    onPressed: () {},
                     icon: const Icon(Icons.play_arrow),
                     label: const Text('Join'),
                     style: ElevatedButton.styleFrom(
@@ -174,77 +163,40 @@ class _FeaturedLiveStream extends StatelessWidget {
 }
 
 class _LivePanditsList extends StatelessWidget {
+  const _LivePanditsList({required this.items});
+  final List<Map<String, dynamic>> items;
+
   @override
   Widget build(BuildContext context) {
-    // Mock live pandits
-    final livePandits = [
-      _LivePanditData(
-        id: '1',
-        name: 'Pandit Priya Sharma',
-        viewers: 856,
-        title: 'Daily Horoscope Reading',
-        thumbnail: null,
-      ),
-      _LivePanditData(
-        id: '2',
-        name: 'Pandit Krishna Das',
-        viewers: 432,
-        title: 'Marriage Compatibility',
-        thumbnail: null,
-      ),
-      _LivePanditData(
-        id: '3',
-        name: 'Pandit Aaryan',
-        viewers: 234,
-        title: 'Career Guidance',
-        thumbnail: null,
-      ),
-    ];
-
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: livePandits.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        return _LivePanditCard(pandit: livePandits[index]);
+        final it = items[index];
+        return _LivePanditCard(
+          name: '${it['title'] ?? 'Live Session'}',
+          viewers: (it['viewers'] ?? 0) as int? ?? 0,
+        );
       },
     );
   }
 }
 
-class _LivePanditData {
-  final String id;
+class _LivePanditCard extends StatelessWidget {
+  const _LivePanditCard({required this.name, required this.viewers});
   final String name;
   final int viewers;
-  final String title;
-  final String? thumbnail;
-
-  _LivePanditData({
-    required this.id,
-    required this.name,
-    required this.viewers,
-    required this.title,
-    this.thumbnail,
-  });
-}
-
-class _LivePanditCard extends StatelessWidget {
-  final _LivePanditData pandit;
-
-  const _LivePanditCard({required this.pandit});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () {
-          _showLiveStreamDialog(context, pandit);
-        },
+        onTap: () => _showLiveStreamDialog(context),
         borderRadius: BorderRadius.circular(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumbnail
             Stack(
               children: [
                 Container(
@@ -261,7 +213,6 @@ class _LivePanditCard extends StatelessWidget {
                     child: Icon(Icons.videocam, size: 60, color: AppTheme.yellowPrimary),
                   ),
                 ),
-                // Live badge
                 Positioned(
                   top: 12,
                   left: 12,
@@ -273,17 +224,10 @@ class _LivePanditCard extends StatelessWidget {
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Text(
+                      children: const [
+                        Icon(Icons.circle, size: 8, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text(
                           'LIVE',
                           style: TextStyle(
                             color: Colors.white,
@@ -295,7 +239,6 @@ class _LivePanditCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Viewers count
                 Positioned(
                   top: 12,
                   right: 12,
@@ -311,7 +254,7 @@ class _LivePanditCard extends StatelessWidget {
                         const Icon(Icons.people, size: 14, color: Colors.white),
                         const SizedBox(width: 4),
                         Text(
-                          '${pandit.viewers}',
+                          '$viewers',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -324,7 +267,6 @@ class _LivePanditCard extends StatelessWidget {
                 ),
               ],
             ),
-            // Info
             Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
@@ -340,24 +282,22 @@ class _LivePanditCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          pandit.name,
+                          name,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          pandit.title,
-                          style: Theme.of(context).textTheme.bodySmall,
+                        const Text(
+                          'Tap to join the stream',
+                          style: TextStyle(color: Colors.black54),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.play_circle_filled, color: AppTheme.yellowPrimary),
-                    onPressed: () {
-                      _showLiveStreamDialog(context, pandit);
-                    },
+                    onPressed: () => _showLiveStreamDialog(context),
                   ),
                 ],
               ),
@@ -368,20 +308,191 @@ class _LivePanditCard extends StatelessWidget {
     );
   }
 
-  void _showLiveStreamDialog(BuildContext context, _LivePanditData pandit) {
+  void _showLiveStreamDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _LiveStreamView(pandit: pandit),
+      builder: (context) => const _LiveStreamView(),
+    );
+  }
+}
+
+class _LiveReels extends StatelessWidget {
+  const _LiveReels({required this.items});
+  final List<Map<String, dynamic>> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final it = items[index];
+        final name = '${it['title'] ?? 'Live Session'}';
+        final viewers = (it['viewers'] ?? 0) as int? ?? 0;
+        final panditName = it['panditName'] as String?;
+        final panditId = it['panditId'] as String?;
+        return _ReelItem(
+          name: name,
+          viewers: viewers,
+          panditName: panditName,
+          panditId: panditId,
+        );
+      },
+    );
+  }
+}
+
+class _ReelItem extends StatelessWidget {
+  const _ReelItem({
+    required this.name,
+    required this.viewers,
+    this.panditName,
+    this.panditId,
+  });
+  final String name;
+  final int viewers;
+  final String? panditName;
+  final String? panditId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          color: Colors.black,
+          width: double.infinity,
+          height: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.yellowPrimary.withOpacity(0.2),
+                  Colors.black,
+                  AppTheme.primaryOrange.withOpacity(0.1),
+                ],
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(40),
+                    decoration: BoxDecoration(
+                      color: AppTheme.yellowPrimary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppTheme.yellowPrimary.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.videocam,
+                      size: 100,
+                      color: AppTheme.yellowPrimary.withOpacity(0.5),
+                    ),
+                  ),
+                  if (panditName != null) ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      panditName!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40,
+          left: 16,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(20)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.circle, size: 8, color: Colors.white),
+                SizedBox(width: 6),
+                Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40,
+          right: 16,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.people, size: 14, color: Colors.white),
+                const SizedBox(width: 4),
+                Text('$viewers', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 100,
+          left: 16,
+          right: 16,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Swipe up/down to explore live pandits',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () => _showLiveStreamDialog(context),
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('Join'),
+                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.yellowPrimary, foregroundColor: AppTheme.textDark),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showLiveStreamDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _LiveStreamView(),
     );
   }
 }
 
 class _LiveStreamView extends StatefulWidget {
-  final _LivePanditData pandit;
-
-  const _LiveStreamView({required this.pandit});
+  const _LiveStreamView();
 
   @override
   State<_LiveStreamView> createState() => _LiveStreamViewState();
@@ -403,55 +514,14 @@ class _LiveStreamViewState extends State<_LiveStreamView> {
       ),
       child: Column(
         children: [
-          // Top bar
           Container(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppTheme.yellowPrimary,
-                        child: Icon(Icons.person, color: AppTheme.textDark),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.pandit.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'LIVE',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                const Expanded(
+                  child: Text(
+                    'Live Stream',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
                 IconButton(
@@ -461,7 +531,6 @@ class _LiveStreamViewState extends State<_LiveStreamView> {
               ],
             ),
           ),
-          // Video area
           Expanded(
             child: Container(
               color: Colors.grey[900],
@@ -471,16 +540,12 @@ class _LiveStreamViewState extends State<_LiveStreamView> {
                   children: [
                     Icon(Icons.videocam, size: 80, color: Colors.white54),
                     SizedBox(height: 16),
-                    Text(
-                      'Live Stream',
-                      style: TextStyle(color: Colors.white70, fontSize: 18),
-                    ),
+                    Text('Live Stream', style: TextStyle(color: Colors.white70, fontSize: 18)),
                   ],
                 ),
               ),
             ),
           ),
-          // Gifts section
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -495,32 +560,18 @@ class _LiveStreamViewState extends State<_LiveStreamView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Send Gift',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
-                          ),
-                    ),
+                    Text('Send Gift', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white)),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppTheme.yellowPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      decoration: BoxDecoration(color: AppTheme.yellowPrimary, borderRadius: BorderRadius.circular(20)),
                       child: Row(
                         children: [
                           const Icon(Icons.account_balance_wallet, size: 16),
                           const SizedBox(width: 4),
-                          Text(
-                            '₹${_walletBalance.toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
+                          Text('₹${_walletBalance.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                         ],
                       ),
-                    ),
+                    )
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -529,36 +580,11 @@ class _LiveStreamViewState extends State<_LiveStreamView> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      _GiftItem(
-                        icon: Icons.favorite,
-                        name: 'Rose',
-                        price: 10,
-                        onTap: () => _sendGift(10),
-                      ),
-                      _GiftItem(
-                        icon: Icons.star,
-                        name: 'Star',
-                        price: 50,
-                        onTap: () => _sendGift(50),
-                      ),
-                      _GiftItem(
-                        icon: Icons.diamond,
-                        name: 'Diamond',
-                        price: 100,
-                        onTap: () => _sendGift(100),
-                      ),
-                      _GiftItem(
-                        icon: Icons.celebration,
-                        name: 'Crown',
-                        price: 500,
-                        onTap: () => _sendGift(500),
-                      ),
-                      _GiftItem(
-                        icon: Icons.local_fire_department,
-                        name: 'Fire',
-                        price: 1000,
-                        onTap: () => _sendGift(1000),
-                      ),
+                      _GiftItem(icon: Icons.favorite, name: 'Rose', price: 10, onTap: () => _sendGift(10)),
+                      _GiftItem(icon: Icons.star, name: 'Star', price: 50, onTap: () => _sendGift(50)),
+                      _GiftItem(icon: Icons.diamond, name: 'Diamond', price: 100, onTap: () => _sendGift(100)),
+                      _GiftItem(icon: Icons.celebration, name: 'Crown', price: 500, onTap: () => _sendGift(500)),
+                      _GiftItem(icon: Icons.local_fire_department, name: 'Fire', price: 1000, onTap: () => _sendGift(1000)),
                     ],
                   ),
                 ),
@@ -572,38 +598,23 @@ class _LiveStreamViewState extends State<_LiveStreamView> {
 
   void _sendGift(double amount) {
     if (_walletBalance >= amount) {
-      setState(() {
-        _walletBalance -= amount;
-      });
+      setState(() => _walletBalance -= amount);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gift sent! ₹$amount'),
-          backgroundColor: AppTheme.successGreen,
-        ),
+        SnackBar(content: Text('Gift sent! ₹$amount'), backgroundColor: AppTheme.successGreen),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Insufficient wallet balance'),
-          backgroundColor: AppTheme.errorRed,
-        ),
-      );
+      const snackBar = SnackBar(content: Text('Insufficient wallet balance'), backgroundColor: Colors.red);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }
 
 class _GiftItem extends StatelessWidget {
+  const _GiftItem({required this.icon, required this.name, required this.price, required this.onTap});
   final IconData icon;
   final String name;
   final double price;
   final VoidCallback onTap;
-
-  const _GiftItem({
-    required this.icon,
-    required this.name,
-    required this.price,
-    required this.onTap,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -623,20 +634,9 @@ class _GiftItem extends StatelessWidget {
           children: [
             Icon(icon, color: AppTheme.yellowPrimary, size: 28),
             const SizedBox(height: 4),
-            Text(
-              name,
-              style: const TextStyle(color: Colors.white, fontSize: 10),
-              textAlign: TextAlign.center,
-            ),
+            Text(name, style: const TextStyle(color: Colors.white, fontSize: 10), textAlign: TextAlign.center),
             const SizedBox(height: 2),
-            Text(
-              '₹${price.toInt()}',
-              style: TextStyle(
-                color: AppTheme.yellowPrimary,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text('₹${price.toInt()}', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

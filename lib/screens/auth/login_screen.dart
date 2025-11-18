@@ -20,7 +20,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   final _authService = AuthService();
   bool _isOTPSent = false;
   bool _isLoading = false;
-  String _userRole = AppConstants.roleClient; // Default to client
+  // Client-only app - no role selection needed
+  static const String _userRole = AppConstants.roleClient;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -136,14 +137,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       return;
     }
 
-    // Demo login for both client and pandit
+    // Demo login for client
     if (_phoneController.text == '1234567890' && _otpController.text == '123456') {
       setState(() => _isLoading = false);
-      if (_userRole == AppConstants.rolePandit) {
-        context.go('/pandit/dashboard');
-      } else {
-        context.go('/client/dashboard');
-      }
+      context.go('/client/dashboard');
       return;
     }
 
@@ -157,11 +154,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
       if (mounted && user != null) {
         setState(() => _isLoading = false);
-        if (_userRole == AppConstants.rolePandit) {
-          context.go('/pandit/dashboard');
-        } else {
-          context.go('/client/dashboard');
-        }
+        context.go('/client/dashboard');
       }
     } catch (e) {
       if (mounted) {
@@ -191,12 +184,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     );
   }
 
-  void _loginDemoPandit() async {
-    // For demo/testing, skip to dashboard
-    // In production, remove this function
-    setState(() => _userRole = AppConstants.rolePandit);
-    context.go('/pandit/dashboard');
-  }
 
   void _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
@@ -205,11 +192,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       
       if (mounted && user != null) {
         setState(() => _isLoading = false);
-        if (_userRole == AppConstants.rolePandit) {
-          context.go('/pandit/dashboard');
-        } else {
-          context.go('/client/dashboard');
-        }
+        context.go('/client/dashboard');
       } else {
         if (mounted) {
           setState(() => _isLoading = false);
@@ -297,84 +280,78 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    // Enhanced Logo with animated glow effect
+                    const SizedBox(height: 40),
+                    // Vedic Mate Logo
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      height: MediaQuery.of(context).size.width * 0.3,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: MediaQuery.of(context).size.width * 0.4,
                       constraints: const BoxConstraints(
-                        minWidth: 100,
-                        maxWidth: 150,
-                        minHeight: 100,
-                        maxHeight: 150,
+                        minWidth: 120,
+                        maxWidth: 180,
+                        minHeight: 120,
+                        maxHeight: 180,
                       ),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.primaryOrange,
-                            AppTheme.accentGold,
-                            AppTheme.primaryDeep,
-                          ],
+                        color: AppTheme.yellowPrimary.withOpacity(0.15),
+                        border: Border.all(
+                          color: AppTheme.yellowPrimary,
+                          width: 3,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primaryOrange.withOpacity(0.4),
-                            blurRadius: 30,
-                            spreadRadius: 8,
-                          ),
-                          BoxShadow(
-                            color: AppTheme.accentGold.withOpacity(0.3),
-                            blurRadius: 50,
-                            spreadRadius: 12,
+                            color: AppTheme.yellowPrimary.withOpacity(0.3),
+                            blurRadius: 20,
+                            spreadRadius: 5,
                           ),
                         ],
                       ),
-                      child: Icon(
-                        Icons.stars_rounded,
-                        size: MediaQuery.of(context).size.width * 0.18,
-                        color: AppTheme.textDark,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Logo Icon (representing the two figures)
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Background circle
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.yellowPrimary,
+                                ),
+                              ),
+                              // Simplified logo representation
+                              Icon(
+                                Icons.auto_awesome,
+                                size: 50,
+                                color: AppTheme.textDark,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                     // App Name with enhanced styling
-                    ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                      ).createShader(bounds),
-                      child: Text(
-                        'Vedic Mate',
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                      ),
+                    Text(
+                      'VEDIC MATE',
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 36,
+                            letterSpacing: 2,
+                            color: AppTheme.yellowPrimary,
+                          ),
                     ),
+                    const SizedBox(height: 8),
                     Text(
                       'Your Spiritual Journey Begins Here',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.textLight,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppTheme.neutralMedium,
                             fontStyle: FontStyle.italic,
                           ),
                     ),
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.06,
-                      ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: _loginDemoPandit,
-                          icon: const Icon(Icons.verified_user),
-                          label: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: const Text('Login as Demo Pandit'),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
                     const SizedBox(height: 32),
                     // Enhanced Free Chat Banner
                     Container(
@@ -490,38 +467,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 24),
-                                // Enhanced Role Selection
-                                Text(
-                                  'Login as:',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _EnhancedRoleButton(
-                                        label: 'Client',
-                                        icon: Icons.person,
-                                        description: 'Seek guidance',
-                                        isSelected: _userRole == AppConstants.roleClient,
-                                        onTap: () => setState(() => _userRole = AppConstants.roleClient),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _EnhancedRoleButton(
-                                        label: 'Pandit',
-                                        icon: Icons.verified_user,
-                                        description: 'Provide guidance',
-                                        isSelected: _userRole == AppConstants.rolePandit,
-                                        onTap: () => setState(() => _userRole = AppConstants.rolePandit),
-                                      ),
-                                    ),
-                                  ],
                                 ),
                                 const SizedBox(height: 24),
                                 // Enhanced Send OTP Button

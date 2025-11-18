@@ -4,7 +4,6 @@ import '../../screens/auth/splash_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/registration_screen.dart';
 import '../../screens/client/client_dashboard.dart';
-import '../../screens/pandit/pandit_dashboard.dart';
 import '../../screens/shared/pandit_search_screen.dart';
 import '../../screens/shared/pandit_profile_detail_screen.dart';
 import '../../screens/shared/booking_scheduling_screen.dart';
@@ -12,13 +11,34 @@ import '../../screens/shared/video_call_screen.dart';
 import '../../screens/shared/chat_screen.dart';
 import '../../screens/shared/booking_history_screen.dart';
 import '../../screens/shared/payment_wallet_screen.dart';
-import '../../screens/admin/admin_dashboard.dart';
-import '../../screens/pandit/pandit_verification_screen.dart';
-import '../../screens/pandit/blocked_account_screen.dart';
+import '../../screens/shared/settings_screen.dart';
+import '../../screens/client/ai_pandit_chat_screen.dart';
+import '../../screens/client/ai_pandit_voice_call_screen.dart';
+import '../../screens/client/wallet_recharge_screen.dart';
+import '../../screens/shared/kundli_generation_screen.dart';
+import '../../screens/shared/edit_profile_screen.dart';
+import '../../screens/client/remedies_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/splash',
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Error: ${state.error}'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.go('/login'),
+              child: const Text('Go to Login'),
+            ),
+          ],
+        ),
+      ),
+    ),
     routes: [
       GoRoute(
         path: '/splash',
@@ -36,10 +56,7 @@ class AppRouter {
         path: '/client/dashboard',
         builder: (context, state) => const ClientDashboard(),
       ),
-      GoRoute(
-        path: '/pandit/dashboard',
-        builder: (context, state) => const PanditDashboard(),
-      ),
+      // Pandit search and profile routes (for clients to browse pandits)
       GoRoute(
         path: '/pandit/search',
         builder: (context, state) => const PanditSearchScreen(),
@@ -85,16 +102,45 @@ class AppRouter {
         builder: (context, state) => const PaymentWalletScreen(),
       ),
       GoRoute(
-        path: '/admin/dashboard',
-        builder: (context, state) => const AdminDashboard(),
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
-        path: '/pandit/verification',
-        builder: (context, state) => const PanditVerificationScreen(),
+        path: '/profile/edit',
+        builder: (context, state) => const EditProfileScreen(),
       ),
       GoRoute(
-        path: '/pandit/blocked',
-        builder: (context, state) => const BlockedAccountScreen(),
+        path: '/ai-pandit/chat',
+        builder: (context, state) => const AIPanditChatScreen(),
+      ),
+      GoRoute(
+        path: '/ai-pandit/voice-call',
+        builder: (context, state) => const AIPanditVoiceCallScreen(),
+      ),
+      GoRoute(
+        path: '/wallet/recharge',
+        builder: (context, state) => const WalletRechargeScreen(),
+      ),
+      GoRoute(
+        path: '/kundli/generation',
+        builder: (context, state) {
+          // Get parameters from query or use defaults
+          final name = state.uri.queryParameters['name'] ?? 'User';
+          final dob = state.uri.queryParameters['dob'];
+          final place = state.uri.queryParameters['place'] ?? 'Unknown';
+          final time = state.uri.queryParameters['time'] ?? '12:00';
+          
+          return KundliGenerationScreen(
+            name: name,
+            dateOfBirth: dob != null ? DateTime.parse(dob) : DateTime.now(),
+            placeOfBirth: place,
+            timeOfBirth: time,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/remedies',
+        builder: (context, state) => const RemediesScreen(),
       ),
     ],
   );

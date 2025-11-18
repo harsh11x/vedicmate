@@ -8,7 +8,8 @@ class BlockedCheck {
   // Mock function - in production, this would check against backend
   static bool isPanditBlocked(String panditId) {
     // Mock blocked IDs - in production, fetch from API
-    final blockedIds = ['3']; // Example: Pandit ID '3' is blocked
+    // For demo, no pandits are blocked
+    final blockedIds = <String>[]; // Empty for demo - no blocked accounts
     return blockedIds.contains(panditId);
   }
 

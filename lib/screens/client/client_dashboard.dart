@@ -7,6 +7,8 @@ import '../../widgets/daily_horoscope_card.dart';
 import '../../widgets/quick_stats_widget.dart';
 import '../../widgets/auspicious_timings_widget.dart';
 import '../../widgets/special_offers_widget.dart';
+import '../../widgets/numerology_widget.dart';
+import '../../widgets/astronomy_widget.dart';
 import '../../services/pandit_service.dart';
 import '../../providers/api_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +23,7 @@ import '../shared/video_call_screen.dart';
 import '../shared/payment_wallet_screen.dart';
 import '../shared/settings_screen.dart';
 import '../shared/booking_history_screen.dart';
+import 'remedies_screen.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});
@@ -51,7 +54,7 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
           ),
           _ChatTab(),
           const LiveScreen(),
-          _CallTab(),
+          const RemediesScreen(),
           _ProfileTab(),
         ],
       ),
@@ -79,7 +82,7 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
                 _buildNavItem(Icons.home, 'Home', 0),
                 _buildNavItem(Icons.chat_bubble_outline, 'Chat', 1),
                 _buildNavItem(Icons.live_tv, 'Live', 2),
-                _buildNavItem(Icons.phone, 'Call', 3),
+                _buildNavItem(Icons.shopping_bag, 'Remedies', 3),
                 _buildNavItem(Icons.person_outline, 'Profile', 4),
               ],
             ),
@@ -380,6 +383,20 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
             // Auspicious Timings
             SliverToBoxAdapter(
               child: const AuspiciousTimingsWidget(),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Numerology Widget
+            SliverToBoxAdapter(
+              child: const NumerologyWidget(),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Astronomy Widget
+            SliverToBoxAdapter(
+              child: const AstronomyWidget(),
             ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),

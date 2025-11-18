@@ -57,8 +57,8 @@ class _PanditSearchScreenState extends ConsumerState<PanditSearchScreen> {
           // Enhanced Search Bar
           Padding(
             padding: EdgeInsets.all(
-              MediaQuery.of(context).size.width * 0.04,
-            ).clamp(12.0, 20.0),
+              (MediaQuery.of(context).size.width * 0.04).clamp(12.0, 20.0),
+            ),
             child: Container(
               decoration: BoxDecoration(
                 color: AppTheme.white,

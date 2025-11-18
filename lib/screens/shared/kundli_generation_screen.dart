@@ -5,7 +5,12 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:cross_file/cross_file.dart';
+import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 import '../../core/theme/app_theme.dart';
+import '../../widgets/lagna_chart.dart';
+import '../../services/kundli_pdf_service.dart';
 
 class KundliGenerationScreen extends StatefulWidget {
   final String name;
@@ -138,6 +143,44 @@ class _KundliGenerationScreenState extends State<KundliGenerationScreen> {
                       ],
                     ),
                     const SizedBox(height: 24),
+                    // Visual Lagna Chart
+                    _KundliSection(
+                      title: 'Lagna Chart (Birth Chart)',
+                      children: [
+                        Container(
+                          height: 300,
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppTheme.white,
+                            border: Border.all(color: AppTheme.yellowPrimary, width: 1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: LagnaChart(
+                              lagnaSign: 'Aries',
+                              houses: {
+                                1: 'Aries', 2: 'Taurus', 3: 'Gemini', 4: 'Cancer',
+                                5: 'Leo', 6: 'Virgo', 7: 'Libra', 8: 'Scorpio',
+                                9: 'Sagittarius', 10: 'Capricorn', 11: 'Aquarius', 12: 'Pisces',
+                              },
+                              planets: {
+                                'Sun': 'Leo 15°',
+                                'Moon': 'Cancer 22°',
+                                'Mars': 'Aries 8°',
+                                'Mercury': 'Virgo 12°',
+                                'Jupiter': 'Sagittarius 18°',
+                                'Venus': 'Libra 25°',
+                                'Saturn': 'Capricorn 10°',
+                                'Rahu': 'Pisces 5°',
+                                'Ketu': 'Virgo 5°',
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                     // Houses (Mock Data)
                     _KundliSection(
                       title: 'Houses',
@@ -172,9 +215,18 @@ class _KundliGenerationScreenState extends State<KundliGenerationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: _downloadKundli,
-                    icon: const Icon(Icons.download),
-                    label: const Text('Download Kundli'),
+                    onPressed: _isDownloading ? null : _downloadKundli,
+                    icon: _isDownloading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppTheme.textDark,
+                            ),
+                          )
+                        : const Icon(Icons.picture_as_pdf),
+                    label: Text(_isDownloading ? 'Generating PDF...' : 'Download as PDF'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.yellowPrimary,
                       foregroundColor: AppTheme.textDark,
@@ -203,24 +255,56 @@ class _KundliGenerationScreenState extends State<KundliGenerationScreen> {
   Future<void> _downloadKundli() async {
     setState(() => _isDownloading = true);
     try {
-      // Capture the widget as image
-      final RenderRepaintBoundary boundary =
-          _repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      final Uint8List pngBytes = byteData!.buffer.asUint8List();
+      // Generate PDF with Lagna chart
+      final pdfBytes = await KundliPdfService.generatePdf(
+        name: widget.name,
+        dateOfBirth: widget.dateOfBirth,
+        placeOfBirth: widget.placeOfBirth,
+        timeOfBirth: widget.timeOfBirth,
+        lagnaSign: 'Aries',
+        houses: {
+          1: 'Aries', 2: 'Taurus', 3: 'Gemini', 4: 'Cancer',
+          5: 'Leo', 6: 'Virgo', 7: 'Libra', 8: 'Scorpio',
+          9: 'Sagittarius', 10: 'Capricorn', 11: 'Aquarius', 12: 'Pisces',
+        },
+        planets: {
+          'Sun': 'Leo 15°',
+          'Moon': 'Cancer 22°',
+          'Mars': 'Aries 8°',
+          'Mercury': 'Virgo 12°',
+          'Jupiter': 'Sagittarius 18°',
+          'Venus': 'Libra 25°',
+          'Saturn': 'Capricorn 10°',
+          'Rahu': 'Pisces 5°',
+          'Ketu': 'Virgo 5°',
+        },
+      );
 
-      // Save to device
-      final Directory directory = await getApplicationDocumentsDirectory();
-      final String fileName = 'Kundli_${widget.name}_${DateTime.now().millisecondsSinceEpoch}.png';
-      final File file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(pngBytes);
+      // Save PDF to device
+      final directory = await path_provider.getApplicationDocumentsDirectory();
+      final fileName = 'Kundli_${widget.name}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final file = File('${directory.path}/$fileName');
+      await file.writeAsBytes(pdfBytes);
 
       if (mounted) {
+        // Show PDF preview and allow sharing
+        await Printing.layoutPdf(
+          onLayout: (format) async => pdfBytes,
+        );
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Kundli saved to: ${file.path}'),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text('Kundli PDF saved successfully!\nLocation: ${file.path}'),
+                ),
+              ],
+            ),
             backgroundColor: AppTheme.successGreen,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -228,7 +312,13 @@ class _KundliGenerationScreenState extends State<KundliGenerationScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error downloading: $e'),
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text('Error generating PDF: $e')),
+              ],
+            ),
             backgroundColor: AppTheme.errorRed,
           ),
         );

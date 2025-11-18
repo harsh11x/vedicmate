@@ -1,0 +1,24 @@
+name: vedicmate_demo
+description: VedicMate Enhanced UI Demo
+publish_to: 'none'
+version: 0.1.0
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  go_router: ^12.0.0
+  google_fonts: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/

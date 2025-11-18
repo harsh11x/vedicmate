@@ -169,23 +169,42 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2B2B2F), // Dark charcoal background
+      backgroundColor: AppTheme.white,
       body: SafeArea(
-        child: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.9,
-              minWidth: 280,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.white,
+                AppTheme.yellowPrimary.withOpacity(0.1),
+                AppTheme.primarySoft,
+              ],
             ),
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.circular(48),
-            ),
-            padding: EdgeInsets.all(
-              (MediaQuery.of(context).size.width * 0.1).clamp(20.0, 40.0),
-            ),
-            child: Column(
+          ),
+          child: Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              constraints: BoxConstraints(
+                maxWidth: 400,
+                minWidth: 300,
+              ),
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.neutralDark.withOpacity(0.1),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.all(
+                (MediaQuery.of(context).size.width * 0.08).clamp(24.0, 32.0),
+              ),
+              child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // PageView for onboarding pages
@@ -206,6 +225,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   children: [
                     // Pagination dots
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
                         _pages.length,
                         (index) => Container(
@@ -215,7 +235,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           decoration: BoxDecoration(
                             color: _currentPage == index
                                 ? AppTheme.yellowPrimary
-                                : const Color(0xFFB8B8B8),
+                                : AppTheme.neutralLight.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -269,6 +289,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   ],
                 ),
               ],
+            ),
             ),
           ),
         ),
