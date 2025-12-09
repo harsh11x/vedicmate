@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/booking_model.dart';
+import '../../services/booking_service.dart';
+import '../../providers/api_providers.dart';
 
-class BookingHistoryScreen extends StatefulWidget {
+class BookingHistoryScreen extends ConsumerStatefulWidget {
   const BookingHistoryScreen({super.key});
 
   @override
-  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
+  ConsumerState<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
 }
 
-class _BookingHistoryScreenState extends State<BookingHistoryScreen>
+class _BookingHistoryScreenState extends ConsumerState<BookingHistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -29,6 +33,17 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    
+    if (userId == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Booking History')),
+        body: const Center(
+          child: Text('Please login to view bookings'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Booking History'),
@@ -45,91 +60,57 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildBookingsList(BookingStatus.confirmed),
-          _buildBookingsList(BookingStatus.completed),
-          _buildBookingsList(BookingStatus.cancelled),
-          _buildBookingsList(null),
+          _buildBookingsList(userId, BookingStatus.confirmed),
+          _buildBookingsList(userId, BookingStatus.completed),
+          _buildBookingsList(userId, BookingStatus.cancelled),
+          _buildBookingsList(userId, null),
         ],
       ),
     );
   }
 
-  Widget _buildBookingsList(BookingStatus? status) {
-    // Mock data
-    final allBookings = [
-      BookingModel(
-        id: '1',
-        clientId: 'c1',
-        panditId: 'p1',
-        serviceType: 'Horoscope Reading',
-        scheduledAt: DateTime.now().add(const Duration(days: 2)),
-        duration: 30,
-        amount: 500.0,
-        platformFee: 75.0,
-        gst: 103.5,
-        totalAmount: 678.5,
-        status: BookingStatus.confirmed,
-        callType: 'video',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      BookingModel(
-        id: '2',
-        clientId: 'c1',
-        panditId: 'p2',
-        serviceType: 'Marriage Consultation',
-        scheduledAt: DateTime.now().subtract(const Duration(days: 5)),
-        duration: 45,
-        amount: 1000.0,
-        platformFee: 150.0,
-        gst: 207.0,
-        totalAmount: 1357.0,
-        status: BookingStatus.completed,
-        callType: 'audio',
-        createdAt: DateTime.now().subtract(const Duration(days: 10)),
-        completedAt: DateTime.now().subtract(const Duration(days: 5)),
-      ),
-      BookingModel(
-        id: '3',
-        clientId: 'c1',
-        panditId: 'p3',
-        serviceType: 'Career Guidance',
-        scheduledAt: DateTime.now().subtract(const Duration(days: 3)),
-        duration: 30,
-        amount: 600.0,
-        platformFee: 90.0,
-        gst: 124.2,
-        totalAmount: 814.2,
-        status: BookingStatus.cancelled,
-        createdAt: DateTime.now().subtract(const Duration(days: 7)),
-      ),
-    ];
+  Widget _buildBookingsList(String userId, BookingStatus? status) {
+    final bookingService = ref.watch(bookingServiceProvider);
 
-    final filteredBookings = status == null
-        ? allBookings
-        : allBookings.where((b) => b.status == status).toList();
+    return StreamBuilder<List<BookingModel>>(
+      stream: bookingService.getBookingsByUserStream(userId, status: status),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    if (filteredBookings.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.calendar_today_outlined,
-                size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'No bookings found',
-              style: Theme.of(context).textTheme.headlineMedium,
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        }
+
+        final bookings = snapshot.data ?? [];
+
+        if (bookings.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.calendar_today_outlined,
+                    size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No bookings found',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    }
+          );
+        }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: filteredBookings.length,
-      itemBuilder: (context, index) {
-        return _BookingCard(booking: filteredBookings[index]);
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            return _BookingCard(booking: bookings[index]);
+          },
+        );
       },
     );
   }

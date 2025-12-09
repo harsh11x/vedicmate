@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/ai_chat_model.dart';
-import '../../services/gemini_service.dart';
 import '../../services/wallet_service.dart';
+import '../../providers/wallet_provider.dart';
+import '../../providers/api_providers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AIPanditVoiceCallScreen extends StatefulWidget {
-  const AIPanditVoiceCallScreen({super.key});
+class AIPanditVoiceCallScreen extends ConsumerStatefulWidget {
+  final String? panditId;
+  
+  const AIPanditVoiceCallScreen({super.key, this.panditId});
 
   @override
-  State<AIPanditVoiceCallScreen> createState() => _AIPanditVoiceCallScreenState();
+  ConsumerState<AIPanditVoiceCallScreen> createState() => _AIPanditVoiceCallScreenState();
 }
 
-class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with TickerProviderStateMixin {
-  final GeminiService _geminiService = GeminiService();
+class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScreen> with TickerProviderStateMixin {
   final WalletService _walletService = WalletService();
   final AIChatService _chatService = AIChatService();
   
@@ -45,7 +50,7 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
   
-  final String _userId = 'demo_user_123';
+  String? _userId;
 
   // Supported languages for voice recognition
   final Map<String, String> _supportedLanguages = {
@@ -81,9 +86,14 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
   @override
   void initState() {
     super.initState();
-    _initializeVoiceCall();
     _setupAnimations();
     _setupTTS();
+    // NO async operations in initState - UI must render first!
+    // Initialize after first frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Use microtask to defer initialization even further
+      Future.microtask(() => _initializeVoiceCall());
+    });
   }
 
   void _setupAnimations() {
@@ -117,72 +127,168 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
   }
 
   Future<void> _initializeVoiceCall() async {
-    setState(() => _isLoading = true);
+    if (!mounted) return;
     
-    // Request microphone permission
-    final micPermission = await Permission.microphone.request();
-    if (!micPermission.isGranted) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Microphone permission is required for voice calls'),
-            backgroundColor: AppTheme.errorRed,
-          ),
-        );
-        context.pop();
-      }
-      return;
+    final user = FirebaseAuth.instance.currentUser;
+    
+    // Allow everyone - regular users, guest users, and even unauthenticated users
+    String userId;
+    if (user == null) {
+      // Create a temporary guest ID for unauthenticated users
+      userId = 'guest_temp_${DateTime.now().millisecondsSinceEpoch}';
+      print('✅ Using temporary guest session: $userId');
+    } else {
+      // Handle authenticated users (regular or anonymous)
+      userId = user.isAnonymous ? 'guest_${user.uid}' : user.uid;
+      print('✅ User authenticated: ${user.isAnonymous ? "Guest" : "Regular"} - ID: $userId');
     }
     
-    // Initialize speech recognition
-    bool available = await _speech.initialize(
-      onStatus: (status) {
-        if (status == 'done' || status == 'notListening') {
-          setState(() => _isListening = false);
-        }
-      },
-      onError: (error) {
-        setState(() => _isListening = false);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Speech recognition error: ${error.errorMsg}'),
-              backgroundColor: AppTheme.errorRed,
-            ),
-          );
-        }
-      },
+    setState(() {
+      _userId = userId;
+      _isLoading = true;
+      _walletBalance = 5000.0; // Default optimistic value
+    });
+    
+    // Create local session immediately (no async wait)
+    _currentSession = AIChatSession(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      userId: userId,
+      startTime: DateTime.now(),
     );
-    
-    if (!available) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Speech recognition not available'),
-            backgroundColor: AppTheme.errorRed,
-          ),
-        );
-        context.pop();
-      }
-      return;
-    }
-    
-    // Check wallet balance
-    _walletBalance = await _walletService.getBalance(_userId);
-    
-    // Create new session
-    _currentSession = await _chatService.startSession(_userId);
     _startCostTimer();
     
+    // UI is ready NOW - stop loading immediately
     setState(() {
       _isLoading = false;
       _isCallActive = true;
     });
     
-    // Start with welcome message
-    _speakWelcomeMessage();
+    // Everything else happens in background
+    _initializeInBackground();
+  }
+
+  // All heavy operations happen here in background
+  Future<void> _initializeInBackground() async {
+    if (!mounted || _userId == null) return;
+    
+    try {
+      // Request microphone permission (non-blocking)
+      try {
+        final micPermission = await Permission.microphone.request().timeout(
+          const Duration(seconds: 2),
+          onTimeout: () => PermissionStatus.denied,
+        );
+        if (!micPermission.isGranted && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Microphone permission is required for voice calls'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+      } catch (e) {
+        print('⚠️ Mic permission error: $e');
+      }
+      
+      // Initialize speech recognition (non-blocking)
+      try {
+        final available = await _speech.initialize(
+          onStatus: (status) {
+            if (status == 'done' || status == 'notListening') {
+              if (mounted) setState(() => _isListening = false);
+            }
+          },
+          onError: (error) {
+            if (mounted) setState(() => _isListening = false);
+          },
+        ).timeout(
+          const Duration(seconds: 2),
+          onTimeout: () => false,
+        );
+        
+        if (!available && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Speech recognition not available'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+      } catch (e) {
+        print('⚠️ Speech init error: $e');
+      }
+      
+      // Try to get active session (non-blocking)
+      try {
+        final activeSession = await _chatService.getActiveSession(_userId!).timeout(
+          const Duration(seconds: 1),
+          onTimeout: () => null,
+        );
+        
+        if (activeSession != null && mounted) {
+          setState(() {
+            _currentSession = activeSession;
+            _conversationHistory = activeSession.messages.map((m) => {
+              'isUser': m.isUser.toString(),
+              'message': m.message,
+            }).toList();
+            _elapsedSeconds = activeSession.getDurationInSeconds();
+            _currentCost = activeSession.calculateCost();
+          });
+        }
+      } catch (e) {
+        print('⚠️ Session check error: $e');
+      }
+      
+      // Start welcome message
+      _speakWelcomeMessage();
+      
+      // Check wallet balance
+      _checkWalletBalance();
+      
+    } catch (e) {
+      print('⚠️ Background init error: $e');
+      // Ignore - app continues working
+    }
+  }
+
+  // Check wallet balance in background (non-blocking)
+  Future<void> _checkWalletBalance() async {
+    if (_userId == null) return;
+    
+    try {
+      final balance = await _walletService.getBalance(_userId!).timeout(
+        const Duration(seconds: 3),
+        onTimeout: () => 5000.0,
+      );
+      if (mounted) {
+        setState(() {
+          _walletBalance = balance;
+        });
+        
+        // Show low balance notification if needed (non-blocking)
+        if (_walletBalance < 25.0) {
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Low balance: ₹${_walletBalance.toStringAsFixed(2)}. Consider recharging.'),
+                  backgroundColor: AppTheme.primaryOrange,
+                  action: SnackBarAction(
+                    label: 'Recharge',
+                    textColor: Colors.white,
+                    onPressed: () => context.push('/wallet/recharge'),
+                  ),
+                ),
+              );
+            }
+          });
+        }
+      }
+    } catch (e) {
+      print('⚠️ Background wallet check failed: $e');
+      // Ignore - use default balance
+    }
   }
 
   void _startCostTimer() {
@@ -197,18 +303,45 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
   }
 
   Future<void> _speakWelcomeMessage() async {
-    String welcomeMessage = 'Namaste! I am your AI Vedic Pandit. How may I help you today?';
-    
-    // Detect language and set welcome message
-    if (_currentLanguage == 'hi') {
-      welcomeMessage = 'नमस्ते! मैं आपका AI वैदिक पंडित हूं। मैं आज आपकी कैसे सहायता कर सकता हूं?';
-    } else if (_currentLanguage == 'ur') {
-      welcomeMessage = 'السلام علیکم! میں آپ کا AI ویدک پنڈت ہوں۔ میں آج آپ کی کس طرح مدد کر سکتا ہوں؟';
-    } else if (_currentLanguage == 'zh') {
-      welcomeMessage = '你好！我是您的AI吠陀占星师。我今天如何为您提供帮助？';
+    try {
+      String welcomeMessage = 'Namaste! I am your AI Vedic Pandit. How may I help you today?';
+      
+      // Detect language and set welcome message
+      if (_currentLanguage == 'hi') {
+        welcomeMessage = 'नमस्ते! मैं आपका AI वैदिक पंडित हूं। मैं आज आपकी कैसे सहायता कर सकता हूं?';
+      } else if (_currentLanguage == 'ur') {
+        welcomeMessage = 'السلام علیکم! میں آپ کا AI ویدک پنڈت ہوں۔ میں آج آپ کی کس طرح مدد کر سکتا ہوں؟';
+      } else if (_currentLanguage == 'zh') {
+        welcomeMessage = '你好！我是您的AI吠陀占星师。我今天如何为您提供帮助？';
+      }
+      
+      // Speak with timeout to prevent hanging
+      await _speak(welcomeMessage).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          print('⚠️ TTS timeout, continuing anyway');
+        },
+      );
+      
+      // Start listening after welcome message
+      if (mounted && _isCallActive) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted && _isCallActive && !_isSpeaking) {
+            _startListening();
+          }
+        });
+      }
+    } catch (e) {
+      print('⚠️ Error in welcome message: $e');
+      // Continue anyway - start listening
+      if (mounted && _isCallActive) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted && _isCallActive && !_isSpeaking) {
+            _startListening();
+          }
+        });
+      }
     }
-    
-    await _speak(welcomeMessage);
   }
 
   Future<void> _startListening() async {
@@ -242,7 +375,7 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
   }
 
   Future<void> _processUserSpeech(String userMessage) async {
-    if (userMessage.trim().isEmpty) {
+    if (userMessage.trim().isEmpty || _userId == null || _currentSession == null) {
       _startListening();
       return;
     }
@@ -256,6 +389,57 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
       await _flutterTts.setLanguage(detectedLang);
     }
     
+    // Check if user is asking for Kundli - if so, try to get their birth details
+    String enhancedMessage = userMessage;
+    if (userMessage.toLowerCase().contains(RegExp(r'(kundli|birth chart|horoscope|janam kundli|rasi|lagna)'))) {
+      try {
+        // Get actual Firebase user ID (not guest_ prefix)
+        final user = FirebaseAuth.instance.currentUser;
+        final firestoreUserId = user?.uid ?? _userId;
+        
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(firestoreUserId)
+            .get()
+            .timeout(const Duration(seconds: 3), onTimeout: () {
+              throw TimeoutException('Firestore query timeout');
+            });
+        
+        if (userDoc.exists) {
+          final userData = userDoc.data();
+          final dob = userData?['dateOfBirth'] as Timestamp?;
+          final place = userData?['placeOfBirth'] as String?;
+          final time = userData?['timeOfBirth'] as String?;
+          final name = userData?['displayName'] as String? ?? 'User';
+          
+          if (dob != null && place != null && time != null) {
+            enhancedMessage = '''
+$userMessage
+
+[I have my birth details:
+Name: $name
+Date of Birth: ${dob.toDate().day}/${dob.toDate().month}/${dob.toDate().year}
+Time of Birth: $time
+Place of Birth: $place
+
+Please use these details to generate my complete Kundli analysis.]
+''';
+          }
+        }
+      } catch (e) {
+        print('Could not fetch birth details: $e');
+      }
+    }
+    
+    // Add user message to session
+    final userChatMessage = AIChatMessage(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      message: userMessage,
+      isUser: true,
+      timestamp: DateTime.now(),
+    );
+    await _chatService.addMessage(_currentSession!.id, userChatMessage);
+    
     // Add to conversation history
     _conversationHistory.add({
       'isUser': 'true',
@@ -267,12 +451,25 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
       _recognizedText = userMessage;
     });
     
-    // Get AI response
+    // Get AI response from Gemini
     try {
-      final aiResponse = await _geminiService.sendMessage(
-        userMessage,
+      final geminiService = ref.read(geminiServiceProvider);
+      final aiResponse = await geminiService.sendMessage(
+        enhancedMessage,
         _conversationHistory,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => 'I apologize, but the response is taking longer than expected. Please try again.',
       );
+      
+      // Add AI response to session
+      final aiChatMessage = AIChatMessage(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        message: aiResponse,
+        isUser: false,
+        timestamp: DateTime.now(),
+      );
+      await _chatService.addMessage(_currentSession!.id, aiChatMessage);
       
       // Add AI response to history
       _conversationHistory.add({
@@ -286,11 +483,12 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text('Error getting AI response: $e'),
             backgroundColor: AppTheme.errorRed,
           ),
         );
       }
+      print('Error processing speech: $e');
       _startListening();
     }
   }
@@ -380,7 +578,7 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
       await _flutterTts.stop();
       _costTimer?.cancel();
       
-      final result = await _chatService.endSession(_userId, _currentSession!.id);
+      final result = await _chatService.endSession(_userId ?? 'anonymous', _currentSession!.id);
       
       if (result['success'] && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -441,23 +639,29 @@ class _AIPanditVoiceCallScreenState extends State<AIPanditVoiceCallScreen> with 
           ),
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppTheme.white.withOpacity(0.25),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.account_balance_wallet, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  '₹${_walletBalance.toStringAsFixed(0)}',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+          Consumer(
+            builder: (context, ref, child) {
+              final walletBalanceAsync = ref.watch(walletBalanceProvider);
+              final balance = walletBalanceAsync.valueOrNull ?? _walletBalance;
+              return Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.white.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ],
-            ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.account_balance_wallet, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      '₹${balance.toStringAsFixed(0)}',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline),

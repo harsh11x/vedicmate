@@ -208,6 +208,45 @@ class AuthService {
     }
   }
 
+  // Guest Login - Create anonymous user
+  Future<User?> signInAsGuest() async {
+    try {
+      // Sign in anonymously
+      UserCredential userCredential = await _auth.signInAnonymously();
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Create guest user document in Firestore
+        final guestUserId = 'guest_${user.uid}';
+        await _firestore.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'role': AppConstants.roleClient,
+          'isGuest': true,
+          'displayName': 'Guest User',
+          'phoneNumber': '',
+          'email': '',
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'isActive': true,
+          'isVerified': false,
+        }, SetOptions(merge: true));
+        
+        print('✅ Guest user created: ${user.uid}');
+      }
+
+      return user;
+    } catch (e) {
+      print('❌ Guest login error: $e');
+      throw e.toString();
+    }
+  }
+
+  // Check if current user is a guest
+  bool isGuestUser() {
+    final user = _auth.currentUser;
+    return user?.isAnonymous ?? false;
+  }
+
   // Logout
   Future<void> logout() async {
     await _googleSignIn.signOut();

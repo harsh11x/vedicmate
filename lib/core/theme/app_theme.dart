@@ -5,16 +5,16 @@ class AppTheme {
   // Enhanced Professional Color Palette
   static const Color primaryOrange = Color(0xFFFF6B35);
   static const Color primaryDeep = Color(0xFFE55A2B);
-  static const Color primaryLight = Color(0xFFFFE5DC);
-  static const Color primarySoft = Color(0xFFFFF4F1);
+  static const Color primaryLight = Color(0xFFFFF0EB); // Slightly warmer light
+  static const Color primarySoft = Color(0xFFFFF8F6);
   
   static const Color accentGold = Color(0xFFFFB800);
-  static const Color accentGoldLight = Color(0xFFFFF3D4);
+  static const Color accentGoldLight = Color(0xFFFFF9E6);
   
-  static const Color neutralDark = Color(0xFF1A1A1A);
-  static const Color neutralMedium = Color(0xFF666666);
-  static const Color neutralLight = Color(0xFF9E9E9E);
-  static const Color neutralSoft = Color(0xFFF5F5F5);
+  static const Color neutralDark = Color(0xFF1F2937); // Cool dark gray
+  static const Color neutralMedium = Color(0xFF6B7280);
+  static const Color neutralLight = Color(0xFFD1D5DB);
+  static const Color neutralSoft = Color(0xFFF3F4F6);
   static const Color white = Color(0xFFFFFFFF);
   
   static const Color successGreen = Color(0xFF10B981);
@@ -35,17 +35,13 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
   
-  // Enhanced Shadows with multiple layers
+  // Modern Shadows
   static List<BoxShadow> get softShadow => [
     BoxShadow(
-      color: neutralDark.withOpacity(0.04),
-      blurRadius: 8,
-      offset: const Offset(0, 2),
-    ),
-    BoxShadow(
-      color: neutralDark.withOpacity(0.06),
-      blurRadius: 16,
+      color: neutralDark.withOpacity(0.05),
+      blurRadius: 10,
       offset: const Offset(0, 4),
+      spreadRadius: 0,
     ),
   ];
   
@@ -53,74 +49,74 @@ class AppTheme {
     BoxShadow(
       color: neutralDark.withOpacity(0.08),
       blurRadius: 16,
-      offset: const Offset(0, 4),
-    ),
-    BoxShadow(
-      color: neutralDark.withOpacity(0.12),
-      blurRadius: 24,
-      offset: const Offset(0, 8),
+      offset: const Offset(0, 6),
+      spreadRadius: -2,
     ),
   ];
   
   static List<BoxShadow> get strongShadow => [
     BoxShadow(
-      color: neutralDark.withOpacity(0.10),
-      blurRadius: 20,
-      offset: const Offset(0, 8),
-    ),
-    BoxShadow(
-      color: neutralDark.withOpacity(0.14),
-      blurRadius: 32,
+      color: neutralDark.withOpacity(0.12),
+      blurRadius: 24,
       offset: const Offset(0, 12),
+      spreadRadius: -4,
     ),
   ];
   
   static List<BoxShadow> get glowShadow => [
     BoxShadow(
-      color: primaryOrange.withOpacity(0.3),
+      color: primaryOrange.withOpacity(0.25),
       blurRadius: 20,
-      offset: const Offset(0, 4),
-    ),
-    BoxShadow(
-      color: primaryOrange.withOpacity(0.1),
-      blurRadius: 40,
       offset: const Offset(0, 8),
+      spreadRadius: -2,
     ),
   ];
   
   static List<BoxShadow> get goldGlowShadow => [
     BoxShadow(
       color: accentGold.withOpacity(0.3),
-      blurRadius: 20,
-      offset: const Offset(0, 4),
-    ),
-    BoxShadow(
-      color: accentGold.withOpacity(0.1),
-      blurRadius: 40,
-      offset: const Offset(0, 8),
+      blurRadius: 16,
+      offset: const Offset(0, 6),
+      spreadRadius: -2,
     ),
   ];
   
+  // Border styles
+  static BoxBorder get softBorder => Border.all(
+    color: neutralLight.withOpacity(0.3),
+    width: 1,
+  );
+  
+  static BoxBorder get mediumBorder => Border.all(
+    color: neutralLight.withOpacity(0.5),
+    width: 1.5,
+  );
+  
+  static BoxBorder get accentBorder => Border.all(
+    color: primaryOrange.withOpacity(0.3),
+    width: 1.5,
+  );
+  
   // Glass Morphism Effects
   static BoxDecoration get glassMorphism => BoxDecoration(
-    color: white.withOpacity(0.7),
-    borderRadius: BorderRadius.circular(20),
+    color: white.withOpacity(0.85),
+    borderRadius: BorderRadius.circular(24),
     border: Border.all(
-      color: white.withOpacity(0.2),
+      color: white.withOpacity(0.5),
       width: 1.5,
     ),
     boxShadow: [
       BoxShadow(
-        color: neutralDark.withOpacity(0.1),
-        blurRadius: 20,
+        color: neutralDark.withOpacity(0.05),
+        blurRadius: 24,
         offset: const Offset(0, 8),
       ),
     ],
   );
   
   static BoxDecoration get glassMorphismDark => BoxDecoration(
-    color: neutralDark.withOpacity(0.3),
-    borderRadius: BorderRadius.circular(20),
+    color: neutralDark.withOpacity(0.6),
+    borderRadius: BorderRadius.circular(24),
     border: Border.all(
       color: white.withOpacity(0.1),
       width: 1.5,
@@ -128,7 +124,7 @@ class AppTheme {
     boxShadow: [
       BoxShadow(
         color: Colors.black.withOpacity(0.2),
-        blurRadius: 20,
+        blurRadius: 24,
         offset: const Offset(0, 8),
       ),
     ],
@@ -138,7 +134,7 @@ class AppTheme {
   static const LinearGradient shimmerGradient = LinearGradient(
     colors: [
       Color(0xFFFFFFFF),
-      Color(0xFFF5F5F5),
+      Color(0xFFF9FAFB),
       Color(0xFFFFFFFF),
     ],
     stops: [0.0, 0.5, 1.0],
@@ -168,6 +164,9 @@ class AppTheme {
   static const Color saffronPrimary = primaryOrange;
   static const Color saffronDark = primaryDeep;
   static const Color creamPrimary = primarySoft;
+
+
+  static const Duration staggeredAnimationDuration = Duration(milliseconds: 375);
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -347,194 +346,5 @@ class AppTheme {
     );
   }
 
-  static ThemeData get darkTheme {
-    const darkSurface = Color(0xFF2A2A2A);
-    const darkBackground = Color(0xFF1A1A1A);
-    const darkCard = Color(0xFF2D2D2D);
-    const darkBorder = Color(0xFF404040);
-    
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.dark(
-        primary: primaryOrange,
-        secondary: accentGold,
-        surface: darkSurface,
-        background: darkBackground,
-        error: errorRed,
-        onPrimary: white,
-        onSecondary: darkBackground,
-        onSurface: white,
-        onBackground: white,
-        onError: white,
-        surfaceVariant: darkCard,
-        onSurfaceVariant: white.withOpacity(0.8),
-      ),
-      scaffoldBackgroundColor: darkBackground,
-      appBarTheme: AppBarTheme(
-        backgroundColor: darkSurface,
-        foregroundColor: white,
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: GoogleFonts.inter(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: white,
-        ),
-        shadowColor: Colors.black.withOpacity(0.3),
-      ),
-      cardTheme: CardThemeData(
-        color: darkCard,
-        elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: darkBorder.withOpacity(0.3), width: 1),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryOrange,
-          foregroundColor: white,
-          elevation: 4,
-          shadowColor: primaryOrange.withOpacity(0.5),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: primaryOrange,
-          side: const BorderSide(color: primaryOrange, width: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      textTheme: GoogleFonts.interTextTheme().copyWith(
-        displayLarge: GoogleFonts.inter(
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: white,
-          height: 1.2,
-        ),
-        displayMedium: GoogleFonts.inter(
-          fontSize: 28,
-          fontWeight: FontWeight.w700,
-          color: white,
-          height: 1.2,
-        ),
-        displaySmall: GoogleFonts.inter(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: white,
-          height: 1.3,
-        ),
-        headlineLarge: GoogleFonts.inter(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-          color: white,
-          height: 1.3,
-        ),
-        headlineMedium: GoogleFonts.inter(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: white,
-          height: 1.3,
-        ),
-        headlineSmall: GoogleFonts.inter(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: white,
-          height: 1.4,
-        ),
-        titleLarge: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: white,
-          height: 1.4,
-        ),
-        titleMedium: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: white,
-          height: 1.4,
-        ),
-        bodyLarge: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: white.withOpacity(0.95),
-          height: 1.5,
-        ),
-        bodyMedium: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: white.withOpacity(0.9),
-          height: 1.5,
-        ),
-        bodySmall: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: white.withOpacity(0.8),
-          height: 1.5,
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: darkCard,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: darkBorder, width: 1.5),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: darkBorder, width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: primaryOrange, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: errorRed, width: 1.5),
-        ),
-        hintStyle: GoogleFonts.inter(
-          color: white.withOpacity(0.6),
-          fontSize: 14,
-        ),
-        labelStyle: GoogleFonts.inter(
-          color: white.withOpacity(0.85),
-          fontSize: 14,
-        ),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: darkSurface,
-        selectedItemColor: primaryOrange,
-        unselectedItemColor: white.withOpacity(0.6),
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-        selectedLabelStyle: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-        unselectedLabelStyle: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-    );
-  }
-}
 
+}

@@ -4,8 +4,6 @@ import '../../screens/auth/splash_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/registration_screen.dart';
 import '../../screens/client/client_dashboard.dart';
-import '../../screens/shared/pandit_search_screen.dart';
-import '../../screens/shared/pandit_profile_detail_screen.dart';
 import '../../screens/shared/booking_scheduling_screen.dart';
 import '../../screens/shared/video_call_screen.dart';
 import '../../screens/shared/chat_screen.dart';
@@ -18,6 +16,7 @@ import '../../screens/client/wallet_recharge_screen.dart';
 import '../../screens/shared/kundli_generation_screen.dart';
 import '../../screens/shared/edit_profile_screen.dart';
 import '../../screens/client/remedies_screen.dart';
+import '../../screens/client/all_ai_pandits_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -56,18 +55,6 @@ class AppRouter {
         path: '/client/dashboard',
         builder: (context, state) => const ClientDashboard(),
       ),
-      // Pandit search and profile routes (for clients to browse pandits)
-      GoRoute(
-        path: '/pandit/search',
-        builder: (context, state) => const PanditSearchScreen(),
-      ),
-      GoRoute(
-        path: '/pandit/profile/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return PanditProfileDetailScreen(panditId: id);
-        },
-      ),
       GoRoute(
         path: '/booking/schedule',
         builder: (context, state) {
@@ -87,10 +74,11 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/chat/:bookingId',
+        path: '/chat/:id',
         builder: (context, state) {
-          final bookingId = state.pathParameters['bookingId']!;
-          return ChatScreen(bookingId: bookingId);
+          final id = state.pathParameters['id']!;
+          // id can be either a booking ID or chat room ID
+          return ChatScreen(bookingId: id);
         },
       ),
       GoRoute(
@@ -111,11 +99,21 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ai-pandit/chat',
-        builder: (context, state) => const AIPanditChatScreen(),
+        builder: (context, state) {
+          final panditId = state.uri.queryParameters['panditId'];
+          return AIPanditChatScreen(panditId: panditId);
+        },
       ),
       GoRoute(
         path: '/ai-pandit/voice-call',
-        builder: (context, state) => const AIPanditVoiceCallScreen(),
+        builder: (context, state) {
+          final panditId = state.uri.queryParameters['panditId'];
+          return AIPanditVoiceCallScreen(panditId: panditId);
+        },
+      ),
+      GoRoute(
+        path: '/ai-pandits/all',
+        builder: (context, state) => const AllAIPanditsScreen(),
       ),
       GoRoute(
         path: '/wallet/recharge',

@@ -330,20 +330,30 @@ class _ProductCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Text(
-                        '₹${price.toInt()}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppTheme.yellowPrimary,
-                          fontWeight: FontWeight.w700,
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '₹${price.toInt()}',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: AppTheme.yellowPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                       ),
                       if (originalPrice != null) ...[
                         const SizedBox(width: 8),
-                        Text(
-                          '₹${originalPrice!.toInt()}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            decoration: TextDecoration.lineThrough,
-                            color: AppTheme.neutralMedium,
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '₹${originalPrice!.toInt()}',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                decoration: TextDecoration.lineThrough,
+                                color: AppTheme.neutralMedium,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -451,20 +461,30 @@ class _ProductDetailsSheet extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              Text(
-                '₹${price.toInt()}',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: AppTheme.yellowPrimary,
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '₹${price.toInt()}',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: AppTheme.yellowPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               if (originalPrice != null) ...[
                 const SizedBox(width: 12),
-                Text(
-                  '₹${originalPrice!.toInt()}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    decoration: TextDecoration.lineThrough,
-                    color: AppTheme.neutralMedium,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '₹${originalPrice!.toInt()}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        decoration: TextDecoration.lineThrough,
+                        color: AppTheme.neutralMedium,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -503,7 +523,15 @@ class _ProductDetailsSheet extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Product added to cart!'),
+                        backgroundColor: AppTheme.successGreen,
+                      ),
+                    );
+                  },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
@@ -1124,6 +1152,8 @@ class _CustomRequestTab extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppTheme.textDark.withOpacity(0.8),
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -1258,6 +1288,7 @@ class _RemedyCategoryCard extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

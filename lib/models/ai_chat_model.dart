@@ -72,6 +72,13 @@ class AIChatSession {
     return duration.inSeconds / 60.0;
   }
 
+  // Get duration in seconds
+  int getDurationInSeconds() {
+    final end = endTime ?? DateTime.now();
+    final duration = end.difference(startTime);
+    return duration.inSeconds;
+  }
+
   factory AIChatSession.fromJson(Map<String, dynamic> json) {
     return AIChatSession(
       id: json['id'] ?? '',

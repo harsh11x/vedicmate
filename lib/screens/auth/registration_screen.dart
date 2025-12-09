@@ -237,25 +237,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                         child: Column(
                           children: [
                             Container(
-                              width: 80,
-                              height: 80,
+                              width: 120,
+                              height: 120,
+                              padding: const EdgeInsets.all(8),
+                              child: Image.asset(
+                                'assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png',
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  // Fallback if image fails to load
+                                  return Container(
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
                                 ),
                                 shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.yellowPrimary.withOpacity(0.3),
-                                    blurRadius: 15,
-                                    spreadRadius: 3,
-                                  ),
-                                ],
                               ),
                               child: const Icon(
                                 Icons.stars_rounded,
                                 size: 40,
                                 color: AppTheme.textDark,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             const SizedBox(height: 16),

@@ -185,6 +185,60 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
 
+  void _handleGuestLogin() async {
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.signInAsGuest();
+      
+      if (mounted && user != null) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.celebration, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(child: Text('Welcome! ₹5000 added to your wallet')),
+              ],
+            ),
+            backgroundColor: AppTheme.successGreen,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        // Navigate to dashboard
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            context.go('/client/dashboard');
+          }
+        });
+      } else {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(e.toString())),
+              ],
+            ),
+            backgroundColor: AppTheme.errorRed,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
+    }
+  }
+
   void _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
     try {
@@ -283,14 +337,20 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     const SizedBox(height: 40),
                     // Vedic Mate Logo
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.width * 0.5,
                       constraints: const BoxConstraints(
-                        minWidth: 120,
-                        maxWidth: 180,
-                        minHeight: 120,
-                        maxHeight: 180,
+                        minWidth: 150,
+                        maxWidth: 250,
+                        minHeight: 150,
+                        maxHeight: 250,
                       ),
+                      child: Image.asset(
+                        'assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Fallback if image fails to load
+                          return Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppTheme.yellowPrimary.withOpacity(0.15),
@@ -298,39 +358,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           color: AppTheme.yellowPrimary,
                           width: 3,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.yellowPrimary.withOpacity(0.3),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Logo Icon (representing the two figures)
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Background circle
-                              Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppTheme.yellowPrimary,
-                                ),
-                              ),
-                              // Simplified logo representation
-                              Icon(
+                            child: const Icon(
                                 Icons.auto_awesome,
                                 size: 50,
                                 color: AppTheme.textDark,
                               ),
-                            ],
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -671,6 +706,43 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             ],
                           ),
                           const SizedBox(height: 16),
+                          // Guest Login Button (Prominent)
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [AppTheme.primaryOrange, AppTheme.yellowPrimary],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.primaryOrange.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton.icon(
+                              onPressed: _isLoading ? null : _handleGuestLogin,
+                              icon: const Icon(Icons.person_outline, color: Colors.white),
+                              label: const Text(
+                                'Continue as Guest (₹5000 Bonus)',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
                           // Enhanced Google Login
                           Container(
                             decoration: BoxDecoration(

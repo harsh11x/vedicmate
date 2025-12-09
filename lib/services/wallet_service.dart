@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/ai_chat_model.dart';
 
@@ -16,6 +17,14 @@ class WalletService {
       return wallet.balance;
     }
     
+    // Check if this is a guest user - return ₹5000
+    final isGuest = userId.startsWith('guest_') || userId.contains('anonymous');
+    if (isGuest) {
+      // Initialize guest wallet with ₹5000
+      final wallet = await getWallet(userId);
+      return wallet.balance;
+    }
+    
     return 0.0;
   }
 
@@ -28,20 +37,36 @@ class WalletService {
       return UserWallet.fromJson(jsonDecode(walletData));
     }
     
+    // Check if this is a guest user - initialize with ₹5000
+    final isGuest = userId.startsWith('guest_') || userId.contains('anonymous');
+    final initialBalance = isGuest ? 5000.0 : 0.0;
+    
     // Create new wallet if doesn't exist
     final newWallet = UserWallet(
       userId: userId,
-      balance: 0.0,
-      transactions: [],
+      balance: initialBalance,
+      transactions: isGuest ? [
+        // Add welcome transaction for guest
+        WalletTransaction(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          userId: userId,
+          amount: 5000.0,
+          type: TransactionType.credit,
+          description: 'Welcome Bonus - Guest Account',
+          timestamp: DateTime.now(),
+          referenceId: 'guest_welcome',
+        ),
+      ] : [],
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
     
     await _saveWallet(newWallet);
+    print('✅ Wallet created for $userId with balance: ₹$initialBalance');
     return newWallet;
   }
 
-  // Add money to wallet (via Razorpay)
+  // Add money to wallet (via Razorpay) - Real-time, instant
   Future<bool> addMoney(String userId, double amount, String paymentId) async {
     try {
       final wallet = await getWallet(userId);
@@ -60,20 +85,23 @@ class WalletService {
       wallet.transactions = [...wallet.transactions, transaction];
       wallet.updatedAt = DateTime.now();
       
+      // Save immediately - no delays
       await _saveWallet(wallet);
+      print('✅ Money added instantly: ₹$amount to $userId. New balance: ₹${wallet.balance}');
       return true;
     } catch (e) {
-      print('Error adding money: $e');
+      print('❌ Error adding money: $e');
       return false;
     }
   }
 
-  // Deduct money from wallet
+  // Deduct money from wallet - Real-time, instant
   Future<bool> deductMoney(String userId, double amount, String description, {String? referenceId}) async {
     try {
       final wallet = await getWallet(userId);
       
       if (wallet.balance < amount) {
+        print('❌ Insufficient balance: ₹${wallet.balance} < ₹$amount');
         return false; // Insufficient balance
       }
       
@@ -91,10 +119,12 @@ class WalletService {
       wallet.transactions = [...wallet.transactions, transaction];
       wallet.updatedAt = DateTime.now();
       
+      // Save immediately - no delays
       await _saveWallet(wallet);
+      print('✅ Money deducted instantly: ₹$amount from $userId. New balance: ₹${wallet.balance}');
       return true;
     } catch (e) {
-      print('Error deducting money: $e');
+      print('❌ Error deducting money: $e');
       return false;
     }
   }
@@ -219,21 +249,55 @@ class AIChatService {
     return null;
   }
 
-  // Get active session for user
+  // Get active session for user (optimized with timeout)
   Future<AIChatSession?> getActiveSession(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-    
-    for (var key in keys) {
-      if (key.startsWith(_sessionsKey)) {
-        final sessionData = prefs.getString(key);
-        if (sessionData != null) {
-          final session = AIChatSession.fromJson(jsonDecode(sessionData));
-          if (session.userId == userId && session.isActive) {
-            return session;
+    try {
+      final prefs = await SharedPreferences.getInstance().timeout(
+        const Duration(seconds: 1),
+        onTimeout: () => throw TimeoutException('SharedPreferences timeout'),
+      );
+      
+      // Try to get a cached active session key first
+      final activeSessionKey = prefs.getString('active_session_$userId');
+      if (activeSessionKey != null) {
+        try {
+          final sessionData = prefs.getString('${_sessionsKey}_$activeSessionKey');
+          if (sessionData != null) {
+            final session = AIChatSession.fromJson(jsonDecode(sessionData));
+            if (session.isActive) {
+              return session;
+            }
+          }
+        } catch (e) {
+          print('⚠️ Error reading cached session: $e');
+        }
+      }
+      
+      // Fallback: iterate through keys (but limit to first 50 to prevent hang)
+      final keys = prefs.getKeys();
+      int checked = 0;
+      for (var key in keys) {
+        if (checked++ > 50) break; // Limit iteration to prevent hang
+        if (key.startsWith(_sessionsKey)) {
+          try {
+            final sessionData = prefs.getString(key);
+            if (sessionData != null) {
+              final session = AIChatSession.fromJson(jsonDecode(sessionData));
+              if (session.userId == userId && session.isActive) {
+                // Cache the active session key for faster lookup next time
+                await prefs.setString('active_session_$userId', session.id);
+                return session;
+              }
+            }
+          } catch (e) {
+            print('⚠️ Error parsing session: $e');
+            continue;
           }
         }
       }
+    } catch (e) {
+      print('⚠️ Error getting active session: $e');
+      return null;
     }
     
     return null;
@@ -247,11 +311,23 @@ class AIChatService {
 
   // Save session to local storage
   Future<void> _saveSession(AIChatSession session) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      '${_sessionsKey}_${session.id}',
-      jsonEncode(session.toJson()),
-    );
+    try {
+      final prefs = await SharedPreferences.getInstance().timeout(
+        const Duration(seconds: 1),
+        onTimeout: () => throw TimeoutException('SharedPreferences timeout'),
+      );
+      await prefs.setString(
+        '${_sessionsKey}_${session.id}',
+        jsonEncode(session.toJson()),
+      );
+      // Cache active session key for faster lookup
+      if (session.isActive) {
+        await prefs.setString('active_session_${session.userId}', session.id);
+      }
+    } catch (e) {
+      print('⚠️ Error saving session: $e');
+      // Don't throw - allow app to continue
+    }
   }
 
   // Get all user sessions

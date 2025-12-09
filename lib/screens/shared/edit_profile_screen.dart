@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/validators.dart';
 import '../../widgets/custom_text_field.dart';
@@ -13,11 +15,20 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController(text: 'Nickals');
-  final _emailController = TextEditingController(text: 'nickals@example.com');
-  final _phoneController = TextEditingController(text: '1234567890');
-  final _bioController = TextEditingController(text: 'Spiritual seeker and astrology enthusiast');
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _bioController = TextEditingController();
   bool _isLoading = false;
+  bool _isInitializing = true;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
 
   @override
   void dispose() {
@@ -28,13 +39,70 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  void _handleSave() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      
+  Future<void> _loadProfile() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      if (mounted) {
+        context.pop();
+      }
+      return;
+    }
+
+    setState(() {
+      _nameController.text = user.displayName ?? '';
+      _emailController.text = user.email ?? '';
+      _phoneController.text = user.phoneNumber ?? '';
+    });
+
+    try {
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        setState(() {
+          _nameController.text = data?['displayName'] ?? user.displayName ?? '';
+          _emailController.text = data?['email'] ?? user.email ?? '';
+          _phoneController.text = data?['phoneNumber'] ?? user.phoneNumber ?? '';
+          _bioController.text = data?['bio'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error loading profile: $e');
+    } finally {
+      setState(() => _isInitializing = false);
+    }
+  }
+
+  Future<void> _handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final user = _auth.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please login to update profile')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Update Firebase Auth profile
+      if (_nameController.text != user.displayName) {
+        await user.updateDisplayName(_nameController.text);
+      }
+
+      if (_emailController.text != user.email && _emailController.text.isNotEmpty) {
+        await user.updateEmail(_emailController.text);
+      }
+
+      // Update Firestore user document
+      await _firestore.collection('users').doc(user.uid).update({
+        'displayName': _nameController.text,
+        'email': _emailController.text,
+        'bio': _bioController.text,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -53,11 +121,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         );
         context.pop();
       }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update profile: $e'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isInitializing) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Edit Profile')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),

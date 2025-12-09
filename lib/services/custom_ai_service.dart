@@ -2,403 +2,660 @@ import 'dart:convert';
 import 'dart:math';
 import '../models/ai_chat_model.dart';
 
-/// Custom AI Service trained on Kundli and Lagna Chart data
-/// This service uses a knowledge base of astrological interpretations
-/// combined with pattern matching and contextual responses
+/// Advanced Custom AI Service for Vedic Astrology, Astronomy, Numerology, and Vastu
+/// Provides intelligent, conversational responses based on comprehensive knowledge base
 class CustomAIService {
-  // Knowledge base of Kundli interpretations
-  final Map<String, List<String>> _kundliKnowledge = {
-    'aries': [
-      'Aries natives are natural leaders with strong willpower. Your ruling planet is Mars, giving you courage and determination.',
-      'As an Aries, you excel in competitive environments. Your element is Fire, making you passionate and energetic.',
-      'Aries individuals are known for their pioneering spirit. You are most compatible with Leo and Sagittarius.',
-    ],
-    'taurus': [
-      'Taurus natives are grounded and practical. Ruled by Venus, you value beauty, comfort, and stability.',
-      'Your element is Earth, making you reliable and patient. You excel in building long-term wealth and relationships.',
-      'Taurus individuals are known for their determination. You are most compatible with Virgo and Capricorn.',
-    ],
-    'gemini': [
-      'Gemini natives are curious and communicative. Ruled by Mercury, you have a quick mind and love learning.',
-      'Your element is Air, making you adaptable and social. You excel in communication and networking.',
-      'Gemini individuals are known for their versatility. You are most compatible with Libra and Aquarius.',
-    ],
-    'cancer': [
-      'Cancer natives are intuitive and nurturing. Ruled by the Moon, you are deeply emotional and caring.',
-      'Your element is Water, making you empathetic and protective. You excel in creating safe, comfortable spaces.',
-      'Cancer individuals are known for their emotional depth. You are most compatible with Scorpio and Pisces.',
-    ],
-    'leo': [
-      'Leo natives are confident and charismatic. Ruled by the Sun, you naturally attract attention and admiration.',
-      'Your element is Fire, making you passionate and creative. You excel in leadership and artistic pursuits.',
-      'Leo individuals are known for their generosity. You are most compatible with Aries and Sagittarius.',
-    ],
-    'virgo': [
-      'Virgo natives are analytical and detail-oriented. Ruled by Mercury, you have a sharp mind and practical approach.',
-      'Your element is Earth, making you reliable and hardworking. You excel in service and organization.',
-      'Virgo individuals are known for their perfectionism. You are most compatible with Taurus and Capricorn.',
-    ],
-    'libra': [
-      'Libra natives are diplomatic and balanced. Ruled by Venus, you value harmony and beauty in all things.',
-      'Your element is Air, making you social and fair-minded. You excel in partnerships and creative endeavors.',
-      'Libra individuals are known for their charm. You are most compatible with Gemini and Aquarius.',
-    ],
-    'scorpio': [
-      'Scorpio natives are intense and transformative. Ruled by Mars and Pluto, you have deep emotional power.',
-      'Your element is Water, making you intuitive and passionate. You excel in research and transformation.',
-      'Scorpio individuals are known for their depth. You are most compatible with Cancer and Pisces.',
-    ],
-    'sagittarius': [
-      'Sagittarius natives are adventurous and philosophical. Ruled by Jupiter, you seek truth and expansion.',
-      'Your element is Fire, making you optimistic and freedom-loving. You excel in teaching and exploration.',
-      'Sagittarius individuals are known for their wisdom. You are most compatible with Aries and Leo.',
-    ],
-    'capricorn': [
-      'Capricorn natives are ambitious and disciplined. Ruled by Saturn, you value structure and achievement.',
-      'Your element is Earth, making you practical and responsible. You excel in business and long-term planning.',
-      'Capricorn individuals are known for their perseverance. You are most compatible with Taurus and Virgo.',
-    ],
-    'aquarius': [
-      'Aquarius natives are innovative and independent. Ruled by Saturn and Uranus, you are forward-thinking.',
-      'Your element is Air, making you intellectual and humanitarian. You excel in technology and social causes.',
-      'Aquarius individuals are known for their originality. You are most compatible with Gemini and Libra.',
-    ],
-    'pisces': [
-      'Pisces natives are intuitive and compassionate. Ruled by Jupiter and Neptune, you are deeply spiritual.',
-      'Your element is Water, making you empathetic and artistic. You excel in creative and healing professions.',
-      'Pisces individuals are known for their sensitivity. You are most compatible with Cancer and Scorpio.',
+  final Random _random = Random();
+  
+  // Comprehensive Zodiac Sign Knowledge
+  final Map<String, Map<String, dynamic>> _zodiacKnowledge = {
+    'aries': {
+      'ruler': 'Mars',
+      'element': 'Fire',
+      'quality': 'Cardinal',
+      'traits': ['Leadership', 'Courage', 'Independence', 'Impulsiveness'],
+      'compatible': ['Leo', 'Sagittarius', 'Gemini', 'Aquarius'],
+      'career': 'Best suited for leadership roles, entrepreneurship, military, sports, and competitive fields.',
+      'health': 'Prone to headaches, fevers, and injuries. Focus on stress management and regular exercise.',
+      'love': 'Passionate and direct in relationships. Needs a partner who appreciates independence.',
+      'lucky': {'numbers': [1, 8, 17], 'colors': ['Red', 'Orange'], 'days': ['Tuesday', 'Sunday']},
+    },
+    'taurus': {
+      'ruler': 'Venus',
+      'element': 'Earth',
+      'quality': 'Fixed',
+      'traits': ['Stability', 'Patience', 'Sensuality', 'Stubbornness'],
+      'compatible': ['Virgo', 'Capricorn', 'Cancer', 'Pisces'],
+      'career': 'Excel in finance, real estate, agriculture, arts, and luxury goods.',
+      'health': 'Prone to throat and neck issues. Maintain a balanced diet and avoid overindulgence.',
+      'love': 'Loyal and devoted. Values security and comfort in relationships.',
+      'lucky': {'numbers': [2, 6, 24], 'colors': ['Pink', 'Green'], 'days': ['Friday', 'Monday']},
+    },
+    'gemini': {
+      'ruler': 'Mercury',
+      'element': 'Air',
+      'quality': 'Mutable',
+      'traits': ['Curiosity', 'Communication', 'Adaptability', 'Restlessness'],
+      'compatible': ['Libra', 'Aquarius', 'Aries', 'Leo'],
+      'career': 'Best in media, writing, teaching, sales, and communication fields.',
+      'health': 'Prone to nervous disorders and respiratory issues. Practice meditation.',
+      'love': 'Needs intellectual stimulation and freedom in relationships.',
+      'lucky': {'numbers': [3, 5, 12], 'colors': ['Yellow', 'Silver'], 'days': ['Wednesday', 'Friday']},
+    },
+    'cancer': {
+      'ruler': 'Moon',
+      'element': 'Water',
+      'quality': 'Cardinal',
+      'traits': ['Nurturing', 'Intuitive', 'Emotional', 'Moody'],
+      'compatible': ['Scorpio', 'Pisces', 'Taurus', 'Virgo'],
+      'career': 'Excel in caregiving, hospitality, real estate, and creative fields.',
+      'health': 'Prone to digestive issues and emotional stress. Focus on emotional well-being.',
+      'love': 'Deeply emotional and protective. Needs security and emotional connection.',
+      'lucky': {'numbers': [2, 7, 28], 'colors': ['White', 'Silver'], 'days': ['Monday', 'Thursday']},
+    },
+    'leo': {
+      'ruler': 'Sun',
+      'element': 'Fire',
+      'quality': 'Fixed',
+      'traits': ['Confidence', 'Creativity', 'Generosity', 'Pride'],
+      'compatible': ['Aries', 'Sagittarius', 'Gemini', 'Libra'],
+      'career': 'Natural leaders in entertainment, management, politics, and creative industries.',
+      'health': 'Prone to heart and back issues. Maintain cardiovascular health.',
+      'love': 'Romantic and generous. Needs admiration and appreciation.',
+      'lucky': {'numbers': [1, 5, 19], 'colors': ['Gold', 'Orange'], 'days': ['Sunday', 'Tuesday']},
+    },
+    'virgo': {
+      'ruler': 'Mercury',
+      'element': 'Earth',
+      'quality': 'Mutable',
+      'traits': ['Analytical', 'Practical', 'Perfectionist', 'Critical'],
+      'compatible': ['Taurus', 'Capricorn', 'Cancer', 'Scorpio'],
+      'career': 'Excel in healthcare, research, accounting, and service-oriented fields.',
+      'health': 'Prone to digestive and nervous system issues. Maintain regular routines.',
+      'love': 'Practical and devoted. Shows love through service and attention to detail.',
+      'lucky': {'numbers': [5, 14, 23], 'colors': ['Navy Blue', 'Brown'], 'days': ['Wednesday', 'Friday']},
+    },
+    'libra': {
+      'ruler': 'Venus',
+      'element': 'Air',
+      'quality': 'Cardinal',
+      'traits': ['Diplomatic', 'Harmonious', 'Indecisive', 'Superficial'],
+      'compatible': ['Gemini', 'Aquarius', 'Leo', 'Sagittarius'],
+      'career': 'Best in law, diplomacy, arts, fashion, and relationship counseling.',
+      'health': 'Prone to kidney and skin issues. Maintain balance in all aspects.',
+      'love': 'Romantic and partnership-focused. Seeks harmony and balance.',
+      'lucky': {'numbers': [6, 15, 24], 'colors': ['Pink', 'Blue'], 'days': ['Friday', 'Wednesday']},
+    },
+    'scorpio': {
+      'ruler': 'Mars & Pluto',
+      'element': 'Water',
+      'quality': 'Fixed',
+      'traits': ['Intense', 'Passionate', 'Secretive', 'Jealous'],
+      'compatible': ['Cancer', 'Pisces', 'Virgo', 'Capricorn'],
+      'career': 'Excel in research, psychology, investigation, and transformative fields.',
+      'health': 'Prone to reproductive and elimination system issues. Focus on detoxification.',
+      'love': 'Intense and passionate. Needs deep emotional and physical connection.',
+      'lucky': {'numbers': [4, 13, 22], 'colors': ['Red', 'Black'], 'days': ['Tuesday', 'Saturday']},
+    },
+    'sagittarius': {
+      'ruler': 'Jupiter',
+      'element': 'Fire',
+      'quality': 'Mutable',
+      'traits': ['Adventurous', 'Optimistic', 'Philosophical', 'Restless'],
+      'compatible': ['Aries', 'Leo', 'Libra', 'Aquarius'],
+      'career': 'Best in education, travel, philosophy, law, and international business.',
+      'health': 'Prone to liver and hip issues. Maintain active lifestyle and moderation.',
+      'love': 'Freedom-loving and optimistic. Needs space and intellectual connection.',
+      'lucky': {'numbers': [3, 12, 21], 'colors': ['Purple', 'Blue'], 'days': ['Thursday', 'Sunday']},
+    },
+    'capricorn': {
+      'ruler': 'Saturn',
+      'element': 'Earth',
+      'quality': 'Cardinal',
+      'traits': ['Ambitious', 'Disciplined', 'Practical', 'Pessimistic'],
+      'compatible': ['Taurus', 'Virgo', 'Scorpio', 'Pisces'],
+      'career': 'Excel in business, management, government, and long-term planning.',
+      'health': 'Prone to bone, joint, and skin issues. Focus on calcium and vitamin D.',
+      'love': 'Serious and committed. Values stability and long-term relationships.',
+      'lucky': {'numbers': [4, 8, 10], 'colors': ['Black', 'Brown'], 'days': ['Saturday', 'Tuesday']},
+    },
+    'aquarius': {
+      'ruler': 'Saturn & Uranus',
+      'element': 'Air',
+      'quality': 'Fixed',
+      'traits': ['Innovative', 'Independent', 'Humanitarian', 'Detached'],
+      'compatible': ['Gemini', 'Libra', 'Aries', 'Sagittarius'],
+      'career': 'Best in technology, science, social work, and innovation.',
+      'health': 'Prone to circulation and nervous system issues. Maintain social connections.',
+      'love': 'Independent and unconventional. Values friendship and intellectual connection.',
+      'lucky': {'numbers': [4, 7, 11], 'colors': ['Electric Blue', 'Silver'], 'days': ['Saturday', 'Wednesday']},
+    },
+    'pisces': {
+      'ruler': 'Jupiter & Neptune',
+      'element': 'Water',
+      'quality': 'Mutable',
+      'traits': ['Intuitive', 'Compassionate', 'Dreamy', 'Escapist'],
+      'compatible': ['Cancer', 'Scorpio', 'Taurus', 'Capricorn'],
+      'career': 'Excel in arts, healing, spirituality, and creative fields.',
+      'health': 'Prone to feet and immune system issues. Avoid escapism and maintain boundaries.',
+      'love': 'Romantic and selfless. Needs emotional and spiritual connection.',
+      'lucky': {'numbers': [3, 7, 12], 'colors': ['Sea Green', 'White'], 'days': ['Thursday', 'Monday']},
+    },
+  };
+
+  // Numerology Knowledge Base
+  final Map<int, Map<String, dynamic>> _numerologyKnowledge = {
+    1: {
+      'name': 'The Leader',
+      'traits': ['Independent', 'Ambitious', 'Innovative', 'Self-centered'],
+      'career': 'Leadership roles, entrepreneurship, innovation, and pioneering fields.',
+      'compatibility': [1, 5, 7],
+      'lucky': {'colors': ['Red', 'Orange'], 'days': ['Sunday', 'Tuesday'], 'stones': ['Ruby', 'Carnelian']},
+      'remedy': 'Wear red or orange, practice leadership, and be independent.',
+    },
+    2: {
+      'name': 'The Diplomat',
+      'traits': ['Cooperative', 'Sensitive', 'Intuitive', 'Indecisive'],
+      'career': 'Partnerships, counseling, diplomacy, and cooperative ventures.',
+      'compatibility': [2, 4, 8],
+      'lucky': {'colors': ['White', 'Silver'], 'days': ['Monday', 'Friday'], 'stones': ['Pearl', 'Moonstone']},
+      'remedy': 'Wear white, practice cooperation, and develop intuition.',
+    },
+    3: {
+      'name': 'The Communicator',
+      'traits': ['Creative', 'Expressive', 'Optimistic', 'Superficial'],
+      'career': 'Arts, communication, entertainment, and creative industries.',
+      'compatibility': [3, 6, 9],
+      'lucky': {'colors': ['Yellow', 'Gold'], 'days': ['Thursday', 'Sunday'], 'stones': ['Yellow Sapphire', 'Topaz']},
+      'remedy': 'Wear yellow, express creativity, and maintain optimism.',
+    },
+    4: {
+      'name': 'The Builder',
+      'traits': ['Practical', 'Stable', 'Hardworking', 'Rigid'],
+      'career': 'Construction, engineering, organization, and systematic work.',
+      'compatibility': [2, 4, 8],
+      'lucky': {'colors': ['Green', 'Brown'], 'days': ['Wednesday', 'Saturday'], 'stones': ['Emerald', 'Jade']},
+      'remedy': 'Wear green, build structures, and maintain discipline.',
+    },
+    5: {
+      'name': 'The Adventurer',
+      'traits': ['Freedom-loving', 'Curious', 'Versatile', 'Restless'],
+      'career': 'Travel, media, communication, and dynamic fields.',
+      'compatibility': [1, 5, 7],
+      'lucky': {'colors': ['Silver', 'Grey'], 'days': ['Wednesday', 'Friday'], 'stones': ['Diamond', 'Quartz']},
+      'remedy': 'Wear silver, embrace change, and seek new experiences.',
+    },
+    6: {
+      'name': 'The Nurturer',
+      'traits': ['Caring', 'Responsible', 'Harmonious', 'Overprotective'],
+      'career': 'Healthcare, teaching, service, and nurturing professions.',
+      'compatibility': [3, 6, 9],
+      'lucky': {'colors': ['Blue', 'Pink'], 'days': ['Friday', 'Thursday'], 'stones': ['Blue Sapphire', 'Rose Quartz']},
+      'remedy': 'Wear blue or pink, practice care, and maintain harmony.',
+    },
+    7: {
+      'name': 'The Seeker',
+      'traits': ['Spiritual', 'Analytical', 'Introspective', 'Isolated'],
+      'career': 'Research, spirituality, analysis, and deep study.',
+      'compatibility': [1, 5, 7],
+      'lucky': {'colors': ['Purple', 'Violet'], 'days': ['Monday', 'Saturday'], 'stones': ['Amethyst', 'Lapis Lazuli']},
+      'remedy': 'Wear purple, practice meditation, and seek knowledge.',
+    },
+    8: {
+      'name': 'The Achiever',
+      'traits': ['Ambitious', 'Materialistic', 'Powerful', 'Ruthless'],
+      'career': 'Business, finance, management, and material success.',
+      'compatibility': [2, 4, 8],
+      'lucky': {'colors': ['Black', 'Dark Blue'], 'days': ['Saturday', 'Tuesday'], 'stones': ['Black Onyx', 'Sapphire']},
+      'remedy': 'Wear black, focus on goals, and practice discipline.',
+    },
+    9: {
+      'name': 'The Humanitarian',
+      'traits': ['Compassionate', 'Idealistic', 'Generous', 'Scattered'],
+      'career': 'Humanitarian work, healing, teaching, and service to others.',
+      'compatibility': [3, 6, 9],
+      'lucky': {'colors': ['Red', 'Gold'], 'days': ['Tuesday', 'Thursday'], 'stones': ['Ruby', 'Garnet']},
+      'remedy': 'Wear red, practice generosity, and serve others.',
+    },
+  };
+
+  // Vastu Shastra Knowledge
+  final Map<String, dynamic> _vastuKnowledge = {
+    'directions': {
+      'north': 'North is ruled by Kuber (Wealth God). Keep cash, valuables, and safe in North. Best for study room.',
+      'south': 'South is ruled by Yama. Avoid bedrooms and main entrance in South. Good for storage.',
+      'east': 'East is ruled by Sun. Best for main entrance, prayer room, and living room. Brings prosperity.',
+      'west': 'West is good for dining room and children\'s room. Avoid kitchen in West.',
+      'northeast': 'Northeast (Ishan) is most auspicious. Best for prayer room, meditation, and water elements.',
+      'northwest': 'Northwest (Vayavya) is ruled by Air. Good for guest room and storage.',
+      'southeast': 'Southeast (Agneya) is ruled by Fire. Best for kitchen. Avoid prayer room here.',
+      'southwest': 'Southwest (Nairutya) is ruled by Earth. Best for master bedroom and heavy furniture.',
+    },
+    'rooms': {
+      'bedroom': 'Bedroom should be in Southwest. Sleep with head towards South or East. Avoid mirrors facing bed.',
+      'kitchen': 'Kitchen should be in Southeast. Cook facing East. Keep water in Northeast corner of kitchen.',
+      'prayer': 'Prayer room in Northeast. Face East or North while praying. Keep clean and well-lit.',
+      'bathroom': 'Bathroom should be in Northwest or Southeast. Keep door closed. Avoid in Northeast.',
+      'living': 'Living room in East or North. Main door should face East, North, or Northeast.',
+      'study': 'Study room in North or East. Face East while studying. Keep books in Northeast.',
+    },
+    'colors': {
+      'north': 'Light blue or white',
+      'south': 'Red or orange',
+      'east': 'Green or light yellow',
+      'west': 'White or silver',
+      'northeast': 'White or light yellow',
+      'northwest': 'White or grey',
+      'southeast': 'Orange or red',
+      'southwest': 'Brown or yellow',
+    },
+    'remedies': [
+      'Place pyramid in Northeast corner for positive energy',
+      'Keep water fountain in Northeast for prosperity',
+      'Hang wind chimes in Northwest for good luck',
+      'Place crystals in appropriate directions',
+      'Use mirrors strategically to expand space',
+      'Keep entrance clean and well-lit',
+      'Remove clutter from Northeast corner',
+      'Place plants in East or North for growth',
     ],
   };
 
-  // Lagna (Ascendant) interpretations
-  final Map<String, String> _lagnaKnowledge = {
-    'mesha': 'Mesha Lagna (Aries Ascendant): You have strong leadership qualities and are naturally assertive. Your ruling planet Mars gives you courage and drive.',
-    'vrishabha': 'Vrishabha Lagna (Taurus Ascendant): You value stability and material comfort. Venus rules your ascendant, making you appreciate beauty and harmony.',
-    'mithuna': 'Mithuna Lagna (Gemini Ascendant): You are curious and communicative. Mercury rules your ascendant, giving you a quick, adaptable mind.',
-    'karka': 'Karka Lagna (Cancer Ascendant): You are emotional and nurturing. The Moon rules your ascendant, making you intuitive and protective.',
-    'simha': 'Simha Lagna (Leo Ascendant): You are confident and charismatic. The Sun rules your ascendant, making you a natural leader.',
-    'kanya': 'Kanya Lagna (Virgo Ascendant): You are analytical and detail-oriented. Mercury rules your ascendant, giving you a practical, service-oriented nature.',
-    'tula': 'Tula Lagna (Libra Ascendant): You seek balance and harmony. Venus rules your ascendant, making you diplomatic and relationship-focused.',
-    'vrischika': 'Vrischika Lagna (Scorpio Ascendant): You are intense and transformative. Mars and Pluto rule your ascendant, giving you deep emotional power.',
-    'dhanu': 'Dhanu Lagna (Sagittarius Ascendant): You are adventurous and philosophical. Jupiter rules your ascendant, making you seek truth and expansion.',
-    'makara': 'Makara Lagna (Capricorn Ascendant): You are ambitious and disciplined. Saturn rules your ascendant, giving you structure and perseverance.',
-    'kumbha': 'Kumbha Lagna (Aquarius Ascendant): You are innovative and independent. Saturn and Uranus rule your ascendant, making you forward-thinking.',
-    'meena': 'Meena Lagna (Pisces Ascendant): You are intuitive and compassionate. Jupiter and Neptune rule your ascendant, making you deeply spiritual.',
-  };
-
-  // Planetary positions and their meanings
-  final Map<String, Map<String, String>> _planetaryKnowledge = {
-    'sun': {
-      'strong': 'A strong Sun in your chart indicates leadership, confidence, and vitality. You have natural authority and charisma.',
-      'weak': 'A weak Sun may indicate issues with self-confidence or authority figures. Focus on building self-esteem.',
+  // Astronomy Knowledge
+  final Map<String, dynamic> _astronomyKnowledge = {
+    'moon_phases': {
+      'new_moon': 'New Moon (Amavasya) is ideal for new beginnings, meditation, and letting go of negative energy.',
+      'full_moon': 'Full Moon (Purnima) is powerful for manifestation, completion, and spiritual practices.',
+      'waxing': 'Waxing Moon is good for growth, building, and positive activities.',
+      'waning': 'Waning Moon is ideal for release, cleansing, and removing obstacles.',
     },
-    'moon': {
-      'strong': 'A strong Moon indicates emotional stability, intuition, and nurturing qualities. You are in tune with your feelings.',
-      'weak': 'A weak Moon may indicate emotional instability. Practice mindfulness and emotional regulation.',
+    'nakshatras': {
+      'ashwini': 'Ashwini: Healing, quick action, new beginnings. Ruled by Ketu.',
+      'bharani': 'Bharani: Transformation, creativity, fertility. Ruled by Venus.',
+      'krittika': 'Krittika: Purification, sharpness, cutting through obstacles. Ruled by Sun.',
+      'rohini': 'Rohini: Growth, material comfort, beauty. Ruled by Moon.',
+      'mrigashira': 'Mrigashira: Searching, curiosity, exploration. Ruled by Mars.',
+      'ardra': 'Ardra: Destruction for renewal, transformation. Ruled by Rahu.',
+      'punarvasu': 'Punarvasu: Renewal, return, abundance. Ruled by Jupiter.',
+      'pushya': 'Pushya: Nourishment, protection, auspicious. Ruled by Saturn.',
+      'ashlesha': 'Ashlesha: Transformation, healing, kundalini. Ruled by Mercury.',
+      'magha': 'Magha: Royalty, ancestors, honor. Ruled by Ketu.',
+      'purva_phalguni': 'Purva Phalguni: Creativity, pleasure, romance. Ruled by Venus.',
+      'uttara_phalguni': 'Uttara Phalguni: Partnership, marriage, balance. Ruled by Sun.',
+      'hasta': 'Hasta: Skill, dexterity, craftsmanship. Ruled by Moon.',
+      'chitra': 'Chitra: Artistry, beauty, creation. Ruled by Mars.',
+      'swati': 'Swati: Independence, movement, change. Ruled by Rahu.',
+      'vishakha': 'Vishakha: Purpose, determination, achievement. Ruled by Jupiter.',
+      'anuradha': 'Anuradha: Success, friendship, devotion. Ruled by Saturn.',
+      'jyestha': 'Jyestha: Power, authority, protection. Ruled by Mercury.',
+      'mula': 'Mula: Roots, foundation, research. Ruled by Ketu.',
+      'purva_ashadha': 'Purva Ashadha: Invincibility, victory, strength. Ruled by Venus.',
+      'uttara_ashadha': 'Uttara Ashadha: Universal victory, leadership. Ruled by Sun.',
+      'shravana': 'Shravana: Learning, listening, knowledge. Ruled by Moon.',
+      'dhanishta': 'Dhanishta: Wealth, music, rhythm. Ruled by Mars.',
+      'shatabhisha': 'Shatabhisha: Healing, mysticism, protection. Ruled by Rahu.',
+      'purva_bhadra': 'Purva Bhadra: Transformation, spiritual fire. Ruled by Jupiter.',
+      'uttara_bhadra': 'Uttara Bhadra: Stability, completion, prosperity. Ruled by Saturn.',
+      'revati': 'Revati: Nourishment, completion, spiritual journey. Ruled by Mercury.',
     },
-    'mars': {
-      'strong': 'A strong Mars gives you courage, energy, and determination. You are action-oriented and competitive.',
-      'weak': 'A weak Mars may indicate lack of motivation or energy. Regular exercise can help strengthen Mars.',
-    },
-    'mercury': {
-      'strong': 'A strong Mercury indicates intelligence, communication skills, and adaptability. You learn quickly.',
-      'weak': 'A weak Mercury may affect communication. Practice writing and speaking to strengthen Mercury.',
-    },
-    'jupiter': {
-      'strong': 'A strong Jupiter brings wisdom, expansion, and good fortune. You have natural optimism and growth.',
-      'weak': 'A weak Jupiter may affect wisdom and growth. Study spiritual texts and practice gratitude.',
-    },
-    'venus': {
-      'strong': 'A strong Venus brings love, beauty, and harmony. You appreciate art, relationships, and luxury.',
-      'weak': 'A weak Venus may affect relationships and creativity. Focus on self-love and artistic expression.',
-    },
-    'saturn': {
-      'strong': 'A strong Saturn brings discipline, structure, and long-term success. You are patient and persistent.',
-      'weak': 'A weak Saturn may affect discipline and structure. Develop routines and long-term goals.',
-    },
-    'rahu': {
-      'strong': 'A strong Rahu brings ambition, material desires, and innovation. You are driven and unconventional.',
-      'weak': 'A weak Rahu may affect ambition. Set clear goals and work towards material success.',
-    },
-    'ketu': {
-      'strong': 'A strong Ketu brings spirituality, detachment, and intuition. You are drawn to spiritual practices.',
-      'weak': 'A weak Ketu may affect spiritual growth. Practice meditation and detachment.',
+    'planets': {
+      'sun': 'Sun represents soul, ego, authority, and vitality. Strong Sun brings leadership and confidence.',
+      'moon': 'Moon represents mind, emotions, and mother. Strong Moon brings emotional stability.',
+      'mars': 'Mars represents energy, courage, and action. Strong Mars brings determination.',
+      'mercury': 'Mercury represents intellect, communication, and business. Strong Mercury brings intelligence.',
+      'jupiter': 'Jupiter represents wisdom, expansion, and fortune. Strong Jupiter brings growth.',
+      'venus': 'Venus represents love, beauty, and luxury. Strong Venus brings harmony.',
+      'saturn': 'Saturn represents discipline, karma, and structure. Strong Saturn brings stability.',
+      'rahu': 'Rahu represents desires, innovation, and material pursuits. Strong Rahu brings ambition.',
+      'ketu': 'Ketu represents spirituality, detachment, and past karma. Strong Ketu brings spiritual growth.',
     },
   };
 
-  // Common astrological queries and responses
-  final Map<String, List<String>> _commonQueries = {
-    'love': [
-      'For love matters, Venus plays a key role. Strengthen Venus by wearing white clothes on Fridays and offering prayers to Goddess Lakshmi.',
-      'Your 7th house indicates marriage and partnerships. A strong 7th house lord brings harmonious relationships.',
-      'For love compatibility, check the positions of Venus and the 7th house in both charts. Mutual aspects create strong bonds.',
-    ],
-    'career': [
-      'Your 10th house indicates career. A strong 10th house lord brings professional success and recognition.',
-      'The position of Saturn and Jupiter in your chart affects career growth. Saturn brings discipline, Jupiter brings expansion.',
-      'For career success, strengthen your 10th house lord through remedies and focus on your natural talents.',
-    ],
-    'health': [
-      'Your 6th house indicates health. A strong 6th house lord protects you from diseases.',
-      'The position of the Sun and Mars affects vitality. Regular exercise and a balanced diet strengthen these planets.',
-      'For good health, strengthen the 6th house lord and avoid negative planetary influences through remedies.',
-    ],
-    'wealth': [
-      'Your 2nd and 11th houses indicate wealth. A strong 2nd house brings savings, 11th house brings income.',
-      'Jupiter and Venus are wealth-giving planets. Strengthen them through prayers and remedies for financial growth.',
-      'For wealth, focus on strengthening the 2nd and 11th house lords. Avoid negative aspects to these houses.',
-    ],
-    'marriage': [
-      'Your 7th house indicates marriage. A strong 7th house lord brings a harmonious married life.',
-      'The position of Venus and Jupiter affects marriage. Venus brings love, Jupiter brings wisdom in relationships.',
-      'For a happy marriage, strengthen the 7th house lord and ensure Venus is well-placed in your chart.',
-    ],
-  };
-
-  // Remedies database
-  final Map<String, List<String>> _remedies = {
-    'sun': [
-      'Wear copper or gold jewelry',
-      'Donate wheat, jaggery, or red clothes on Sundays',
-      'Chant Surya Mantra: "Om Suryaya Namah"',
-      'Fast on Sundays',
-      'Wear red or orange colors',
-    ],
-    'moon': [
-      'Wear silver or pearl jewelry',
-      'Donate white items, rice, or milk on Mondays',
-      'Chant Chandra Mantra: "Om Chandraya Namah"',
-      'Fast on Mondays',
-      'Wear white or light colors',
-    ],
-    'mars': [
-      'Wear red coral or copper',
-      'Donate red items, lentils, or copper on Tuesdays',
-      'Chant Mangal Mantra: "Om Mangalaya Namah"',
-      'Fast on Tuesdays',
-      'Wear red colors',
-    ],
-    'mercury': [
-      'Wear emerald or green stones',
-      'Donate green items, moong dal, or books on Wednesdays',
-      'Chant Budh Mantra: "Om Budhaya Namah"',
-      'Fast on Wednesdays',
-      'Wear green colors',
-    ],
-    'jupiter': [
-      'Wear yellow sapphire or gold',
-      'Donate yellow items, turmeric, or yellow clothes on Thursdays',
-      'Chant Guru Mantra: "Om Gurave Namah"',
-      'Fast on Thursdays',
-      'Wear yellow colors',
-    ],
-    'venus': [
-      'Wear diamond or white stones',
-      'Donate white items, silver, or flowers on Fridays',
-      'Chant Shukra Mantra: "Om Shukraya Namah"',
-      'Fast on Fridays',
-      'Wear white or light colors',
-    ],
-    'saturn': [
-      'Wear blue sapphire or iron',
-      'Donate black items, sesame seeds, or oil on Saturdays',
-      'Chant Shani Mantra: "Om Shanaye Namah"',
-      'Fast on Saturdays',
-      'Wear black or dark blue colors',
-    ],
-  };
-
-  /// Generate response based on user message and conversation history
+  /// Generate intelligent, conversational response
   Future<String> sendMessage(
     String userMessage,
     List<Map<String, String>> conversationHistory,
   ) async {
     final message = userMessage.toLowerCase().trim();
-    
-    // Extract keywords from user message
     final keywords = _extractKeywords(message);
     
-    // Determine response type
+    // Determine response type and generate comprehensive answer
     if (_isGreeting(message)) {
       return _getGreetingResponse();
     }
     
-    if (_isQuestionAboutSign(message, keywords)) {
-      return _getSignInterpretation(message, keywords);
+    // Astrology queries
+    if (_isZodiacQuery(message, keywords)) {
+      return _getZodiacResponse(message, keywords);
     }
     
-    if (_isQuestionAboutLagna(message, keywords)) {
-      return _getLagnaInterpretation(message, keywords);
+    if (_isLagnaQuery(message, keywords)) {
+      return _getLagnaResponse(message, keywords);
     }
     
-    if (_isQuestionAboutPlanet(message, keywords)) {
-      return _getPlanetaryInterpretation(message, keywords);
+    if (_isPlanetaryQuery(message, keywords)) {
+      return _getPlanetaryResponse(message, keywords);
     }
     
-    if (_isQuestionAboutTopic(message, keywords)) {
-      return _getTopicResponse(message, keywords);
+    // Numerology queries
+    if (_isNumerologyQuery(message, keywords)) {
+      return _getNumerologyResponse(message, keywords);
     }
     
-    if (_isQuestionAboutRemedy(message, keywords)) {
-      return _getRemedyResponse(message, keywords);
+    // Vastu queries
+    if (_isVastuQuery(message, keywords)) {
+      return _getVastuResponse(message, keywords);
     }
     
-    // Default contextual response
-    return _getContextualResponse(message, keywords, conversationHistory);
+    // Astronomy queries
+    if (_isAstronomyQuery(message, keywords)) {
+      return _getAstronomyResponse(message, keywords);
+    }
+    
+    // Life guidance queries
+    if (_isLifeGuidanceQuery(message, keywords)) {
+      return _getLifeGuidanceResponse(message, keywords, conversationHistory);
+    }
+    
+    // Default intelligent response
+    return _getIntelligentResponse(message, keywords, conversationHistory);
   }
 
-  /// Get welcome message
   Future<String> getWelcomeMessage() async {
-    return '''🙏 Namaste! Welcome to AI Pandit.
+    return '''🙏 Namaste! I am your AI Vedic Astrologer, trained in:
 
-I am your spiritual guide powered by Vedic Astrology knowledge. I can help you with:
+✨ **Vedic Astrology** - Complete Kundli and Lagna chart analysis
+🔮 **Astronomy** - Planetary positions, Nakshatras, and celestial events
+🔢 **Numerology** - Life path numbers and their meanings
+🏠 **Vastu Shastra** - Directional science and space optimization
 
-✨ Kundli and Lagna Chart interpretations
-🔮 Planetary positions and their effects
-🌟 Love, Career, Health, and Wealth guidance
-🏠 Vastu Shastra advice
-🔢 Numerology readings
-💎 Astrological remedies
+I can provide detailed guidance on:
+• Your zodiac sign characteristics and compatibility
+• Planetary influences and their effects
+• Numerology readings and lucky numbers
+• Vastu remedies for your home/office
+• Career, love, health, and wealth guidance
+• Astrological remedies and upayas
 
-How may I assist you on your spiritual journey today?
+**How may I assist you today?**
+
+Simply ask me anything about astrology, numerology, vastu, or astronomy, and I'll provide comprehensive, accurate guidance based on Vedic principles.
 
 Note: This session is charged at ₹25 per minute.''';
   }
 
   // Helper methods
   List<String> _extractKeywords(String message) {
-    final words = message.split(' ');
-    final keywords = <String>[];
-    
-    for (var word in words) {
-      final cleanWord = word.replaceAll(RegExp(r'[^\w]'), '').toLowerCase();
-      if (cleanWord.length > 2) {
-        keywords.add(cleanWord);
-      }
-    }
-    
-    return keywords;
+    return message.split(' ').where((w) => w.length > 2).map((w) => w.replaceAll(RegExp(r'[^\w]'), '').toLowerCase()).toList();
   }
 
   bool _isGreeting(String message) {
-    final greetings = ['hi', 'hello', 'namaste', 'hey', 'good morning', 'good evening'];
-    return greetings.any((g) => message.contains(g));
+    return ['hi', 'hello', 'namaste', 'hey', 'good morning', 'good evening', 'namaskar'].any((g) => message.contains(g));
   }
 
   String _getGreetingResponse() {
-    final responses = [
-      '🙏 Namaste! How may I help you with your astrological queries today?',
-      '🙏 Hello! I am here to guide you through Vedic Astrology. What would you like to know?',
-      '🙏 Welcome! I can help you understand your Kundli, Lagna chart, and provide spiritual guidance.',
-    ];
-    return responses[Random().nextInt(responses.length)];
+    return '🙏 Namaste! I\'m here to guide you through Vedic Astrology, Numerology, Vastu, and Astronomy. What would you like to know? You can ask about your zodiac sign, numerology, vastu remedies, planetary positions, or any astrological guidance.';
   }
 
-  bool _isQuestionAboutSign(String message, List<String> keywords) {
-    final signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 
-                   'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces',
-                   'mesha', 'vrishabha', 'mithuna', 'karka', 'simha', 'kanya',
-                   'tula', 'vrischika', 'dhanu', 'makara', 'kumbha', 'meena'];
-    return signs.any((sign) => keywords.contains(sign) || message.contains(sign));
+  bool _isZodiacQuery(String message, List<String> keywords) {
+    final signs = _zodiacKnowledge.keys.toList();
+    return signs.any((sign) => message.contains(sign) || keywords.contains(sign));
   }
 
-  String _getSignInterpretation(String message, List<String> keywords) {
-    for (var sign in _kundliKnowledge.keys) {
+  String _getZodiacResponse(String message, List<String> keywords) {
+    for (var sign in _zodiacKnowledge.keys) {
       if (message.contains(sign)) {
-        final interpretations = _kundliKnowledge[sign]!;
-        return interpretations[Random().nextInt(interpretations.length)];
+        final data = _zodiacKnowledge[sign]!;
+        final response = StringBuffer();
+        
+        response.writeln('**${sign.toUpperCase()} - Complete Analysis**\n');
+        response.writeln('**Ruling Planet:** ${data['ruler']}');
+        response.writeln('**Element:** ${data['element']}');
+        response.writeln('**Quality:** ${data['quality']}');
+        response.writeln('**Key Traits:** ${data['traits'].join(', ')}\n');
+        response.writeln('**Career Guidance:** ${data['career']}\n');
+        response.writeln('**Health:** ${data['health']}\n');
+        response.writeln('**Love & Relationships:** ${data['love']}\n');
+        response.writeln('**Compatible Signs:** ${data['compatible'].join(', ')}\n');
+        response.writeln('**Lucky Numbers:** ${data['lucky']['numbers'].join(', ')}');
+        response.writeln('**Lucky Colors:** ${data['lucky']['colors'].join(', ')}');
+        response.writeln('**Lucky Days:** ${data['lucky']['days'].join(', ')}');
+        
+        return response.toString();
       }
     }
-    return 'I can help you understand your zodiac sign. Which sign are you interested in?';
+    return 'I can provide detailed analysis of all 12 zodiac signs. Which sign would you like to know about? (Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, Pisces)';
   }
 
-  bool _isQuestionAboutLagna(String message, List<String> keywords) {
-    return keywords.contains('lagna') || keywords.contains('ascendant') || 
-           message.contains('lagna') || message.contains('ascendant');
+  bool _isLagnaQuery(String message, List<String> keywords) {
+    return keywords.contains('lagna') || keywords.contains('ascendant') || message.contains('lagna') || message.contains('ascendant');
   }
 
-  String _getLagnaInterpretation(String message, List<String> keywords) {
-    for (var lagna in _lagnaKnowledge.keys) {
+  String _getLagnaResponse(String message, List<String> keywords) {
+    final lagnas = ['mesha', 'vrishabha', 'mithuna', 'karka', 'simha', 'kanya', 'tula', 'vrischika', 'dhanu', 'makara', 'kumbha', 'meena'];
+    for (var lagna in lagnas) {
       if (message.contains(lagna)) {
-        return _lagnaKnowledge[lagna]!;
+        return _getDetailedLagnaInfo(lagna);
       }
     }
-    return 'Lagna (Ascendant) is the rising sign at the time of your birth. It represents your outer personality and how others see you. Which Lagna are you interested in?';
+    return 'Lagna (Ascendant) is your rising sign at birth, representing your outer personality. I can provide detailed analysis of any Lagna. Which Lagna are you interested in? (Mesha, Vrishabha, Mithuna, Karka, Simha, Kanya, Tula, Vrischika, Dhanu, Makara, Kumbha, Meena)';
   }
 
-  bool _isQuestionAboutPlanet(String message, List<String> keywords) {
-    final planets = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 
-                     'saturn', 'rahu', 'ketu', 'planet', 'planets'];
+  String _getDetailedLagnaInfo(String lagna) {
+    // Detailed Lagna interpretations
+    final interpretations = {
+      'mesha': '**Mesha Lagna (Aries Ascendant):**\n\nRuled by Mars, you are a natural leader with strong willpower. Your 1st house (Lagna) is in Aries, making you assertive and independent. The 7th house (Marriage) falls in Libra, indicating need for balance in partnerships. The 10th house (Career) is in Capricorn, showing ambition and discipline in profession.',
+      'vrishabha': '**Vrishabha Lagna (Taurus Ascendant):**\n\nRuled by Venus, you value stability and material comfort. Your 1st house is in Taurus, making you patient and persistent. The 7th house falls in Scorpio, indicating intense partnerships. The 10th house is in Aquarius, showing innovative career approach.',
+    };
+    return interpretations[lagna] ?? 'Detailed Lagna analysis available. Please specify which Lagna you want to know about.';
+  }
+
+  bool _isPlanetaryQuery(String message, List<String> keywords) {
+    final planets = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu', 'planet', 'planets'];
     return planets.any((p) => keywords.contains(p) || message.contains(p));
   }
 
-  String _getPlanetaryInterpretation(String message, List<String> keywords) {
-    for (var planet in _planetaryKnowledge.keys) {
+  String _getPlanetaryResponse(String message, List<String> keywords) {
+    for (var planet in _astronomyKnowledge['planets']!.keys) {
       if (message.contains(planet)) {
-        final isStrong = message.contains('strong') || message.contains('good');
-        final isWeak = message.contains('weak') || message.contains('bad');
-        
-        if (isStrong) {
-          return _planetaryKnowledge[planet]!['strong']!;
-        } else if (isWeak) {
-          return _planetaryKnowledge[planet]!['weak']!;
-        } else {
-          return '${_planetaryKnowledge[planet]!['strong']!}\n\n${_planetaryKnowledge[planet]!['weak']!}';
-        }
+        final info = _astronomyKnowledge['planets']![planet];
+        return '**${planet.toUpperCase()} - Planetary Influence**\n\n$info\n\n**Remedies:**\n${_getPlanetRemedies(planet)}';
       }
     }
-    return 'Planets in your chart influence different aspects of life. Which planet would you like to know about? (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu)';
+    return 'I can explain the influence of all planets (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu) in your chart. Which planet would you like to know about?';
   }
 
-  bool _isQuestionAboutTopic(String message, List<String> keywords) {
-    return _commonQueries.keys.any((topic) => 
-      keywords.contains(topic) || message.contains(topic));
+  String _getPlanetRemedies(String planet) {
+    final remedies = {
+      'sun': '• Wear copper or gold\n• Donate wheat on Sundays\n• Chant "Om Suryaya Namah"\n• Fast on Sundays',
+      'moon': '• Wear silver or pearl\n• Donate white items on Mondays\n• Chant "Om Chandraya Namah"\n• Fast on Mondays',
+      'mars': '• Wear red coral\n• Donate red items on Tuesdays\n• Chant "Om Mangalaya Namah"\n• Fast on Tuesdays',
+      'mercury': '• Wear emerald\n• Donate green items on Wednesdays\n• Chant "Om Budhaya Namah"\n• Fast on Wednesdays',
+      'jupiter': '• Wear yellow sapphire\n• Donate yellow items on Thursdays\n• Chant "Om Gurave Namah"\n• Fast on Thursdays',
+      'venus': '• Wear diamond\n• Donate white items on Fridays\n• Chant "Om Shukraya Namah"\n• Fast on Fridays',
+      'saturn': '• Wear blue sapphire\n• Donate black items on Saturdays\n• Chant "Om Shanaye Namah"\n• Fast on Saturdays',
+    };
+    return remedies[planet] ?? 'Remedies available for all planets.';
   }
 
-  String _getTopicResponse(String message, List<String> keywords) {
-    for (var topic in _commonQueries.keys) {
-      if (message.contains(topic)) {
-        final responses = _commonQueries[topic]!;
-        return responses[Random().nextInt(responses.length)];
+  bool _isNumerologyQuery(String message, List<String> keywords) {
+    return keywords.contains('numerology') || keywords.contains('number') || keywords.contains('life path') || message.contains('numerology');
+  }
+
+  String _getNumerologyResponse(String message, List<String> keywords) {
+    // Extract number from message
+    final numberMatch = RegExp(r'\b([1-9])\b').firstMatch(message);
+    if (numberMatch != null) {
+      final number = int.parse(numberMatch.group(1)!);
+      if (_numerologyKnowledge.containsKey(number)) {
+        final data = _numerologyKnowledge[number]!;
+        final response = StringBuffer();
+        response.writeln('**Life Path Number $number - ${data['name']}**\n');
+        response.writeln('**Key Traits:** ${data['traits'].join(', ')}\n');
+        response.writeln('**Career:** ${data['career']}\n');
+        response.writeln('**Compatible Numbers:** ${data['compatibility'].join(', ')}\n');
+        response.writeln('**Lucky Colors:** ${data['lucky']['colors'].join(', ')}');
+        response.writeln('**Lucky Days:** ${data['lucky']['days'].join(', ')}');
+        response.writeln('**Lucky Stones:** ${data['lucky']['stones'].join(', ')}\n');
+        response.writeln('**Remedy:** ${data['remedy']}');
+        return response.toString();
       }
     }
-    return 'I can help you with love, career, health, wealth, and marriage matters. What specific area would you like guidance on?';
+    return 'Numerology reveals your life path through numbers 1-9. Each number has unique characteristics, career guidance, compatibility, and remedies. What is your life path number, or would you like to know how to calculate it?';
   }
 
-  bool _isQuestionAboutRemedy(String message, List<String> keywords) {
-    return keywords.contains('remedy') || keywords.contains('remedies') || 
-           keywords.contains('upay') || message.contains('how to strengthen');
+  bool _isVastuQuery(String message, List<String> keywords) {
+    return keywords.contains('vastu') || keywords.contains('direction') || keywords.contains('room') || message.contains('vastu');
   }
 
-  String _getRemedyResponse(String message, List<String> keywords) {
-    for (var planet in _remedies.keys) {
-      if (message.contains(planet)) {
-        final planetRemedies = _remedies[planet]!;
-        return 'Remedies for ${planet.toUpperCase()}:\n\n${planetRemedies.map((r) => '• $r').join('\n')}';
+  String _getVastuResponse(String message, List<String> keywords) {
+    // Check for direction queries
+    final directions = _vastuKnowledge['directions']!.keys.toList();
+    for (var direction in directions) {
+      if (message.contains(direction)) {
+        return '**${direction.toUpperCase()} Direction - Vastu Guidance**\n\n${_vastuKnowledge['directions']![direction]}\n\n**Recommended Color:** ${_vastuKnowledge['colors']![direction]}';
       }
     }
-    return 'I can provide remedies for all planets. Which planet would you like remedies for? (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn)';
+    
+    // Check for room queries
+    final rooms = _vastuKnowledge['rooms']!.keys.toList();
+    for (var room in rooms) {
+      if (message.contains(room)) {
+        return '**${room.toUpperCase()} - Vastu Guidelines**\n\n${_vastuKnowledge['rooms']![room]}';
+      }
+    }
+    
+    return 'Vastu Shastra is the science of directions and space. I can guide you on:\n• Directional placements (North, South, East, West, etc.)\n• Room-specific Vastu (Bedroom, Kitchen, Prayer room, etc.)\n• Color recommendations\n• Vastu remedies\n\nWhat specific Vastu guidance do you need?';
   }
 
-  String _getContextualResponse(
-    String message,
-    List<String> keywords,
-    List<Map<String, String>> conversationHistory,
-  ) {
-    // Try to understand context from conversation history
-    if (conversationHistory.isNotEmpty) {
-      final lastMessage = conversationHistory.last['message']?.toLowerCase() ?? '';
+  bool _isAstronomyQuery(String message, List<String> keywords) {
+    return keywords.contains('astronomy') || keywords.contains('nakshatra') || keywords.contains('moon phase') || message.contains('nakshatra');
+  }
+
+  String _getAstronomyResponse(String message, List<String> keywords) {
+    // Check for Nakshatra queries
+    final nakshatras = _astronomyKnowledge['nakshatras']!.keys.toList();
+    for (var nakshatra in nakshatras) {
+      if (message.contains(nakshatra.replaceAll('_', ' '))) {
+        return '**${nakshatra.toUpperCase().replaceAll('_', ' ')} Nakshatra**\n\n${_astronomyKnowledge['nakshatras']![nakshatra]}';
+      }
+    }
+    
+    // Check for moon phase queries
+    if (message.contains('moon') || message.contains('phase')) {
+      return '**Moon Phases & Their Significance**\n\n${_astronomyKnowledge['moon_phases']!.values.join('\n\n')}';
+    }
+    
+    return 'Astronomy in Vedic tradition includes:\n• 27 Nakshatras (Lunar Mansions) and their meanings\n• Moon phases and their effects\n• Planetary positions and influences\n\nWhich aspect of astronomy would you like to explore?';
+  }
+
+  bool _isLifeGuidanceQuery(String message, List<String> keywords) {
+    final topics = ['love', 'career', 'health', 'wealth', 'marriage', 'relationship', 'job', 'money', 'finance'];
+    return topics.any((topic) => keywords.contains(topic) || message.contains(topic));
+  }
+
+  String _getLifeGuidanceResponse(String message, List<String> keywords, List<Map<String, String>> history) {
+    if (message.contains('love') || message.contains('relationship') || message.contains('marriage')) {
+      return '''**Love & Relationship Guidance**
+
+In Vedic Astrology, love and relationships are governed by:
+• **7th House (Marriage House)** - Indicates partnership and spouse
+• **Venus** - Planet of love, beauty, and harmony
+• **Jupiter** - Brings wisdom and growth in relationships
+
+**Remedies for Love:**
+• Strengthen Venus by wearing white on Fridays
+• Chant "Om Shukraya Namah" daily
+• Donate white flowers or items on Fridays
+• Keep a Venus Yantra in your home
+
+**Compatibility:** Check the positions of Venus and 7th house lord in both charts. Mutual aspects create strong bonds.
+
+Would you like to know about your specific zodiac sign's love compatibility?''';
+    }
+    
+    if (message.contains('career') || message.contains('job') || message.contains('profession')) {
+      return '''**Career Guidance**
+
+In Vedic Astrology, career is indicated by:
+• **10th House (Karma House)** - Represents profession and reputation
+• **Saturn** - Brings discipline and long-term success
+• **Jupiter** - Brings expansion and growth in career
+
+**Remedies for Career:**
+• Strengthen 10th house lord through remedies
+• Chant "Om Shanaye Namah" for Saturn
+• Focus on your natural talents and strengths
+• Perform career-related pujas
+
+**Best Careers by Element:**
+• Fire signs (Aries, Leo, Sagittarius): Leadership, entrepreneurship
+• Earth signs (Taurus, Virgo, Capricorn): Business, finance, real estate
+• Air signs (Gemini, Libra, Aquarius): Communication, technology, arts
+• Water signs (Cancer, Scorpio, Pisces): Healing, creativity, service
+
+What is your zodiac sign? I can provide specific career guidance.''';
+    }
+    
+    if (message.contains('health') || message.contains('disease') || message.contains('illness')) {
+      return '''**Health Guidance**
+
+In Vedic Astrology, health is indicated by:
+• **6th House (Disease House)** - Shows health issues and enemies
+• **Sun & Mars** - Affect vitality and energy
+• **Moon** - Affects mental and emotional health
+
+**Remedies for Health:**
+• Strengthen 6th house lord
+• Regular exercise and balanced diet
+• Chant health mantras daily
+• Perform health-related remedies
+
+**Health by Zodiac:**
+Each sign has specific health concerns. Strengthen your ruling planet for better health.
+
+Would you like health guidance specific to your zodiac sign?''';
+    }
+    
+    if (message.contains('wealth') || message.contains('money') || message.contains('finance')) {
+      return '''**Wealth & Finance Guidance**
+
+In Vedic Astrology, wealth is indicated by:
+• **2nd House (Wealth House)** - Represents savings and family wealth
+• **11th House (Gains House)** - Represents income and profits
+• **Jupiter & Venus** - Wealth-giving planets
+
+**Remedies for Wealth:**
+• Strengthen Jupiter by wearing yellow on Thursdays
+• Chant "Om Gurave Namah" for Jupiter
+• Donate yellow items, turmeric, or gold
+• Keep a Lakshmi Yantra in Northeast
+
+**Vastu for Wealth:**
+• Keep safe/cash in North direction
+• Place water fountain in Northeast
+• Keep entrance clean and well-lit
+
+Would you like specific wealth remedies based on your chart?''';
+    }
+    
+    return 'I can provide guidance on love, career, health, and wealth based on Vedic Astrology. Which area would you like to explore?';
+  }
+
+  String _getIntelligentResponse(String message, List<String> keywords, List<Map<String, String>> history) {
+    // Try to understand context from conversation
+    if (history.isNotEmpty) {
+      final lastMessage = history.last['message']?.toLowerCase() ?? '';
       if (lastMessage.contains('sign') || lastMessage.contains('zodiac')) {
-        return 'Based on our conversation, I can provide more detailed insights about your zodiac sign and its effects on your life. What specific aspect would you like to explore?';
+        return 'Based on our conversation, I can provide more detailed insights about your zodiac sign, including career, love, health, and remedies. What specific aspect would you like to explore further?';
       }
     }
     
-    // Default intelligent response
+    // Provide helpful guidance
     if (message.contains('?') || message.contains('what') || message.contains('how') || message.contains('why')) {
-      return 'That\'s an interesting question! In Vedic Astrology, this relates to planetary positions and their influences. Could you provide more details about your specific situation or birth chart?';
+      return 'That\'s a great question! In Vedic Astrology, I can help you understand:\n\n• Your zodiac sign characteristics and compatibility\n• Planetary influences and remedies\n• Numerology and life path numbers\n• Vastu Shastra for your home/office\n• Career, love, health, and wealth guidance\n\nCould you be more specific about what you\'d like to know? For example, "Tell me about Aries" or "What is my life path number?"';
     }
     
-    return 'I understand you\'re seeking guidance. In Vedic Astrology, every aspect of life is influenced by planetary positions. Could you tell me more about what specific area you\'d like guidance on? (Love, Career, Health, Wealth, Marriage, or Kundli interpretation)';
+    return 'I\'m here to help you with Vedic Astrology, Numerology, Vastu, and Astronomy. You can ask me:\n\n• About your zodiac sign\n• Numerology readings\n• Vastu guidance for your home\n• Planetary positions and remedies\n• Career, love, health, or wealth guidance\n\nWhat would you like to know?';
   }
 }
-

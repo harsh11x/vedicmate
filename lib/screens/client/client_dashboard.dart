@@ -1,22 +1,24 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
-import '../../models/pandit_model.dart';
-import '../../widgets/pandit_card.dart';
+import '../../models/ai_pandit_model.dart';
 import '../../widgets/daily_horoscope_card.dart';
 import '../../widgets/quick_stats_widget.dart';
 import '../../widgets/auspicious_timings_widget.dart';
 import '../../widgets/special_offers_widget.dart';
 import '../../widgets/numerology_widget.dart';
 import '../../widgets/astronomy_widget.dart';
-import '../../services/pandit_service.dart';
+import '../../widgets/service_info_cards.dart';
+import '../../widgets/ai_pandits_section.dart';
+import '../../widgets/staggered_list_animation.dart';
 import '../../providers/api_providers.dart';
+import '../../providers/wallet_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'live_screen.dart';
 import 'remedies_screen.dart';
 import 'ai_pandit_chat_screen.dart';
-import '../shared/pandit_search_screen.dart';
-import '../shared/pandit_profile_detail_screen.dart';
 import '../shared/booking_scheduling_screen.dart';
 import '../shared/chat_screen.dart';
 import '../shared/video_call_screen.dart';
@@ -45,49 +47,50 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
+      extendBody: true,
+      body: Stack(
         children: [
-          _HomeTab(
-            searchController: _searchController,
-            onNavigateToTab: (index) => setState(() => _currentIndex = index),
+          IndexedStack(
+            index: _currentIndex,
+            children: [
+              _HomeTab(
+                searchController: _searchController,
+                onNavigateToTab: (index) => setState(() => _currentIndex = index),
+              ),
+              _ChatTab(),
+              const LiveScreen(),
+              const RemediesScreen(),
+              _ProfileTab(),
+            ],
           ),
-          _ChatTab(),
-          const LiveScreen(),
-          const RemediesScreen(),
-          _ProfileTab(),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            right: 20,
+            child: Container(
+              decoration: AppTheme.glassMorphism,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildNavItem(Icons.home_rounded, 'Home', 0),
+                        _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
+                        _buildNavItem(Icons.live_tv_rounded, 'Live', 2),
+                        _buildNavItem(Icons.shopping_bag_rounded, 'Remedies', 3),
+                        _buildNavItem(Icons.person_rounded, 'Profile', 4),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.neutralDark.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.08,
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.02,
-              vertical: 8,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.home, 'Home', 0),
-                _buildNavItem(Icons.chat_bubble_outline, 'Chat', 1),
-                _buildNavItem(Icons.live_tv, 'Live', 2),
-                _buildNavItem(Icons.shopping_bag, 'Remedies', 3),
-                _buildNavItem(Icons.person_outline, 'Profile', 4),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -96,24 +99,34 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _currentIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            isSelected ? icon : icon,
-            color: isSelected ? AppTheme.yellowPrimary : AppTheme.neutralLight,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? AppTheme.yellowPrimary : AppTheme.neutralLight,
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryOrange.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralLight,
+              size: 24,
             ),
-          ),
-        ],
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: AppTheme.primaryOrange,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -135,8 +148,6 @@ class _HomeTab extends ConsumerStatefulWidget {
 class _HomeTabState extends ConsumerState<_HomeTab> {
   @override
   Widget build(BuildContext context) {
-    final panditService = ref.watch(panditServiceProvider);
-    final panditsAsync = ref.watch(panditsProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.white,
@@ -172,30 +183,39 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                         ],
                       ),
                     ),
-                    // Wallet Balance Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: AppTheme.softShadow,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.account_balance_wallet, size: 18, color: AppTheme.textDark),
-                          const SizedBox(width: 6),
-                          Text(
-                            '₹1,250',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: AppTheme.textDark,
+                    // Wallet Balance Badge - Synced
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final walletBalanceAsync = ref.watch(walletBalanceProvider);
+                        final balance = walletBalanceAsync.valueOrNull ?? 0.0;
+                        return GestureDetector(
+                          onTap: () => context.push('/payment/wallet'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: AppTheme.softBorder,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.account_balance_wallet, size: 18, color: AppTheme.textDark),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '₹${balance.toStringAsFixed(0)}',
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.textDark,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(width: 8),
                     Stack(
@@ -203,7 +223,11 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                         IconButton(
                           icon: const Icon(Icons.notifications_outlined),
                           color: AppTheme.neutralDark,
-                          onPressed: () {},
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('No new notifications')),
+                            );
+                          },
                         ),
                         Positioned(
                           right: 8,
@@ -226,13 +250,9 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-            // Quick Stats Widget
-            SliverToBoxAdapter(
-              child: QuickStatsWidget(
-                walletBalance: 1250.0,
-                upcomingBookings: 2,
-                activeChats: 3,
-              ),
+            // AI Pandits Section - Replaces Stories
+            const SliverToBoxAdapter(
+              child: AIPanditsSection(),
             ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -245,27 +265,75 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                   decoration: BoxDecoration(
                     color: AppTheme.neutralSoft,
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: AppTheme.softShadow,
                   ),
                   child: TextField(
                     controller: widget.searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search',
+                      hintText: 'Search AI Pandits, Services...',
                       prefixIcon: const Icon(Icons.search, color: AppTheme.neutralMedium),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.mic, color: AppTheme.neutralMedium),
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Voice search coming soon!')),
+                          );
+                        },
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.all(16),
                     ),
                     onSubmitted: (value) {
                       if (value.isNotEmpty) {
-                        context.push('/pandit/search?q=$value');
+                        context.push('/ai-pandits/all?q=$value');
                       }
                     },
                   ),
                 ),
               ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // AI Services - Prominent placement
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _AIServiceCard(
+                        icon: Icons.auto_awesome,
+                        label: 'AI Astrologer',
+                        subtitle: 'Chat with AI',
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                        ),
+                        onTap: () => context.push('/ai-pandit/chat'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _AIServiceCard(
+                        icon: Icons.phone,
+                        label: 'AI Voice Call',
+                        subtitle: 'Talk with AI',
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.successGreen, Color(0xFF4CAF50)],
+                        ),
+                        onTap: () => context.push('/ai-pandit/voice-call'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            
+            // Service Info Cards - Numerology, Horoscope, Astrology, Vastu, Kundli
+            SliverToBoxAdapter(
+              child: const ServiceInfoCards(),
             ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -281,7 +349,22 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // Service Categories
+            // Explore Services - Service Categories
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Explore Services',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.neutralDark,
+                  ),
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
             SliverToBoxAdapter(
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.12,
@@ -291,20 +374,6 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                     horizontal: MediaQuery.of(context).size.width * 0.05,
                   ),
                   children: [
-                    _ServiceCategoryCard(
-                      icon: Icons.auto_awesome,
-                      label: 'AI Astrologer',
-                      color: AppTheme.yellowPrimary,
-                      onTap: () => context.push('/ai-pandit/chat'),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.04),
-                    _ServiceCategoryCard(
-                      icon: Icons.phone,
-                      label: 'AI Voice Call',
-                      color: AppTheme.successGreen,
-                      onTap: () => context.push('/ai-pandit/voice-call'),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.04),
                     _ServiceCategoryCard(
                       icon: Icons.star,
                       label: 'Kundli',
@@ -366,7 +435,11 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('More offers coming soon!')),
+                            );
+                          },
                           child: const Text('View All'),
                         ),
                       ],
@@ -506,7 +579,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-            // Trending Pandits Section
+            // Top Rated AI Pandits Section
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -520,18 +593,20 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: AppTheme.errorRed.withOpacity(0.1),
+                            gradient: const LinearGradient(
+                              colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
-                            Icons.local_fire_department,
-                            color: AppTheme.errorRed,
+                            Icons.auto_awesome,
+                            color: AppTheme.textDark,
                             size: 20,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Trending Astrologers',
+                          'Top Rated AI Pandits',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 20,
@@ -540,7 +615,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       ],
                     ),
                     TextButton(
-                      onPressed: () => context.push('/pandit/search'),
+                      onPressed: () => context.push('/ai-pandits/all'),
                       child: const Text('See all'),
                     ),
                   ],
@@ -550,61 +625,39 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-            // Featured Pandits (Top Rated)
+            // Featured AI Pandits (Top Rated)
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 260,
-                child: panditsAsync.when(
-                  data: (pandits) {
-                    if (pandits.isEmpty) {
-                      return Center(
-                        child: Text(
-                          'No astrologers available',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.neutralMedium,
-                          ),
-                        ),
-                      );
-                    }
-                    // Sort by rating and take top 3
-                    final sortedPandits = List<PanditModel>.from(pandits)
-                      ..sort((a, b) => b.rating.compareTo(a.rating));
-                    final featuredPandits = sortedPandits.take(3).toList();
+                child: Builder(
+                  builder: (context) {
+                    final aiPandits = AIPandits.getTopRated(limit: 5);
                     
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: featuredPandits.length,
+                      itemCount: aiPandits.length,
                       itemBuilder: (context, index) {
-                        final pandit = featuredPandits[index];
+                        final pandit = aiPandits[index];
                         return Container(
                           width: 200,
                           margin: const EdgeInsets.only(right: 16),
-                          child: _FeaturedPanditCard(
+                          child: _FeaturedAIPanditCard(
                             pandit: pandit,
                             isTopRated: index == 0,
-                            onTap: () => context.push('/pandit/profile/${pandit.id}'),
+                            onTap: () => context.push('/ai-pandit/chat?panditId=${pandit.id}'),
                           ),
                         );
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Center(
-                    child: Text(
-                      'Error loading astrologers',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.errorRed,
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-            // All Astrologers Section Header
+            // All AI Pandits Section Header
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -614,14 +667,14 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'All Astrologers',
+                      'All AI Pandits',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 20,
                       ),
                     ),
                     TextButton(
-                      onPressed: () => context.push('/pandit/search'),
+                      onPressed: () => context.push('/ai-pandits/all'),
                       child: const Text('See all'),
                     ),
                   ],
@@ -631,48 +684,31 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-            // Astrologers List (Horizontal Scrollable)
+            // AI Pandits List (Horizontal Scrollable)
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 240,
-                child: panditsAsync.when(
-                  data: (pandits) {
-                    if (pandits.isEmpty) {
-                      return Center(
-                        child: Text(
-                          'No astrologers available',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.neutralMedium,
-                          ),
-                        ),
-                      );
-                    }
+                child: Builder(
+                  builder: (context) {
+                    final aiPandits = AIPandits.getAllPandits();
+                    
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: pandits.length,
+                      itemCount: aiPandits.length,
                       itemBuilder: (context, index) {
-                        final pandit = pandits[index];
+                        final pandit = aiPandits[index];
                         return Container(
                           width: 180,
                           margin: const EdgeInsets.only(right: 16),
-                          child: _AstrologerCard(
+                          child: _AIPanditCard(
                             pandit: pandit,
-                            onTap: () => context.push('/pandit/profile/${pandit.id}'),
+                            onTap: () => context.push('/ai-pandit/chat?panditId=${pandit.id}'),
                           ),
                         );
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Center(
-                    child: Text(
-                      'Error loading astrologers',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.errorRed,
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -739,6 +775,82 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
   }
 }
 
+// AI Service Card - Prominent card for AI services
+class _AIServiceCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final Gradient gradient;
+  final VoidCallback onTap;
+
+  const _AIServiceCard({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.gradient,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: (gradient.colors.firstOrNull ?? Colors.black).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+              spreadRadius: -2,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Icon(icon, color: Colors.white, size: 28),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ServiceCategoryCard extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -760,11 +872,21 @@ class _ServiceCategoryCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: cardWidth.clamp(70.0, 100.0),
-        padding: EdgeInsets.all((screenWidth * 0.04).clamp(12.0, 16.0)),
+        padding: EdgeInsets.all((screenWidth * 0.03).clamp(10.0, 14.0)),
         decoration: BoxDecoration(
           color: AppTheme.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: AppTheme.softShadow,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: color.withOpacity(0.1),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -775,7 +897,7 @@ class _ServiceCategoryCard extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: color, size: 28),
+              child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(height: 8),
             FittedBox(
@@ -785,6 +907,7 @@ class _ServiceCategoryCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: (screenWidth * 0.03).clamp(10.0, 12.0),
+                  color: AppTheme.neutralDark,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -798,11 +921,12 @@ class _ServiceCategoryCard extends StatelessWidget {
   }
 }
 
-class _AstrologerCard extends StatelessWidget {
-  final PanditModel pandit;
+// AI Pandit Card Widget
+class _AIPanditCard extends StatelessWidget {
+  final AIPanditModel pandit;
   final VoidCallback onTap;
 
-  const _AstrologerCard({
+  const _AIPanditCard({
     required this.pandit,
     required this.onTap,
   });
@@ -823,91 +947,189 @@ class _AstrologerCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppTheme.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: AppTheme.mediumShadow,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppTheme.yellowPrimary.withOpacity(0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.yellowPrimary.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with favorite icon
+            // Image with AI badge
             Stack(
               children: [
                 Container(
-                  height: 140,
+                  height: 130,
                   decoration: BoxDecoration(
-                    color: bgColor.withOpacity(0.2),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppTheme.yellowPrimary.withOpacity(0.2),
+                        bgColor.withOpacity(0.1),
+                      ],
+                    ),
                     borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
+                      top: Radius.circular(20),
                     ),
                   ),
                   child: Center(
-                    child: pandit.profileImage != null
-                        ? ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(16),
-                            ),
-                            child: Image.network(
-                              pandit.profileImage!,
-                              width: double.infinity,
-                              height: 140,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  _buildDefaultAvatar(bgColor),
-                            ),
-                          )
-                        : _buildDefaultAvatar(bgColor),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                      child: Image.network(
+                        pandit.profileImage,
+                        width: double.infinity,
+                        height: 130,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Icon(Icons.person, size: 50, color: bgColor.withOpacity(0.5)),
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
                   top: 8,
-                  right: 8,
-                  child: IconButton(
-                    icon: const Icon(Icons.favorite_border, size: 20),
-                    color: Colors.purple,
-                    onPressed: () {},
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: AppTheme.goldGlowShadow,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.auto_awesome, size: 12, color: AppTheme.textDark),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'AI',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textDark,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+                Positioned(
+                  bottom: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star, color: AppTheme.accentGold, size: 10),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${pandit.rating}',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (pandit.isAvailable)
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.successGreen,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Online',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.white,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
             // Info
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pandit.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pandit.name,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          pandit.specializations.firstOrNull ?? 'AI Astrologer',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.neutralMedium,
+                            fontSize: 11,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: AppTheme.yellowPrimary, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${pandit.rating}',
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${pandit.experienceYears}+ Yrs Exp',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          color: AppTheme.textDark,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '₹${pandit.servicePricing.values.first.toInt()}/per min',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.primaryOrange,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -915,59 +1137,103 @@ class _AstrologerCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildDefaultAvatar(Color bgColor) {
-    return Container(
-      width: double.infinity,
-      height: 140,
-      decoration: BoxDecoration(
-        color: bgColor.withOpacity(0.3),
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(16),
-        ),
-      ),
-      child: Icon(
-        Icons.person,
-        size: 60,
-        color: bgColor,
-      ),
-    );
-  }
 }
 
-class _ChatTab extends StatelessWidget {
+class _ChatTab extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final chatService = ref.watch(chatServiceProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat'),
         backgroundColor: AppTheme.white,
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.chat_bubble_outline, size: 64, color: AppTheme.neutralLight),
-            const SizedBox(height: 16),
-            Text(
-              'No chats yet',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start a conversation with an astrologer',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.neutralMedium,
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: chatService.getUserChatRooms(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          final chatRooms = snapshot.data ?? [];
+
+          if (chatRooms.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.chat_bubble_outline, size: 64, color: AppTheme.neutralLight),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No chats yet',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Start a conversation with an AI Pandit',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.neutralMedium,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => context.push('/ai-pandits/all'),
+                    child: const Text('Browse AI Pandits'),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => context.push('/pandit/search'),
-              child: const Text('Browse Astrologers'),
-            ),
-          ],
-        ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: chatRooms.length,
+            itemBuilder: (context, index) {
+              final chatRoom = chatRooms[index];
+              final participants = chatRoom['participantNames'] as Map<String, dynamic>? ?? {};
+              final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+              final otherParticipantName = participants.entries
+                  .firstWhere(
+                    (e) => e.key != currentUserId,
+                    orElse: () => MapEntry('', 'Pandit'),
+                  )
+                  .value as String? ?? 'Pandit';
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
+                    child: Icon(Icons.person, color: AppTheme.primaryOrange),
+                  ),
+                  title: Text(
+                    otherParticipantName,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    chatRoom['lastMessage'] ?? 'No messages yet',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Icon(Icons.chevron_right),
+                  onTap: () {
+                    // Navigate to chat screen
+                    // We need booking ID - for now use chat room ID
+                    context.push('/chat/${chatRoom['id']}');
+                  },
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -994,15 +1260,15 @@ class _CallTab extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Book a call with an astrologer',
+              'Start a voice call with an AI Pandit',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppTheme.neutralMedium,
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () => context.push('/pandit/search'),
-              child: const Text('Browse Astrologers'),
+              onPressed: () => context.push('/ai-pandits/all'),
+              child: const Text('Browse AI Pandits'),
             ),
           ],
         ),
@@ -1019,83 +1285,315 @@ class _ProfileTab extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 320, // Increased height to prevent overlap
             pinned: true,
             backgroundColor: AppTheme.white,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: AppTheme.primaryGradient,
-                ),
-                child: SafeArea(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              background: Stack(
+                children: [
+                  // Gradient Background
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppTheme.primaryOrange,
+                          AppTheme.primaryDeep,
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Decorative Circles
+                  Positioned(
+                    top: -50,
+                    right: -50,
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -30,
+                    left: -30,
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  // Profile Content
+                  SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: AppTheme.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppTheme.white, width: 4),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: AppTheme.primaryOrange,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.yellowPrimary,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppTheme.white, width: 2),
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
+                                  size: 14,
+                                  color: AppTheme.textDark,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Nickals',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: AppTheme.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '+91 98765 43210',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40), // Added spacing at bottom
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Dashboard Stats Card
+          SliverToBoxAdapter(
+            child: Transform.translate(
+              offset: const Offset(0, -30),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppTheme.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppTheme.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppTheme.white, width: 4),
-                        ),
-                        child: const Icon(
-                          Icons.person,
-                          size: 40,
-                          color: AppTheme.primaryOrange,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Nickals',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: AppTheme.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'Complete your profile',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.white.withOpacity(0.9),
-                        ),
-                      ),
+                      _buildStatItem(context, 'Wallet', '₹500', Icons.account_balance_wallet, AppTheme.successGreen),
+                      Container(width: 1, height: 40, color: AppTheme.neutralLight),
+                      _buildStatItem(context, 'Bookings', '12', Icons.calendar_today, AppTheme.primaryOrange),
+                      Container(width: 1, height: 40, color: AppTheme.neutralLight),
+                      _buildStatItem(context, 'Minutes', '450', Icons.timer, AppTheme.infoBlue),
                     ],
                   ),
                 ),
               ),
             ),
           ),
+
+          // Menu Items
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _ProfileMenuItem(
-                    icon: Icons.edit,
-                    title: 'Edit Profile',
-                    subtitle: 'Update your personal information',
-                    onTap: () {},
+                  Text(
+                    'Account',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.neutralDark,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  _ProfileMenuItem(
-                    icon: Icons.account_balance_wallet,
-                    title: 'Wallet & Payments',
-                    subtitle: 'Manage your wallet and transactions',
-                    onTap: () => context.push('/payment/wallet'),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: AppTheme.softShadow,
+                    ),
+                    child: Column(
+                      children: [
+                        _ProfileMenuItem(
+                          icon: Icons.person_outline,
+                          title: 'Edit Profile',
+                          subtitle: 'Update your personal information',
+                          onTap: () => context.push('/profile/edit'),
+                          isFirst: true,
+                        ),
+                        _ProfileMenuItem(
+                          icon: Icons.account_balance_wallet_outlined,
+                          title: 'Wallet & Payments',
+                          subtitle: 'Manage your wallet and transactions',
+                          onTap: () => context.push('/payment/wallet'),
+                        ),
+                        _ProfileMenuItem(
+                          icon: Icons.history,
+                          title: 'Booking History',
+                          subtitle: 'View your past consultations',
+                          onTap: () => context.push('/bookings/history'),
+                          isLast: true,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  _ProfileMenuItem(
-                    icon: Icons.history,
-                    title: 'Booking History',
-                    subtitle: 'View your past consultations',
-                    onTap: () => context.push('/bookings/history'),
+                  
+                  const SizedBox(height: 24),
+                  
+                  Text(
+                    'Preferences',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.neutralDark,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  _ProfileMenuItem(
-                    icon: Icons.settings,
-                    title: 'Settings',
-                    subtitle: 'App preferences and privacy',
-                    onTap: () => context.push('/settings'),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: AppTheme.softShadow,
+                    ),
+                    child: Column(
+                      children: [
+                        _ProfileMenuItem(
+                          icon: Icons.language,
+                          title: 'Language',
+                          subtitle: 'English (US)',
+                          onTap: () {},
+                          isFirst: true,
+                        ),
+                        _ProfileMenuItem(
+                          icon: Icons.notifications_outlined,
+                          title: 'Notifications',
+                          subtitle: 'Manage your alerts',
+                          onTap: () {},
+                        ),
+                        _ProfileMenuItem(
+                          icon: Icons.settings_outlined,
+                          title: 'Settings',
+                          subtitle: 'App preferences and privacy',
+                          onTap: () => context.push('/settings'),
+                          isLast: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  Text(
+                    'Support',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.neutralDark,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: AppTheme.softShadow,
+                    ),
+                    child: Column(
+                      children: [
+                        _ProfileMenuItem(
+                          icon: Icons.help_outline,
+                          title: 'Help & Support',
+                          subtitle: 'Get assistance with your issues',
+                          onTap: () {},
+                          isFirst: true,
+                        ),
+                        _ProfileMenuItem(
+                          icon: Icons.info_outline,
+                          title: 'About Us',
+                          subtitle: 'Learn more about Vedic Mate',
+                          onTap: () {},
+                          isLast: true,
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Logout Button
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 100),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle logout
+                        context.go('/login');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.errorRed.withOpacity(0.1),
+                        foregroundColor: AppTheme.errorRed,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text(
+                        'Log Out',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -1105,6 +1603,35 @@ class _ProfileTab extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon, Color color) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: AppTheme.neutralMedium,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _ProfileMenuItem extends StatelessWidget {
@@ -1112,47 +1639,78 @@ class _ProfileMenuItem extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onTap;
+  final bool isFirst;
+  final bool isLast;
 
   const _ProfileMenuItem({
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.isFirst = false,
+    this.isLast = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.softShadow,
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.primaryLight,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(icon, color: AppTheme.primaryOrange),
-        ),
-        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-        trailing: const Icon(Icons.chevron_right),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.vertical(
+          top: isFirst ? const Radius.circular(20) : Radius.zero,
+          bottom: isLast ? const Radius.circular(20) : Radius.zero,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.neutralSoft,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: AppTheme.primaryOrange, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.neutralMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: AppTheme.neutralLight),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-// Featured Pandit Card with Badge
-class _FeaturedPanditCard extends StatelessWidget {
-  final PanditModel pandit;
+// Featured AI Pandit Card with Badge
+class _FeaturedAIPanditCard extends StatelessWidget {
+  final AIPanditModel pandit;
   final bool isTopRated;
   final VoidCallback onTap;
 
-  const _FeaturedPanditCard({
+  const _FeaturedAIPanditCard({
     required this.pandit,
     required this.isTopRated,
     required this.onTap,
@@ -1166,10 +1724,17 @@ class _FeaturedPanditCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(20),
-          border: isTopRated
-              ? Border.all(color: AppTheme.yellowPrimary, width: 2)
-              : null,
-          boxShadow: isTopRated ? AppTheme.glowShadow : AppTheme.mediumShadow,
+          border: Border.all(
+            color: isTopRated ? AppTheme.yellowPrimary : AppTheme.yellowPrimary.withOpacity(0.3),
+            width: isTopRated ? 2.5 : 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.yellowPrimary.withOpacity(isTopRated ? 0.3 : 0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1184,7 +1749,7 @@ class _FeaturedPanditCard extends StatelessWidget {
                       end: Alignment.bottomRight,
                       colors: [
                         AppTheme.yellowPrimary.withOpacity(0.3),
-                        AppTheme.primaryOrange.withOpacity(0.2),
+                        AppTheme.goldAccent.withOpacity(0.2),
                       ],
                     ),
                     borderRadius: const BorderRadius.vertical(
@@ -1192,23 +1757,22 @@ class _FeaturedPanditCard extends StatelessWidget {
                     ),
                   ),
                   child: Center(
-                    child: pandit.profileImage != null
-                        ? ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                            child: Image.network(
-                              pandit.profileImage!,
-                              width: double.infinity,
-                              height: 150,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Icon(
-                            Icons.person,
-                            size: 60,
-                            color: AppTheme.yellowPrimary,
-                          ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                      child: Image.network(
+                        pandit.profileImage,
+                        width: double.infinity,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.person,
+                          size: 60,
+                          color: AppTheme.yellowPrimary,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 if (isTopRated)
@@ -1229,7 +1793,7 @@ class _FeaturedPanditCard extends StatelessWidget {
                         children: [
                           const Icon(Icons.star, size: 16, color: AppTheme.textDark),
                           const SizedBox(width: 4),
-                          Text(
+                          const Text(
                             'Top Rated',
                             style: TextStyle(
                               color: AppTheme.textDark,
@@ -1247,7 +1811,36 @@ class _FeaturedPanditCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      gradient: const LinearGradient(
+                        colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: AppTheme.goldGlowShadow,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.auto_awesome, color: AppTheme.textDark, size: 12),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'AI',
+                          style: TextStyle(
+                            color: AppTheme.textDark,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -1270,7 +1863,7 @@ class _FeaturedPanditCard extends StatelessWidget {
                 if (pandit.isAvailable)
                   Positioned(
                     bottom: 8,
-                    left: 8,
+                    right: 8,
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
@@ -1317,17 +1910,27 @@ class _FeaturedPanditCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '₹${pandit.servicePricing.values.first.toInt()}/min',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppTheme.primaryOrange,
-                          fontWeight: FontWeight.w700,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${pandit.experienceYears}+ Yrs',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: AppTheme.textDark,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                       Row(
                         children: [
                           GestureDetector(
-                            onTap: () => context.push('/booking/schedule?panditId=${pandit.id}&serviceType=chat'),
+                            onTap: onTap,
                             child: Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
@@ -1343,7 +1946,7 @@ class _FeaturedPanditCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           GestureDetector(
-                            onTap: () => context.push('/booking/schedule?panditId=${pandit.id}&serviceType=video'),
+                            onTap: () => context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
                             child: Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
@@ -1395,10 +1998,9 @@ class _QuickActionCard extends StatelessWidget {
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withOpacity(0.3),
             width: 1.5,
           ),
-          boxShadow: AppTheme.softShadow,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1431,8 +2033,3 @@ class _QuickActionCard extends StatelessWidget {
   }
 }
 
-// Provider for fetching pandits
-final panditsProvider = FutureProvider<List<PanditModel>>((ref) async {
-  final panditService = ref.watch(panditServiceProvider);
-  return await panditService.fetchPandits();
-});

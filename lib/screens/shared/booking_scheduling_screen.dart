@@ -3,10 +3,14 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_constants.dart';
 import '../../providers/api_providers.dart';
+import '../../providers/wallet_provider.dart';
 import '../../services/settings_service.dart';
+import '../../services/booking_service.dart';
+import '../../models/booking_model.dart';
 
 class BookingSchedulingScreen extends ConsumerStatefulWidget {
   final String panditId;
@@ -246,28 +250,93 @@ class _BookingSchedulingScreenState extends ConsumerState<BookingSchedulingScree
   }
 
   void _handleBooking() async {
+    if (_selectedTimeSlot == null) return;
+
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() => _isLoading = false);
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Booking Confirmed!'),
-          content: Text(
-            'Your consultation is scheduled for ${DateFormat('MMM dd, yyyy').format(_selectedDate)} at $_selectedTimeSlot',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                context.go('/client/dashboard');
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+
+    try {
+      final bookingService = ref.read(bookingServiceProvider);
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      
+      if (userId == null) {
+        throw Exception('Please login to book a consultation');
+      }
+
+      // Parse time slot
+      final timeParts = _selectedTimeSlot!.split(' ');
+      final time = timeParts[0];
+      final period = timeParts[1];
+      final hourMinute = time.split(':');
+      int hour = int.parse(hourMinute[0]);
+      final minute = int.parse(hourMinute[1]);
+      
+      if (period == 'PM' && hour != 12) hour += 12;
+      if (period == 'AM' && hour == 12) hour = 0;
+
+      final scheduledDateTime = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        hour,
+        minute,
       );
+
+      // Get service price from pandit (simplified - should fetch from pandit model)
+      final servicePrice = _servicePrice;
+
+      // Create booking
+      final booking = await bookingService.createBooking(
+        clientId: userId,
+        panditId: widget.panditId,
+        serviceType: widget.serviceType,
+        scheduledAt: scheduledDateTime,
+        duration: 30, // Default duration
+        callType: _selectedCallType,
+        servicePrice: servicePrice,
+      );
+
+      if (mounted) {
+        setState(() => _isLoading = false);
+        
+        // Refresh wallet balance
+        ref.read(walletNotifierProvider.notifier).refresh();
+        
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Booking Confirmed!'),
+            content: Text(
+              'Your consultation is scheduled for ${DateFormat('MMM dd, yyyy').format(scheduledDateTime)} at $_selectedTimeSlot\n\nBooking ID: ${booking.id}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  context.go('/client/dashboard');
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Booking Failed'),
+            content: Text(e.toString().replaceFirst('Exception: ', '')),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 }
