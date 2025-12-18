@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
@@ -98,11 +99,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
       setState(() => _isLoading = true);
       
       try {
-        // Register user using Firebase Auth
+        // Register user using Firebase Auth with email and password
         User? user = await _authService.register(
           _nameController.text,
           _emailController.text,
           _phoneController.text,
+          _passwordController.text,
           _selectedRole,
           dateOfBirth: _selectedDate,
           placeOfBirth: _placeOfBirthController.text,
@@ -164,6 +166,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: false,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -552,7 +560,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                         children: [
                           Text(
                             'Already have an account? ',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.neutralDark,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                           TextButton(
                             onPressed: () => context.go('/login'),
@@ -561,6 +573,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.yellowPrimary,
+                                fontSize: 14,
                               ),
                             ),
                           ),

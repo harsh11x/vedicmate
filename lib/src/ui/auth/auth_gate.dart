@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../services/auth_service.dart';
-import 'phone_auth_page.dart';
+import 'login_page.dart';
 import '../home/home_page.dart';
 
 class AuthGate extends StatelessWidget {
@@ -19,7 +19,7 @@ class AuthGate extends StatelessWidget {
         }
         final user = snapshot.data;
         if (user == null) {
-          return const PhoneAuthPage();
+          return const LoginPage();
         }
         return const HomePage();
       },

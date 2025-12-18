@@ -80,3 +80,8 @@ app.*.map.json
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 
+
+# Node modules
+node_modules/
+admin-panel/node_modules/
+**/node_modules/

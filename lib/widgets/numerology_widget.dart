@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../core/theme/app_theme.dart';
+import '../services/astrology_service.dart';
+import '../services/horoscope_service.dart';
 
-class NumerologyWidget extends StatelessWidget {
+final astrologyServiceProvider = Provider<AstrologyService>((ref) {
+  return AstrologyService();
+});
+
+class NumerologyWidget extends ConsumerWidget {
   const NumerologyWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),

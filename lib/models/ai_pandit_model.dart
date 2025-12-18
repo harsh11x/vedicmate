@@ -65,7 +65,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_1',
       name: 'Pandit Rajesh Shastri',
-      profileImage: 'https://ui-avatars.com/api/?name=Rajesh+Shastri&background=FF6B35&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/pandit_rajesh.png',
       specializations: ['Vedic Astrology', 'Kundli Analysis', 'Marriage Matching'],
       experienceYears: 25,
       rating: 4.9,
@@ -78,7 +78,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_2',
       name: 'Acharya Suresh Joshi',
-      profileImage: 'https://ui-avatars.com/api/?name=Suresh+Joshi&background=4ECDC4&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/acharya_suresh.png',
       specializations: ['Numerology', 'Vastu Shastra', 'Gemstone Consultation'],
       experienceYears: 20,
       rating: 4.8,
@@ -91,7 +91,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_3',
       name: 'Pandit Vijay Sharma',
-      profileImage: 'https://ui-avatars.com/api/?name=Vijay+Sharma&background=95E1D3&color=000&size=200',
+      profileImage: 'assets/images/ai_pandits/pandit_vijay.png',
       specializations: ['Palmistry', 'Career Guidance', 'Health Astrology'],
       experienceYears: 18,
       rating: 4.7,
@@ -104,7 +104,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_4',
       name: 'Guru Mahesh Pandey',
-      profileImage: 'https://ui-avatars.com/api/?name=Mahesh+Pandey&background=F38181&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/guru_mahesh.png',
       specializations: ['KP Astrology', 'Stock Market Predictions', 'Business Astrology'],
       experienceYears: 22,
       rating: 4.9,
@@ -117,7 +117,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_5',
       name: 'Jyotish Acharya Ramesh Tripathi',
-      profileImage: 'https://ui-avatars.com/api/?name=Ramesh+Tripathi&background=AA96DA&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/jyotish_ramesh.png',
       specializations: ['Prashna Kundli', 'Muhurat', 'Spiritual Guidance'],
       experienceYears: 30,
       rating: 5.0,
@@ -132,7 +132,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_6',
       name: 'Sadhvi Priya Devi',
-      profileImage: 'https://ui-avatars.com/api/?name=Priya+Devi&background=FFB6B9&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/sadhvi_priya.png',
       specializations: ['Vedic Astrology', 'Love & Relationships', 'Women Wellness'],
       experienceYears: 15,
       rating: 4.9,
@@ -145,7 +145,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_7',
       name: 'Jyotishi Meera Kulkarni',
-      profileImage: 'https://ui-avatars.com/api/?name=Meera+Kulkarni&background=FECA57&color=000&size=200',
+      profileImage: 'assets/images/ai_pandits/jyotishi_meera.png',
       specializations: ['Numerology', 'Name Correction', 'Child Astrology'],
       experienceYears: 12,
       rating: 4.8,
@@ -158,7 +158,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_8',
       name: 'Panditayin Kavita Iyer',
-      profileImage: 'https://ui-avatars.com/api/?name=Kavita+Iyer&background=48DBFB&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/panditayin_kavita.png',
       specializations: ['Vastu Shastra', 'Home Harmony', 'Feng Shui'],
       experienceYears: 16,
       rating: 4.9,
@@ -171,7 +171,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_9',
       name: 'Acharya Anjali Mishra',
-      profileImage: 'https://ui-avatars.com/api/?name=Anjali+Mishra&background=FF9FF3&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/acharya_anjali.png',
       specializations: ['Tarot Reading', 'Spiritual Healing', 'Meditation Guidance'],
       experienceYears: 10,
       rating: 4.7,
@@ -184,7 +184,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_10',
       name: 'Dr. Sunita Acharya',
-      profileImage: 'https://ui-avatars.com/api/?name=Sunita+Acharya&background=54A0FF&color=fff&size=200',
+      profileImage: 'assets/images/ai_pandits/dr_sunita.png',
       specializations: ['Medical Astrology', 'Health Predictions', 'Ayurveda Astrology'],
       experienceYears: 20,
       rating: 4.9,

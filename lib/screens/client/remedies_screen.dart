@@ -9,1409 +9,550 @@ class RemediesScreen extends StatefulWidget {
   State<RemediesScreen> createState() => _RemediesScreenState();
 }
 
-class _RemediesScreenState extends State<RemediesScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _RemediesScreenState extends State<RemediesScreen> {
+  final ScrollController _scrollController = ScrollController();
+  String _selectedCategory = 'All';
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
+  final List<Map<String, dynamic>> _remedies = [
+    {
+      'id': '1',
+      'title': 'Rudraksha Mala',
+      'category': 'Spiritual',
+      'price': 2999,
+      'image': 'assets/images/remedy1.png',
+      'description': 'Authentic Rudraksha mala for spiritual protection and positive energy. Made from genuine Rudraksha beads sourced from Nepal. Wearing this mala helps in meditation, reduces stress, and brings peace of mind.',
+      'benefits': [
+        'Enhances spiritual growth',
+        'Reduces stress and anxiety',
+        'Improves concentration',
+        'Brings positive energy',
+      ],
+    },
+    {
+      'id': '2',
+      'title': 'Ganesh Yantra',
+      'category': 'Vastu',
+      'price': 1499,
+      'image': 'assets/images/remedy2.png',
+      'description': 'Sacred Ganesh Yantra made of pure copper. This powerful yantra removes obstacles, brings prosperity, and ensures success in all endeavors. Place it in your home or office for maximum benefits.',
+      'benefits': [
+        'Removes obstacles',
+        'Brings prosperity',
+        'Ensures success',
+        'Protects from negative energy',
+      ],
+    },
+    {
+      'id': '3',
+      'title': 'Crystal Healing Set',
+      'category': 'Healing',
+      'price': 3999,
+      'image': 'assets/images/remedy3.png',
+      'description': 'Premium crystal healing set with 7 different crystals including Amethyst, Rose Quartz, Clear Quartz, Citrine, Black Tourmaline, Selenite, and Tiger Eye. Each crystal has unique healing properties.',
+      'benefits': [
+        'Emotional healing',
+        'Energy cleansing',
+        'Chakra balancing',
+        'Stress relief',
+      ],
+    },
+    {
+      'id': '4',
+      'title': 'Sage Smudging Kit',
+      'category': 'Cleansing',
+      'price': 899,
+      'image': 'assets/images/remedy4.png',
+      'description': 'Complete sage smudging kit with white sage bundle, abalone shell, and feather. Used for space cleansing, removing negative energy, and purifying your environment.',
+      'benefits': [
+        'Cleanses negative energy',
+        'Purifies environment',
+        'Promotes positive vibes',
+        'Spiritual protection',
+      ],
+    },
+    {
+      'id': '5',
+      'title': 'Vastu Mirror',
+      'category': 'Vastu',
+      'price': 2499,
+      'image': 'assets/images/remedy5.png',
+      'description': 'Authentic Vastu mirror with sacred geometry patterns. This mirror deflects negative energy and enhances positive vibrations in your home or office space.',
+      'benefits': [
+        'Deflects negative energy',
+        'Enhances positive vibes',
+        'Vastu compliance',
+        'Protection from evil eye',
+      ],
+    },
+    {
+      'id': '6',
+      'title': 'Lakshmi Puja Kit',
+      'category': 'Spiritual',
+      'price': 1999,
+      'image': 'assets/images/remedy6.png',
+      'description': 'Complete Lakshmi puja kit with all necessary items for performing Lakshmi puja. Includes idols, incense, diya, flowers, and other puja essentials. Brings wealth and prosperity.',
+      'benefits': [
+        'Attracts wealth',
+        'Brings prosperity',
+        'Removes financial obstacles',
+        'Blessings of Goddess Lakshmi',
+      ],
+    },
+    {
+      'id': '7',
+      'title': 'Rudraksha Mala Chain',
+      'category': 'Jewelry',
+      'price': 2499,
+      'image': 'assets/images/mala_chain.png',
+      'description': 'Premium Rudraksha mala chain with 108 beads. Handcrafted with genuine Rudraksha seeds from Nepal. Perfect for daily meditation and spiritual practices. Available in various sizes.',
+      'benefits': [
+        'Spiritual protection',
+        'Enhances meditation',
+        'Reduces stress',
+        'Positive energy flow',
+      ],
+    },
+    {
+      'id': '8',
+      'title': 'Gemstone Bracelet Set',
+      'category': 'Jewelry',
+      'price': 3499,
+      'image': 'assets/images/bracelet.png',
+      'description': 'Beautiful gemstone bracelet set with natural stones including Ruby, Emerald, Blue Sapphire, Yellow Sapphire, and Pearl. Each stone has specific astrological benefits.',
+      'benefits': [
+        'Astrological benefits',
+        'Enhances planetary energies',
+        'Stylish accessory',
+        'Natural gemstones',
+      ],
+    },
+    {
+      'id': '9',
+      'title': 'Navratna Ring',
+      'category': 'Jewelry',
+      'price': 4999,
+      'image': 'assets/images/navratna_ring.png',
+      'description': 'Authentic Navratna ring with 9 precious gemstones arranged in traditional pattern. Includes Ruby, Pearl, Coral, Emerald, Yellow Sapphire, Diamond, Blue Sapphire, Hessonite, and Cat\'s Eye.',
+      'benefits': [
+        'Complete planetary protection',
+        'Traditional design',
+        'Precious gemstones',
+        'Astrological significance',
+      ],
+    },
+    {
+      'id': '10',
+      'title': 'Tulsi Mala',
+      'category': 'Spiritual',
+      'price': 899,
+      'image': 'assets/images/tulsi_mala.png',
+      'description': 'Sacred Tulsi (Holy Basil) mala with 108 beads. Made from pure Tulsi wood, known for its spiritual and medicinal properties. Ideal for daily prayers and meditation.',
+      'benefits': [
+        'Spiritual purification',
+        'Health benefits',
+        'Divine connection',
+        'Traditional practice',
+      ],
+    },
+    {
+      'id': '11',
+      'title': 'Silver Om Pendant',
+      'category': 'Jewelry',
+      'price': 1799,
+      'image': 'assets/images/om_pendant.png',
+      'description': 'Elegant silver Om symbol pendant with chain. Handcrafted with intricate designs. The Om symbol represents the ultimate reality and consciousness.',
+      'benefits': [
+        'Spiritual symbol',
+        'Elegant design',
+        'Silver purity',
+        'Universal consciousness',
+      ],
+    },
+    {
+      'id': '12',
+      'title': 'Copper Bracelet',
+      'category': 'Accessories',
+      'price': 1299,
+      'image': 'assets/images/copper_bracelet.png',
+      'description': 'Pure copper bracelet with Vedic symbols. Copper is known for its health benefits and positive energy. Features traditional engravings.',
+      'benefits': [
+        'Health benefits',
+        'Positive energy',
+        'Traditional design',
+        'Pure copper',
+      ],
+    },
+    {
+      'id': '13',
+      'title': 'Gold Plated Mangalsutra',
+      'category': 'Jewelry',
+      'price': 5999,
+      'image': 'assets/images/mangalsutra.png',
+      'description': 'Traditional gold plated mangalsutra with black beads and gold pendant. Symbol of marital bliss and prosperity. Available in various designs.',
+      'benefits': [
+        'Marital harmony',
+        'Traditional significance',
+        'Elegant design',
+        'Prosperity symbol',
+      ],
+    },
+    {
+      'id': '14',
+      'title': 'Panchdhatu Ring',
+      'category': 'Jewelry',
+      'price': 3999,
+      'image': 'assets/images/panchdhatu_ring.png',
+      'description': 'Sacred Panchdhatu ring made from five metals: Gold, Silver, Copper, Zinc, and Iron. Believed to balance all five elements and bring harmony.',
+      'benefits': [
+        'Elemental balance',
+        'Five metal alloy',
+        'Traditional significance',
+        'Harmony and balance',
+      ],
+    },
+  ];
+
+  final List<String> _categories = ['All', 'Spiritual', 'Vastu', 'Healing', 'Cleansing', 'Jewelry', 'Accessories'];
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final filteredRemedies = _selectedCategory == 'All'
+        ? _remedies
+        : _remedies.where((r) => r['category'] == _selectedCategory).toList();
+
     return Scaffold(
-      backgroundColor: AppTheme.white,
-      appBar: AppBar(
-        backgroundColor: AppTheme.white,
-        elevation: 0,
-        title: Text(
-          'Remedies & Shop',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+      backgroundColor: AppTheme.neutralSoft,
+      body: SafeArea(
+        bottom: true,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+          // App Bar
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: false,
+            pinned: true,
+            backgroundColor: AppTheme.white,
+            elevation: 0,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+              title: Text(
+                'Spiritual Remedies',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.neutralDark,
+                    ),
+              ),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppTheme.primaryOrange.withOpacity(0.1),
+                      AppTheme.yellowPrimary.withOpacity(0.05),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppTheme.yellowPrimary,
-          unselectedLabelColor: AppTheme.neutralMedium,
-          indicatorColor: AppTheme.yellowPrimary,
-          tabs: const [
-            Tab(text: 'Products'),
-            Tab(text: 'Pooja/Havan'),
-            Tab(text: 'Custom Request'),
+
+          // Category Filter
+          SliverToBoxAdapter(
+            child: Container(
+              height: 60,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: _categories.length,
+                itemBuilder: (context, index) {
+                  final category = _categories[index];
+                  final isSelected = _selectedCategory == category;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: FilterChip(
+                      label: Text(category),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() => _selectedCategory = category);
+                      },
+                      selectedColor: AppTheme.primaryOrange,
+                      labelStyle: TextStyle(
+                        color: isSelected ? AppTheme.white : AppTheme.neutralDark,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(
+                          color: isSelected
+                              ? AppTheme.primaryOrange
+                              : AppTheme.neutralLight,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          // Remedies List
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final remedy = filteredRemedies[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: _RemedyCard(remedy: remedy),
+                  );
+                },
+                childCount: filteredRemedies.length,
+              ),
+            ),
+          ),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          _ProductsTab(),
-          _PoojaHavanTab(),
-          _CustomRequestTab(),
-        ],
-      ),
     );
   }
 }
 
-// Products Tab - Shop for pendants, bracelets, etc.
-class _ProductsTab extends StatelessWidget {
-  const _ProductsTab();
+class _RemedyCard extends StatelessWidget {
+  final Map<String, dynamic> remedy;
 
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(
-        (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Search Bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppTheme.neutralSoft,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search products...',
-                prefixIcon: Icon(Icons.search, color: AppTheme.neutralMedium),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          // Category Filter
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _CategoryChip(label: 'All', isSelected: true),
-                const SizedBox(width: 8),
-                _CategoryChip(label: 'Pendants'),
-                const SizedBox(width: 8),
-                _CategoryChip(label: 'Bracelets'),
-                const SizedBox(width: 8),
-                _CategoryChip(label: 'Mala'),
-                const SizedBox(width: 8),
-                _CategoryChip(label: 'Yantra'),
-                const SizedBox(width: 8),
-                _CategoryChip(label: 'Gemstones'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          // Products Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.7,
-            children: [
-              _ProductCard(
-                name: 'Rudraksha Mala',
-                price: 499,
-                originalPrice: 699,
-                image: Icons.eco,
-                category: 'Mala',
-                rating: 4.5,
-              ),
-              _ProductCard(
-                name: 'Gemstone Bracelet',
-                price: 1299,
-                originalPrice: 1799,
-                image: Icons.diamond,
-                category: 'Bracelets',
-                rating: 4.8,
-              ),
-              _ProductCard(
-                name: 'Shri Yantra Plate',
-                price: 799,
-                originalPrice: 999,
-                image: Icons.crop_square,
-                category: 'Yantra',
-                rating: 4.7,
-              ),
-              _ProductCard(
-                name: 'Copper Bracelet',
-                price: 299,
-                originalPrice: 399,
-                image: Icons.circle,
-                category: 'Bracelets',
-                rating: 4.3,
-              ),
-              _ProductCard(
-                name: 'Crystal Pendant',
-                price: 899,
-                originalPrice: 1199,
-                image: Icons.star,
-                category: 'Pendants',
-                rating: 4.6,
-              ),
-              _ProductCard(
-                name: 'Saffron Mala',
-                price: 399,
-                originalPrice: 599,
-                image: Icons.eco,
-                category: 'Mala',
-                rating: 4.4,
-              ),
-              _ProductCard(
-                name: 'Emerald Pendant',
-                price: 2499,
-                originalPrice: 2999,
-                image: Icons.diamond,
-                category: 'Pendants',
-                rating: 4.9,
-              ),
-              _ProductCard(
-                name: 'Lakshmi Yantra',
-                price: 599,
-                originalPrice: 799,
-                image: Icons.crop_square,
-                category: 'Yantra',
-                rating: 4.5,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CategoryChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-
-  const _CategoryChip({
-    required this.label,
-    this.isSelected = false,
-  });
+  const _RemedyCard({required this.remedy});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isSelected ? AppTheme.yellowPrimary : AppTheme.neutralSoft,
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? AppTheme.textDark : AppTheme.neutralMedium,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-        ),
-      ),
-    );
-  }
-}
-
-class _ProductCard extends StatelessWidget {
-  final String name;
-  final double price;
-  final double? originalPrice;
-  final IconData image;
-  final String category;
-  final double rating;
-
-  const _ProductCard({
-    required this.name,
-    required this.price,
-    this.originalPrice,
-    required this.image,
-    required this.category,
-    required this.rating,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        onTap: () => _showProductDetails(context),
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 140,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.yellowPrimary.withOpacity(0.2),
-                        AppTheme.primaryOrange.withOpacity(0.1),
-                      ],
-                    ),
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                  ),
-                  child: Icon(image, size: 60, color: AppTheme.yellowPrimary),
-                ),
-                if (originalPrice != null)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.errorRed,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${((1 - price / originalPrice!) * 100).toInt()}% OFF',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    category,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutralMedium,
-                      fontSize: 11,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    name,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.star, size: 14, color: AppTheme.yellowPrimary),
-                      const SizedBox(width: 4),
-                      Text(
-                        rating.toStringAsFixed(1),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            '₹${price.toInt()}',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: AppTheme.yellowPrimary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (originalPrice != null) ...[
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              '₹${originalPrice!.toInt()}',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                decoration: TextDecoration.lineThrough,
-                                color: AppTheme.neutralMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image Section
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.primaryOrange.withOpacity(0.2),
+                  AppTheme.yellowPrimary.withOpacity(0.1),
                 ],
               ),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
+            child: Stack(
+              children: [
+                Center(
+                  child: Icon(
+                    Icons.spa,
+                    size: 80,
+                    color: AppTheme.primaryOrange.withOpacity(0.3),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.yellowPrimary,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      remedy['category'],
+                      style: const TextStyle(
+                        color: AppTheme.textDark,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-  void _showProductDetails(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => _ProductDetailsSheet(
-        name: name,
-        price: price,
-        originalPrice: originalPrice,
-        category: category,
-        rating: rating,
-      ),
-    );
-  }
-}
-
-class _ProductDetailsSheet extends StatelessWidget {
-  final String name;
-  final double price;
-  final double? originalPrice;
-  final String category;
-  final double rating;
-
-  const _ProductDetailsSheet({
-    required this.name,
-    required this.price,
-    this.originalPrice,
-    required this.category,
-    required this.rating,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
+          // Content Section
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title and Price
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      style: Theme.of(context).textTheme.headlineMedium,
+                    Expanded(
+                      child: Text(
+                        remedy['title'],
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: AppTheme.neutralDark,
+                            ),
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      category,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.neutralMedium,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '₹${remedy['price']}',
+                        style: const TextStyle(
+                          color: AppTheme.textDark,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Row(
-                children: List.generate(5, (index) {
-                  return Icon(
-                    index < rating.floor()
-                        ? Icons.star
-                        : index < rating
-                            ? Icons.star_half
-                            : Icons.star_border,
-                    size: 20,
-                    color: AppTheme.yellowPrimary,
-                  );
-                }),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                rating.toStringAsFixed(1),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    '₹${price.toInt()}',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: AppTheme.yellowPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              if (originalPrice != null) ...[
-                const SizedBox(width: 12),
-                Flexible(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      '₹${originalPrice!.toInt()}',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        decoration: TextDecoration.lineThrough,
+
+                const SizedBox(height: 12),
+
+                // Description - Properly wrapped
+                Text(
+                  remedy['description'],
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppTheme.neutralMedium,
+                        fontSize: 14,
+                        height: 1.5,
                       ),
-                    ),
-                  ),
+                  textAlign: TextAlign.left,
                 ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 24),
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.yellowPrimary.withOpacity(0.2),
-                  AppTheme.primaryOrange.withOpacity(0.1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Icon(Icons.image, size: 80, color: AppTheme.yellowPrimary),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Description',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Authentic spiritual product blessed by expert Pandits. Made with high-quality materials and traditional methods. This product is energized and ready to use.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Product added to cart!'),
-                        backgroundColor: AppTheme.successGreen,
+
+                const SizedBox(height: 16),
+
+                // Benefits
+                Text(
+                  'Benefits:',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutralDark,
                       ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text('Add to Cart'),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Product added to cart!'),
-                        backgroundColor: AppTheme.successGreen,
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.yellowPrimary,
-                    foregroundColor: AppTheme.textDark,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Text('Buy Now'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Pooja/Havan Tab
-class _PoojaHavanTab extends StatelessWidget {
-  const _PoojaHavanTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(
-        (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Custom Puja/Havan Request Card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppTheme.mediumShadow,
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.add_circle_outline, size: 40, color: AppTheme.textDark),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Custom Puja/Havan Request',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Book a personalized puja or havan for your specific needs',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textDark.withOpacity(0.8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios, color: AppTheme.textDark),
-                  onPressed: () => _showCustomPujaDialog(context),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Popular Pooja & Havan',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.85,
-            children: [
-              _PoojaCard(
-                title: 'Lakshmi Pooja',
-                subtitle: 'For Wealth & Prosperity',
-                price: 1999,
-                duration: '2 hours',
-                icon: Icons.attach_money,
-                color: Colors.green,
-              ),
-              _PoojaCard(
-                title: 'Mangal Dosh Pooja',
-                subtitle: 'For Marriage Harmony',
-                price: 2999,
-                duration: '3 hours',
-                icon: Icons.favorite,
-                color: Colors.pink,
-              ),
-              _PoojaCard(
-                title: 'Rudra Abhishek',
-                subtitle: 'For Health & Protection',
-                price: 3999,
-                duration: '4 hours',
-                icon: Icons.health_and_safety,
-                color: Colors.teal,
-              ),
-              _PoojaCard(
-                title: 'Saraswati Pooja',
-                subtitle: 'For Education & Knowledge',
-                price: 2499,
-                duration: '2 hours',
-                icon: Icons.school,
-                color: Colors.purple,
-              ),
-              _PoojaCard(
-                title: 'Ganpati Havan',
-                subtitle: 'For Success & Obstacles',
-                price: 3499,
-                duration: '3 hours',
-                icon: Icons.star,
-                color: Colors.orange,
-              ),
-              _PoojaCard(
-                title: 'Shani Remedies',
-                subtitle: 'For Career & Stability',
-                price: 4499,
-                duration: '5 hours',
-                icon: Icons.work,
-                color: Colors.blue,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showCustomPujaDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => _CustomPujaDialog(),
-    );
-  }
-}
-
-class _PoojaCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final double price;
-  final String duration;
-  final IconData icon;
-  final Color color;
-
-  const _PoojaCard({
-    required this.title,
-    required this.subtitle,
-    required this.price,
-    required this.duration,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        onTap: () => _showPoojaDetails(context),
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-                ),
-                child: Center(
-                  child: Icon(icon, size: 50, color: color),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutralMedium,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
+                const SizedBox(height: 8),
+                ...(remedy['benefits'] as List<String>).map((benefit) => Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '₹${price.toInt()}',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: AppTheme.yellowPrimary,
-                              fontWeight: FontWeight.w700,
+                          Container(
+                            margin: const EdgeInsets.only(top: 6, right: 8),
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryOrange,
+                              shape: BoxShape.circle,
                             ),
                           ),
-                          Text(
-                            duration,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontSize: 10,
+                          Expanded(
+                            child: Text(
+                              benefit,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppTheme.neutralMedium,
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
                             ),
                           ),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.yellowPrimary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.calendar_today,
-                          size: 16,
-                          color: AppTheme.yellowPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                    )),
 
-  void _showPoojaDetails(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => _PoojaDetailsSheet(
-        title: title,
-        subtitle: subtitle,
-        price: price,
-        duration: duration,
-      ),
-    );
-  }
-}
+                const SizedBox(height: 20),
 
-class _PoojaDetailsSheet extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final double price;
-  final String duration;
-
-  const _PoojaDetailsSheet({
-    required this.title,
-    required this.subtitle,
-    required this.price,
-    required this.duration,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'What\'s Included:',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _DetailItem(text: 'Expert Pandit consultation'),
-          _DetailItem(text: 'Live Pooja/Havan performance'),
-          _DetailItem(text: 'HD photos and video recording'),
-          _DetailItem(text: 'Prasad delivery to your address'),
-          _DetailItem(text: 'Detailed remedy instructions'),
-          _DetailItem(text: 'Follow-up consultation'),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Icon(Icons.access_time, size: 20, color: AppTheme.neutralMedium),
-              const SizedBox(width: 8),
-              Text(
-                'Duration: $duration',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Price',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  Text(
-                    '₹${price.toInt()}',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: AppTheme.yellowPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  context.push('/booking/schedule?serviceType=pooja&title=$title&price=$price');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.yellowPrimary,
-                  foregroundColor: AppTheme.textDark,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                ),
-                child: const Text('Book Now'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DetailItem extends StatelessWidget {
-  final String text;
-
-  const _DetailItem({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(Icons.check_circle, size: 20, color: AppTheme.successGreen),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CustomPujaDialog extends StatefulWidget {
-  @override
-  State<_CustomPujaDialog> createState() => _CustomPujaDialogState();
-}
-
-class _CustomPujaDialogState extends State<_CustomPujaDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _descriptionController = TextEditingController();
-  final _dateController = TextEditingController();
-  String _selectedType = 'Puja';
-  String _selectedPurpose = 'General';
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Custom Puja/Havan Request',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 24),
-                DropdownButtonFormField<String>(
-                  value: _selectedType,
-                  decoration: const InputDecoration(
-                    labelText: 'Type',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Puja', 'Havan', 'Abhishek', 'Other']
-                      .map((type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(type),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedType = value!);
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _selectedPurpose,
-                  decoration: const InputDecoration(
-                    labelText: 'Purpose',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: [
-                    'General',
-                    'Love & Marriage',
-                    'Wealth & Finance',
-                    'Career & Business',
-                    'Health & Protection',
-                    'Education',
-                    'Other'
-                  ]
-                      .map((purpose) => DropdownMenuItem(
-                            value: purpose,
-                            child: Text(purpose),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedPurpose = value!);
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _dateController,
-                  decoration: const InputDecoration(
-                    labelText: 'Preferred Date',
-                    hintText: 'Select date',
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.calendar_today),
-                  ),
-                  readOnly: true,
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      _dateController.text =
-                          '${date.day}/${date.month}/${date.year}';
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _descriptionController,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    labelText: 'Special Requirements',
-                    hintText: 'Describe your specific needs...',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please describe your requirements';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
+                // Action Buttons
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Add to cart functionality
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${remedy['title']} added to cart'),
+                              backgroundColor: AppTheme.successGreen,
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.shopping_cart_outlined, size: 18),
+                        label: const Text('Add to Cart'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(color: AppTheme.primaryOrange, width: 1.5),
+                          foregroundColor: AppTheme.primaryOrange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Custom puja request submitted! Our team will contact you soon.'),
-                                backgroundColor: AppTheme.successGreen,
-                              ),
-                            );
-                          }
+                          // Buy now functionality
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Proceeding to buy ${remedy['title']}'),
+                              backgroundColor: AppTheme.primaryOrange,
+                            ),
+                          );
                         },
-                        child: const Text('Submit'),
+                        icon: const Icon(Icons.shopping_bag, size: 18),
+                        label: const Text('Buy Now'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor: AppTheme.primaryOrange,
+                          foregroundColor: AppTheme.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Custom Request Tab - For remedies (love, finance, career, etc.)
-class _CustomRequestTab extends StatelessWidget {
-  const _CustomRequestTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(
-        (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Custom Remedy Request Card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: AppTheme.mediumShadow,
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.add_circle_outline, size: 40, color: AppTheme.textDark),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Raise Custom Remedy Request',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Get personalized remedies for your specific needs',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textDark.withOpacity(0.8),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios, color: AppTheme.textDark),
-                  onPressed: () => _showCustomRemedyDialog(context),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Popular Remedy Categories',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 16),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.9,
-            children: [
-              _RemedyCategoryCard(
-                title: 'Love & Relationship',
-                icon: Icons.favorite,
-                color: Colors.pink,
-                onTap: () => _showCustomRemedyDialog(context, category: 'Love'),
-              ),
-              _RemedyCategoryCard(
-                title: 'Wealth & Finance',
-                icon: Icons.attach_money,
-                color: Colors.green,
-                onTap: () => _showCustomRemedyDialog(context, category: 'Wealth'),
-              ),
-              _RemedyCategoryCard(
-                title: 'Career & Business',
-                icon: Icons.work,
-                color: Colors.blue,
-                onTap: () => _showCustomRemedyDialog(context, category: 'Career'),
-              ),
-              _RemedyCategoryCard(
-                title: 'Health & Protection',
-                icon: Icons.health_and_safety,
-                color: Colors.teal,
-                onTap: () => _showCustomRemedyDialog(context, category: 'Health'),
-              ),
-              _RemedyCategoryCard(
-                title: 'Marriage & Family',
-                icon: Icons.family_restroom,
-                color: Colors.red,
-                onTap: () => _showCustomRemedyDialog(context, category: 'Marriage'),
-              ),
-              _RemedyCategoryCard(
-                title: 'Education & Knowledge',
-                icon: Icons.school,
-                color: Colors.purple,
-                onTap: () => _showCustomRemedyDialog(context, category: 'Education'),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
-
-  void _showCustomRemedyDialog(BuildContext context, {String? category}) {
-    showDialog(
-      context: context,
-      builder: (context) => _CustomRemedyDialog(initialCategory: category),
-    );
-  }
 }
 
-class _RemedyCategoryCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _RemedyCategoryCard({
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.1),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 40, color: color),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CustomRemedyDialog extends StatefulWidget {
-  final String? initialCategory;
-
-  const _CustomRemedyDialog({this.initialCategory});
-
-  @override
-  State<_CustomRemedyDialog> createState() => _CustomRemedyDialogState();
-}
-
-class _CustomRemedyDialogState extends State<_CustomRemedyDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _descriptionController = TextEditingController();
-  String _selectedCategory = 'General';
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedCategory = widget.initialCategory ?? 'General';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Custom Remedy Request',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 24),
-                DropdownButtonFormField<String>(
-                  value: _selectedCategory,
-                  decoration: const InputDecoration(
-                    labelText: 'Category',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: [
-                    'General',
-                    'Love',
-                    'Wealth',
-                    'Career',
-                    'Health',
-                    'Marriage',
-                    'Education',
-                    'Family',
-                    'Other'
-                  ]
-                      .map((category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedCategory = value!);
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _descriptionController,
-                  maxLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'Describe your requirement',
-                    hintText: 'Tell us what remedy you need and why...',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please describe your requirement';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Custom remedy request submitted! Our expert will contact you soon.'),
-                                backgroundColor: AppTheme.successGreen,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('Submit'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

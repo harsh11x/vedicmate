@@ -132,21 +132,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           SafeArea(
             child: Column(
               children: [
-                // Skip Button
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: TextButton(
-                      onPressed: _navigateToLogin,
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white.withOpacity(0.5),
-                      ),
-                      child: const Text('SKIP', style: TextStyle(letterSpacing: 1.5, fontSize: 12)),
-                    ),
-                  ),
-                ),
-
                 const Spacer(),
 
                 // Main Content Area

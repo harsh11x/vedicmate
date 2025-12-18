@@ -8,9 +8,20 @@ import '../services/wallet_service.dart';
 import '../services/gemini_service.dart';
 import '../services/notification_service.dart';
 import '../services/kundli_ai_service.dart';
+import '../services/horoscope_service.dart';
+import '../services/astrology_service.dart';
+import '../services/custom_ai_service.dart';
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();
+});
+
+final horoscopeServiceProvider = Provider<HoroscopeService>((ref) {
+  return HoroscopeService();
+});
+
+final astrologyServiceProvider = Provider<AstrologyService>((ref) {
+  return AstrologyService();
 });
 
 final liveServiceProvider = Provider<LiveService>((ref) {
@@ -48,4 +59,8 @@ final geminiServiceProvider = Provider<GeminiService>((ref) {
 
 final kundliAIServiceProvider = Provider<KundliAIService>((ref) {
   return KundliAIService();
+});
+
+final customAIServiceProvider = Provider<CustomAIService>((ref) {
+  return CustomAIService();
 });

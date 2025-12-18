@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../core/theme/app_theme.dart';
 
 class ServiceInfoCards extends StatelessWidget {
@@ -6,212 +7,84 @@ class ServiceInfoCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            'Explore Our Services',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 22,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 280,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            children: const [
-              _ServiceInfoCard(
-                title: 'Numerology',
-                description: 'Discover your life path number and unlock the secrets of numbers that influence your destiny.',
-                icon: Icons.numbers,
-                gradient: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                image: '🔢',
-              ),
-              SizedBox(width: 16),
-              _ServiceInfoCard(
-                title: 'Horoscope',
-                description: 'Get daily, weekly, and monthly predictions based on your zodiac sign and planetary positions.',
-                icon: Icons.stars,
-                gradient: [Color(0xFFF59E0B), Color(0xFFEF4444)],
-                image: '⭐',
-              ),
-              SizedBox(width: 16),
-              _ServiceInfoCard(
-                title: 'Astrology',
-                description: 'Expert Vedic astrology consultations to understand your birth chart and planetary influences.',
-                icon: Icons.auto_awesome,
-                gradient: [Color(0xFF10B981), Color(0xFF059669)],
-                image: '🌟',
-              ),
-              SizedBox(width: 16),
-              _ServiceInfoCard(
-                title: 'Vastu Shastra',
-                description: 'Harmonize your living space with Vastu principles for prosperity, health, and positive energy.',
-                icon: Icons.home,
-                gradient: [Color(0xFFEC4899), Color(0xFFBE185D)],
-                image: '🏠',
-              ),
-              SizedBox(width: 16),
-              _ServiceInfoCard(
-                title: 'Kundli',
-                description: 'Generate your detailed birth chart (Kundli) with accurate planetary positions and predictions.',
-                icon: Icons.account_tree,
-                gradient: [Color(0xFFFF6B35), Color(0xFFE55A2B)],
-                image: '📊',
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ServiceInfoCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final IconData icon;
-  final List<Color> gradient;
-  final String image;
-
-  const _ServiceInfoCard({
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.gradient,
-    required this.image,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 240,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradient,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        border: AppTheme.softBorder,
-      ),
-      child: Stack(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Decorative pattern
-          Positioned(
-            top: -20,
-            right: -20,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -30,
-            left: -30,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.08),
-              ),
-            ),
-          ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Icon and emoji
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      image,
-                      style: const TextStyle(fontSize: 32),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF10B981).withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                const Spacer(),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
+                child: const Icon(
+                  Icons.workspace_premium_rounded,
+                  color: Colors.white,
+                  size: 24,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 1,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Our Services',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: AppTheme.neutralDark,
+                      letterSpacing: -0.5,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Explore',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1.1,
+            children: [
+              _ServiceCard(
+                icon: Icons.auto_awesome_rounded,
+                title: 'Kundli',
+                subtitle: 'Birth Chart Analysis',
+                gradient: const [Color(0xFFEC4899), Color(0xFFF472B6)],
+                onTap: () => context.push('/kundli/generation'),
+              ),
+              _ServiceCard(
+                icon: Icons.calendar_month_rounded,
+                title: 'Horoscope',
+                subtitle: 'Daily Predictions',
+                gradient: const [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+                onTap: () {},
+              ),
+              _ServiceCard(
+                icon: Icons.home_work_rounded,
+                title: 'Vastu',
+                subtitle: 'Home Solutions',
+                gradient: const [Color(0xFF10B981), Color(0xFF34D399)],
+                onTap: () {},
+              ),
+              _ServiceCard(
+                icon: Icons.numbers_rounded,
+                title: 'Numerology',
+                subtitle: 'Number Analysis',
+                gradient: const [Color(0xFF8B5CF6), Color(0xFFA78BFA)],
+                onTap: () {},
+              ),
+            ],
           ),
         ],
       ),
@@ -219,3 +92,105 @@ class _ServiceInfoCard extends StatelessWidget {
   }
 }
 
+class _ServiceCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final List<Color> gradient;
+  final VoidCallback onTap;
+
+  const _ServiceCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.gradient,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              gradient[0].withOpacity(0.1),
+              gradient[1].withOpacity(0.05),
+              Colors.white,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: gradient[0].withOpacity(0.2),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: gradient[0].withOpacity(0.15),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: gradient,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradient[0].withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppTheme.neutralDark,
+                      letterSpacing: -0.3,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                subtitle,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.neutralMedium,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

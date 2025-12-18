@@ -12,6 +12,8 @@ import '../../services/wallet_service.dart';
 import '../../providers/wallet_provider.dart';
 import '../../providers/api_providers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../models/ai_pandit_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AIPanditVoiceCallScreen extends ConsumerStatefulWidget {
   final String? panditId;
@@ -619,219 +621,330 @@ Please use these details to generate my complete Kundli analysis.]
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('AI Pandit Voice Call', style: TextStyle(fontSize: 18)),
-            Text(
-              '₹25/min • ₹${_currentCost.toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppTheme.white.withOpacity(0.9),
+      backgroundColor: AppTheme.celestialVoid,
+      body: Stack(
+        children: [
+          // 1. Background
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF0F172A), // Deep Slate
+                  Color(0xFF1E293B), // Slate 800
+                  Colors.black,
+                ],
               ),
             ),
-          ],
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.primaryGradient,
           ),
-        ),
-        actions: [
-          Consumer(
-            builder: (context, ref, child) {
-              final walletBalanceAsync = ref.watch(walletBalanceProvider);
-              final balance = walletBalanceAsync.valueOrNull ?? _walletBalance;
-              return Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppTheme.white.withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.account_balance_wallet, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      '₹${balance.toStringAsFixed(0)}',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              );
-            },
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.network(
+                'https://www.transparenttextures.com/patterns/stardust.png',
+                repeat: ImageRepeat.repeat,
+                errorBuilder: (_,__,___) => const SizedBox(),
+              ),
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.chat_bubble_outline),
-            onPressed: () {
-              context.pushReplacement('/ai-pandit/chat');
-            },
-            tooltip: 'Switch to Chat',
-          ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.language),
-            onSelected: _changeLanguage,
-            itemBuilder: (context) => _supportedLanguages.entries.map((entry) {
-              return PopupMenuItem(
-                value: entry.key,
-                child: Text(entry.value),
-              );
-            }).toList(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.stop_circle_outlined),
-            onPressed: _endCall,
-            tooltip: 'End Call',
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
+
+          // 2. Main Content
+          SafeArea(
+            child: Column(
               children: [
-                // Cost indicator
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppTheme.warningAmber.withOpacity(0.1),
-                        AppTheme.accentGoldLight,
-                      ],
-                    ),
-                    border: Border(
-                      bottom: BorderSide(
-                        color: AppTheme.warningAmber.withOpacity(0.3),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.timer, size: 16, color: AppTheme.warningAmber),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${(_elapsedSeconds ~/ 60)}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.neutralDark,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Cost: ₹${_currentCost.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.primaryOrange,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                // Main content
+                _buildAppBar(),
                 Expanded(
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // AI Pandit Avatar
-                        AnimatedBuilder(
-                          animation: _pulseAnimation,
-                          builder: (context, child) {
-                            return Transform.scale(
-                              scale: _isSpeaking ? _pulseAnimation.value : 1.0,
-                              child: Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  gradient: AppTheme.goldGradient,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppTheme.yellowPrimary.withOpacity(0.5),
-                                      blurRadius: 30,
-                                      spreadRadius: 10,
+                        // Dynamic Avatar with Waves
+                        SizedBox(
+                          height: 300,
+                          width: 300,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Radiating Waves (Only when speaking)
+                              if (_isSpeaking)
+                                ...List.generate(3, (index) {
+                                  return TweenAnimationBuilder<double>(
+                                    tween: Tween(begin: 0.0, end: 1.0),
+                                    duration: Duration(milliseconds: 1500 + (index * 500)),
+                                    curve: Curves.easeOutQuad, // Smooth expansion
+                                    builder: (context, value, child) {
+                                      return Container(
+                                        width: 150 + (value * 150), // Expand outwards
+                                        height: 150 + (value * 150),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: AppTheme.primaryOrange.withOpacity((1 - value) * 0.5),
+                                            width: 2,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    onEnd: () {
+                                      // Loop manually if needed or use Repeat (TweenAnimationBuilder doesn't loop easily, 
+                                      // better to use the _pulseController with Staggered animations in a real app, 
+                                      // but for now we use the existing pulse or a simplified version)
+                                    },
+                                  );
+                                }),
+                                
+                              // Pulse Animation for Listening/Speaking
+                              AnimatedBuilder(
+                                animation: _pulseAnimation,
+                                builder: (context, child) {
+                                  return Transform.scale(
+                                    scale: _isSpeaking 
+                                        ? 1.0 + (_pulseController.value * 0.1) // Subtle bounce when speaking
+                                        : 1.0 + (_pulseController.value * 0.05), // Gentle breath when listening
+                                    child: Container(
+                                      width: 160,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: _isSpeaking ? AppTheme.primaryGradient : AppTheme.goldGradient,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: (_isSpeaking ? AppTheme.primaryOrange : AppTheme.accentGold).withOpacity(0.6),
+                                            blurRadius: 40,
+                                            spreadRadius: 5,
+                                          ),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.black, // Border between gradient and image
+                                        ),
+                                        padding: const EdgeInsets.all(2),
+                                        child: _buildAvatarImage(),
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.auto_awesome,
-                                  size: 60,
-                                  color: AppTheme.white,
-                                ),
+                                  );
+                                },
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         ),
                         
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 40),
                         
-                        // Status text
-                        Text(
-                          _isSpeaking
-                              ? 'AI Pandit is speaking...'
-                              : _isListening
-                                  ? 'Listening...'
-                                  : 'Tap to speak',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: AppTheme.neutralDark,
-                            fontWeight: FontWeight.w600,
+                        // Status Text
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: Text(
+                            _isSpeaking
+                                ? 'AI Pandit is speaking...'
+                                : _isListening
+                                    ? 'Listening to you...'
+                                    : 'Thinking...',
+                            key: ValueKey(_isSpeaking ? 'speak' : (_isListening ? 'listen' : 'think')),
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white.withOpacity(0.9),
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                         
                         const SizedBox(height: 16),
                         
-                        // Recognized text
+                        // Live Transcription
                         if (_recognizedText.isNotEmpty)
                           Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             margin: const EdgeInsets.symmetric(horizontal: 32),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppTheme.neutralSoft,
-                              borderRadius: BorderRadius.circular(12),
+                            decoration: AppTheme.glassMorphism.copyWith(
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
                               _recognizedText,
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.8),
+                                fontStyle: FontStyle.italic,
+                              ),
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        
-                        const SizedBox(height: 32),
-                        
-                        // Voice button
-                        GestureDetector(
-                          onTap: _isCallActive && !_isSpeaking
-                              ? (_isListening ? _stopListening : _startListening)
-                              : null,
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              gradient: _isListening
-                                  ? AppTheme.primaryGradient
-                                  : null,
-                              color: _isListening ? null : AppTheme.neutralLight,
-                              shape: BoxShape.circle,
-                              boxShadow: _isListening
-                                  ? AppTheme.glowShadow
-                                  : AppTheme.softShadow,
-                            ),
-                            child: Icon(
-                              _isListening ? Icons.mic : Icons.mic_none,
-                              size: 40,
-                              color: _isListening ? AppTheme.white : AppTheme.neutralMedium,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
                 ),
+                
+                // Bottom Controls
+                _buildBottomControls(),
               ],
             ),
+          ),
+          
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              child: const Center(child: CircularProgressIndicator(color: AppTheme.primaryOrange)),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatarImage() {
+    AIPanditModel? currentPandit;
+    if (widget.panditId != null) {
+      try {
+        currentPandit = AIPandits.allPandits.firstWhere((p) => p.id == widget.panditId);
+      } catch (_) {}
+    }
+    
+    return CircleAvatar(
+      backgroundColor: AppTheme.neutralDark,
+      backgroundImage: currentPandit != null 
+          ? (currentPandit.profileImage.startsWith('assets/') 
+              ? AssetImage(currentPandit.profileImage) as ImageProvider
+              : NetworkImage(currentPandit.profileImage))
+          : null,
+      child: currentPandit == null 
+          ? const Icon(Icons.person, size: 60, color: Colors.white54) 
+          : null,
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.transparent,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 30),
+            onPressed: () => context.pop(),
+          ),
+          Column(
+            children: [
+              Text(
+                'VOICE CALL',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  color: Colors.white.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppTheme.successGreen.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.successGreen.withOpacity(0.5)),
+                ),
+                child: Row(
+                  children: [
+                    Container(width: 6, height: 6, decoration: BoxDecoration(color: AppTheme.successGreen, shape: BoxShape.circle)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${(_elapsedSeconds ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
+                      style: const TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+            onPressed: () => context.pushReplacement('/ai-pandit/chat?panditId=${widget.panditId}'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomControls() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 30, left: 24, right: 24),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+      decoration: AppTheme.glassMorphism.copyWith(
+        borderRadius: BorderRadius.circular(40),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _ControlIcon(
+            icon: Icons.mic_off,
+            color: Colors.white,
+            onTap: () {
+               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mute not implemented yet')));
+            },
+          ),
+           _ControlIcon(
+            icon: Icons.call_end,
+            color: Colors.white,
+            bgColor: AppTheme.errorRed,
+            size: 64,
+            iconSize: 32,
+            onTap: _endCall,
+          ),
+           _ControlIcon(
+            icon: Icons.volume_up,
+            color: Colors.white,
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Speaker toggle not implemented yet')));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+class _ControlIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final Color? bgColor;
+  final VoidCallback onTap;
+  final double size;
+  final double iconSize;
+
+  const _ControlIcon({
+    required this.icon,
+    required this.color,
+    this.bgColor,
+    required this.onTap,
+    this.size = 50,
+    this.iconSize = 24,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: bgColor ?? Colors.white.withOpacity(0.1),
+          shape: BoxShape.circle,
+          border: bgColor == null ? Border.all(color: Colors.white.withOpacity(0.2)) : null,
+          boxShadow: bgColor != null ? [
+            BoxShadow(color: bgColor!.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))
+          ] : null,
+        ),
+        child: Icon(icon, color: color, size: iconSize),
+      ),
     );
   }
 }

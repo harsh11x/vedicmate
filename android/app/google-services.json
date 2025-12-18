@@ -1,35 +1,41 @@
 {
   "project_info": {
-    "project_number": "123456789000",
-    "firebase_url": "https://vedicmate-default-rtdb.firebaseio.com",
-    "project_id": "vedicmate-placeholder",
-    "storage_bucket": "vedicmate-placeholder.appspot.com"
+    "project_number": "848781830717",
+    "project_id": "vedic-mate",
+    "storage_bucket": "vedic-mate.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789000:android:abcdef1234567890",
+        "mobilesdk_app_id": "1:848781830717:android:0976dc87632e6ad487d854",
         "android_client_info": {
-          "package_name": "com.example.vedic_mate"
+          "package_name": "com.example.vastu_mate"
         }
       },
       "oauth_client": [
         {
-          "client_id": "123456789000-placeholder.apps.googleusercontent.com",
+          "client_id": "848781830717-lk3tj2q0hfl07691b8k8an6u96qglvee.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyPlaceholder-Key-Replace-With-Real-Key"
+          "current_key": "AIzaSyCfrhBl-XkAG6gZQvF3GEH5tI3b6dYgNKc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "123456789000-placeholder.apps.googleusercontent.com",
+              "client_id": "848781830717-lk3tj2q0hfl07691b8k8an6u96qglvee.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "848781830717-ftfem5g4rfk47dcrnuthh3mpf9n6bmo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.vastuMate"
+              }
             }
           ]
         }

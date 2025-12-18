@@ -17,6 +17,9 @@ import '../../screens/shared/kundli_generation_screen.dart';
 import '../../screens/shared/edit_profile_screen.dart';
 import '../../screens/client/remedies_screen.dart';
 import '../../screens/client/all_ai_pandits_screen.dart';
+import '../../screens/client/ai_pandit_profile_screen.dart';
+import '../../screens/shared/service_report_screen.dart';
+import '../../screens/auth/email_login_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -46,6 +49,10 @@ class AppRouter {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/login/email',
+        builder: (context, state) => const EmailLoginScreen(),
       ),
       GoRoute(
         path: '/register',
@@ -116,6 +123,13 @@ class AppRouter {
         builder: (context, state) => const AllAIPanditsScreen(),
       ),
       GoRoute(
+        path: '/ai-pandit/profile/:id',
+        builder: (context, state) {
+          final panditId = state.pathParameters['id']!;
+          return AIPanditProfileScreen(panditId: panditId);
+        },
+      ),
+      GoRoute(
         path: '/wallet/recharge',
         builder: (context, state) => const WalletRechargeScreen(),
       ),
@@ -139,6 +153,17 @@ class AppRouter {
       GoRoute(
         path: '/remedies',
         builder: (context, state) => const RemediesScreen(),
+      ),
+      GoRoute(
+        path: '/service/:type',
+        builder: (context, state) {
+          final type = state.pathParameters['type']!;
+          final extra = state.extra as Map<String, dynamic>?;
+          return ServiceReportScreen(
+            title: extra?['title'] ?? type.toUpperCase(),
+            report: extra?['report'] ?? 'Report not available',
+          );
+        },
       ),
     ],
   );
