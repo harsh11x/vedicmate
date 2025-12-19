@@ -24,7 +24,7 @@ class AIPanditChatScreen extends ConsumerStatefulWidget {
   ConsumerState<AIPanditChatScreen> createState() => _AIPanditChatScreenState();
 }
 
-class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with TickerProviderStateMixin {
+class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final WalletService _walletService = WalletService();
@@ -37,51 +37,137 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   double _walletBalance = 0.0;
   AIChatSession? _currentSession;
   Timer? _costTimer;
+  Timer? _walletCheckTimer; // Timer to check wallet balance during chat
   double _currentCost = 0.0;
   int _elapsedSeconds = 0;
+  bool _isChatStarted = false; // Whether user has started the chat
+  bool _isViewingOnly = false; // Whether user is just viewing history
   
   String? _userId;
+  static const double _minimumBalance = 50.0; // Minimum ₹50 required
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.microtask(() => _initializeChat());
     });
+    
+    // Watch wallet provider for real-time updates
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _watchWalletBalance();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Refresh wallet balance when app comes back to foreground
+    if (state == AppLifecycleState.resumed && _userId != null) {
+      _checkWalletBalance();
+    }
+  }
+
+  void _watchWalletBalance() {
+    // Watch wallet provider for real-time updates
+    ref.listen<AsyncValue<double>>(walletBalanceProvider, (previous, next) {
+      next.whenData((balance) {
+        if (mounted && (_walletBalance != balance || previous?.value != balance)) {
+          setState(() {
+            _walletBalance = balance;
+          });
+          print('✅ Wallet balance updated from provider: ₹$_walletBalance');
+        }
+      });
+    });
+    
+    // Also get initial balance from provider
+    final balanceAsync = ref.read(walletBalanceProvider);
+    balanceAsync.whenData((balance) {
+      if (mounted) {
+        setState(() {
+          _walletBalance = balance;
+        });
+        print('✅ Initial wallet balance from provider: ₹$_walletBalance');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _costTimer?.cancel();
+    _walletCheckTimer?.cancel();
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _initializeChat() async {
-    if (!mounted) return;
+    if (!mounted || widget.panditId == null) return;
     
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      
+      // Use the provider's userId to ensure consistency
+      final providerUserId = ref.read(currentUserIdProvider);
       String userId;
-      if (user == null) {
-        userId = 'guest_temp_${DateTime.now().millisecondsSinceEpoch}';
+      
+      if (providerUserId != null) {
+        userId = providerUserId;
       } else {
-        userId = user.isAnonymous ? 'guest_${user.uid}' : user.uid;
+        // Fallback to Firebase Auth
+        final user = FirebaseAuth.instance.currentUser;
+        if (user == null) {
+          userId = 'guest_temp_${DateTime.now().millisecondsSinceEpoch}';
+        } else {
+          userId = user.isAnonymous ? 'guest_${user.uid}' : user.uid;
+        }
       }
       
       setState(() {
         _userId = userId;
-        _walletBalance = 5000.0;
       });
+      print('✅ Chat screen using userId: $userId');
       
-      _currentSession = AIChatSession(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: userId,
-        startTime: DateTime.now(),
-      );
-      _startCostTimer();
+      // Get or create session for this specific pandit
+      _currentSession = await _chatService.getOrCreateSession(userId, widget.panditId!);
+      
+      // Load previous messages for this pandit
+      if (_currentSession != null && _currentSession!.messages.isNotEmpty) {
+        setState(() {
+          _messages = _currentSession!.messages;
+          _isChatStarted = _currentSession!.isStarted;
+          _isViewingOnly = !_currentSession!.isStarted;
+        });
+      }
+      
+      // Check wallet balance AFTER session is loaded
+      await _checkWalletBalance();
+      
+      // Also get balance from provider as backup
+      final balanceAsync = ref.read(walletBalanceProvider);
+      balanceAsync.whenData((balance) {
+        if (mounted) {
+          setState(() {
+            _walletBalance = balance;
+          });
+          print('✅ Wallet balance from provider on init: ₹$_walletBalance');
+        }
+      });
       
       setState(() => _isLoading = false);
       
-      _initializeInBackground();
+      // Don't show dialog automatically - wait for user to click Start button
+      if (_isChatStarted) {
+        // If already started, initialize timers
+        _startCostTimer();
+        _startWalletCheckTimer();
+        _loadWelcomeMessage();
+      }
       
     } catch (e) {
       print('❌ Error in _initializeChat: $e');
@@ -91,58 +177,382 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     }
   }
 
-  Future<void> _initializeInBackground() async {
-    if (!mounted || _userId == null) return;
-    
-    try {
-      AIChatSession? activeSession;
-      try {
-        activeSession = await _chatService.getActiveSession(_userId!).timeout(
-          const Duration(seconds: 1),
-          onTimeout: () => null,
-        );
-      } catch (e) {
-        print('⚠️ Session check error: $e');
-      }
-      
-      if (activeSession != null && mounted) {
+  Future<void> _showStartChatDialog() async {
+    if (!mounted || _walletBalance < _minimumBalance) {
+      _showInsufficientFundsDialog();
+      return;
+    }
+
+    final shouldStart = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.primaryOrange, AppTheme.accentGold],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Start Chat?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Would you like to start a chat with this AI Pandit?',
+              style: TextStyle(
+                fontSize: 15,
+                color: AppTheme.neutralMedium,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryOrange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 18, color: AppTheme.primaryOrange),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Chat charges: ₹25/minute\nMinimum balance required: ₹50',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.neutralDark,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.account_balance_wallet, size: 16, color: AppTheme.successGreen),
+                const SizedBox(width: 6),
+                Text(
+                  'Your balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.successGreen,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'View History Only',
+              style: TextStyle(color: AppTheme.neutralMedium),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('Start Chat'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldStart == true) {
+      await _startChat();
+    } else {
         setState(() {
-          _currentSession = activeSession!;
-          _messages = activeSession!.messages;
-          _elapsedSeconds = activeSession!.getDurationInSeconds();
-          _currentCost = activeSession!.calculateCost();
-        });
-      } else {
-        try {
-          await _chatService.startSession(_userId!).timeout(
-            const Duration(seconds: 1),
-            onTimeout: () => _currentSession!,
-          );
-        } catch (e) {
-          print('⚠️ Session save error: $e');
-        }
-      }
-      
-      _loadWelcomeMessage();
-      _checkWalletBalance();
-      
-    } catch (e) {
-      print('⚠️ Background init error: $e');
+        _isViewingOnly = true;
+      });
     }
   }
+
+  Future<void> _startChat() async {
+    if (_currentSession == null || _userId == null || widget.panditId == null) return;
+
+    // Check wallet balance immediately
+    await _checkWalletBalance();
+    if (_walletBalance < _minimumBalance) {
+      _showInsufficientFundsDialog();
+      return;
+    }
+
+    // Mark session as started immediately
+    _currentSession!.isStarted = true;
+    _currentSession!.isActive = true;
+    await _chatService.saveSession(_currentSession!);
+
+    setState(() {
+      _isChatStarted = true;
+      _isViewingOnly = false;
+    });
+
+    // Start timers immediately
+    _startCostTimer();
+    _startWalletCheckTimer();
+
+    // Add welcome message if no messages exist
+    if (_messages.isEmpty) {
+      _loadWelcomeMessage();
+    }
+  }
+
+  void _startWalletCheckTimer() {
+    _walletCheckTimer?.cancel();
+    _walletCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (!_isChatStarted || _isViewingOnly) {
+        timer.cancel();
+        return;
+      }
+
+      await _checkWalletBalance();
+      
+      // Check if balance is insufficient (less than cost for 1 more minute)
+      if (_walletBalance < 25.0) {
+        timer.cancel();
+        _stopChatDueToInsufficientFunds();
+      }
+    });
+  }
+
+  Future<void> _stopChatDueToInsufficientFunds() async {
+    if (_currentSession == null) return;
+
+    // Stop timers
+    _costTimer?.cancel();
+    _walletCheckTimer?.cancel();
+
+    // Mark session as inactive
+    _currentSession!.isActive = false;
+    _currentSession!.endTime = DateTime.now();
+    await _chatService.saveSession(_currentSession!);
+
+    setState(() {
+      _isChatStarted = false;
+      _isViewingOnly = true;
+    });
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.errorRed.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.error_outline, color: AppTheme.errorRed, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Insufficient Funds',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Your wallet balance is insufficient to continue the chat.',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: AppTheme.neutralMedium,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.errorRed.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Current Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.errorRed,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('View History', style: TextStyle(color: AppTheme.neutralMedium)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.push('/payment/wallet');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryOrange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Recharge Wallet'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void _showInsufficientFundsDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.errorRed.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.account_balance_wallet, color: AppTheme.errorRed, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Insufficient Balance',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'You need a minimum balance of ₹$_minimumBalance to start a chat or call with an AI Pandit.',
+              style: TextStyle(
+                fontSize: 15,
+                color: AppTheme.neutralMedium,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.errorRed.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Current Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.errorRed,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.neutralMedium)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.push('/payment/wallet');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Recharge Wallet'),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Future<void> _checkWalletBalance() async {
     if (_userId == null) return;
     
     try {
-      final balance = await _walletService.getBalance(_userId!).timeout(
-        const Duration(seconds: 3),
-        onTimeout: () => 5000.0,
-      );
+      // First, try to get balance from provider (most up-to-date)
+      final balanceAsync = ref.read(walletBalanceProvider);
+      balanceAsync.whenData((balance) {
+        if (mounted) {
+          setState(() {
+            _walletBalance = balance;
+          });
+          print('✅ Wallet balance from provider: ₹$_walletBalance');
+        }
+      });
+      
+      // Also use wallet service directly as backup
+      final balance = await _walletService.getBalance(_userId!);
+      
+      // Refresh the provider to ensure it's up-to-date
+      ref.invalidate(walletBalanceProvider);
+      
       if (mounted) {
         setState(() {
           _walletBalance = balance;
         });
+        print('✅ Wallet balance updated from service: ₹$_walletBalance');
         
         if (_walletBalance < 25.0 && _messages.isEmpty) {
           Future.delayed(const Duration(seconds: 1), () {
@@ -175,6 +585,20 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       }
     } catch (e) {
       print('⚠️ Background wallet check failed: $e');
+      // Try to get balance from provider as fallback
+      try {
+        final balanceAsync = ref.read(walletBalanceProvider);
+        balanceAsync.whenData((balance) {
+          if (mounted) {
+            setState(() {
+              _walletBalance = balance;
+            });
+            print('✅ Wallet balance from provider fallback: ₹$_walletBalance');
+          }
+        });
+      } catch (e2) {
+        print('⚠️ Provider fallback also failed: $e2');
+      }
     }
   }
 
@@ -185,14 +609,14 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       String welcomeMessage;
       
       try {
-        welcomeMessage = await geminiService.getWelcomeMessage().timeout(
+        welcomeMessage = await geminiService.getWelcomeMessage(panditId: widget.panditId).timeout(
           const Duration(seconds: 5),
         );
       } catch (e) {
         // Fallback to Custom AI
         print('⚠️ Gemini welcome failed, using fallback: $e');
         final customAI = ref.read(customAIServiceProvider);
-        welcomeMessage = await customAI.getWelcomeMessage();
+        welcomeMessage = await customAI.getWelcomeMessage(panditId: widget.panditId);
         _usingFallback = true;
       }
       
@@ -215,23 +639,19 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   }
 
   void _startCostTimer() {
+    _costTimer?.cancel();
     _costTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted && _currentSession != null && _currentSession!.isActive) {
+      if (mounted && _currentSession != null && _currentSession!.isActive && _isChatStarted && !_isViewingOnly) {
         setState(() {
           _elapsedSeconds++;
           _currentCost = _currentSession!.calculateCost();
         });
+      } else {
+        timer.cancel();
       }
     });
   }
 
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _scrollController.dispose();
-    _costTimer?.cancel();
-    super.dispose();
-  }
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -246,7 +666,30 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   }
 
   Future<void> _sendMessage() async {
+    // Check if chat is started
+    if (!_isChatStarted || _isViewingOnly) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please start the chat to send messages'),
+          backgroundColor: AppTheme.warningAmber,
+          action: SnackBarAction(
+            label: 'Start Chat',
+            textColor: Colors.white,
+            onPressed: () => _startChat(),
+          ),
+        ),
+      );
+      return;
+    }
+
     if (_messageController.text.trim().isEmpty || _userId == null || _currentSession == null) return;
+    
+    // Check wallet balance before sending
+    await _checkWalletBalance();
+    if (_walletBalance < 25.0) {
+      _stopChatDueToInsufficientFunds();
+      return;
+    }
     
     final messageText = _messageController.text.trim();
     _messageController.clear();
@@ -308,11 +751,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       try {
         if (_usingFallback) throw Exception('Already using fallback');
         
-        final geminiService = ref.read(geminiServiceProvider);
+      final geminiService = ref.read(geminiServiceProvider);
         print('📤 Sending to Gemini...');
         aiResponse = await geminiService.sendMessage(
-          enhancedMessage,
-          conversationHistory,
+        enhancedMessage,
+        conversationHistory,
           panditId: widget.panditId,
         ).timeout(const Duration(seconds: 15));
         
@@ -325,6 +768,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         aiResponse = await customAI.sendMessage(
           messageText,
           conversationHistory,
+          panditId: widget.panditId,
         );
       }
 
@@ -336,17 +780,17 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       );
 
       if (mounted) {
-        setState(() {
-          _messages.add(aiMessage);
-          _isTyping = false;
-        });
-        
-        await _chatService.addMessage(_currentSession!.id, aiMessage);
-        _scrollToBottom();
+      setState(() {
+        _messages.add(aiMessage);
+        _isTyping = false;
+      });
+      
+      await _chatService.addMessage(_currentSession!.id, aiMessage);
+      _scrollToBottom();
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _isTyping = false);
+      setState(() => _isTyping = false);
         _showError('AI Connection Error. Please try again.');
         print('Critical AI Error: $e');
       }
@@ -354,7 +798,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   }
 
   Future<void> _endSession() async {
-    if (_userId == null || _currentSession == null) return;
+    if (_userId == null || _currentSession == null || !_isChatStarted) {
+      // If not started, just go back
+      if (mounted) context.pop();
+      return;
+    }
 
     _walletBalance = await _walletService.getBalance(_userId!);
     
@@ -442,42 +890,31 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.celestialVoid, // Dark celestial background
+      backgroundColor: AppTheme.neutralSoft,
       body: Stack(
-        children: [
-          // 1. Cosmic Background Gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppTheme.celestialVoid,
-                  AppTheme.celestialBlue,
-                  Colors.black,
+          children: [
+          // Beautiful gradient background matching app theme
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                      colors: [
+                  AppTheme.white,
+                  AppTheme.primarySoft,
+                  AppTheme.neutralSoft,
                 ],
-                stops: const [0.0, 0.5, 1.0],
+                stops: const [0.0, 0.3, 1.0],
               ),
             ),
-          ),
-          
-          // 2. Stars / Stardust Overlay (Optional: using static noise or dots)
-          Positioned.fill(
-             child: Opacity(
-               opacity: 0.1,
-               child: Image.network(
-                 'https://www.transparenttextures.com/patterns/stardust.png',
-                 repeat: ImageRepeat.repeat,
-                 errorBuilder: (_,__,___) => const SizedBox(),
-               ),
-             ),
           ),
           
           SafeArea(
             child: Column(
               children: [
                 _buildAppBar(),
-                _buildCostIndicator(),
+                if (!_isChatStarted) _buildStartButton(),
+                if (_isChatStarted) _buildCostIndicator(),
                 Expanded(
                   child: ListView.builder(
                     controller: _scrollController,
@@ -501,11 +938,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           
           if (_isLoading)
             Container(
-              color: Colors.black54,
+              color: AppTheme.neutralDark.withOpacity(0.3),
               child: const Center(child: CircularProgressIndicator(color: AppTheme.primaryOrange)),
             ),
-        ],
-      ),
+              ],
+            ),
     );
   }
 
@@ -524,8 +961,8 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         );
       },
       child: Align(
-        alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
+      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
           margin: EdgeInsets.only(
             bottom: isSequence ? 4 : 16,
             left: message.isUser ? 50 : 0,
@@ -568,24 +1005,24 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                message.message,
+            Text(
+              message.message,
                 style: GoogleFonts.inter(
                   color: Colors.white, // Always white text on dark/glass backgrounds
-                  fontSize: 15,
+                fontSize: 15,
                   height: 1.5,
                   fontWeight: FontWeight.w400,
-                ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
                 style: GoogleFonts.inter(
                   fontSize: 10,
                   color: Colors.white.withOpacity(0.5),
-                ),
               ),
-            ],
+            ),
+          ],
           ),
         ),
       ),
@@ -596,10 +1033,22 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 16, left: 0, right: 50),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: AppTheme.glassMorphism.copyWith(
+        decoration: BoxDecoration(
+          color: AppTheme.white,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppTheme.primaryOrange.withOpacity(0.1),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryOrange.withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -610,7 +1059,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                'AI is typing...',
                style: GoogleFonts.inter(
                  fontSize: 12,
-                 color: Colors.white.withOpacity(0.7),
+                 color: AppTheme.neutralMedium,
                ),
              ),
           ],
@@ -623,7 +1072,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.white,
+          color: AppTheme.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
@@ -638,20 +1087,20 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         child: Column(
           children: [
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+            scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
+            child: Row(
+              children: [
                   _QuickActionChip('🔮 Future', onTap: () => _fillAndSend('Predict my future based on my chart')),
-                  const SizedBox(width: 8),
+                const SizedBox(width: 8),
                   _QuickActionChip('❤️ Love', onTap: () => _fillAndSend('How is my love life looking?')),
-                  const SizedBox(width: 8),
+                const SizedBox(width: 8),
                   _QuickActionChip('💼 Career', onTap: () => _fillAndSend('What are my career prospects?')),
-                  const SizedBox(width: 8),
+                const SizedBox(width: 8),
                    _QuickActionChip('✨ Luck', onTap: () => _fillAndSend('What are my lucky colors and numbers?')),
-                ],
-              ),
+              ],
             ),
+          ),
             Row(
               children: [
                 Expanded(
@@ -663,34 +1112,59 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     ),
                     child: TextField(
                       controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Ask anything...',
+                      enabled: _isChatStarted && !_isViewingOnly,
+                      decoration: InputDecoration(
+                        hintText: _isChatStarted && !_isViewingOnly 
+                            ? 'Ask anything...' 
+                            : 'Tap to start chat...',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         isDense: true,
-                      ),
+                        ),
                       textCapitalization: TextCapitalization.sentences,
                       onSubmitted: (_) => _sendMessage(),
+                      onTap: () {
+                        if (!_isChatStarted && !_isViewingOnly) {
+                          _showStartChatDialog();
+                        }
+                      },
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
-                  onTap: _sendMessage,
+                  onTap: _isChatStarted && !_isViewingOnly ? _sendMessage : () {
+                    if (!_isChatStarted) {
+                      _showStartChatDialog();
+                    }
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: AppTheme.primaryGradient,
-                      boxShadow: [
-                        BoxShadow(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                      gradient: _isChatStarted && !_isViewingOnly 
+                          ? AppTheme.primaryGradient
+                          : LinearGradient(
+                              colors: [
+                                AppTheme.neutralLight,
+                                AppTheme.neutralLight,
+                              ],
+                            ),
+                      boxShadow: _isChatStarted && !_isViewingOnly ? [
+                        const BoxShadow(
                           color: AppTheme.primaryOrange,
                           blurRadius: 8,
                           offset: Offset(0, 4),
                         )
-                      ],
+                      ] : null,
                     ),
-                    child: const Icon(Icons.send_rounded, color: Colors.white, size: 22),
+                    child: Icon(
+                      Icons.send_rounded, 
+                      color: _isChatStarted && !_isViewingOnly 
+                          ? Colors.white 
+                          : AppTheme.neutralMedium, 
+                      size: 22,
+                    ),
                   ),
                 ),
               ],
@@ -705,32 +1179,137 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     _messageController.text = text;
     _sendMessage();
   }
-  Widget _buildCostIndicator() {
+  Widget _buildStartButton() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.white.withOpacity(0.05),
-        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.1))),
+        color: AppTheme.white,
+        border: Border(bottom: BorderSide(color: AppTheme.neutralLight.withOpacity(0.5))),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryOrange.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(Icons.timer_outlined, size: 14, color: AppTheme.accentGold),
-          const SizedBox(width: 4),
-          Text(
-            '${(_elapsedSeconds ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
-            style: GoogleFonts.inter(fontSize: 12, color: Colors.white70),
+          Icon(
+            Icons.account_balance_wallet,
+            size: 18,
+            color: _walletBalance >= _minimumBalance
+                ? AppTheme.successGreen
+                : AppTheme.errorRed,
           ),
-          const Spacer(),
-          Text(
-            'Cost: ₹${_currentCost.toStringAsFixed(2)}',
-            style: GoogleFonts.inter(
-              fontSize: 12, 
-              color: AppTheme.primaryOrange,
-              fontWeight: FontWeight.w600,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: _walletBalance >= _minimumBalance
+                        ? AppTheme.successGreen
+                        : AppTheme.errorRed,
+                  ),
+                ),
+                if (_walletBalance < _minimumBalance)
+                  Text(
+                    'Minimum ₹${_minimumBalance.toStringAsFixed(0)} required',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: AppTheme.errorRed,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _walletBalance >= _minimumBalance
+                ? () => _showStartChatDialog()
+                : () => _showInsufficientFundsDialog(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _walletBalance >= _minimumBalance
+                  ? AppTheme.primaryOrange
+                  : AppTheme.neutralLight,
+              foregroundColor: _walletBalance >= _minimumBalance
+                  ? Colors.white
+                  : AppTheme.neutralMedium,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              elevation: _walletBalance >= _minimumBalance ? 4 : 0,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.play_arrow,
+                  size: 18,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Start Chat',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCostIndicator() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+                    color: AppTheme.white,
+        border: Border(bottom: BorderSide(color: AppTheme.neutralLight.withOpacity(0.5))),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryOrange.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.timer_outlined, size: 14, color: AppTheme.primaryOrange),
+          const SizedBox(width: 4),
+          Text(
+            '${(_elapsedSeconds ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
+            style: GoogleFonts.inter(fontSize: 12, color: AppTheme.neutralMedium),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.primaryOrange, AppTheme.accentGold],
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'Cost: ₹${_currentCost.toStringAsFixed(2)}',
+              style: GoogleFonts.inter(
+                fontSize: 12, 
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -741,10 +1320,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
      }
      
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.white,
       elevation: 0,
+      shadowColor: AppTheme.primaryOrange.withOpacity(0.1),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: AppTheme.neutralDark),
         onPressed: () => context.pop(),
       ),
       title: Row(
@@ -764,7 +1344,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                 style: GoogleFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: AppTheme.neutralDark,
                 ),
               ),
               Row(
@@ -782,7 +1362,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     'Online',
                     style: GoogleFonts.inter(
                       fontSize: 10,
-                      color: Colors.white.withOpacity(0.7),
+                      color: AppTheme.neutralMedium,
                     ),
                   ),
                 ],
@@ -793,11 +1373,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.phone, color: Colors.white),
+          icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
           onPressed: () => context.push('/ai-pandit/voice-call?panditId=${widget.panditId}'),
         ),
         IconButton(
-          icon: const Icon(Icons.more_vert, color: Colors.white),
+          icon: const Icon(Icons.more_vert, color: AppTheme.neutralDark),
           onPressed: _endSession,
         ),
       ],
@@ -855,7 +1435,7 @@ class _TypingDotsState extends State<_TypingDots> with SingleTickerProviderState
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(opacity),
+                  color: AppTheme.primaryOrange.withOpacity(opacity),
                   shape: BoxShape.circle,
                 ),
               );
@@ -932,12 +1512,12 @@ class _QuickActionChip extends StatelessWidget {
           border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.2)),
         ),
         child: Text(
-          label,
+              label,
           style: const TextStyle(
-            color: AppTheme.primaryOrange,
+                color: AppTheme.primaryOrange,
             fontWeight: FontWeight.w600,
             fontSize: 13,
-          ),
+              ),
         ),
       ),
     );

@@ -226,28 +226,37 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon with subtle glow
+          // Vedic Mate Logo
           Center(
             child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    page.color.withOpacity(0.2),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-              child: Icon(
-                page.icon,
-                size: 48,
-                color: page.color,
+              width: 200,
+              height: 200,
+              margin: const EdgeInsets.only(bottom: 40),
+              child: Image.asset(
+                'assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback if image fails to load
+                  return Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: page.color.withOpacity(0.15),
+                      border: Border.all(
+                        color: page.color,
+                        width: 3,
+                      ),
+                    ),
+                    child: Icon(
+                      page.icon,
+                      size: 80,
+                      color: page.color,
+                    ),
+                  );
+                },
               ),
             ),
           ),
-          const SizedBox(height: 60),
+          const SizedBox(height: 40),
           
           // Text Content with Animation
           FadeTransition(

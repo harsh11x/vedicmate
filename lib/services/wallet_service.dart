@@ -163,19 +163,56 @@ class AIChatService {
   static const String _sessionsKey = 'ai_chat_sessions';
   final WalletService _walletService = WalletService();
 
-  // Start a new AI chat session
-  Future<AIChatSession> startSession(String userId) async {
+  // Start a new AI chat session for a specific pandit
+  Future<AIChatSession> startSession(String userId, String panditId) async {
     final session = AIChatSession(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       userId: userId,
+      panditId: panditId,
       startTime: DateTime.now(),
       ratePerMinute: 25.0,
       messages: [],
       isActive: true,
+      isStarted: false, // Not started until user confirms
     );
     
-    await _saveSession(session);
+    await saveSession(session);
     return session;
+  }
+
+  // Get or create session for a specific pandit
+  Future<AIChatSession> getOrCreateSession(String userId, String panditId) async {
+    // First, try to get the most recent active session for this pandit
+    final sessions = await getUserSessionsByPandit(userId, panditId);
+    
+    AIChatSession? activeSession;
+    try {
+      activeSession = sessions.firstWhere(
+        (s) => s.isActive && !s.isStarted,
+      );
+    } catch (e) {
+      try {
+        activeSession = sessions.firstWhere(
+          (s) => s.isActive,
+        );
+      } catch (e2) {
+        // No active session found
+      }
+    }
+
+    // If no active session exists, create a new one
+    if (activeSession == null || activeSession.id.isEmpty || activeSession.endTime != null) {
+      return await startSession(userId, panditId);
+    }
+
+    return activeSession;
+  }
+
+  // Get all sessions for a specific pandit
+  Future<List<AIChatSession>> getUserSessionsByPandit(String userId, String panditId) async {
+    final allSessions = await getUserSessions(userId);
+    return allSessions.where((s) => s.panditId == panditId).toList()
+      ..sort((a, b) => b.startTime.compareTo(a.startTime));
   }
 
   // End a chat session and deduct charges
@@ -211,7 +248,7 @@ class AIChatService {
         };
       }
       
-      await _saveSession(session);
+      await saveSession(session);
       
       return {
         'success': true,
@@ -233,7 +270,7 @@ class AIChatService {
     final session = await getSession(sessionId);
     if (session != null) {
       session.messages = [...session.messages, message];
-      await _saveSession(session);
+      await saveSession(session);
     }
   }
 
@@ -249,8 +286,8 @@ class AIChatService {
     return null;
   }
 
-  // Get active session for user (optimized with timeout)
-  Future<AIChatSession?> getActiveSession(String userId) async {
+  // Get active session for user and pandit
+  Future<AIChatSession?> getActiveSession(String userId, {String? panditId}) async {
     try {
       final prefs = await SharedPreferences.getInstance().timeout(
         const Duration(seconds: 1),
@@ -310,7 +347,7 @@ class AIChatService {
   }
 
   // Save session to local storage
-  Future<void> _saveSession(AIChatSession session) async {
+  Future<void> saveSession(AIChatSession session) async {
     try {
       final prefs = await SharedPreferences.getInstance().timeout(
         const Duration(seconds: 1),
@@ -322,7 +359,7 @@ class AIChatService {
       );
       // Cache active session key for faster lookup
       if (session.isActive) {
-        await prefs.setString('active_session_${session.userId}', session.id);
+        await prefs.setString('active_session_${session.userId}_${session.panditId}', session.id);
       }
     } catch (e) {
       print('⚠️ Error saving session: $e');

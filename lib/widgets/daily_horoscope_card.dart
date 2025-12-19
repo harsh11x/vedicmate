@@ -14,20 +14,20 @@ class DailyHoroscopeCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF6366F1), // Indigo
-                      Color(0xFF8B5CF6), // Purple
+                      AppTheme.primaryOrange,
+                      AppTheme.accentGold,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF6366F1).withOpacity(0.3),
+                      color: AppTheme.primaryOrange.withOpacity(0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -59,19 +59,19 @@ class DailyHoroscopeCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF6366F1).withOpacity(0.1),
-                  const Color(0xFF8B5CF6).withOpacity(0.05),
-                  Colors.white,
+                  AppTheme.primaryOrange.withOpacity(0.08),
+                  AppTheme.accentGold.withOpacity(0.05),
+                  AppTheme.white,
                 ],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: const Color(0xFF6366F1).withOpacity(0.2),
+                color: AppTheme.primaryOrange.withOpacity(0.15),
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF6366F1).withOpacity(0.1),
+                  color: AppTheme.primaryOrange.withOpacity(0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -86,18 +86,18 @@ class DailyHoroscopeCard extends StatelessWidget {
                     itemCount: 12,
                     itemBuilder: (context, index) {
                       final signs = [
-                        {'name': 'Aries', 'icon': Icons.auto_awesome_rounded, 'color': const Color(0xFFEF4444), 'gradient': [Color(0xFFFF6B6B), Color(0xFFEE5A6F)]},
-                        {'name': 'Taurus', 'icon': Icons.eco_rounded, 'color': const Color(0xFF10B981), 'gradient': [Color(0xFF51CF66), Color(0xFF40C057)]},
-                        {'name': 'Gemini', 'icon': Icons.people_rounded, 'color': const Color(0xFFF59E0B), 'gradient': [Color(0xFFFFD93D), Color(0xFFFFC947)]},
-                        {'name': 'Cancer', 'icon': Icons.water_drop_rounded, 'color': const Color(0xFF3B82F6), 'gradient': [Color(0xFF4DABF7), Color(0xFF339AF0)]},
-                        {'name': 'Leo', 'icon': Icons.local_fire_department_rounded, 'color': const Color(0xFFF97316), 'gradient': [Color(0xFFFF922B), Color(0xFFFF6B00)]},
-                        {'name': 'Virgo', 'icon': Icons.forest_rounded, 'color': const Color(0xFF84CC16), 'gradient': [Color(0xFFA9E34B), Color(0xFF94D82D)]},
-                        {'name': 'Libra', 'icon': Icons.balance_rounded, 'color': const Color(0xFFEC4899), 'gradient': [Color(0xFFFF6BCB), Color(0xFFF06292)]},
-                        {'name': 'Scorpio', 'icon': Icons.bug_report_rounded, 'color': const Color(0xFF991B1B), 'gradient': [Color(0xFFC92A2A), Color(0xFFB91C1C)]},
-                        {'name': 'Sagittarius', 'icon': Icons.arrow_forward_rounded, 'color': const Color(0xFF7C3AED), 'gradient': [Color(0xFF9775FA), Color(0xFF845EF7)]},
-                        {'name': 'Capricorn', 'icon': Icons.landscape_rounded, 'color': const Color(0xFF6B7280), 'gradient': [Color(0xFF868E96), Color(0xFF74808A)]},
-                        {'name': 'Aquarius', 'icon': Icons.water_drop_rounded, 'color': const Color(0xFF06B6D4), 'gradient': [Color(0xFF3BC9DB), Color(0xFF22B8CF)]},
-                        {'name': 'Pisces', 'icon': Icons.set_meal_rounded, 'color': const Color(0xFF60A5FA), 'gradient': [Color(0xFF74C0FC), Color(0xFF4DABF7)]},
+                        {'name': 'Aries', 'icon': Icons.auto_awesome_rounded, 'color': AppTheme.primaryOrange, 'gradient': [AppTheme.primaryOrange, AppTheme.primaryDeep]},
+                        {'name': 'Taurus', 'icon': Icons.eco_rounded, 'color': AppTheme.successGreen, 'gradient': [AppTheme.successGreen, const Color(0xFF059669)]},
+                        {'name': 'Gemini', 'icon': Icons.people_rounded, 'color': AppTheme.accentGold, 'gradient': [AppTheme.accentGold, const Color(0xFFFFD700)]},
+                        {'name': 'Cancer', 'icon': Icons.water_drop_rounded, 'color': AppTheme.infoBlue, 'gradient': [AppTheme.infoBlue, const Color(0xFF2563EB)]},
+                        {'name': 'Leo', 'icon': Icons.local_fire_department_rounded, 'color': AppTheme.warningAmber, 'gradient': [AppTheme.warningAmber, const Color(0xFFD97706)]},
+                        {'name': 'Virgo', 'icon': Icons.forest_rounded, 'color': const Color(0xFF84CC16), 'gradient': [const Color(0xFF84CC16), const Color(0xFF65A30D)]},
+                        {'name': 'Libra', 'icon': Icons.balance_rounded, 'color': const Color(0xFFEC4899), 'gradient': [const Color(0xFFEC4899), const Color(0xFFDB2777)]},
+                        {'name': 'Scorpio', 'icon': Icons.bug_report_rounded, 'color': AppTheme.errorRed, 'gradient': [AppTheme.errorRed, const Color(0xFFDC2626)]},
+                        {'name': 'Sagittarius', 'icon': Icons.arrow_forward_rounded, 'color': AppTheme.celestialPurple, 'gradient': [AppTheme.celestialPurple, const Color(0xFF7C3AED)]},
+                        {'name': 'Capricorn', 'icon': Icons.landscape_rounded, 'color': AppTheme.neutralMedium, 'gradient': [AppTheme.neutralMedium, AppTheme.neutralDark]},
+                        {'name': 'Aquarius', 'icon': Icons.water_drop_rounded, 'color': const Color(0xFF06B6D4), 'gradient': [const Color(0xFF06B6D4), const Color(0xFF0891B2)]},
+                        {'name': 'Pisces', 'icon': Icons.set_meal_rounded, 'color': AppTheme.infoBlue, 'gradient': [AppTheme.infoBlue, const Color(0xFF2563EB)]},
                       ];
                       final sign = signs[index];
                       return Container(
@@ -156,13 +156,13 @@ class DailyHoroscopeCard extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.white,
-                        const Color(0xFF6366F1).withOpacity(0.05),
+                        AppTheme.white,
+                        AppTheme.primaryOrange.withOpacity(0.03),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFF6366F1).withOpacity(0.1),
+                      color: AppTheme.primaryOrange.withOpacity(0.1),
                     ),
                   ),
                   child: Row(
@@ -171,7 +171,7 @@ class DailyHoroscopeCard extends StatelessWidget {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                            colors: [AppTheme.primaryOrange, AppTheme.accentGold],
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),

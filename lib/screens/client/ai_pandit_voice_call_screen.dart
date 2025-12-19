@@ -24,7 +24,7 @@ class AIPanditVoiceCallScreen extends ConsumerStatefulWidget {
   ConsumerState<AIPanditVoiceCallScreen> createState() => _AIPanditVoiceCallScreenState();
 }
 
-class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScreen> with TickerProviderStateMixin {
+class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
   final WalletService _walletService = WalletService();
   final AIChatService _chatService = AIChatService();
   
@@ -36,14 +36,17 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   bool _isListening = false;
   bool _isSpeaking = false;
   bool _isCallActive = false;
+  bool _isCallStarted = false; // Whether user has started the call
   bool _isLoading = false;
   String _recognizedText = '';
   String _currentLanguage = 'en';
   double _walletBalance = 0.0;
   AIChatSession? _currentSession;
   Timer? _costTimer;
+  Timer? _walletCheckTimer; // Timer to check wallet balance during call
   double _currentCost = 0.0;
   int _elapsedSeconds = 0;
+  static const double _minimumBalance = 50.0; // Minimum ₹50 required
   
   // Conversation history
   List<Map<String, String>> _conversationHistory = [];
@@ -88,6 +91,7 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _setupAnimations();
     _setupTTS();
     // NO async operations in initState - UI must render first!
@@ -95,6 +99,41 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Use microtask to defer initialization even further
       Future.microtask(() => _initializeVoiceCall());
+      _watchWalletBalance();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Refresh wallet balance when app comes back to foreground
+    if (state == AppLifecycleState.resumed && _userId != null) {
+      _checkWalletBalance();
+    }
+  }
+
+  void _watchWalletBalance() {
+    // Watch wallet provider for real-time updates
+    ref.listen<AsyncValue<double>>(walletBalanceProvider, (previous, next) {
+      next.whenData((balance) {
+        if (mounted && (_walletBalance != balance || previous?.value != balance)) {
+          setState(() {
+            _walletBalance = balance;
+          });
+          print('✅ Wallet balance updated from provider: ₹$_walletBalance');
+        }
+      });
+    });
+    
+    // Also get initial balance from provider
+    final balanceAsync = ref.read(walletBalanceProvider);
+    balanceAsync.whenData((balance) {
+      if (mounted) {
+        setState(() {
+          _walletBalance = balance;
+        });
+        print('✅ Initial wallet balance from provider: ₹$_walletBalance');
+      }
     });
   }
 
@@ -131,42 +170,448 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   Future<void> _initializeVoiceCall() async {
     if (!mounted) return;
     
-    final user = FirebaseAuth.instance.currentUser;
-    
-    // Allow everyone - regular users, guest users, and even unauthenticated users
+    // Use the provider's userId to ensure consistency
+    final providerUserId = ref.read(currentUserIdProvider);
     String userId;
-    if (user == null) {
-      // Create a temporary guest ID for unauthenticated users
-      userId = 'guest_temp_${DateTime.now().millisecondsSinceEpoch}';
-      print('✅ Using temporary guest session: $userId');
+    
+    if (providerUserId != null) {
+      userId = providerUserId;
     } else {
-      // Handle authenticated users (regular or anonymous)
-      userId = user.isAnonymous ? 'guest_${user.uid}' : user.uid;
-      print('✅ User authenticated: ${user.isAnonymous ? "Guest" : "Regular"} - ID: $userId');
+      // Fallback to Firebase Auth
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        // Create a temporary guest ID for unauthenticated users
+        userId = 'guest_temp_${DateTime.now().millisecondsSinceEpoch}';
+        print('✅ Using temporary guest session: $userId');
+      } else {
+        // Handle authenticated users (regular or anonymous)
+        userId = user.isAnonymous ? 'guest_${user.uid}' : user.uid;
+        print('✅ User authenticated: ${user.isAnonymous ? "Guest" : "Regular"} - ID: $userId');
+      }
     }
     
     setState(() {
       _userId = userId;
-      _isLoading = true;
-      _walletBalance = 5000.0; // Default optimistic value
+      _isLoading = false;
+    });
+    print('✅ Voice call screen using userId: $userId');
+    
+    // Get or create session for this specific pandit
+    _currentSession = await _chatService.getOrCreateSession(userId, widget.panditId ?? 'default');
+    
+    // Check wallet balance AFTER session is loaded
+    await _checkWalletBalance();
+    
+    // Also get balance from provider as backup
+    final balanceAsync = ref.read(walletBalanceProvider);
+    balanceAsync.whenData((balance) {
+      if (mounted) {
+        setState(() {
+          _walletBalance = balance;
+        });
+        print('✅ Wallet balance from provider on init: ₹$_walletBalance');
+      }
     });
     
-    // Create local session immediately (no async wait)
-    _currentSession = AIChatSession(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: userId,
-      startTime: DateTime.now(),
-    );
-    _startCostTimer();
+    // Don't start call automatically - wait for user to click Start button
+  }
+
+  Future<void> _checkWalletBalance() async {
+    if (_userId == null) return;
     
-    // UI is ready NOW - stop loading immediately
+    try {
+      // First, try to get balance from provider (most up-to-date)
+      final balanceAsync = ref.read(walletBalanceProvider);
+      balanceAsync.whenData((balance) {
+        if (mounted) {
+          setState(() {
+            _walletBalance = balance;
+          });
+          print('✅ Wallet balance from provider: ₹$_walletBalance');
+        }
+      });
+      
+      // Also use wallet service directly as backup
+      final balance = await _walletService.getBalance(_userId!);
+      
+      // Refresh the provider to ensure it's up-to-date
+      ref.invalidate(walletBalanceProvider);
+      
+      if (mounted) {
+        setState(() {
+          _walletBalance = balance;
+        });
+        print('✅ Wallet balance updated from service: ₹$_walletBalance');
+      }
+    } catch (e) {
+      print('⚠️ Wallet check failed: $e');
+      // Try to get balance from provider as fallback
+      try {
+        final balanceAsync = ref.read(walletBalanceProvider);
+        balanceAsync.whenData((balance) {
+          if (mounted) {
+            setState(() {
+              _walletBalance = balance;
+            });
+            print('✅ Wallet balance from provider fallback: ₹$_walletBalance');
+          }
+        });
+      } catch (e2) {
+        print('⚠️ Provider fallback also failed: $e2');
+        if (mounted) {
+          setState(() {
+            _walletBalance = 0.0;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _showStartCallDialog() async {
+    if (!mounted || _walletBalance < _minimumBalance) {
+      _showInsufficientFundsDialog();
+      return;
+    }
+
+    final shouldStart = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.primaryOrange, AppTheme.accentGold],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.phone, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Start Voice Call?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Would you like to start a voice call with this AI Pandit?',
+              style: TextStyle(
+                fontSize: 15,
+                color: AppTheme.neutralMedium,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryOrange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 18, color: AppTheme.primaryOrange),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Call charges: ₹25/minute\nMinimum balance required: ₹50',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.neutralDark,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.account_balance_wallet, size: 16, color: AppTheme.successGreen),
+                const SizedBox(width: 6),
+                Text(
+                  'Your balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.successGreen,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppTheme.neutralMedium),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('Start Call'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldStart == true) {
+      await _startCall();
+    }
+  }
+
+  Future<void> _startCall() async {
+    if (_currentSession == null || _userId == null) return;
+
+    // Check wallet balance immediately
+    await _checkWalletBalance();
+    if (_walletBalance < _minimumBalance) {
+      _showInsufficientFundsDialog();
+      return;
+    }
+
+    // Mark session as started immediately
+    _currentSession!.isStarted = true;
+    _currentSession!.isActive = true;
+    await _chatService.saveSession(_currentSession!);
+
     setState(() {
-      _isLoading = false;
+      _isCallStarted = true;
       _isCallActive = true;
     });
     
-    // Everything else happens in background
+    // Start timers immediately
+    _startCostTimer();
+    _startWalletCheckTimer();
+
+    // Initialize call in background
     _initializeInBackground();
+  }
+
+  void _startWalletCheckTimer() {
+    _walletCheckTimer?.cancel();
+    _walletCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (!_isCallStarted || !_isCallActive) {
+        timer.cancel();
+        return;
+      }
+
+      await _checkWalletBalance();
+      
+      // Check if balance is insufficient (less than cost for 1 more minute)
+      if (_walletBalance < 25.0) {
+        timer.cancel();
+        _stopCallDueToInsufficientFunds();
+      }
+    });
+  }
+
+  Future<void> _stopCallDueToInsufficientFunds() async {
+    if (_currentSession == null) return;
+
+    // Stop timers
+    _costTimer?.cancel();
+    _walletCheckTimer?.cancel();
+    await _speech.stop();
+    await _flutterTts.stop();
+
+    // Mark session as inactive
+    _currentSession!.isActive = false;
+    _currentSession!.endTime = DateTime.now();
+    await _chatService.saveSession(_currentSession!);
+
+    setState(() {
+      _isCallStarted = false;
+      _isCallActive = false;
+      _isListening = false;
+      _isSpeaking = false;
+    });
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.errorRed.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.error_outline, color: AppTheme.errorRed, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Insufficient Funds',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Your wallet balance is insufficient to continue the call.',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: AppTheme.neutralMedium,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.errorRed.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Current Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.errorRed,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK', style: TextStyle(color: AppTheme.neutralMedium)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                context.push('/payment/wallet');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryOrange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Recharge Wallet'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void _showInsufficientFundsDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.errorRed.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.account_balance_wallet, color: AppTheme.errorRed, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Insufficient Balance',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'You need a minimum balance of ₹$_minimumBalance to start a chat or call with an AI Pandit.',
+              style: TextStyle(
+                fontSize: 15,
+                color: AppTheme.neutralMedium,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.errorRed.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Current Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.errorRed,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.neutralMedium)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.push('/payment/wallet');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Recharge Wallet'),
+          ),
+        ],
+      ),
+    );
   }
 
   // All heavy operations happen here in background
@@ -254,44 +699,7 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
     }
   }
 
-  // Check wallet balance in background (non-blocking)
-  Future<void> _checkWalletBalance() async {
-    if (_userId == null) return;
-    
-    try {
-      final balance = await _walletService.getBalance(_userId!).timeout(
-        const Duration(seconds: 3),
-        onTimeout: () => 5000.0,
-      );
-      if (mounted) {
-        setState(() {
-          _walletBalance = balance;
-        });
-        
-        // Show low balance notification if needed (non-blocking)
-        if (_walletBalance < 25.0) {
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Low balance: ₹${_walletBalance.toStringAsFixed(2)}. Consider recharging.'),
-                  backgroundColor: AppTheme.primaryOrange,
-                  action: SnackBarAction(
-                    label: 'Recharge',
-                    textColor: Colors.white,
-                    onPressed: () => context.push('/wallet/recharge'),
-                  ),
-                ),
-              );
-            }
-          });
-        }
-      }
-    } catch (e) {
-      print('⚠️ Background wallet check failed: $e');
-      // Ignore - use default balance
-    }
-  }
+  // Remove duplicate - using the one defined earlier
 
   void _startCostTimer() {
     _costTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -347,7 +755,13 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   }
 
   Future<void> _startListening() async {
-    if (!_isCallActive || _isSpeaking || _isListening) return;
+    // Check if call is started
+    if (!_isCallStarted || !_isCallActive) {
+      _showStartCallDialog();
+      return;
+    }
+    
+    if (_isSpeaking || _isListening) return;
     
     setState(() {
       _isListening = true;
@@ -459,6 +873,7 @@ Please use these details to generate my complete Kundli analysis.]
       final aiResponse = await geminiService.sendMessage(
         enhancedMessage,
         _conversationHistory,
+        panditId: widget.panditId,
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () => 'I apologize, but the response is taking longer than expected. Please try again.',
@@ -611,9 +1026,11 @@ Please use these details to generate my complete Kundli analysis.]
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _speech.stop();
     _flutterTts.stop();
     _costTimer?.cancel();
+    _walletCheckTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
@@ -623,14 +1040,14 @@ Please use these details to generate my complete Kundli analysis.]
     return Scaffold(
       backgroundColor: AppTheme.celestialVoid,
       body: Stack(
-        children: [
+          children: [
           // 1. Background
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
+                      colors: [
                   Color(0xFF0F172A), // Deep Slate
                   Color(0xFF1E293B), // Slate 800
                   Colors.black,
@@ -654,18 +1071,25 @@ Please use these details to generate my complete Kundli analysis.]
             child: Column(
               children: [
                 _buildAppBar(),
+                if (!_isCallStarted) _buildStartButton(),
                 Expanded(
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Dynamic Avatar with Waves
-                        SizedBox(
-                          height: 300,
-                          width: 300,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (!_isCallStarted) {
+                              _showStartCallDialog();
+                            }
+                          },
+                          child: SizedBox(
+                            height: 300,
+                            width: 300,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
                               // Radiating Waves (Only when speaking)
                               if (_isSpeaking)
                                 ...List.generate(3, (index) {
@@ -695,27 +1119,27 @@ Please use these details to generate my complete Kundli analysis.]
                                 }),
                                 
                               // Pulse Animation for Listening/Speaking
-                              AnimatedBuilder(
-                                animation: _pulseAnimation,
-                                builder: (context, child) {
-                                  return Transform.scale(
+                        AnimatedBuilder(
+                          animation: _pulseAnimation,
+                          builder: (context, child) {
+                            return Transform.scale(
                                     scale: _isSpeaking 
                                         ? 1.0 + (_pulseController.value * 0.1) // Subtle bounce when speaking
                                         : 1.0 + (_pulseController.value * 0.05), // Gentle breath when listening
-                                    child: Container(
+                              child: Container(
                                       width: 160,
                                       height: 160,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
                                         gradient: _isSpeaking ? AppTheme.primaryGradient : AppTheme.goldGradient,
-                                        boxShadow: [
-                                          BoxShadow(
+                                  boxShadow: [
+                                    BoxShadow(
                                             color: (_isSpeaking ? AppTheme.primaryOrange : AppTheme.accentGold).withOpacity(0.6),
                                             blurRadius: 40,
                                             spreadRadius: 5,
-                                          ),
-                                        ],
-                                      ),
+                                    ),
+                                  ],
+                                ),
                                       padding: const EdgeInsets.all(4),
                                       child: Container(
                                         decoration: const BoxDecoration(
@@ -724,14 +1148,15 @@ Please use these details to generate my complete Kundli analysis.]
                                         ),
                                         padding: const EdgeInsets.all(2),
                                         child: _buildAvatarImage(),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                ),
+                              ),
+                            );
+                          },
                               ),
                             ],
                           ),
                         ),
+                      ),
                         
                         const SizedBox(height: 40),
                         
@@ -739,9 +1164,9 @@ Please use these details to generate my complete Kundli analysis.]
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
                           child: Text(
-                            _isSpeaking
-                                ? 'AI Pandit is speaking...'
-                                : _isListening
+                          _isSpeaking
+                              ? 'AI Pandit is speaking...'
+                              : _isListening
                                     ? 'Listening to you...'
                                     : 'Thinking...',
                             key: ValueKey(_isSpeaking ? 'speak' : (_isListening ? 'listen' : 'think')),
@@ -811,10 +1236,92 @@ Please use these details to generate my complete Kundli analysis.]
           ? (currentPandit.profileImage.startsWith('assets/') 
               ? AssetImage(currentPandit.profileImage) as ImageProvider
               : NetworkImage(currentPandit.profileImage))
-          : null,
+                              : null,
       child: currentPandit == null 
           ? const Icon(Icons.person, size: 60, color: Colors.white54) 
-          : null,
+                                  : null,
+    );
+  }
+
+  Widget _buildStartButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.account_balance_wallet,
+            size: 18,
+            color: _walletBalance >= _minimumBalance
+                ? AppTheme.successGreen
+                : AppTheme.errorRed,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                if (_walletBalance < _minimumBalance)
+                  Text(
+                    'Minimum ₹${_minimumBalance.toStringAsFixed(0)} required',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: AppTheme.errorRed,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _walletBalance >= _minimumBalance
+                ? () => _showStartCallDialog()
+                : () => _showInsufficientFundsDialog(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _walletBalance >= _minimumBalance
+                  ? AppTheme.primaryOrange
+                  : Colors.white.withOpacity(0.2),
+              foregroundColor: _walletBalance >= _minimumBalance
+                  ? Colors.white
+                  : Colors.white.withOpacity(0.5),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              elevation: _walletBalance >= _minimumBalance ? 4 : 0,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.play_arrow,
+                  size: 18,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Start Call',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -841,32 +1348,33 @@ Please use these details to generate my complete Kundli analysis.]
                 ),
               ),
               const SizedBox(height: 2),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppTheme.successGreen.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppTheme.successGreen.withOpacity(0.5)),
-                ),
-                child: Row(
-                  children: [
-                    Container(width: 6, height: 6, decoration: BoxDecoration(color: AppTheme.successGreen, shape: BoxShape.circle)),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${(_elapsedSeconds ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
-                      style: const TextStyle(fontSize: 10, color: Colors.white),
+              if (_isCallStarted)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTheme.successGreen.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppTheme.successGreen.withOpacity(0.5)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(width: 6, height: 6, decoration: BoxDecoration(color: AppTheme.successGreen, shape: BoxShape.circle)),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${(_elapsedSeconds ~/ 60).toString().padLeft(2, '0')}:${(_elapsedSeconds % 60).toString().padLeft(2, '0')}',
+                        style: const TextStyle(fontSize: 10, color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
             ],
           ),
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
             onPressed: () => context.pushReplacement('/ai-pandit/chat?panditId=${widget.panditId}'),
-          ),
-        ],
-      ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -884,7 +1392,11 @@ Please use these details to generate my complete Kundli analysis.]
             icon: Icons.mic_off,
             color: Colors.white,
             onTap: () {
-               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mute not implemented yet')));
+              if (!_isCallStarted) {
+                _showStartCallDialog();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mute not implemented yet')));
+              }
             },
           ),
            _ControlIcon(
@@ -944,7 +1456,7 @@ class _ControlIcon extends StatelessWidget {
           ] : null,
         ),
         child: Icon(icon, color: color, size: iconSize),
-      ),
+            ),
     );
   }
 }

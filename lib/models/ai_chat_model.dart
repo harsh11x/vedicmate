@@ -39,22 +39,26 @@ class AIChatMessage {
 class AIChatSession {
   final String id;
   final String userId;
+  final String panditId; // Store which pandit this chat is with
   final DateTime startTime;
   DateTime? endTime;
   final double ratePerMinute; // Rs. 25 per minute
   double totalCost;
   List<AIChatMessage> messages;
   bool isActive;
+  bool isStarted; // Whether user has started the chat (not just viewing)
 
   AIChatSession({
     required this.id,
     required this.userId,
+    required this.panditId,
     required this.startTime,
     this.endTime,
     this.ratePerMinute = 25.0,
     this.totalCost = 0.0,
     this.messages = const [],
     this.isActive = true,
+    this.isStarted = false,
   });
 
   // Calculate cost based on duration
@@ -83,6 +87,7 @@ class AIChatSession {
     return AIChatSession(
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
+      panditId: json['panditId'] ?? '',
       startTime: json['startTime'] != null
           ? DateTime.parse(json['startTime'])
           : DateTime.now(),
@@ -94,6 +99,7 @@ class AIChatSession {
               .toList() ??
           [],
       isActive: json['isActive'] ?? true,
+      isStarted: json['isStarted'] ?? false,
     );
   }
 
@@ -101,12 +107,14 @@ class AIChatSession {
     return {
       'id': id,
       'userId': userId,
+      'panditId': panditId,
       'startTime': startTime.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
       'ratePerMinute': ratePerMinute,
       'totalCost': totalCost,
       'messages': messages.map((m) => m.toJson()).toList(),
       'isActive': isActive,
+      'isStarted': isStarted,
     };
   }
 }

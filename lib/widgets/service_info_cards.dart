@@ -10,8 +10,8 @@ class ServiceInfoCards extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           Row(
             children: [
               Container(
@@ -38,15 +38,15 @@ class ServiceInfoCards extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Our Services',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 22,
+              fontSize: 22,
                       color: AppTheme.neutralDark,
                       letterSpacing: -0.5,
-                    ),
-              ),
-            ],
+            ),
           ),
+            ],
+        ),
           const SizedBox(height: 20),
           GridView.count(
             crossAxisCount: 2,
@@ -87,7 +87,7 @@ class ServiceInfoCards extends StatelessWidget {
             ],
           ),
         ],
-      ),
+        ),
     );
   }
 }
@@ -112,16 +112,16 @@ class _ServiceCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
             colors: [
               gradient[0].withOpacity(0.1),
               gradient[1].withOpacity(0.05),
               Colors.white,
             ],
-          ),
+        ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: gradient[0].withOpacity(0.2),
@@ -132,24 +132,24 @@ class _ServiceCard extends StatelessWidget {
               color: gradient[0].withOpacity(0.15),
               blurRadius: 15,
               offset: const Offset(0, 6),
-            ),
+              ),
           ],
-        ),
+          ),
         child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
+            padding: const EdgeInsets.all(20),
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
+                      decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: gradient,
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: gradient[0].withOpacity(0.3),
@@ -160,11 +160,11 @@ class _ServiceCard extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  color: Colors.white,
+                    color: Colors.white,
                   size: 32,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
               Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -175,21 +175,21 @@ class _ServiceCard extends StatelessWidget {
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-              ),
+                  ),
               const SizedBox(height: 6),
-              Text(
+                      Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppTheme.neutralMedium,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                    ),
+                        ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
-        ),
       ),
     );
   }
