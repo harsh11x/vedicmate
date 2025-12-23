@@ -20,10 +20,14 @@ import '../../screens/client/all_ai_pandits_screen.dart';
 import '../../screens/client/ai_pandit_profile_screen.dart';
 import '../../screens/shared/service_report_screen.dart';
 import '../../screens/auth/email_login_screen.dart';
+import '../../screens/onboarding/astrology_type_selection_screen.dart';
+import '../../screens/onboarding/birth_details_screen.dart';
+import '../../screens/onboarding/ai_pandit_selection_screen.dart';
+
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/splash',
+    initialLocation: '/login',
     errorBuilder: (context, state) => Scaffold(
       body: Center(
         child: Column(
@@ -43,10 +47,6 @@ class AppRouter {
     ),
     routes: [
       GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
-      GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
       ),
@@ -57,6 +57,23 @@ class AppRouter {
       GoRoute(
         path: '/register',
         builder: (context, state) => const RegistrationScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/select-type',
+        builder: (context, state) => const AstrologyTypeSelectionScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/birth-details',
+        builder: (context, state) {
+          final extras = state.extra as Map<String, dynamic>?;
+          return BirthDetailsScreen(
+            astrologyType: extras?['astrologyType'] ?? 'Unknown',
+          );
+        },
+      ),
+      GoRoute(
+        path: '/onboarding/select-pandit',
+        builder: (context, state) => const AIPanditSelectionScreen(),
       ),
       GoRoute(
         path: '/client/dashboard',
@@ -107,14 +124,14 @@ class AppRouter {
       GoRoute(
         path: '/ai-pandit/chat',
         builder: (context, state) {
-          final panditId = state.uri.queryParameters['panditId'];
+          final panditId = state.uri.queryParameters['panditId'] ?? (state.extra as Map<String, dynamic>?)?['panditId'];
           return AIPanditChatScreen(panditId: panditId);
         },
       ),
       GoRoute(
         path: '/ai-pandit/voice-call',
         builder: (context, state) {
-          final panditId = state.uri.queryParameters['panditId'];
+          final panditId = state.uri.queryParameters['panditId'] ?? (state.extra as Map<String, dynamic>?)?['panditId'];
           return AIPanditVoiceCallScreen(panditId: panditId);
         },
       ),

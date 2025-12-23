@@ -6,28 +6,34 @@ class AppTheme {
   // Celestial Glassmorphism Color Palette
   
   // Light Mode (Solar/Day)
-  static const Color primaryOrange = Color(0xFFFF6B35); // Solar Flare
-  static const Color primaryDeep = Color(0xFFE55A2B);   // Deep Sunset
-  static const Color primaryLight = Color(0xFFFFF0EB);  // Morning Glow
-  static const Color primarySoft = Color(0xFFFFF8F6);   // Soft Cloud
+  // Cosmic AI Theme Palette
   
-  static const Color accentGold = Color(0xFFFFB800);    // Noon Sun
-  static const Color accentGoldLight = Color(0xFFFFF9E6); // Starlight
+  // Primary Colors (Deep Space & Nebula)
+  static const Color primaryOrange = Color(0xFF8B5CF6); // Changed to Electric Purple
+  static const Color primaryDeep = Color(0xFF6D28D9);   // Deep Purple
+  static const Color celestialVoid = Color(0xFF0B0B19); // Deepest Space Background
+  static const Color celestialBlue = Color(0xFF1E1E2E); // Card Background
+  static const Color celestialPurple = Color(0xFF581C87); // Restored for compatibility
+  static const Color primaryLight = Color(0xFFFFF0EB);  // Restored for compatibility
   
-  static const Color celestialBlue = Color(0xFF0F172A); // Midnight Sky
-  static const Color celestialPurple = Color(0xFF581C87); // Nebula
-  static const Color celestialVoid = Color(0xFF020617); // Deep Space
+  // Accents
+  static const Color accentGold = Color(0xFFFFD700);    // Celestial Gold
+  static const Color accentGoldLight = Color(0xFFFFE57F);
   
-  static const Color neutralDark = Color(0xFF1F2937); 
-  static const Color neutralMedium = Color(0xFF6B7280);
-  static const Color neutralLight = Color(0xFFD1D5DB);
-  static const Color neutralSoft = Color(0xFFF3F4F6);
+  // Neutrals
+  static const Color neutralDark = Color(0xFF0F172A); 
+  static const Color neutralMedium = Color(0xFF94A3B8);
+  static const Color neutralLight = Color(0xFFCBD5E1);
+  static const Color neutralSoft = Color(0xFFF1F5F9);
   static const Color white = Color(0xFFFFFFFF);
   
-  static const Color successGreen = Color(0xFF10B981); // Emerald
+  static const Color successGreen = Color(0xFF10B981);
+  static const Color errorRed = Color(0xFFEF4444);
+  static const Color infoBlue = Color(0xFF3B82F6);
   static const Color warningAmber = Color(0xFFF59E0B);
-  static const Color errorRed = Color(0xFFEF4444);     // Mars Red
-  static const Color infoBlue = Color(0xFF3B82F6);     // Neptune Blue
+  
+  // Legacy colors for compatibility
+  static const Color primarySoft = Color(0xFFF3E8FF); // Soft Violet for Cosmic Theme
   
   // Gradient Colors
   static const LinearGradient primaryGradient = LinearGradient(

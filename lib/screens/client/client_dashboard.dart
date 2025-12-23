@@ -2,31 +2,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../core/theme/app_theme.dart';
-import '../../models/ai_pandit_model.dart';
-import '../../widgets/daily_horoscope_card.dart';
-import '../../widgets/quick_stats_widget.dart';
-import '../../widgets/auspicious_timings_widget.dart';
-import '../../widgets/special_offers_widget.dart';
-import '../../widgets/numerology_widget.dart';
-import '../../widgets/astronomy_widget.dart';
-import '../../widgets/service_info_cards.dart';
-import '../../widgets/ai_pandits_section.dart';
-import '../../widgets/staggered_list_animation.dart';
-import '../../providers/api_providers.dart';
-import '../../providers/wallet_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../core/theme/app_theme.dart';
+import '../../models/ai_pandit_model.dart';
+import '../../widgets/service_info_cards.dart';
+import '../../providers/wallet_provider.dart';
+import '../../providers/api_providers.dart';
 import 'reels_screen.dart';
 import 'remedies_screen.dart';
-import 'ai_pandit_chat_screen.dart';
-import '../shared/booking_scheduling_screen.dart';
-import '../shared/chat_screen.dart';
-import '../shared/video_call_screen.dart';
-import '../shared/payment_wallet_screen.dart';
 import '../shared/settings_screen.dart';
-import '../shared/booking_history_screen.dart';
-import 'remedies_screen.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});
@@ -48,9 +33,26 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.celestialVoid, // Cosmic Background
       extendBody: true,
       body: Stack(
         children: [
+          // Ambient Background Stars/Glow
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF0B0B19), // Deep Void
+                    Color(0xFF1A1A2E), // Slight Nebula
+                  ],
+                ),
+              ),
+            ),
+          ),
+          
           IndexedStack(
             index: _currentIndex,
             children: [
@@ -58,34 +60,46 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
                 searchController: _searchController,
                 onNavigateToTab: (index) => setState(() => _currentIndex = index),
               ),
-              _ChatTab(),
-              const ReelsScreen(),
-              const RemediesScreen(),
-              _ProfileTab(),
+              // Placeholder screens needs cosmic theme too, but focusing on home first
+               _PlaceholderScreen(title: 'Chat', icon: Icons.chat_bubble_outline),
+               const ReelsScreen(), // Assuming this has its own UI
+               const RemediesScreen(), // Assuming this has its own UI
+               const SettingsScreen(), // Assuming this has its own UI
             ],
           ),
+          
+          // Cosmic Bottom Navigation Bar
           Positioned(
-            bottom: 20,
+            bottom: 24,
             left: 20,
             right: 20,
-            child: Container(
-              decoration: AppTheme.glassMorphism,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildNavItem(Icons.home_rounded, 'Home', 0),
-                        _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
-                        _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
-                        _buildNavItem(Icons.shopping_bag_rounded, 'Remedies', 3),
-                        _buildNavItem(Icons.person_rounded, 'Profile', 4),
-                      ],
-                    ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.celestialBlue.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryOrange.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildNavItem(Icons.home_rounded, 'Home', 0),
+                      _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
+                      _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
+                      _buildNavItem(Icons.shopping_bag_rounded, 'Shop', 3),
+                      _buildNavItem(Icons.person_rounded, 'Profile', 4),
+                    ],
                   ),
                 ),
               ),
@@ -102,25 +116,26 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
       onTap: () => setState(() => _currentIndex = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 8, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryOrange.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryOrange.withOpacity(0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
+          border: isSelected ? Border.all(color: AppTheme.primaryOrange.withOpacity(0.5)) : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralLight,
+              color: isSelected ? AppTheme.accentGold : Colors.white.withOpacity(0.6),
               size: 24,
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
               Text(
                 label,
-                style: TextStyle(
-                  color: AppTheme.primaryOrange,
+                style: GoogleFonts.outfit(
+                  color: Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -129,6 +144,25 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _PlaceholderScreen extends StatelessWidget {
+  final String title;
+  final IconData icon; // ignore: unused_element
+  const _PlaceholderScreen({required this.title, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent, // Keep transparent to show cosmic bg
+      appBar: AppBar(
+        title: Text(title, style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent, 
+        elevation: 0,
+      ),
+      body: Center(child: Text('Coming Soon', style: TextStyle(color: Colors.white))),
     );
   }
 }
@@ -151,694 +185,156 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final userName = user?.displayName ?? 
-                     (user?.email?.split('@').first ?? 'User');
-    final greeting = _getGreeting();
-
+                     (user?.email?.split('@').first ?? 'Seeker');
+    
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
           slivers: [
-            // Top Bar with Greeting and Wallet
+            // 1. Cosmic Header
             SliverToBoxAdapter(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppTheme.primaryOrange.withOpacity(0.05),
-                      AppTheme.yellowPrimary.withOpacity(0.03),
-                    ],
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(
-                    (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '$greeting, ',
-                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 22,
-                                    color: AppTheme.neutralDark,
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Text(
-                                    userName,
-                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 22,
-                                      color: AppTheme.primaryOrange,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '👋',
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Discover your spiritual path today',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.neutralMedium,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome back,',
+                          style: GoogleFonts.outfit(
+                            color: Colors.white.withOpacity(0.7),
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                      // Wallet Balance Badge - Synced
-                      Consumer(
-                        builder: (context, ref, child) {
-                          final walletBalanceAsync = ref.watch(walletBalanceProvider);
-                          final balance = walletBalanceAsync.valueOrNull ?? 0.0;
-                          return GestureDetector(
-                            onTap: () => context.push('/payment/wallet'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                border: AppTheme.softBorder,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.account_balance_wallet, size: 18, color: AppTheme.textDark),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    '₹${balance.toStringAsFixed(0)}',
-                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: AppTheme.textDark,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      Stack(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.notifications_outlined),
-                            color: AppTheme.neutralDark,
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('No new notifications')),
-                              );
-                            },
+                        Text(
+                          userName,
+                          style: GoogleFonts.outfit(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Positioned(
-                            right: 8,
-                            top: 8,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppTheme.errorRed,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    _buildSolarBalance(ref),
+                  ],
                 ),
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // AI Pandits Section - Replaces Stories
-            const SliverToBoxAdapter(
-              child: AIPanditsSection(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-            // Enhanced Search Bar
+            // 2. Search Bar (Glassmorphic)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.white,
-                        AppTheme.neutralSoft.withOpacity(0.5),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryOrange.withOpacity(0.1),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: AppTheme.primaryOrange.withOpacity(0.2),
-                      width: 1.5,
-                    ),
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
                   ),
                   child: TextField(
                     controller: widget.searchController,
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Search AI Pandits, Services, Remedies...',
-                      hintStyle: TextStyle(
-                        color: AppTheme.neutralMedium.withOpacity(0.7),
-                        fontSize: 15,
-                      ),
-                      prefixIcon: Container(
-                        margin: const EdgeInsets.all(12),
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.primaryOrange, AppTheme.yellowPrimary],
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(Icons.search, color: AppTheme.white, size: 20),
-                      ),
-                      suffixIcon: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        child: IconButton(
-                          icon: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppTheme.infoBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(Icons.mic, color: AppTheme.infoBlue, size: 20),
-                          ),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Voice search coming soon!'),
-                                backgroundColor: AppTheme.infoBlue,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                      hintText: 'Search the cosmos...',
+                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+                      prefixIcon: Icon(Icons.search, color: AppTheme.accentGold),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
+                      contentPadding: const EdgeInsets.all(16),
                     ),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    onSubmitted: (value) {
-                      if (value.isNotEmpty) {
-                        context.push('/ai-pandits/all?q=$value');
-                      }
+                    onSubmitted: (val) {
+                       if (val.isNotEmpty) context.push('/ai-pandits/all?q=$val');
                     },
                   ),
                 ),
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // AI Services - Prominent placement
+            // 3. AI Features (Chat & Call)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
                   children: [
                     Expanded(
-                      child: _AIServiceCard(
+                      child: _CosmicActionCard(
+                        title: 'Vedic AI Chat',
+                        subtitle: 'Ask about your destiny',
                         icon: Icons.auto_awesome,
-                        label: 'AI Astrologer',
-                        subtitle: 'Chat with AI',
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                        ),
+                        color: AppTheme.primaryOrange,
                         onTap: () => context.push('/ai-pandit/chat'),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _AIServiceCard(
-                        icon: Icons.phone,
-                        label: 'AI Voice Call',
-                        subtitle: 'Talk with AI',
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.successGreen, Color(0xFF4CAF50)],
-                        ),
-                        onTap: () => context.push('/ai-pandit/voice-call'),
+                      child: _CosmicActionCard(
+                        title: 'Voice Call',
+                        subtitle: 'Speak to the stars',
+                        icon: Icons.mic_none,
+                        color: AppTheme.successGreen,
+                         onTap: () => context.push('/ai-pandit/voice-call'),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+
+            // 4. Section: Featured Pandits
+            _buildSectionHeader('Cosmic Guides', onSeeAll: () => context.push('/ai-pandits/all')),
             
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-            
-            // Service Info Cards - Numerology, Horoscope, Astrology, Vastu, Kundli
-            SliverToBoxAdapter(
-              child: ServiceInfoCards(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Daily Horoscope Card - Real-time with user data
-            SliverToBoxAdapter(
-              child: DailyHoroscopeCard(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Special Offers Section
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Special Offers',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('More offers coming soon!')),
-                            );
-                          },
-                          child: const Text('View All'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const SpecialOffersWidget(),
-                ],
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Auspicious Timings
-            SliverToBoxAdapter(
-              child: const AuspiciousTimingsWidget(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Numerology Widget
-            SliverToBoxAdapter(
-              child: const NumerologyWidget(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Astronomy Widget
-            SliverToBoxAdapter(
-              child: const AstronomyWidget(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Enhanced Promotional Banner
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.primaryOrange,
-                        AppTheme.yellowPrimary,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryOrange.withOpacity(0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                '✨ Special Offer',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Talk to AI Astrologer',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Get instant answers and guidance from our advanced AI Pandits',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                                fontSize: 14,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () => context.push('/ai-pandit/chat'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: AppTheme.primaryOrange,
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      elevation: 2,
-                                    ),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.chat_bubble, size: 16),
-                                          const SizedBox(width: 4),
-                                          const Text(
-                                            'Chat Now',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () => context.push('/ai-pandit/voice-call'),
-                                    style: OutlinedButton.styleFrom(
-                                      side: const BorderSide(color: Colors.white, width: 2),
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                    ),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.phone, size: 16),
-                                          const SizedBox(width: 4),
-                                          const Text(
-                                            'Call',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      // Enhanced decorative graphic
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 2,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.auto_awesome,
-                          size: 50,
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-            // Top Rated AI Pandits Section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.auto_awesome,
-                            color: AppTheme.textDark,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Top Rated AI Pandits',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextButton(
-                      onPressed: () => context.push('/ai-pandits/all'),
-                      child: const Text('See all'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-            // Featured AI Pandits (Top Rated)
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 260,
-                child: Builder(
-                  builder: (context) {
-                    final aiPandits = AIPandits.getTopRated(limit: 5);
-                    
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: aiPandits.length,
-                      itemBuilder: (context, index) {
-                        final pandit = aiPandits[index];
-                        return Container(
-                          width: 200,
-                          margin: const EdgeInsets.only(right: 16),
-                          child: _FeaturedAIPanditCard(
-                            pandit: pandit,
-                            isTopRated: index == 0,
-                            onTap: () => context.push('/ai-pandit/profile/${pandit.id}'),
-                          ),
-                        );
-                      },
-                    );
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    final pandits = AIPandits.getTopRated();
+                    if (index >= pandits.length) return const SizedBox.shrink();
+                     return Padding(
+                       padding: const EdgeInsets.only(right: 12),
+                       child: _CosmicPanditCard(
+                         pandit: pandits[index], 
+                         onTap: () => context.push('/ai-pandit/profile/${pandits[index].id}')
+                       ),
+                     );
                   },
                 ),
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-            // All AI Pandits Section Header
+            // 5. Existing Astrology Services (Grid)
             SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'All AI Pandits',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => context.push('/ai-pandits/all'),
-                      child: const Text('See all'),
-                    ),
-                  ],
-                ),
-              ),
+               child: Padding(
+                 padding: const EdgeInsets.only(top: 24),
+                 child: ServiceInfoCards(), // Assuming this widget exists and handles its own theme or we update it separately
+               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+            // 6. Section: All Pandits
+            _buildSectionHeader('All AI Pandits', onSeeAll: () => context.push('/ai-pandits/all')),
 
-            // AI Pandits List (Horizontal Scrollable)
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 240,
-                child: Builder(
-                  builder: (context) {
-                    final aiPandits = AIPandits.getAllPandits();
-                    
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: aiPandits.length,
-                      itemBuilder: (context, index) {
-                        final pandit = aiPandits[index];
-                        return Container(
-                          width: 180,
-                          margin: const EdgeInsets.only(right: 16),
-                          child: _AIPanditCard(
-                            pandit: pandit,
-                            onTap: () => context.push('/ai-pandit/profile/${pandit.id}'),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Quick Actions Section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quick Actions',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.history,
-                            label: 'Booking History',
-                            color: AppTheme.infoBlue,
-                            onTap: () => context.push('/bookings/history'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.account_balance_wallet,
-                            label: 'Recharge Wallet',
-                            color: AppTheme.successGreen,
-                            onTap: () => context.push('/wallet/recharge'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.settings,
-                            label: 'Settings',
-                            color: AppTheme.neutralMedium,
-                            onTap: () => context.push('/settings'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                   final pandits = AIPandits.getAllPandits();
+                   if (index >= pandits.length) return null;
+                   return Padding(
+                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                     child: _CosmicPanditListTile(
+                       pandit: pandits[index],
+                       onTap: () => context.push('/ai-pandit/profile/${pandits[index].id}'),
+                     ),
+                   );
+                },
+                childCount: AIPandits.getAllPandits().length,
               ),
             ),
 
@@ -849,781 +345,32 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     );
   }
 
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  }
-}
-
-// AI Service Card - Prominent card for AI services
-class _AIServiceCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String subtitle;
-  final Gradient gradient;
-  final VoidCallback onTap;
-
-  const _AIServiceCard({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-    required this.gradient,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: (gradient.colors.firstOrNull ?? Colors.black).withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-              spreadRadius: -2,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Icon(icon, color: Colors.white, size: 28),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-// Celestial Glassmorphic AI Pandit Card
-class _AIPanditCard extends StatelessWidget {
-  final AIPanditModel pandit;
-  final VoidCallback onTap;
-
-  const _AIPanditCard({
-    required this.pandit,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: AppTheme.glassMorphism.copyWith(
-          boxShadow: AppTheme.softShadow,
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withOpacity(0.9),
-              Colors.white.withOpacity(0.7),
-            ],
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // 1. Background Image
-              ShaderMask(
-                shaderCallback: (rect) {
-                  return LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.black, Colors.black.withOpacity(0.0)],
-                    stops: const [0.7, 1.0],
-                  ).createShader(rect);
-                },
-                blendMode: BlendMode.dstIn,
-                child: pandit.profileImage.startsWith('http')
-                    ? Image.network(
-                        pandit.profileImage,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                      )
-                    : Image.asset(
-                        pandit.profileImage,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                      ),
-              ),
-
-              // 2. Gradient Overlay for Text Readability
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      AppTheme.celestialBlue.withOpacity(0.4),
-                      AppTheme.celestialBlue.withOpacity(0.9),
-                    ],
-                    stops: const [0.5, 0.8, 1.0],
-                  ),
-                ),
-              ),
-
-              // 3. Content
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top Row: AI Badge & Rating
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            gradient: AppTheme.primaryGradient,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: AppTheme.glowShadow,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.auto_awesome, size: 12, color: Colors.white),
-                              const SizedBox(width: 4),
-                              Text(
-                                'AI',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.white.withOpacity(0.2)),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.star_rounded, color: AppTheme.accentGold, size: 14),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${pandit.rating}',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    
-                    // Name
-                    Text(
-                      pandit.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    
-                    // Specialization
-                    Text(
-                      pandit.specializations.firstOrNull ?? 'Astrologer',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Active Status / Years Exp
-                    Row(
-                      children: [
-                        if (pandit.isAvailable) ...[
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: AppTheme.successGreen,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.successGreen,
-                                  blurRadius: 6,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Online',
-                            style: GoogleFonts.outfit(
-                              color: AppTheme.successGreen,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                        ],
-                        Text(
-                          '${pandit.experienceYears}+ Yrs',
-                          style: GoogleFonts.outfit(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
+  Widget _buildSolarBalance(WidgetRef ref) {
+    final walletBalanceAsync = ref.watch(walletBalanceProvider);
+    final balance = walletBalanceAsync.valueOrNull ?? 0.0;
+    
     return Container(
-      color: AppTheme.neutralSoft,
-      child: Center(
-        child: Icon(
-          Icons.person,
-          size: 50,
-          color: AppTheme.neutralMedium.withOpacity(0.5),
-        ),
-      ),
-    );
-  }
-}
-
-class _ChatTab extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final chatService = ref.watch(chatServiceProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat'),
-        backgroundColor: AppTheme.white,
-        elevation: 0,
-      ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: chatService.getUserChatRooms(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-
-          final chatRooms = snapshot.data ?? [];
-
-          if (chatRooms.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.chat_bubble_outline, size: 64, color: AppTheme.neutralLight),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No chats yet',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Start a conversation with an AI Pandit',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.neutralMedium,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => context.push('/ai-pandits/all'),
-                    child: const Text('Browse AI Pandits'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: chatRooms.length,
-            itemBuilder: (context, index) {
-              final chatRoom = chatRooms[index];
-              final participants = chatRoom['participantNames'] as Map<String, dynamic>? ?? {};
-              final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-              final otherParticipantName = participants.entries
-                  .firstWhere(
-                    (e) => e.key != currentUserId,
-                    orElse: () => MapEntry('', 'Pandit'),
-                  )
-                  .value as String? ?? 'Pandit';
-
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
-                    child: Icon(Icons.person, color: AppTheme.primaryOrange),
-                  ),
-                  title: Text(
-                    otherParticipantName,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(
-                    chatRoom['lastMessage'] ?? 'No messages yet',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Icon(Icons.chevron_right),
-                  onTap: () {
-                    // Navigate to chat screen
-                    // We need booking ID - for now use chat room ID
-                    context.push('/chat/${chatRoom['id']}');
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _CallTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calls'),
-        backgroundColor: AppTheme.white,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.phone_outlined, size: 64, color: AppTheme.neutralLight),
-            const SizedBox(height: 16),
-            Text(
-              'No calls yet',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start a voice call with an AI Pandit',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.neutralMedium,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => context.push('/ai-pandits/all'),
-              child: const Text('Browse AI Pandits'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const SettingsScreen();
-  }
-}
-
-class _OldProfileTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 320, // Increased height to prevent overlap
-            pinned: true,
-            backgroundColor: AppTheme.white,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                children: [
-                  // Gradient Background
-                  Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppTheme.primaryOrange,
-                          AppTheme.primaryDeep,
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Decorative Circles
-                  Positioned(
-                    top: -50,
-                    right: -50,
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -30,
-                    left: -30,
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  // Profile Content
-                  SafeArea(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: AppTheme.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: AppTheme.white, width: 4),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                size: 50,
-                                color: AppTheme.primaryOrange,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.yellowPrimary,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: AppTheme.white, width: 2),
-                                ),
-                                child: const Icon(
-                                  Icons.edit,
-                                  size: 14,
-                                  color: AppTheme.textDark,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Builder(
-                          builder: (context) {
-                            final user = FirebaseAuth.instance.currentUser;
-                            final userName = user?.displayName ?? 
-                                             (user?.email?.split('@').first ?? 'User');
-                            return Text(
-                              userName,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: AppTheme.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '+91 98765 43210',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.white.withOpacity(0.9),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 40), // Added spacing at bottom
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppTheme.accentGold.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.accentGold.withOpacity(0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.accentGold.withOpacity(0.1),
+            blurRadius: 10,
           ),
-          
-          // Dashboard Stats Card
-          SliverToBoxAdapter(
-            child: Transform.translate(
-              offset: const Offset(0, -30),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppTheme.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatItem(context, 'Wallet', '₹500', Icons.account_balance_wallet, AppTheme.successGreen),
-                      Container(width: 1, height: 40, color: AppTheme.neutralLight),
-                      _buildStatItem(context, 'Bookings', '12', Icons.calendar_today, AppTheme.primaryOrange),
-                      Container(width: 1, height: 40, color: AppTheme.neutralLight),
-                      _buildStatItem(context, 'Minutes', '450', Icons.timer, AppTheme.infoBlue),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Menu Items
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Account',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: AppTheme.softShadow,
-                    ),
-                    child: Column(
-                      children: [
-                        _ProfileMenuItem(
-                          icon: Icons.person_outline,
-                          title: 'Edit Profile',
-                          subtitle: 'Update your personal information',
-                          onTap: () => context.push('/profile/edit'),
-                          isFirst: true,
-                        ),
-                        _ProfileMenuItem(
-                          icon: Icons.account_balance_wallet_outlined,
-                          title: 'Wallet & Payments',
-                          subtitle: 'Manage your wallet and transactions',
-                          onTap: () => context.push('/payment/wallet'),
-                        ),
-                        _ProfileMenuItem(
-                          icon: Icons.history,
-                          title: 'Booking History',
-                          subtitle: 'View your past consultations',
-                          onTap: () => context.push('/bookings/history'),
-                          isLast: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  Text(
-                    'Preferences',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: AppTheme.softShadow,
-                    ),
-                    child: Column(
-                      children: [
-                        _ProfileMenuItem(
-                          icon: Icons.language,
-                          title: 'Language',
-                          subtitle: 'English (US)',
-                          onTap: () {},
-                          isFirst: true,
-                        ),
-                        _ProfileMenuItem(
-                          icon: Icons.notifications_outlined,
-                          title: 'Notifications',
-                          subtitle: 'Manage your alerts',
-                          onTap: () {},
-                        ),
-                        _ProfileMenuItem(
-                          icon: Icons.settings_outlined,
-                          title: 'Settings',
-                          subtitle: 'App preferences and privacy',
-                          onTap: () => context.push('/settings'),
-                          isLast: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  Text(
-                    'Support',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: AppTheme.softShadow,
-                    ),
-                    child: Column(
-                      children: [
-                        _ProfileMenuItem(
-                          icon: Icons.help_outline,
-                          title: 'Help & Support',
-                          subtitle: 'Get assistance with your issues',
-                          onTap: () {},
-                          isFirst: true,
-                        ),
-                        _ProfileMenuItem(
-                          icon: Icons.info_outline,
-                          title: 'About Us',
-                          subtitle: 'Learn more about Vedic Mate',
-                          onTap: () {},
-                          isLast: true,
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Logout Button
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 100),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Handle logout
-                        context.go('/login');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.errorRed.withOpacity(0.1),
-                        foregroundColor: AppTheme.errorRed,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text(
-                        'Log Out',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.account_balance_wallet, color: AppTheme.accentGold, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            '₹${balance.toStringAsFixed(0)}',
+            style: GoogleFonts.outfit(
+              color: AppTheme.accentGold,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -1631,386 +378,52 @@ class _OldProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
+  Widget _buildSectionHeader(String title, {VoidCallback? onSeeAll}) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.outfit(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (onSeeAll != null)
+              GestureDetector(
+                onTap: onSeeAll,
+                child: Text(
+                  'See All',
+                  style: GoogleFonts.outfit(
+                    color: AppTheme.accentGold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+          ],
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: AppTheme.neutralMedium,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
-class _ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
+// Custom Widgets for Client Dashboard
+
+class _CosmicActionCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final VoidCallback onTap;
-  final bool isFirst;
-  final bool isLast;
-
-  const _ProfileMenuItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-    this.isFirst = false,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.vertical(
-          top: isFirst ? const Radius.circular(20) : Radius.zero,
-          bottom: isLast ? const Radius.circular(20) : Radius.zero,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppTheme.neutralSoft,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: AppTheme.primaryOrange, size: 22),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.neutralMedium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(Icons.chevron_right, color: AppTheme.neutralLight),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Featured AI Pandit Card with Badge
-class _FeaturedAIPanditCard extends StatelessWidget {
-  final AIPanditModel pandit;
-  final bool isTopRated;
-  final VoidCallback onTap;
-
-  const _FeaturedAIPanditCard({
-    required this.pandit,
-    required this.isTopRated,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isTopRated ? AppTheme.yellowPrimary : AppTheme.yellowPrimary.withOpacity(0.3),
-            width: isTopRated ? 2.5 : 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.yellowPrimary.withOpacity(isTopRated ? 0.3 : 0.1),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.yellowPrimary.withOpacity(0.3),
-                        AppTheme.goldAccent.withOpacity(0.2),
-                      ],
-                    ),
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                  ),
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                      child: Image.network(
-                        pandit.profileImage,
-                        width: double.infinity,
-                        height: 150,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.person,
-                          size: 60,
-                          color: AppTheme.yellowPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                if (isTopRated)
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: AppTheme.goldGlowShadow,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.star, size: 16, color: AppTheme.textDark),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Top Rated',
-                            style: TextStyle(
-                              color: AppTheme.textDark,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: AppTheme.goldGlowShadow,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.auto_awesome, color: AppTheme.textDark, size: 12),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'AI',
-                          style: TextStyle(
-                            color: AppTheme.textDark,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 14),
-                        const SizedBox(width: 4),
-                        Text(
-                          pandit.rating.toStringAsFixed(1),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (pandit.isAvailable)
-                  Positioned(
-                    bottom: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.successGreen,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        'Online',
-                        style: TextStyle(
-                          color: AppTheme.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pandit.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    pandit.specializations.take(2).join(', '),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutralMedium,
-                      fontSize: 11,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '${pandit.experienceYears}+ Yrs',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: AppTheme.textDark,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: onTap,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: AppTheme.infoBlue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.chat_bubble_outline,
-                                color: AppTheme.infoBlue,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          GestureDetector(
-                            onTap: () => context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: AppTheme.successGreen.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.phone,
-                                color: AppTheme.successGreen,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Quick Action Card
-class _QuickActionCard extends StatelessWidget {
   final IconData icon;
-  final String label;
   final Color color;
   final VoidCallback onTap;
 
-  const _QuickActionCard({
+  const _CosmicActionCard({
+    required this.title,
+    required this.subtitle,
     required this.icon,
-    required this.label,
     required this.color,
     required this.onTap,
   });
@@ -2020,37 +433,139 @@ class _QuickActionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        height: 100,
         decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 1.5,
+          color: color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.3)),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withOpacity(0.2),
+              color.withOpacity(0.05),
+            ],
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
+             Positioned(
+               right: -10,
+               bottom: -10,
+               child: Icon(icon, size: 80, color: color.withOpacity(0.1)),
+             ),
+             Padding(
+               padding: const EdgeInsets.all(16),
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+                   Icon(icon, color: color),
+                   const Spacer(),
+                   Text(
+                     title,
+                     style: GoogleFonts.outfit(
+                       color: Colors.white,
+                       fontWeight: FontWeight.bold,
+                       fontSize: 16,
+                     ),
+                   ),
+                   Text(
+                     subtitle,
+                     style: GoogleFonts.outfit(
+                       color: Colors.white.withOpacity(0.6),
+                       fontSize: 12,
+                     ),
+                   ),
+                 ],
+               ),
+             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CosmicPanditCard extends StatelessWidget {
+  final AIPanditModel pandit;
+  final VoidCallback onTap;
+
+  const _CosmicPanditCard({required this.pandit, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140,
+        decoration: BoxDecoration(
+          color: AppTheme.celestialBlue,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                     child: pandit.profileImage.startsWith('http')
+                        ? Image.network(pandit.profileImage, fit: BoxFit.cover)
+                        : Image.asset(pandit.profileImage, fit: BoxFit.cover),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.star, color: AppTheme.accentGold, size: 10),
+                          const SizedBox(width: 4),
+                          Text(
+                            pandit.rating.toString(),
+                            style: const TextStyle(color: Colors.white, fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(icon, color: color, size: 24),
             ),
-            const SizedBox(height: 8),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    pandit.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    pandit.specializations.firstOrNull ?? 'Astrologer',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -2060,3 +575,83 @@ class _QuickActionCard extends StatelessWidget {
   }
 }
 
+class _CosmicPanditListTile extends StatelessWidget {
+  final AIPanditModel pandit;
+   final VoidCallback onTap;
+
+  const _CosmicPanditListTile({required this.pandit, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppTheme.celestialBlue.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
+        ),
+        child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                 child: SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: pandit.profileImage.startsWith('http')
+                        ? Image.network(pandit.profileImage, fit: BoxFit.cover)
+                         : Image.asset(pandit.profileImage, fit: BoxFit.cover),
+                 ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pandit.name,
+                      style: const TextStyle(
+                         color: Colors.white,
+                         fontWeight: FontWeight.bold,
+                         fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      pandit.specializations.join(', '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.language, size: 12, color: AppTheme.primaryOrange),
+                        const SizedBox(width: 4),
+                        Text(
+                          pandit.languages.join(', '),
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.4),
+                             fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  Icon(Icons.chevron_right, color: AppTheme.primaryOrange),
+                ],
+              ),
+            ],
+        ),
+      ),
+    );
+  }
+}

@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
       if (mounted && user != null) {
         setState(() => _isLoading = false);
-        context.go('/client/dashboard');
+        context.go('/onboarding/select-type');
       }
     } catch (e) {
       if (mounted) {
@@ -219,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         // Navigate to dashboard
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
-            context.go('/client/dashboard');
+            context.go('/onboarding/select-type');
           }
         });
       } else {
@@ -239,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       
       if (mounted && user != null) {
         setState(() => _isLoading = false);
-        context.go('/client/dashboard');
+        context.go('/onboarding/select-type');
       } else {
         if (mounted) {
           setState(() => _isLoading = false);

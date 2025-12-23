@@ -6,7 +6,6 @@ import '../../core/theme/app_theme.dart';
 import '../../core/utils/validators.dart';
 import '../../core/constants/app_constants.dart';
 import '../../widgets/custom_text_field.dart';
-import '../shared/kundli_generation_screen.dart';
 import '../../services/auth_service.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -85,17 +84,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
 
   void _handleRegister() async {
     if (_formKey.currentState!.validate()) {
-      // Validate Kundli fields for clients
-      if (_selectedDate == null || _placeOfBirthController.text.isEmpty || _timeOfBirthController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please fill all Kundli details (DOB, Place, Time)'),
-            backgroundColor: AppTheme.errorRed,
-          ),
-        );
-        return;
-      }
-
       setState(() => _isLoading = true);
       
       try {
@@ -106,35 +94,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
           _phoneController.text,
           _passwordController.text,
           _selectedRole,
-          dateOfBirth: _selectedDate,
-          placeOfBirth: _placeOfBirthController.text,
-          timeOfBirth: _timeOfBirthController.text,
         );
 
-        if (mounted && user != null) {
-          setState(() => _isLoading = false);
-          
-          // Navigate to Kundli generation for clients
-          if (_selectedDate != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => KundliGenerationScreen(
-                  name: _nameController.text,
-                  dateOfBirth: _selectedDate!,
-                  placeOfBirth: _placeOfBirthController.text,
-                  timeOfBirth: _timeOfBirthController.text,
-                ),
-              ),
-            ).then((_) {
-              // After Kundli is generated, go to dashboard
-              if (mounted) {
-                context.go('/client/dashboard');
-              }
-            });
-          } else {
-            context.go('/client/dashboard');
-          }
+        if (mounted) {
+           // If user is null (stub), we might want to simulate success for UI demo if needed, 
+           // but strictly we should check user != null. 
+           // For now, assuming auth service works or returns something.
+           // If it returns null, we might be stuck. 
+           // I will force navigation for the purpose of the flow demo if user is null? 
+           // No, better to trust the service.
+           
+           setState(() => _isLoading = false);
+           if (user != null) {
+             context.go('/onboarding/select-type');
+           } else {
+             // Temporary fallback for stub service:
+             // context.go('/onboarding/select-type');
+             ScaffoldMessenger.of(context).showSnackBar(
+               const SnackBar(content: Text('Registration Service Stub - Please implement backend')),
+             );
+           }
         }
       } catch (e) {
         if (mounted) {
@@ -157,9 +136,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
-    _dobController.dispose();
-    _placeOfBirthController.dispose();
-    _timeOfBirthController.dispose();
     super.dispose();
   }
 
@@ -254,17 +230,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                                 errorBuilder: (context, error, stackTrace) {
                                   // Fallback if image fails to load
                                   return Container(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                                  ),
+                                  shape: BoxShape.circle,
                                 ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.stars_rounded,
-                                size: 40,
-                                color: AppTheme.textDark,
-                                    ),
+                                child: const Icon(
+                                  Icons.stars_rounded,
+                                  size: 40,
+                                  color: AppTheme.textDark,
+                                      ),
                                   );
                                 },
                               ),
@@ -289,32 +265,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                         ),
                       ),
                       const SizedBox(height: 32),
-                      // Role Selection
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'I am a',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Role Selection - Auto selected as Client
+                      
                       const SizedBox(height: 24),
                       // Form Fields Container
                       Container(
@@ -384,120 +336,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                           ],
                         ),
                       ),
-                      // Kundli Fields (only for Clients)
-                      ...[
-                        const SizedBox(height: 24),
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppTheme.yellowPrimary.withOpacity(0.1),
-                                AppTheme.goldAccent.withOpacity(0.05),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppTheme.yellowPrimary.withOpacity(0.3)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.yellowPrimary.withOpacity(0.1),
-                                blurRadius: 15,
-                                spreadRadius: 3,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: const BoxDecoration(
-                                      color: AppTheme.yellowPrimary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.stars,
-                                      color: AppTheme.textDark,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Get Your Free Digital Kundli!',
-                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Required for personalized predictions',
-                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                color: AppTheme.textLight,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              GestureDetector(
-                                onTap: _selectDate,
-                                child: AbsorbPointer(
-                                  child: _EnhancedTextField(
-                                    controller: _dobController,
-                                    label: 'Date of Birth',
-                                    hint: 'Select your birth date',
-                                    icon: Icons.calendar_today,
-                                    validator: (value) {
-                                      if (_selectedDate == null) {
-                                        return 'Please select date of birth';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              _EnhancedTextField(
-                                controller: _placeOfBirthController,
-                                label: 'Place of Birth',
-                                hint: 'Enter city, state',
-                                icon: Icons.location_on,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Place of birth is required';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              GestureDetector(
-                                onTap: _selectTime,
-                                child: AbsorbPointer(
-                                  child: _EnhancedTextField(
-                                    controller: _timeOfBirthController,
-                                    label: 'Time of Birth',
-                                    hint: 'Select your birth time',
-                                    icon: Icons.access_time,
-                                    validator: (value) {
-                                      if (_selectedTime == null) {
-                                        return 'Please select time of birth';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                      // Removed Kundli Fields
                       const SizedBox(height: 32),
                       // Enhanced Register Button
                       Container(

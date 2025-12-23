@@ -27,8 +27,12 @@ class AIPanditChatScreen extends ConsumerStatefulWidget {
 class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _messageFocusNode = FocusNode();
   final WalletService _walletService = WalletService();
   final AIChatService _chatService = AIChatService();
+  
+  // Get the actual pandit ID to use (default to first pandit if not provided)
+  String get _panditId => widget.panditId ?? 'ai_pandit_1';
 
   List<AIChatMessage> _messages = [];
   bool _isLoading = false;
@@ -42,6 +46,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   int _elapsedSeconds = 0;
   bool _isChatStarted = false; // Whether user has started the chat
   bool _isViewingOnly = false; // Whether user is just viewing history
+  bool _isStartingChat = false; // Whether chat is currently being started
   
   String? _userId;
   static const double _minimumBalance = 50.0; // Minimum ₹50 required
@@ -100,12 +105,13 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     _costTimer?.cancel();
     _walletCheckTimer?.cancel();
     _messageController.dispose();
+    _messageFocusNode.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
   Future<void> _initializeChat() async {
-    if (!mounted || widget.panditId == null) return;
+    if (!mounted) return;
     
     setState(() {
       _isLoading = true;
@@ -134,15 +140,30 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       print('✅ Chat screen using userId: $userId');
       
       // Get or create session for this specific pandit
-      _currentSession = await _chatService.getOrCreateSession(userId, widget.panditId!);
+      print('📝 Getting or creating session for userId: $userId, panditId: $_panditId');
+      try {
+        _currentSession = await _chatService.getOrCreateSession(userId, _panditId);
+        if (_currentSession != null) {
+          print('✅ Session obtained: ${_currentSession!.id}, isStarted: ${_currentSession!.isStarted}, isActive: ${_currentSession!.isActive}');
+        } else {
+          print('❌ Session is null after getOrCreateSession');
+          throw Exception('Failed to create session');
+        }
+      } catch (e) {
+        print('❌ Error getting/creating session: $e');
+        throw e;
+      }
       
       // Load previous messages for this pandit
       if (_currentSession != null && _currentSession!.messages.isNotEmpty) {
+        print('📨 Loading ${_currentSession!.messages.length} previous messages');
         setState(() {
           _messages = _currentSession!.messages;
           _isChatStarted = _currentSession!.isStarted;
           _isViewingOnly = !_currentSession!.isStarted;
         });
+      } else {
+        print('ℹ️ No previous messages found');
       }
       
       // Check wallet balance AFTER session is loaded
@@ -178,11 +199,29 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   }
 
   Future<void> _showStartChatDialog() async {
-    if (!mounted || _walletBalance < _minimumBalance) {
+    // Don't show dialog if chat is already started
+    if (_isChatStarted && !_isViewingOnly) {
+      print('ℹ️ Chat already started, skipping dialog');
+      return;
+    }
+    
+    // Don't show dialog if chat is currently being started
+    if (_isStartingChat) {
+      print('ℹ️ Chat is already being started, skipping dialog');
+      return;
+    }
+    
+    if (!mounted) {
+      print('❌ Cannot show dialog: widget not mounted');
+      return;
+    }
+    
+    if (_walletBalance < _minimumBalance) {
       _showInsufficientFundsDialog();
       return;
     }
 
+    print('📱 Showing start chat dialog');
     final shouldStart = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -287,41 +326,163 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     );
 
     if (shouldStart == true) {
+      print('✅ User chose to start chat');
+      setState(() {
+        _isStartingChat = true;
+      });
+      
       await _startChat();
+      
+      setState(() {
+        _isStartingChat = false;
+      });
+      
+      // Verify chat actually started
+      if (!_isChatStarted) {
+        print('⚠️ Chat did not start after _startChat() call');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to start chat. Please try again.'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+      } else {
+        print('✅ Chat started successfully!');
+      }
     } else {
-        setState(() {
+      print('ℹ️ User chose to view history only');
+      setState(() {
         _isViewingOnly = true;
       });
     }
   }
 
   Future<void> _startChat() async {
-    if (_currentSession == null || _userId == null || widget.panditId == null) return;
+    print('🚀 Starting chat...');
+    
+    // Ensure we have userId
+    if (_userId == null) {
+      print('❌ Cannot start chat: _userId is null, trying to get it...');
+      final providerUserId = ref.read(currentUserIdProvider);
+      if (providerUserId != null) {
+        setState(() {
+          _userId = providerUserId;
+        });
+        print('✅ Got userId from provider: $_userId');
+      } else {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final userId = user.isAnonymous ? 'guest_${user.uid}' : user.uid;
+          setState(() {
+            _userId = userId;
+          });
+          print('✅ Got userId from Firebase: $_userId');
+        } else {
+          print('❌ Cannot start chat: No user found');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Error: User not found. Please try again.'),
+                backgroundColor: AppTheme.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+    }
+    
+    // Create session if it doesn't exist
+    if (_currentSession == null) {
+      print('⚠️ Session not found, creating new session...');
+      try {
+        _currentSession = await _chatService.getOrCreateSession(_userId!, _panditId);
+        print('✅ Session created: ${_currentSession?.id}');
+      } catch (e) {
+        print('❌ Error creating session: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error creating session: $e'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+        return;
+      }
+    }
+    
+    if (_currentSession == null) {
+      print('❌ Cannot start chat: Failed to create session');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: Failed to create chat session. Please try again.'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+      return;
+    }
 
     // Check wallet balance immediately
     await _checkWalletBalance();
     if (_walletBalance < _minimumBalance) {
-      _showInsufficientFundsDialog();
+      print('❌ Cannot start chat: Insufficient balance (₹$_walletBalance < ₹$_minimumBalance)');
+      if (mounted) {
+        _showInsufficientFundsDialog();
+      }
       return;
     }
 
-    // Mark session as started immediately
-    _currentSession!.isStarted = true;
-    _currentSession!.isActive = true;
-    await _chatService.saveSession(_currentSession!);
+    try {
+      // Mark session as started immediately
+      _currentSession!.isStarted = true;
+      _currentSession!.isActive = true;
+      await _chatService.saveSession(_currentSession!);
+      print('✅ Session marked as started and saved');
 
-    setState(() {
-      _isChatStarted = true;
-      _isViewingOnly = false;
-    });
+      if (mounted) {
+        setState(() {
+          _isChatStarted = true;
+          _isViewingOnly = false;
+        });
+        print('✅ State updated: _isChatStarted=true, _isViewingOnly=false');
+      }
 
-    // Start timers immediately
-    _startCostTimer();
-    _startWalletCheckTimer();
+      // Start timers immediately
+      _startCostTimer();
+      _startWalletCheckTimer();
+      print('✅ Timers started');
 
-    // Add welcome message if no messages exist
-    if (_messages.isEmpty) {
-      _loadWelcomeMessage();
+      // Add welcome message if no messages exist
+      if (_messages.isEmpty) {
+        _loadWelcomeMessage();
+      }
+      
+      // Focus the text field after starting chat
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            _messageFocusNode.requestFocus();
+            print('✅ Text field focused');
+          }
+        });
+      }
+      
+      print('✅ Chat started successfully!');
+    } catch (e) {
+      print('❌ Error starting chat: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error starting chat: $e'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
     }
   }
 
@@ -609,14 +770,14 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       String welcomeMessage;
       
       try {
-        welcomeMessage = await geminiService.getWelcomeMessage(panditId: widget.panditId).timeout(
+        welcomeMessage = await geminiService.getWelcomeMessage(panditId: _panditId).timeout(
           const Duration(seconds: 5),
         );
       } catch (e) {
         // Fallback to Custom AI
         print('⚠️ Gemini welcome failed, using fallback: $e');
         final customAI = ref.read(customAIServiceProvider);
-        welcomeMessage = await customAI.getWelcomeMessage(panditId: widget.panditId);
+        welcomeMessage = await customAI.getWelcomeMessage(panditId: _panditId);
         _usingFallback = true;
       }
       
@@ -756,7 +917,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         aiResponse = await geminiService.sendMessage(
         enhancedMessage,
         conversationHistory,
-          panditId: widget.panditId,
+          panditId: _panditId,
         ).timeout(const Duration(seconds: 15));
         
       } catch (e) {
@@ -768,7 +929,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         aiResponse = await customAI.sendMessage(
           messageText,
           conversationHistory,
-          panditId: widget.panditId,
+          panditId: _panditId,
         );
       }
 
@@ -1008,7 +1169,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
             Text(
               message.message,
                 style: GoogleFonts.inter(
-                  color: Colors.white, // Always white text on dark/glass backgrounds
+                  color: message.isUser 
+                      ? Colors.white // White text for user messages (gradient background)
+                      : AppTheme.neutralDark, // Dark text for AI messages (light background)
                 fontSize: 15,
                   height: 1.5,
                   fontWeight: FontWeight.w400,
@@ -1019,7 +1182,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
               '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
                 style: GoogleFonts.inter(
                   fontSize: 10,
-                  color: Colors.white.withOpacity(0.5),
+                  color: message.isUser 
+                      ? Colors.white.withOpacity(0.5) // White timestamp for user messages
+                      : AppTheme.neutralMedium, // Dark timestamp for AI messages
               ),
             ),
           ],
@@ -1112,7 +1277,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     ),
                     child: TextField(
                       controller: _messageController,
-                      enabled: _isChatStarted && !_isViewingOnly,
+                      focusNode: _messageFocusNode,
+                      readOnly: !_isChatStarted || _isViewingOnly,
+                      enabled: true, // Always enabled to allow focus
                       decoration: InputDecoration(
                         hintText: _isChatStarted && !_isViewingOnly 
                             ? 'Ask anything...' 
@@ -1122,10 +1289,17 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                         isDense: true,
                         ),
                       textCapitalization: TextCapitalization.sentences,
-                      onSubmitted: (_) => _sendMessage(),
+                      onSubmitted: (_) {
+                        if (_isChatStarted && !_isViewingOnly) {
+                          _sendMessage();
+                        }
+                      },
                       onTap: () {
-                        if (!_isChatStarted && !_isViewingOnly) {
+                        if (!_isChatStarted || _isViewingOnly) {
                           _showStartChatDialog();
+                        } else {
+                          // Focus the field when chat is started
+                          _messageFocusNode.requestFocus();
                         }
                       },
                     ),
@@ -1229,32 +1403,48 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
             ),
           ),
           ElevatedButton(
-            onPressed: _walletBalance >= _minimumBalance
-                ? () => _showStartChatDialog()
-                : () => _showInsufficientFundsDialog(),
+            onPressed: (_isStartingChat || _isChatStarted)
+                ? null
+                : (_walletBalance >= _minimumBalance
+                    ? () => _showStartChatDialog()
+                    : () => _showInsufficientFundsDialog()),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _walletBalance >= _minimumBalance
-                  ? AppTheme.primaryOrange
-                  : AppTheme.neutralLight,
-              foregroundColor: _walletBalance >= _minimumBalance
-                  ? Colors.white
-                  : AppTheme.neutralMedium,
+              backgroundColor: (_isStartingChat || _isChatStarted)
+                  ? AppTheme.neutralLight
+                  : (_walletBalance >= _minimumBalance
+                      ? AppTheme.primaryOrange
+                      : AppTheme.neutralLight),
+              foregroundColor: (_isStartingChat || _isChatStarted)
+                  ? AppTheme.neutralMedium
+                  : (_walletBalance >= _minimumBalance
+                      ? Colors.white
+                      : AppTheme.neutralMedium),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),
-              elevation: _walletBalance >= _minimumBalance ? 4 : 0,
+              elevation: (_isStartingChat || _isChatStarted || _walletBalance < _minimumBalance) ? 0 : 4,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.play_arrow,
-                  size: 18,
-                ),
+                if (_isStartingChat)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.neutralMedium),
+                    ),
+                  )
+                else
+                  Icon(
+                    Icons.play_arrow,
+                    size: 18,
+                  ),
                 const SizedBox(width: 4),
                 Text(
-                  'Start Chat',
+                  _isStartingChat ? 'Starting...' : 'Start Chat',
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -1315,9 +1505,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   Widget _buildAppBar() {
      AIPanditModel? pandit;
-     if (widget.panditId != null) {
-       pandit = AIPandits.getById(widget.panditId!);
-     }
+     pandit = AIPandits.getById(_panditId);
      
     return AppBar(
       backgroundColor: AppTheme.white,
@@ -1374,7 +1562,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       actions: [
         IconButton(
           icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
-          onPressed: () => context.push('/ai-pandit/voice-call?panditId=${widget.panditId}'),
+          onPressed: () => context.push('/ai-pandit/voice-call?panditId=$_panditId'),
         ),
         IconButton(
           icon: const Icon(Icons.more_vert, color: AppTheme.neutralDark),

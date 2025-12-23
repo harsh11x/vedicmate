@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'supabase_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,7 +25,20 @@ class AuthService {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
-    return userCredential.user;
+    final user = userCredential.user;
+    
+    if (user != null) {
+      // Save/Update profile in Supabase
+      // Google provides email and displayName. Phone might be null.
+      await SupabaseService().saveUserProfile(
+        userId: user.uid,
+        email: user.email ?? '',
+        name: user.displayName,
+        phone: user.phoneNumber, 
+      );
+    }
+    
+    return user;
   }
 
   // Sign out
@@ -34,8 +48,13 @@ class AuthService {
   }
 
   // Placeholder for OTP
-  Future<void> sendOTP(String phone, String role) async {}
-  Future<User?> verifyOTP(String otp, String phone, String role) async { return null; }
+  Future<void> sendOTP(String phone, String role) async {
+    // Implement Phone Auth here or use a service
+  }
+  
+  Future<User?> verifyOTP(String otp, String phone, String role) async { 
+    return null; 
+  }
 
   Future<User?> signInAsGuest() async {
     await _auth.signInAnonymously();
@@ -50,12 +69,43 @@ class AuthService {
     String role, 
     {DateTime? dateOfBirth, String? placeOfBirth, String? timeOfBirth}
   ) async {
-    return null;
+    try {
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      final user = userCredential.user;
+      if (user != null) {
+        await user.updateDisplayName(name);
+        
+        // Save profile to Supabase
+        await SupabaseService().saveUserProfile(
+          userId: user.uid,
+          name: name,
+          email: email,
+          phone: phone,
+        );
+      }
+      return user;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
-    return null;
+    try {
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> sendPasswordResetEmail(String email) async {}
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
 }

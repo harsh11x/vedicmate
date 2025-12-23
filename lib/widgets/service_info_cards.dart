@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ServiceInfoCards extends StatelessWidget {
   const ServiceInfoCards({super.key});
@@ -36,15 +37,26 @@ class ServiceInfoCards extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'Our Services',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Text(
+                    'Cosmic Services',
+                    style: GoogleFonts.outfit(
                       fontWeight: FontWeight.bold,
-              fontSize: 22,
-                      color: AppTheme.neutralDark,
-                      letterSpacing: -0.5,
-            ),
-          ),
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'Ancient Wisdom, Modern AI',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
             ],
         ),
           const SizedBox(height: 20),
@@ -57,31 +69,38 @@ class ServiceInfoCards extends StatelessWidget {
             childAspectRatio: 1.1,
             children: [
               _ServiceCard(
-                icon: Icons.auto_awesome_rounded,
-                title: 'Kundli',
-                subtitle: 'Birth Chart Analysis',
-                gradient: const [Color(0xFFEC4899), Color(0xFFF472B6)],
-                onTap: () => context.push('/kundli/generation'),
+                icon: Icons.menu_book_rounded,
+                title: 'Lal Kitab',
+                subtitle: 'Ancient Remedies',
+                gradient: const [Color(0xFFE11D48), Color(0xFFF43F5E)],
+                onTap: () {},
               ),
               _ServiceCard(
-                icon: Icons.calendar_month_rounded,
-                title: 'Horoscope',
-                subtitle: 'Daily Predictions',
-                gradient: const [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+                icon: Icons.front_hand_rounded,
+                title: 'Palm Reading',
+                subtitle: 'Future Lines',
+                gradient: const [Color(0xFFD97706), Color(0xFFFBBF24)],
                 onTap: () {},
+              ),
+              _ServiceCard(
+                icon: Icons.auto_awesome_rounded,
+                title: 'Vedic',
+                subtitle: 'Traditional',
+                gradient: const [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
+                onTap: () {}, 
               ),
               _ServiceCard(
                 icon: Icons.home_work_rounded,
                 title: 'Vastu',
-                subtitle: 'Home Solutions',
-                gradient: const [Color(0xFF10B981), Color(0xFF34D399)],
+                subtitle: 'Living Harmony',
+                gradient: const [Color(0xFF059669), Color(0xFF34D399)],
                 onTap: () {},
               ),
               _ServiceCard(
-                icon: Icons.numbers_rounded,
+                icon: Icons.looks_one_rounded,
                 title: 'Numerology',
-                subtitle: 'Number Analysis',
-                gradient: const [Color(0xFF8B5CF6), Color(0xFFA78BFA)],
+                subtitle: 'Number Power',
+                gradient: const [Color(0xFF2563EB), Color(0xFF60A5FA)],
                 onTap: () {},
               ),
             ],
@@ -113,26 +132,18 @@ class _ServiceCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-            colors: [
-              gradient[0].withOpacity(0.1),
-              gradient[1].withOpacity(0.05),
-              Colors.white,
-            ],
-        ),
-          borderRadius: BorderRadius.circular(20),
+        color: AppTheme.celestialBlue.withOpacity(0.6), // Dark BG
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: gradient[0].withOpacity(0.2),
-            width: 1.5,
+            color: gradient[0].withOpacity(0.3),
+            width: 1,
           ),
           boxShadow: [
-            BoxShadow(
-              color: gradient[0].withOpacity(0.15),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
-              ),
+             BoxShadow(
+               color: Colors.black.withOpacity(0.2),
+               blurRadius: 10,
+               offset: const Offset(0, 4),
+             ),
           ],
           ),
         child: Padding(
@@ -142,14 +153,14 @@ class _ServiceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: gradient,
                   ),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
                       color: gradient[0].withOpacity(0.3),
@@ -161,28 +172,26 @@ class _ServiceCard extends StatelessWidget {
                 child: Icon(
                   icon,
                     color: Colors.white,
-                  size: 32,
+                  size: 24,
                   ),
                 ),
                 const SizedBox(height: 16),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: GoogleFonts.outfit(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: AppTheme.neutralDark,
-                      letterSpacing: -0.3,
+                      color: Colors.white, // White text
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                   ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
                       Text(
                 subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutralMedium,
+                style: GoogleFonts.outfit(
+                      color: Colors.white.withOpacity(0.5), // Dim white text
                       fontSize: 12,
-                      fontWeight: FontWeight.w500,
                         ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
