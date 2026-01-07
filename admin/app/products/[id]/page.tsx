@@ -1,0 +1,276 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+
+const API_BASE = "http://15.207.36.26:3001/api";
+
+interface Product {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    originalPrice: number;
+    category: string;
+    stock: number;
+    images: string[];
+    isActive: boolean;
+}
+
+export default function EditProductPage() {
+    const router = useRouter();
+    const params = useParams();
+    const id = params?.id as string;
+
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/products/${id}`);
+                if (!res.ok) throw new Error("Failed to fetch product");
+                const data = await res.json();
+                setProduct(data.data);
+            } catch (err: any) {
+                setError(err.message || "Failed to load product");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProduct();
+    }, [id]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        if (!product) return;
+        const { name, value, type } = e.target;
+
+        setProduct(prev => {
+            if (!prev) return null;
+            return {
+                ...prev,
+                [name]: type === 'number' ? parseFloat(value) : value
+            };
+        });
+    };
+
+    const handleToggle = () => {
+        if (!product) return;
+        setProduct(prev => prev ? { ...prev, isActive: !prev.isActive } : null);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!product) return;
+
+        setSaving(true);
+        setError(null);
+        setSuccessMessage(null);
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/products/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(product),
+            });
+
+            if (!res.ok) throw new Error("Failed to update product");
+
+            setSuccessMessage("Product updated successfully!");
+            setTimeout(() => {
+                router.push("/products");
+                router.refresh();
+            }, 1000);
+        } catch (err: any) {
+            setError(err.message || "Failed to save changes");
+            setSaving(false);
+        }
+    };
+
+    if (loading) return <div className="p-8 text-center text-gray-500">Loading product details...</div>;
+    if (!product) return <div className="p-8 text-center text-red-500">Product not found</div>;
+
+    return (
+        <div className="max-w-4xl mx-auto pb-10">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-8">
+                <Link href="/products" className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600">
+                    ← Back
+                </Link>
+                <h1 className="text-2xl font-bold text-gray-800">Edit Product</h1>
+            </div>
+
+            {/* Notifications */}
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-medium flex items-center gap-2">
+                    ⚠️ {error}
+                </div>
+            )}
+            {successMessage && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 font-medium flex items-center gap-2">
+                    ✅ {successMessage}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Main Info Card */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-orange-50/50">
+                    <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Basic Information</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2 col-span-2">
+                            <label className="text-sm font-semibold text-gray-600">Product Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={product.name}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-600">Category</label>
+                            <select
+                                name="category"
+                                value={product.category}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-white"
+                            >
+                                <option value="puja-items">Puja Items</option>
+                                <option value="gemstones">Gemstones</option>
+                                <option value="yantras">Yantras</option>
+                                <option value="rudrakshas">Rudrakshas</option>
+                                <option value="idols">Idols</option>
+                                <option value="books">Books</option>
+                                <option value="mala">Mala</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-600">Status</label>
+                            <div
+                                onClick={handleToggle}
+                                className={`cursor-pointer px-4 py-3 rounded-xl border flex items-center justify-between transition-all ${product.isActive
+                                    ? "bg-green-50 border-green-200 text-green-700"
+                                    : "bg-gray-50 border-gray-200 text-gray-500"
+                                    }`}
+                            >
+                                <span className="font-medium">{product.isActive ? "Active (Visible)" : "Inactive (Hidden)"}</span>
+                                <div className={`w-10 h-6 rounded-full p-1 transition-colors ${product.isActive ? "bg-green-500" : "bg-gray-300"}`}>
+                                    <div className={`bg-white w-4 h-4 rounded-full shadow-sm transition-transform ${product.isActive ? "translate-x-4" : ""}`} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 col-span-2">
+                            <label className="text-sm font-semibold text-gray-600">Description</label>
+                            <textarea
+                                name="description"
+                                value={product.description}
+                                onChange={handleChange}
+                                rows={4}
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all resize-none"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Pricing & Inventory */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-orange-50/50">
+                        <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Pricing</h2>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-600">Sale Price (₹)</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={product.price}
+                                    onChange={handleChange}
+                                    min="0"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-600">Original Price (₹)</label>
+                                <input
+                                    type="number"
+                                    name="originalPrice"
+                                    value={product.originalPrice}
+                                    onChange={handleChange}
+                                    min="0"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all"
+                                />
+                                <p className="text-xs text-gray-400">Set higher than sale price to show discount</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-orange-50/50">
+                        <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Inventory</h2>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-gray-600">Stock Quantity</label>
+                                <input
+                                    type="number"
+                                    name="stock"
+                                    value={product.stock}
+                                    onChange={handleChange}
+                                    min="0"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="pt-2">
+                                <div className={`p-3 rounded-lg text-sm ${product.stock > 10 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                                    }`}>
+                                    Inventory Status: <strong>{product.stock > 0 ? "In Stock" : "Out of Stock"}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-4 pt-4">
+                    <button
+                        type="submit"
+                        disabled={saving}
+                        className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {saving ? "Saving Changes..." : "Save Product"}
+                    </button>
+                    <Link
+                        href="/products"
+                        className="px-8 py-4 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all text-center"
+                    >
+                        Cancel
+                    </Link>
+                </div>
+
+                <div className="pt-6 border-t border-gray-100">
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            if (!window.confirm("Are you sure you want to delete this product?")) return;
+                            try {
+                                const res = await fetch(`${API_BASE}/admin/products/${id}`, { method: 'DELETE' });
+                                if (!res.ok) throw new Error("Failed to delete");
+                                router.push('/products');
+                            } catch (err: any) {
+                                alert(err.message);
+                            }
+                        }}
+                        className="text-red-500 font-semibold hover:text-red-700 transition-colors text-sm"
+                    >
+                        Delete this product
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+}
