@@ -1,12 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/validators.dart';
 import '../../core/constants/app_constants.dart';
-import '../../widgets/custom_text_field.dart';
 import '../../services/auth_service.dart';
+import '../../widgets/abstract_background.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -15,412 +16,413 @@ class RegistrationScreen extends StatefulWidget {
   State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
+class _RegistrationScreenState extends State<RegistrationScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  // Separate form keys
+  final _phoneFormKey = GlobalKey<FormState>();
+  final _emailFormKey = GlobalKey<FormState>();
+
+  // Controllers
   final _nameController = TextEditingController();
+  final _phoneController = TextEditingController(); // For Phone Tab
+  final _emailPhoneController = TextEditingController(); // For Email Tab (optional phone)
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _dobController = TextEditingController();
-  final _placeOfBirthController = TextEditingController();
-  final _timeOfBirthController = TextEditingController();
+  final _otpController = TextEditingController();
+
   final _authService = AuthService();
-  
-  // Client-only app - no role selection needed
-  static const String _selectedRole = AppConstants.roleClient;
-  bool _obscurePassword = true;
   bool _isLoading = false;
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-  
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
+  bool _isOTPSent = false;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
-    _animationController.forward();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {}); // Rebuild to update slider UI
+      }
+    });
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 25)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        _dobController.text = '${picked.day}/${picked.month}/${picked.year}';
-      });
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailPhoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  // --- Auth Handlers ---
+
+  void _handleGoogleSignUp() async {
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.signInWithGoogle(AppConstants.roleClient);
+      if (mounted && user != null) {
+        await _navigateAfterAuth(user);
+      } else {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _showSnackBar(e.toString(), isError: true);
+      }
     }
   }
 
-  Future<void> _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedTime = picked;
-        _timeOfBirthController.text = '${picked.hour}:${picked.minute.toString().padLeft(2, '0')}';
-      });
-    }
-  }
-
-  void _handleRegister() async {
-    if (_formKey.currentState!.validate()) {
+  void _handleSendOTP() async {
+    if (_phoneFormKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       
+      await _authService.sendOTP(
+        _phoneController.text, 
+        AppConstants.roleClient,
+        onCodeSent: () {
+          if (mounted) {
+            setState(() {
+              _isOTPSent = true;
+              _isLoading = false;
+            });
+            _showSnackBar('OTP sent to +91 ${_phoneController.text}', isSuccess: true);
+          }
+        },
+        onVerificationCompleted: (User user) async {
+           if (mounted) {
+             _showSnackBar('Phone verified verification complete!', isSuccess: true);
+             await _navigateAfterAuth(user);
+           }
+        },
+        onError: (message) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            _showSnackBar(message, isError: true);
+          }
+        },
+      );
+    }
+  }
+
+  void _handleVerifyOTP() async {
+    if (_otpController.text.length != 6) {
+      _showSnackBar('Please enter valid 6-digit OTP', isError: true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.verifyOTP(
+        _otpController.text,
+        _phoneController.text,
+        AppConstants.roleClient,
+      );
+
+      if (mounted && user != null) {
+        // Update display name for phone users since we collected it
+        if (_nameController.text.isNotEmpty) {
+           await user.updateDisplayName(_nameController.text.trim());
+        }
+        await _navigateAfterAuth(user);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _showSnackBar(e.toString(), isError: true);
+      }
+    }
+  }
+
+  void _handleEmailRegister() async {
+    if (_emailFormKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
       try {
-        // Register user using Firebase Auth with email and password
         User? user = await _authService.register(
-          _nameController.text,
-          _emailController.text,
-          _phoneController.text,
+          _nameController.text.trim(),
+          _emailController.text.trim(),
+          _emailPhoneController.text.trim(),
           _passwordController.text,
-          _selectedRole,
+          AppConstants.roleClient,
         );
 
-        if (mounted) {
-           // If user is null (stub), we might want to simulate success for UI demo if needed, 
-           // but strictly we should check user != null. 
-           // For now, assuming auth service works or returns something.
-           // If it returns null, we might be stuck. 
-           // I will force navigation for the purpose of the flow demo if user is null? 
-           // No, better to trust the service.
-           
-           setState(() => _isLoading = false);
-           if (user != null) {
-             context.go('/onboarding/select-type');
-           } else {
-             // Temporary fallback for stub service:
-             // context.go('/onboarding/select-type');
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Registration Service Stub - Please implement backend')),
-             );
-           }
+        if (mounted && user != null) {
+          _showSnackBar('Account created successfully!', isSuccess: true);
+          await _navigateAfterAuth(user);
         }
       } catch (e) {
         if (mounted) {
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString()),
-              backgroundColor: AppTheme.errorRed,
-            ),
-          );
+          _showSnackBar(e.toString(), isError: true);
         }
       }
     }
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  Future<void> _navigateAfterAuth(User user) async {
+    await _authService.ensureUserProfile(user: user, name: _nameController.text.isNotEmpty ? _nameController.text : null);
+    
+    // MANUAL PERSISTENCE: Save session immediately
+    await _authService.saveUserSession();
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+      // Directly navigate to dashboard as per user request
+      context.go('/client/dashboard'); 
+    }
   }
+
+  void _showSnackBar(String message, {bool isError = false, bool isSuccess = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+             Icon(
+              isError ? Icons.error_outline : (isSuccess ? Icons.check_circle : Icons.info_outline),
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: isError ? AppTheme.errorRed : (isSuccess ? AppTheme.successGreen : AppTheme.neutralDark),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  // --- Responsive Helpers ---
+  bool get _isIOS => Platform.isIOS;
+  double get _spacingSmall => _isIOS ? 8.0 : 16.0;
+  double get _spacingMedium => _isIOS ? 16.0 : 24.0;
+  double get _spacingLarge => _isIOS ? 20.0 : 32.0; // was 20:32
+  double get _logoHeight => _isIOS ? 90.0 : 120.0; // Bump for Android
+  double get _buttonHeight => _isIOS ? 48.0 : 56.0; // Standard Android touch target
+  bool get _isDense => _isIOS;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: false,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFF9E6),
-              Color(0xFFFFFFFF),
-            ],
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => context.go('/login'),
         ),
+      ),
+      body: AbstractBackground(
         child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Back button and header
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: Container(
-                              padding: const EdgeInsets.all(8),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: _isIOS ? 8 : 24),
+              child: Column(
+                children: [
+                  // Logo
+                  SizedBox(
+                    height: _logoHeight,
+                    width: _logoHeight,
+                    child: Image.asset('assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png', fit: BoxFit.contain),
+                  ),
+                  SizedBox(height: _spacingSmall), 
+                  
+                  Text(
+                    'Create Account',
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: _isIOS ? 24 : 32,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.neutralDark,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Join our spiritual community today',
+                    style: GoogleFonts.outfit(
+                      fontSize: _isIOS ? 14 : 16,
+                      color: AppTheme.neutralMedium,
+                    ),
+                  ),
+                  SizedBox(height: _spacingLarge),
+
+                  // Premium Segmented Control
+                  Container(
+                    height: _buttonHeight,
+                    decoration: BoxDecoration(
+                      color: AppTheme.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppTheme.neutralLight),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        AnimatedAlign(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeOutCubic,
+                          alignment: _tabController.index == 0 ? Alignment.centerLeft : Alignment.centerRight,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.5,
+                            child: Container(
+                              margin: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                gradient: AppTheme.primaryGradient,
+                                borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: AppTheme.primaryOrange.withOpacity(0.3),
                                     blurRadius: 8,
-                                    spreadRadius: 1,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                              child: const Icon(Icons.arrow_back, color: AppTheme.textDark),
                             ),
                           ),
-                          const Spacer(),
-                          Text(
-                            'Create Account',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => _tabController.animateTo(0),
+                                behavior: HitTestBehavior.opaque,
+                                child: Center(
+                                  child: Text(
+                                    'Phone',
+                                    style: GoogleFonts.outfit(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: _isIOS ? 14 : 16,
+                                      color: _tabController.index == 0 ? Colors.white : AppTheme.neutralMedium,
+                                    ),
+                                  ),
                                 ),
-                          ),
-                          const Spacer(),
-                          const SizedBox(width: 48), // Balance the back button
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => _tabController.animateTo(1),
+                                behavior: HitTestBehavior.opaque,
+                                child: Center(
+                                  child: Text(
+                                    'Email',
+                                    style: GoogleFonts.outfit(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: _isIOS ? 14 : 16,
+                                      color: _tabController.index == 1 ? Colors.white : AppTheme.neutralMedium,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  SizedBox(height: _spacingLarge),
+
+                  // Form Container
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      decoration: AppTheme.glassMorphism,
+                      padding: EdgeInsets.all(_isIOS ? 16 : 24),
+                      child: Column(
+                        children: [
+                          [_buildPhoneForm(), _buildEmailForm()][_tabController.index],
                         ],
                       ),
-                      const SizedBox(height: 32),
-                      // Welcome section
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 20,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 120,
-                              height: 120,
-                              padding: const EdgeInsets.all(8),
-                              child: Image.asset(
-                                'assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png',
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  // Fallback if image fails to load
-                                  return Container(
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.stars_rounded,
-                                  size: 40,
-                                  color: AppTheme.textDark,
-                                      ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Join Vedic Mate',
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Start your spiritual journey with us',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppTheme.textLight,
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      // Role Selection - Auto selected as Client
-                      
-                      const SizedBox(height: 24),
-                      // Form Fields Container
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 20,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Personal Information',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: 20),
-                            _EnhancedTextField(
-                              controller: _nameController,
-                              label: 'Full Name',
-                              hint: 'Enter your full name',
-                              icon: Icons.person,
-                              validator: Validators.validateName,
-                            ),
-                            const SizedBox(height: 16),
-                            _EnhancedTextField(
-                              controller: _emailController,
-                              label: 'Email',
-                              hint: 'Enter your email',
-                              icon: Icons.email,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: Validators.validateEmail,
-                            ),
-                            const SizedBox(height: 16),
-                            _EnhancedTextField(
-                              controller: _phoneController,
-                              label: 'Phone Number',
-                              hint: 'Enter your phone number',
-                              icon: Icons.phone,
-                              keyboardType: TextInputType.phone,
-                              validator: Validators.validatePhone,
-                            ),
-                            const SizedBox(height: 16),
-                            _EnhancedTextField(
-                              controller: _passwordController,
-                              label: 'Password',
-                              hint: 'Create a strong password',
-                              icon: Icons.lock,
-                              obscureText: _obscurePassword,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                                  color: AppTheme.yellowPrimary,
-                                ),
-                                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                              ),
-                              validator: Validators.validatePassword,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Removed Kundli Fields
-                      const SizedBox(height: 32),
-                      // Enhanced Register Button
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                    ),
+                  ),
+
+                  SizedBox(height: _spacingMedium),
+                  
+                  // Divider
+                   Row(
+                    children: [
+                      Expanded(child: Divider(color: AppTheme.neutralLight.withOpacity(0.8))),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'OR',
+                          style: GoogleFonts.outfit(
+                            color: AppTheme.neutralMedium,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.yellowPrimary.withOpacity(0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleRegister,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.textDark),
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'CREATE ACCOUNT',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: AppTheme.textDark,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Icon(
-                                      Icons.arrow_forward,
-                                      color: AppTheme.textDark,
-                                    ),
-                                  ],
-                                ),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      // Login Link
-                      Row(
+                      Expanded(child: Divider(color: AppTheme.neutralLight.withOpacity(0.8))),
+                    ],
+                  ),
+                  SizedBox(height: _spacingMedium),
+
+                  // Google Sign Up
+                  SizedBox(
+                    height: _buttonHeight,
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : _handleGoogleSignUp,
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        side: const BorderSide(color: AppTheme.neutralLight),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        backgroundColor: AppTheme.white,
+                        foregroundColor: AppTheme.neutralDark,
+                      ),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Already have an account? ',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.neutralDark,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
+                          Image.asset(
+                            'assets/images/google_logo.png',
+                            height: 24,
+                            width: 24,
+                            errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 28),
                           ),
-                          TextButton(
-                            onPressed: () => context.go('/login'),
-                            child: const Text(
-                              'Sign In',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.yellowPrimary,
-                                fontSize: 14,
-                              ),
-                            ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Sign up with Google',
+                            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: _spacingLarge),
+                  
+                  // Footer
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Already have an account? ',
+                        style: GoogleFonts.outfit(color: AppTheme.neutralMedium, fontSize: _isIOS ? 12 : 14),
+                      ),
+                      TextButton(
+                        onPressed: () => context.go('/login'),
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                        child: Text(
+                          'Login', 
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.primaryOrange, fontSize: _isIOS ? 12 : 14),
+                        ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 24),
+                ],
               ),
             ),
           ),
@@ -428,171 +430,183 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
       ),
     );
   }
-}
 
-class _EnhancedRoleCard extends StatelessWidget {
-  final String role;
-  final String label;
-  final IconData icon;
-  final String description;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _EnhancedRoleCard({
-    required this.role,
-    required this.label,
-    required this.icon,
-    required this.description,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? const LinearGradient(
-                  colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                )
-              : null,
-          color: isSelected ? null : Colors.grey[50],
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? AppTheme.yellowPrimary : Colors.grey[300]!,
-            width: isSelected ? 2 : 1,
+  Widget _buildField(TextEditingController controller, String label, IconData icon, 
+      {TextInputType? type, String? Function(String?)? validator, bool isPassword = false, Widget? suffix, String? prefixText}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.w600,
+            fontSize: _isIOS ? 13 : 15,
+            color: AppTheme.neutralDark,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppTheme.yellowPrimary.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
         ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isSelected 
-                    ? Colors.white.withOpacity(0.2)
-                    : AppTheme.yellowPrimary.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: isSelected ? AppTheme.textDark : AppTheme.yellowPrimary,
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          keyboardType: type,
+          validator: validator,
+          obscureText: isPassword,
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 14),
+          decoration: InputDecoration(
+            hintText: 'Enter your ${label.toLowerCase()}',
+            prefixText: prefixText,
+            prefixIcon: Icon(icon, color: AppTheme.neutralMedium, size: 18),
+            suffixIcon: suffix,
+            filled: true,
+            fillColor: AppTheme.neutralLight.withOpacity(0.5),
+            contentPadding: _isIOS 
+              ? const EdgeInsets.symmetric(horizontal: 12, vertical: 12)
+              : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            isDense: _isDense, 
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppTheme.primaryOrange, width: 1.5),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneForm() {
+    return Form(
+      key: _phoneFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (!_isOTPSent) ...[
+            _buildField(
+              _nameController,
+              'Full Name', 
+              Icons.person_outline_rounded,
+              validator: Validators.validateName,
+              type: TextInputType.name,
+            ),
+            SizedBox(height: _spacingSmall),
+            _buildField(
+              _phoneController,
+              'Phone Number',
+              Icons.phone_android_rounded,
+              type: TextInputType.phone,
+              validator: Validators.validatePhone,
+              prefixText: '+91 ',
+            ),
+            SizedBox(height: _spacingMedium),
+            SizedBox(
+              height: _buttonHeight,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _handleSendOTP,
+                child: _isLoading 
+                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text('Send Verification Code'),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? AppTheme.textDark : AppTheme.textDark,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+          ] else ...[
+             Text(
+              'Enter the code sent to +91 ${_phoneController.text}',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(color: AppTheme.neutralMedium, fontSize: 14),
+            ),
+            SizedBox(height: _spacingMedium),
+             TextFormField(
+              controller: _otpController,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              maxLength: 6,
+              style: GoogleFonts.outfit(fontSize: 20, letterSpacing: 8, fontWeight: FontWeight.bold, color: AppTheme.primaryOrange),
+              decoration: InputDecoration(
+                hintText: '••••••',
+                counterText: '',
+                fillColor: AppTheme.neutralSoft,
+                isDense: _isDense,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+            SizedBox(height: _spacingMedium),
+            SizedBox(
+              height: _buttonHeight,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _handleVerifyOTP,
+                child: _isLoading 
+                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text('Verify & Create Account'),
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              description,
-              style: TextStyle(
-                color: isSelected 
-                    ? AppTheme.textDark.withOpacity(0.8) 
-                    : AppTheme.textLight,
-                fontSize: 12,
-              ),
-              textAlign: TextAlign.center,
+            TextButton(
+              onPressed: () => setState(() => _isOTPSent = false),
+              child: const Text('Change Phone Number'),
             ),
-          ],
-        ),
+          ]
+        ],
       ),
     );
   }
-}
 
-class _EnhancedTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String hint;
-  final IconData icon;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final Widget? suffixIcon;
-  final String? Function(String?)? validator;
-
-  const _EnhancedTextField({
-    required this.controller,
-    required this.label,
-    required this.hint,
-    required this.icon,
-    this.keyboardType,
-    this.obscureText = false,
-    this.suffixIcon,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Container(
-          margin: const EdgeInsets.all(8),
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.yellowPrimary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+  Widget _buildEmailForm() {
+    return Form(
+      key: _emailFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildField(
+            _nameController,
+            'Full Name',
+            Icons.person_outline_rounded,
+            validator: Validators.validateName,
+            type: TextInputType.name,
           ),
-          child: Icon(icon, color: AppTheme.yellowPrimary, size: 20),
-        ),
-        suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        filled: true,
-        fillColor: AppTheme.creamPrimary.withOpacity(0.3),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppTheme.yellowPrimary,
-            width: 2,
+          const SizedBox(height: 12),
+          _buildField(
+            _emailController,
+            'Email Address',
+            Icons.email_outlined,
+            validator: Validators.validateEmail,
+            type: TextInputType.emailAddress,
           ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppTheme.errorRed,
-            width: 1,
+          const SizedBox(height: 12),
+           _buildField(
+            _emailPhoneController,
+            'Phone Number (Optional)',
+            Icons.phone_outlined,
+            type: TextInputType.phone,
+            prefixText: '+91 ',
           ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppTheme.errorRed,
-            width: 2,
+          const SizedBox(height: 12),
+          _buildField(
+            _passwordController,
+            'Password', 
+            Icons.lock_outline_rounded,
+            validator: Validators.validatePassword,
+            isPassword: _obscurePassword,
+            suffix: IconButton(
+              icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: 20),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 48,
+            child: ElevatedButton(
+              onPressed: _isLoading ? null : _handleEmailRegister,
+              child: _isLoading 
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : const Text('Create Account'),
+            ),
+          ),
+        ],
       ),
     );
   }

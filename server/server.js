@@ -1,29 +1,503 @@
-// Vedic Mate Backend Server (Express + Socket.IO)
+// ============================================================================
+// Vedic Mate - Complete Backend Server (All-in-One)
+// Express + Socket.IO with Orders, Products, Wallet, and AI Services
+// ============================================================================
+
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
-import AIService from './services/aiService.js';
-import WalletService from './services/walletService.js';
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import axios from 'axios';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ============================================================================
+// APP & SERVER SETUP
+// ============================================================================
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // In production, specify your Flutter app's origin
-    methods: ["GET", "POST"]
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// In-memory demo store (replace with DB later - MongoDB/PostgreSQL)
+// ============================================================================
+// FILE STORAGE SETUP
+// ============================================================================
+
+const DATA_DIR = path.join(__dirname, 'data');
+const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
+const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
+const WALLETS_FILE = path.join(DATA_DIR, 'wallets.json');
+const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+const CUSTOM_REQUESTS_FILE = path.join(DATA_DIR, 'custom_requests.json');
+const LIVE_SESSIONS_FILE = path.join(DATA_DIR, 'live_sessions.json');
+
+// Initialize data directory and files
+const initializeDataStorage = () => {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.log('📁 Created data directory');
+  }
+
+  if (!fs.existsSync(ORDERS_FILE)) {
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2));
+    console.log('📄 Created orders.json');
+  }
+
+  if (!fs.existsSync(PRODUCTS_FILE)) {
+    fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(getDefaultProducts(), null, 2));
+    console.log('📄 Created products.json with default products');
+  }
+
+  if (!fs.existsSync(WALLETS_FILE)) {
+    fs.writeFileSync(WALLETS_FILE, JSON.stringify([], null, 2));
+    console.log('📄 Created wallets.json');
+  }
+
+  if (!fs.existsSync(TRANSACTIONS_FILE)) {
+    fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify([], null, 2));
+    console.log('📄 Created transactions.json');
+  }
+
+  if (!fs.existsSync(CUSTOM_REQUESTS_FILE)) {
+    fs.writeFileSync(CUSTOM_REQUESTS_FILE, JSON.stringify([], null, 2));
+    console.log('📄 Created custom_requests.json');
+  }
+
+  if (!fs.existsSync(LIVE_SESSIONS_FILE)) {
+    fs.writeFileSync(LIVE_SESSIONS_FILE, JSON.stringify([], null, 2));
+    console.log('📄 Created live_sessions.json');
+  }
+
+  if (!fs.existsSync(SETTINGS_FILE)) {
+    fs.writeFileSync(SETTINGS_FILE, JSON.stringify({
+      platformFeePercent: 35,
+      minimumBalance: 50.0,
+      chatRatePerMinute: 25.0
+    }, null, 2));
+    console.log('📄 Created settings.json');
+  }
+};
+
+// Default Vedic products
+const getDefaultProducts = () => [
+  {
+    id: 'rudraksha_5',
+    name: '5 Mukhi Rudraksha',
+    description: 'Authentic 5 Mukhi Rudraksha bead for peace and prosperity. Blessed by Vedic priests.',
+    price: 1499,
+    originalPrice: 1999,
+    category: 'rudraksha',
+    images: ['assets/images/remedies/rudraksha.png'],
+    inStock: true,
+    isActive: true,
+    featured: true,
+    stock: 50,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'yantra_shree',
+    name: 'Shree Yantra',
+    description: 'Gold plated Shree Yantra for wealth and abundance. Energized with mantras.',
+    price: 2999,
+    originalPrice: 3999,
+    category: 'yantra',
+    images: ['assets/images/remedies/yantra.png'],
+    inStock: true,
+    isActive: true,
+    featured: true,
+    stock: 30,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'gemstone_neelam',
+    name: 'Blue Sapphire (Neelam)',
+    description: 'Natural Blue Sapphire gemstone for Saturn. Certified and authentic.',
+    price: 15999,
+    originalPrice: 19999,
+    category: 'gemstone',
+    images: ['assets/images/remedies/gemstone.png'],
+    inStock: true,
+    isActive: true,
+    featured: false,
+    stock: 10,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'mala_tulsi',
+    name: 'Tulsi Mala',
+    description: 'Sacred Tulsi beads mala for daily prayers and meditation.',
+    price: 499,
+    originalPrice: 699,
+    category: 'mala',
+    images: ['assets/images/remedies/mala.png'],
+    inStock: true,
+    isActive: true,
+    featured: false,
+    stock: 100,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
+// ============================================================================
+// FILE HELPERS
+// ============================================================================
+
+const readJsonFile = (filePath, defaultValue = []) => {
+  try {
+    if (!fs.existsSync(filePath)) return defaultValue;
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading ${filePath}:`, error);
+    return defaultValue;
+  }
+};
+
+const writeJsonFile = (filePath, data) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error(`Error writing ${filePath}:`, error);
+    return false;
+  }
+};
+
+// Specific file accessors
+const readOrders = () => readJsonFile(ORDERS_FILE, []);
+const writeOrders = (data) => writeJsonFile(ORDERS_FILE, data);
+const readProducts = () => readJsonFile(PRODUCTS_FILE, []);
+const writeProducts = (data) => writeJsonFile(PRODUCTS_FILE, data);
+const readWallets = () => readJsonFile(WALLETS_FILE, []);
+const writeWallets = (data) => writeJsonFile(WALLETS_FILE, data);
+const readTransactions = () => readJsonFile(TRANSACTIONS_FILE, []);
+const writeTransactions = (data) => writeJsonFile(TRANSACTIONS_FILE, data);
+const readSettings = () => readJsonFile(SETTINGS_FILE, { platformFeePercent: 35 });
+const writeSettings = (data) => writeJsonFile(SETTINGS_FILE, data);
+const readCustomRequests = () => readJsonFile(CUSTOM_REQUESTS_FILE, []);
+const writeCustomRequests = (data) => writeJsonFile(CUSTOM_REQUESTS_FILE, data);
+const readLiveSessions = () => readJsonFile(LIVE_SESSIONS_FILE, []);
+const writeLiveSessions = (data) => writeJsonFile(LIVE_SESSIONS_FILE, data);
+
+// Generate order ID
+const generateOrderId = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+  return `VED-${year}-${random}`;
+};
+
+// Generate custom request ID
+const generateCustomRequestId = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+  return `REQ-${year}-${random}`;
+};
+
+// Generate live session ID
+const generateSessionId = () => {
+  return `LIVE-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+};
+
+// Generate transaction ID
+const generateTxId = () => {
+  return `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// Initialize data storage
+initializeDataStorage();
+
+// ============================================================================
+// WALLET SERVICE (Inline)
+// ============================================================================
+
+const WalletService = {
+  getBalance(userId) {
+    const wallets = readWallets();
+    const wallet = wallets.find(w => w.clientId === userId);
+    if (!wallet) {
+      const newWallet = {
+        clientId: userId,
+        clientName: 'User',
+        balance: 0.0,
+        lastTransaction: Date.now(),
+        transactions: []
+      };
+      wallets.push(newWallet);
+      writeWallets(wallets);
+      return 0.0;
+    }
+    return wallet.balance || 0.0;
+  },
+
+  getWallet(userId) {
+    const wallets = readWallets();
+    let wallet = wallets.find(w => w.clientId === userId);
+    if (!wallet) {
+      wallet = {
+        clientId: userId,
+        clientName: 'User',
+        balance: 0.0,
+        lastTransaction: Date.now(),
+        transactions: []
+      };
+      wallets.push(wallet);
+      writeWallets(wallets);
+    }
+    return wallet;
+  },
+
+  addMoney(userId, amount, type = 'recharge', description = '') {
+    if (amount <= 0) throw new Error('Amount must be positive');
+
+    const wallets = readWallets();
+    const transactions = readTransactions();
+
+    let wallet = wallets.find(w => w.clientId === userId);
+    if (!wallet) {
+      wallet = {
+        clientId: userId,
+        clientName: 'User',
+        balance: 0.0,
+        lastTransaction: Date.now(),
+        transactions: []
+      };
+      wallets.push(wallet);
+    }
+
+    wallet.balance = (wallet.balance || 0) + amount;
+    wallet.lastTransaction = Date.now();
+
+    const transaction = {
+      id: generateTxId(),
+      createdAt: Date.now(),
+      clientId: userId,
+      type: type,
+      amount: amount,
+      description: description || `Wallet recharge of ₹${amount}`,
+      status: 'completed',
+      balanceAfter: wallet.balance
+    };
+
+    transactions.push(transaction);
+    if (!wallet.transactions) wallet.transactions = [];
+    wallet.transactions.push(transaction.id);
+
+    writeWallets(wallets);
+    writeTransactions(transactions);
+
+    return { success: true, newBalance: wallet.balance, transaction };
+  },
+
+  deductMoney(userId, amount, type = 'service', description = '') {
+    if (amount <= 0) throw new Error('Amount must be positive');
+
+    const wallets = readWallets();
+    const transactions = readTransactions();
+
+    const wallet = wallets.find(w => w.clientId === userId);
+    if (!wallet) throw new Error('Wallet not found');
+    if (wallet.balance < amount) throw new Error('Insufficient balance');
+
+    wallet.balance = wallet.balance - amount;
+    wallet.lastTransaction = Date.now();
+
+    const transaction = {
+      id: generateTxId(),
+      createdAt: Date.now(),
+      clientId: userId,
+      type: type,
+      amount: -amount,
+      description: description || `Service charge of ₹${amount}`,
+      status: 'completed',
+      balanceAfter: wallet.balance
+    };
+
+    transactions.push(transaction);
+    if (!wallet.transactions) wallet.transactions = [];
+    wallet.transactions.push(transaction.id);
+
+    writeWallets(wallets);
+    writeTransactions(transactions);
+
+    return { success: true, newBalance: wallet.balance, transaction };
+  },
+
+  getTransactions(userId, limit = 50) {
+    const transactions = readTransactions();
+    return transactions
+      .filter(t => t.clientId === userId)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, limit);
+  }
+};
+
+// ============================================================================
+// AI SERVICE (Inline)
+// ============================================================================
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
+const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+const OPENAI_BASE_URL = 'https://api.openai.com/v1/chat/completions';
+
+const AIService = {
+  pandits: {
+    'ai_pandit_1': {
+      id: 'ai_pandit_1',
+      name: 'Pandit Rajesh Shastri',
+      specializations: ['Vedic Astrology', 'Kundli Analysis', 'Marriage Matching'],
+      experienceYears: 25,
+      gender: 'male',
+      bio: 'A renowned Vedic astrologer with 25 years of experience.'
+    }
+  },
+
+  getPandit(panditId) {
+    return this.pandits[panditId] || null;
+  },
+
+  getPersonalityPrompt(panditId) {
+    const pandit = this.getPandit(panditId);
+    if (!pandit) {
+      return `You are a wise Vedic astrologer with deep knowledge of Hindu astrology and spiritual practices. Be warm, empathetic, and provide practical guidance based on ancient wisdom.`;
+    }
+
+    const { name, specializations, experienceYears, bio } = pandit;
+    return `You are ${name}, a Vedic astrologer with ${experienceYears} years of experience specializing in ${specializations.join(', ')}.
+
+YOUR BACKGROUND: ${bio}
+
+GUIDELINES:
+1. Respond as ${name} with wisdom and authenticity
+2. Use your expertise in ${specializations[0]} to provide accurate guidance
+3. Be empathetic, wise, and helpful
+4. Provide practical, actionable advice based on Vedic wisdom
+5. Never break character or reveal you're an AI`;
+  },
+
+  async getWelcomeMessage(panditId) {
+    const pandit = this.getPandit(panditId);
+    if (!pandit) {
+      return 'Namaste! Welcome to Vedic Mate. How may I assist you today? 🙏';
+    }
+    const { name, specializations } = pandit;
+    return `Pranam! I am ${name}, your guide in ${specializations[0]}. How may I assist you today? 🙏`;
+  },
+
+  async sendMessage(message, history, panditId) {
+    try {
+      if (GEMINI_API_KEY && GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE') {
+        return await this.sendGeminiMessage(message, history, panditId);
+      }
+      if (OPENAI_API_KEY && OPENAI_API_KEY !== 'YOUR_OPENAI_API_KEY_HERE') {
+        return await this.sendOpenAIMessage(message, history, panditId);
+      }
+      return this.getFallbackResponse(message, panditId);
+    } catch (error) {
+      console.error('AI Service Error:', error);
+      return this.getFallbackResponse(message, panditId);
+    }
+  },
+
+  async sendGeminiMessage(message, history, panditId) {
+    const systemPrompt = this.getPersonalityPrompt(panditId);
+    const conversationContext = history.map(h => ({
+      role: h.isUser === 'true' || h.isUser === true ? 'user' : 'model',
+      parts: [{ text: h.message }]
+    }));
+    conversationContext.push({ role: 'user', parts: [{ text: message }] });
+
+    const response = await axios.post(
+      `${GEMINI_BASE_URL}?key=${GEMINI_API_KEY}`,
+      {
+        contents: conversationContext,
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: { temperature: 0.7, topK: 40, topP: 0.95, maxOutputTokens: 1024 }
+      },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
+    );
+
+    if (response.data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      return response.data.candidates[0].content.parts[0].text;
+    }
+    throw new Error('No response from Gemini');
+  },
+
+  async sendOpenAIMessage(message, history, panditId) {
+    const systemPrompt = this.getPersonalityPrompt(panditId);
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...history.map(h => ({
+        role: h.isUser === 'true' || h.isUser === true ? 'user' : 'assistant',
+        content: h.message
+      })),
+      { role: 'user', content: message }
+    ];
+
+    const response = await axios.post(
+      OPENAI_BASE_URL,
+      { model: 'gpt-3.5-turbo', messages, temperature: 0.7, max_tokens: 1024 },
+      {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_API_KEY}` },
+        timeout: 30000
+      }
+    );
+
+    if (response.data.choices?.[0]?.message?.content) {
+      return response.data.choices[0].message.content;
+    }
+    throw new Error('No response from OpenAI');
+  },
+
+  getFallbackResponse(message, panditId) {
+    const pandit = this.getPandit(panditId);
+    const lowerMessage = message.toLowerCase();
+    const name = pandit?.name || 'Vedic Astrologer';
+    const spec = pandit?.specializations?.[0] || 'Vedic astrology';
+
+    if (lowerMessage.includes('kundli') || lowerMessage.includes('birth chart')) {
+      return `I can help you with Kundli analysis. Please share your birth details (date, time, place) for a detailed reading.`;
+    }
+    if (lowerMessage.includes('love') || lowerMessage.includes('relationship')) {
+      return `Relationships are important aspects of life. Based on my experience, I can guide you. Could you share more details?`;
+    }
+    if (lowerMessage.includes('career') || lowerMessage.includes('job')) {
+      return `Career guidance is one of my specialties. What specific aspect would you like to know about?`;
+    }
+    return `Thank you for your question. As ${name}, I specialize in ${spec}. I'm here to help with Vedic guidance. Could you provide more details?`;
+  }
+};
+
+// ============================================================================
+// IN-MEMORY STATE (for pandits, live sessions, etc.)
+// ============================================================================
+
 const state = {
-  platformFeePercent: 35,
   pandits: [
     {
       id: 'p1',
@@ -41,58 +515,43 @@ const state = {
       is_available: true,
       status: 'active',
       totalEarnings: 125000,
-    },
-    // Add more pandits as needed
+    }
   ],
   bookings: [],
-  transactions: [],
-  wallets: [],
-  payouts: [],
   live: [],
-  chatSessions: {}, // { sessionId: { userId, panditId, messages, startTime, isActive } }
+  chatSessions: {}
 };
 
-// Initialize services
-const aiService = new AIService();
-const walletService = new WalletService(state);
+// ============================================================================
+// WEBSOCKET REAL-TIME UPDATES
+// ============================================================================
 
-// ==================== WebSocket Real-time Updates ====================
 io.on('connection', (socket) => {
   console.log(`Client connected: ${socket.id}`);
 
-  // Join user's room for personalized updates
   socket.on('join-user-room', (userId) => {
     socket.join(`user-${userId}`);
     console.log(`User ${userId} joined their room`);
   });
 
-  // Handle wallet balance updates
-  socket.on('request-balance', async (userId) => {
+  socket.on('request-balance', (userId) => {
     try {
-      const balance = walletService.getBalance(userId);
+      const balance = WalletService.getBalance(userId);
       socket.emit('balance-update', { userId, balance });
     } catch (error) {
       socket.emit('error', { message: error.message });
     }
   });
 
-  // Handle chat messages
   socket.on('chat-message', async (data) => {
     try {
       const { sessionId, userId, panditId, message } = data;
-      
-      // Get AI response
       const history = state.chatSessions[sessionId]?.messages || [];
-      const aiResponse = await aiService.sendMessage(message, history, panditId);
+      const aiResponse = await AIService.sendMessage(message, history, panditId);
 
-      // Save messages
       if (!state.chatSessions[sessionId]) {
         state.chatSessions[sessionId] = {
-          userId,
-          panditId,
-          messages: [],
-          startTime: Date.now(),
-          isActive: true
+          userId, panditId, messages: [], startTime: Date.now(), isActive: true
         };
       }
 
@@ -101,17 +560,9 @@ io.on('connection', (socket) => {
         { isUser: false, message: aiResponse, timestamp: Date.now() }
       );
 
-      // Emit response to user
-      socket.emit('chat-response', {
-        sessionId,
-        message: aiResponse,
-        timestamp: Date.now()
-      });
-
-      // Broadcast to user's room
+      socket.emit('chat-response', { sessionId, message: aiResponse, timestamp: Date.now() });
       io.to(`user-${userId}`).emit('chat-update', {
-        sessionId,
-        messages: state.chatSessions[sessionId].messages
+        sessionId, messages: state.chatSessions[sessionId].messages
       });
     } catch (error) {
       socket.emit('error', { message: error.message });
@@ -123,324 +574,394 @@ io.on('connection', (socket) => {
   });
 });
 
-// ==================== REST API Endpoints ====================
+// ============================================================================
+// REST API ENDPOINTS
+// ============================================================================
 
-// Health check
+// Health Check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    ok: true, 
+  res.json({
+    ok: true,
     timestamp: Date.now(),
     services: {
-      ai: !!aiService.geminiApiKey || !!aiService.openaiApiKey,
+      ai: !!GEMINI_API_KEY || !!OPENAI_API_KEY,
       wallet: true,
+      orders: true,
+      products: true,
       websocket: true
     }
   });
 });
 
-// ==================== AI Endpoints ====================
+// ==================== AI ENDPOINTS ====================
 
-// Get welcome message
 app.post('/api/ai/welcome', async (req, res) => {
   try {
     const { panditId } = req.body;
-    const message = await aiService.getWelcomeMessage(panditId);
+    const message = await AIService.getWelcomeMessage(panditId);
     res.json({ success: true, message });
   } catch (error) {
-    console.error('Welcome message error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Send chat message
 app.post('/api/ai/chat', async (req, res) => {
   try {
     const { message, history, panditId } = req.body;
-    
     if (!message || !panditId) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Message and panditId are required' 
-      });
+      return res.status(400).json({ success: false, error: 'Message and panditId are required' });
     }
-
-    const response = await aiService.sendMessage(
-      message,
-      history || [],
-      panditId
-    );
-
-    res.json({ 
-      success: true, 
-      response,
-      timestamp: Date.now()
-    });
+    const response = await AIService.sendMessage(message, history || [], panditId);
+    res.json({ success: true, response, timestamp: Date.now() });
   } catch (error) {
-    console.error('AI chat error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message || 'AI service error' 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// ==================== Wallet Endpoints ====================
+// ==================== WALLET ENDPOINTS ====================
 
-// Get wallet balance
 app.get('/api/wallet/balance/:userId', (req, res) => {
   try {
     const { userId } = req.params;
-    const balance = walletService.getBalance(userId);
-    const wallet = walletService.getWallet(userId);
-    
-    res.json({ 
-      success: true, 
-      balance,
-      wallet 
-    });
+    const balance = WalletService.getBalance(userId);
+    const wallet = WalletService.getWallet(userId);
+    res.json({ success: true, balance, wallet });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Add money to wallet
 app.post('/api/wallet/add', (req, res) => {
   try {
     const { userId, amount, type, description } = req.body;
-    
     if (!userId || !amount) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'UserId and amount are required' 
-      });
+      return res.status(400).json({ success: false, error: 'UserId and amount are required' });
     }
-
     if (amount <= 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Amount must be positive' 
-      });
+      return res.status(400).json({ success: false, error: 'Amount must be positive' });
     }
-
-    const result = walletService.addMoney(
-      userId, 
-      amount, 
-      type || 'recharge',
-      description
-    );
-
-    // Emit real-time update
-    io.to(`user-${userId}`).emit('balance-update', {
-      userId,
-      balance: result.newBalance
-    });
-
-    res.json({ 
-      success: true, 
-      ...result 
-    });
+    const result = WalletService.addMoney(userId, amount, type || 'recharge', description);
+    io.to(`user-${userId}`).emit('balance-update', { userId, balance: result.newBalance });
+    res.json({ success: true, ...result });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Deduct money from wallet
 app.post('/api/wallet/deduct', (req, res) => {
   try {
     const { userId, amount, type, description } = req.body;
-    
     if (!userId || !amount) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'UserId and amount are required' 
-      });
+      return res.status(400).json({ success: false, error: 'UserId and amount are required' });
     }
-
     if (amount <= 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Amount must be positive' 
-      });
+      return res.status(400).json({ success: false, error: 'Amount must be positive' });
     }
-
-    const result = walletService.deductMoney(
-      userId, 
-      amount, 
-      type || 'service',
-      description
-    );
-
-    // Emit real-time update
-    io.to(`user-${userId}`).emit('balance-update', {
-      userId,
-      balance: result.newBalance
-    });
-
-    res.json({ 
-      success: true, 
-      ...result 
-    });
+    const result = WalletService.deductMoney(userId, amount, type || 'service', description);
+    io.to(`user-${userId}`).emit('balance-update', { userId, balance: result.newBalance });
+    res.json({ success: true, ...result });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Get transaction history
 app.get('/api/wallet/transactions/:userId', (req, res) => {
   try {
     const { userId } = req.params;
     const limit = parseInt(req.query.limit) || 50;
-    const transactions = walletService.getTransactions(userId, limit);
-    
-    res.json({ 
-      success: true, 
-      transactions 
-    });
+    const transactions = WalletService.getTransactions(userId, limit);
+    res.json({ success: true, transactions });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// ==================== Chat Session Endpoints ====================
+// ==================== PRODUCTS ENDPOINTS ====================
 
-// Get or create chat session
-app.post('/api/chat/session', (req, res) => {
+app.get('/api/products', (req, res) => {
   try {
-    const { userId, panditId } = req.body;
-    
-    if (!userId || !panditId) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'UserId and panditId are required' 
-      });
+    const products = readProducts();
+    const { category, active, featured } = req.query;
+    let filtered = products;
+    if (category) filtered = filtered.filter(p => p.category === category);
+    if (active === 'true') filtered = filtered.filter(p => p.isActive === true);
+    if (featured === 'true') filtered = filtered.filter(p => p.featured === true);
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/products/:id', (req, res) => {
+  try {
+    const products = readProducts();
+    const product = products.find(p => p.id === req.params.id);
+    if (!product) return res.status(404).json({ success: false, error: 'Product not found' });
+    res.json({ success: true, data: product });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Get all products
+app.get('/api/admin/products', (req, res) => {
+  try {
+    const products = readProducts();
+    const { category, active } = req.query;
+    let filtered = products;
+    if (category) filtered = filtered.filter(p => p.category === category);
+    if (active === 'true') filtered = filtered.filter(p => p.isActive === true);
+    if (active === 'false') filtered = filtered.filter(p => p.isActive === false);
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/admin/products', (req, res) => {
+  try {
+    const products = readProducts();
+    const newProduct = {
+      id: `product_${Date.now()}`,
+      ...req.body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    products.push(newProduct);
+    writeProducts(products);
+    io.emit('products-update', { action: 'add', product: newProduct });
+    res.json({ success: true, data: newProduct });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/admin/products/:id', (req, res) => {
+  try {
+    const products = readProducts();
+    const index = products.findIndex(p => p.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Product not found' });
+    products[index] = { ...products[index], ...req.body, updatedAt: new Date().toISOString() };
+    writeProducts(products);
+    io.emit('products-update', { action: 'update', product: products[index] });
+    res.json({ success: true, data: products[index] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.delete('/api/admin/products/:id', (req, res) => {
+  try {
+    let products = readProducts();
+    const index = products.findIndex(p => p.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Product not found' });
+    const deleted = products[index];
+    products = products.filter(p => p.id !== req.params.id);
+    writeProducts(products);
+    io.emit('products-update', { action: 'delete', productId: req.params.id });
+    res.json({ success: true, message: 'Product deleted', data: deleted });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/admin/products/stats', (req, res) => {
+  try {
+    const products = readProducts();
+    const stats = {
+      total: products.length,
+      active: products.filter(p => p.isActive).length,
+      inStock: products.filter(p => p.inStock).length,
+      outOfStock: products.filter(p => !p.inStock).length,
+      featured: products.filter(p => p.featured).length,
+      totalValue: products.reduce((sum, p) => sum + (p.price * (p.stock || 0)), 0),
+      categories: products.reduce((acc, p) => { acc[p.category] = (acc[p.category] || 0) + 1; return acc; }, {})
+    };
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== ORDERS ENDPOINTS ====================
+
+app.get('/api/orders', (req, res) => {
+  try {
+    const orders = readOrders();
+    const userId = req.headers['x-user-id'];
+    let filtered = userId ? orders.filter(o => o.userId === userId) : orders;
+    filtered.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/orders/:id', (req, res) => {
+  try {
+    const orders = readOrders();
+    const order = orders.find(o => o.id === req.params.id || o.orderId === req.params.id);
+    if (!order) return res.status(404).json({ success: false, error: 'Order not found' });
+    res.json({ success: true, data: order });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/orders', (req, res) => {
+  try {
+    const orders = readOrders();
+    const orderData = req.body;
+    const newOrder = {
+      id: `order_${Date.now()}`,
+      orderId: generateOrderId(),
+      userId: req.headers['x-user-id'] || orderData.userId,
+      orderDate: new Date().toISOString(),
+      items: orderData.items || [],
+      subtotal: orderData.subtotal || 0,
+      tax: orderData.tax || 0,
+      deliveryCharge: orderData.deliveryCharge || 0,
+      totalAmount: orderData.totalAmount || 0,
+      paymentStatus: orderData.paymentId ? 'completed' : 'pending',
+      paymentId: orderData.paymentId || null,
+      deliveryStatus: 'processing',
+      shippingAddress: orderData.shippingAddress || {},
+      expectedDeliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      trackingNumber: null,
+      timeline: [{ status: 'processing', timestamp: new Date().toISOString(), description: 'Order placed successfully' }],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    orders.unshift(newOrder);
+    writeOrders(orders);
+    io.emit('orders-update', { action: 'new', order: newOrder });
+    res.json({ success: true, data: newOrder });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/orders/:id/cancel', (req, res) => {
+  try {
+    const orders = readOrders();
+    const index = orders.findIndex(o => o.id === req.params.id || o.orderId === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Order not found' });
+
+    const order = orders[index];
+    if (['shipped', 'outForDelivery', 'delivered'].includes(order.deliveryStatus)) {
+      return res.status(400).json({ success: false, error: 'Cannot cancel order that has been shipped or delivered' });
     }
 
-    // Find existing session or create new
-    const sessionId = `${userId}_${panditId}`;
-    let session = state.chatSessions[sessionId];
+    orders[index] = {
+      ...order,
+      deliveryStatus: 'cancelled',
+      cancellationReason: req.body.reason || 'Cancelled by user',
+      cancelledAt: new Date().toISOString(),
+      timeline: [...(order.timeline || []), { status: 'cancelled', timestamp: new Date().toISOString(), description: req.body.reason || 'Order cancelled by user' }],
+      updatedAt: new Date().toISOString()
+    };
+    writeOrders(orders);
+    io.emit('orders-update', { action: 'cancelled', order: orders[index] });
+    io.to(`user-${order.userId}`).emit('order-status-update', orders[index]);
+    res.json({ success: true, data: orders[index] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-    if (!session) {
-      session = {
-        id: sessionId,
-        userId,
-        panditId,
-        messages: [],
-        startTime: Date.now(),
-        isActive: false,
-        isStarted: false
+app.get('/api/admin/orders', (req, res) => {
+  try {
+    const orders = readOrders();
+    const { status, paymentStatus } = req.query;
+    let filtered = orders;
+    if (status) filtered = filtered.filter(o => o.deliveryStatus === status);
+    if (paymentStatus) filtered = filtered.filter(o => o.paymentStatus === paymentStatus);
+    filtered.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/admin/orders', (req, res) => {
+  try {
+    const { orderId, updates } = req.body;
+    const orders = readOrders();
+    const index = orders.findIndex(o => o.id === orderId || o._id === orderId || o.orderId === orderId);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Order not found' });
+
+    const order = orders[index];
+    const timelineEntry = [];
+    if (updates.status && updates.status !== order.deliveryStatus) {
+      const statusDescriptions = {
+        'processing': 'Order is being processed',
+        'confirmed': 'Order confirmed by seller',
+        'shipped': 'Order has been shipped',
+        'outForDelivery': 'Order is out for delivery',
+        'delivered': 'Order delivered successfully',
+        'cancelled': 'Order has been cancelled'
       };
-      state.chatSessions[sessionId] = session;
+      timelineEntry.push({ status: updates.status, timestamp: new Date().toISOString(), description: statusDescriptions[updates.status] || `Status changed to ${updates.status}` });
     }
 
-    res.json({ success: true, session });
+    orders[index] = {
+      ...order,
+      deliveryStatus: updates.status || order.deliveryStatus,
+      paymentStatus: updates.paymentStatus || order.paymentStatus,
+      trackingNumber: updates.trackingNumber || order.trackingNumber,
+      expectedDeliveryDate: updates.estimatedDelivery || order.expectedDeliveryDate,
+      notes: updates.notes || order.notes,
+      actualDeliveryDate: updates.status === 'delivered' ? new Date().toISOString() : order.actualDeliveryDate,
+      timeline: [...(order.timeline || []), ...timelineEntry],
+      updatedAt: new Date().toISOString()
+    };
+    writeOrders(orders);
+    io.to(`user-${order.userId}`).emit('order-status-update', orders[index]);
+    io.emit('orders-update', { action: 'updated', order: orders[index] });
+    res.json({ success: true, data: orders[index] });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Get chat session messages
-app.get('/api/chat/session/:sessionId', (req, res) => {
+app.get('/api/admin/orders/stats', (req, res) => {
   try {
-    const { sessionId } = req.params;
-    const session = state.chatSessions[sessionId];
-    
-    if (!session) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Session not found' 
-      });
-    }
-
-    res.json({ success: true, session });
+    const orders = readOrders();
+    const stats = {
+      total: orders.length,
+      processing: orders.filter(o => o.deliveryStatus === 'processing' || o.deliveryStatus === 'confirmed').length,
+      shipped: orders.filter(o => o.deliveryStatus === 'shipped' || o.deliveryStatus === 'outForDelivery').length,
+      delivered: orders.filter(o => o.deliveryStatus === 'delivered').length,
+      cancelled: orders.filter(o => o.deliveryStatus === 'cancelled').length,
+      pendingPayment: orders.filter(o => o.paymentStatus === 'pending').length,
+      totalRevenue: orders.filter(o => o.paymentStatus === 'completed' && o.deliveryStatus !== 'cancelled').reduce((sum, o) => sum + (o.totalAmount || 0), 0)
+    };
+    res.json({ success: true, data: stats });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Start chat session (with wallet check)
-app.post('/api/chat/start', async (req, res) => {
-  try {
-    const { userId, panditId, sessionId } = req.body;
-    
-    if (!userId || !panditId) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'UserId and panditId are required' 
-      });
-    }
-
-    // Check wallet balance (minimum ₹50)
-    const balance = walletService.getBalance(userId);
-    const minimumBalance = 50.0;
-
-    if (balance < minimumBalance) {
-      return res.status(402).json({ 
-        success: false, 
-        error: 'Insufficient balance',
-        required: minimumBalance,
-        current: balance
-      });
-    }
-
-    // Get or create session
-    const sid = sessionId || `${userId}_${panditId}`;
-    let session = state.chatSessions[sid];
-
-    if (!session) {
-      session = {
-        id: sid,
-        userId,
-        panditId,
-        messages: [],
-        startTime: Date.now(),
-        isActive: true,
-        isStarted: true
-      };
-      state.chatSessions[sid] = session;
-    } else {
-      session.isActive = true;
-      session.isStarted = true;
-    }
-
-    res.json({ success: true, session });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// ==================== Settings Endpoints ====================
+// ==================== SETTINGS ENDPOINTS ====================
 
 app.get('/api/settings', (req, res) => {
-  res.json({ 
-    platformFeePercent: state.platformFeePercent,
-    minimumBalance: 50.0,
-    chatRatePerMinute: 25.0
-  });
+  const settings = readSettings();
+  res.json(settings);
 });
 
 app.post('/api/settings', (req, res) => {
-  const { platformFeePercent } = req.body;
-  if (typeof platformFeePercent === 'number') {
-    state.platformFeePercent = platformFeePercent;
-  }
-  res.json({ ok: true });
+  const settings = readSettings();
+  Object.assign(settings, req.body);
+  writeSettings(settings);
+  res.json({ ok: true, settings });
 });
 
-// ==================== Pandits Endpoints ====================
+// ==================== PANDITS ENDPOINTS ====================
 
 app.get('/api/pandits', (req, res) => res.json(state.pandits));
 
 app.post('/api/pandits', (req, res) => {
-  const pandit = { 
-    id: String(Date.now()), 
-    status: 'pending', 
-    rating: 0, 
-    totalEarnings: 0, 
-    ...req.body 
-  };
+  const pandit = { id: String(Date.now()), status: 'pending', rating: 0, totalEarnings: 0, ...req.body };
   state.pandits.push(pandit);
   res.json(pandit);
 });
@@ -453,31 +974,527 @@ app.put('/api/pandits/:id', (req, res) => {
   res.json(state.pandits[idx]);
 });
 
-app.post('/api/pandits/:id/block', (req, res) => {
-  const { id } = req.params;
-  const p = state.pandits.find(p => p.id === id);
-  if (!p) return res.status(404).json({ error: 'Not found' });
-  p.status = 'blocked';
-  res.json({ ok: true });
+// ==================== CHAT SESSION ENDPOINTS ====================
+
+app.post('/api/chat/session', (req, res) => {
+  try {
+    const { userId, panditId } = req.body;
+    if (!userId || !panditId) return res.status(400).json({ success: false, error: 'UserId and panditId are required' });
+
+    const sessionId = `${userId}_${panditId}`;
+    let session = state.chatSessions[sessionId];
+
+    if (!session) {
+      session = { id: sessionId, userId, panditId, messages: [], startTime: Date.now(), isActive: false, isStarted: false };
+      state.chatSessions[sessionId] = session;
+    }
+    res.json({ success: true, session });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
-// ==================== Other Endpoints ====================
+app.get('/api/chat/session/:sessionId', (req, res) => {
+  const session = state.chatSessions[req.params.sessionId];
+  if (!session) return res.status(404).json({ success: false, error: 'Session not found' });
+  res.json({ success: true, session });
+});
 
-app.get('/api/transactions', (req, res) => res.json(state.transactions));
+app.post('/api/chat/start', async (req, res) => {
+  try {
+    const { userId, panditId, sessionId } = req.body;
+    if (!userId || !panditId) return res.status(400).json({ success: false, error: 'UserId and panditId are required' });
 
-app.get('/api/wallets', (req, res) => res.json(state.wallets));
+    const balance = WalletService.getBalance(userId);
+    const settings = readSettings();
+    const minimumBalance = settings.minimumBalance || 50.0;
 
-app.get('/api/payouts', (req, res) => res.json(state.payouts));
+    if (balance < minimumBalance) {
+      return res.status(402).json({ success: false, error: 'Insufficient balance', required: minimumBalance, current: balance });
+    }
 
-app.get('/api/live', (req, res) => res.json(state.live));
+    const sid = sessionId || `${userId}_${panditId}`;
+    let session = state.chatSessions[sid];
 
-// ==================== Start Server ====================
+    if (!session) {
+      session = { id: sid, userId, panditId, messages: [], startTime: Date.now(), isActive: true, isStarted: true };
+      state.chatSessions[sid] = session;
+    } else {
+      session.isActive = true;
+      session.isStarted = true;
+    }
+    res.json({ success: true, session });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-const PORT = process.env.PORT || 4000;
+// ============================================================================
+// CUSTOM REQUESTS API (Puja/Havan Bookings)
+// ============================================================================
+
+// User: Create custom request
+app.post('/api/custom-requests', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const requestData = req.body;
+
+    const newRequest = {
+      id: `request_${Date.now()}`,
+      requestId: generateCustomRequestId(),
+      userId: req.headers['x-user-id'] || requestData.userId,
+      type: requestData.type || 'puja', // puja, havan, homam, etc.
+      serviceName: requestData.serviceName,
+      description: requestData.description || '',
+      preferredDate: requestData.preferredDate,
+      preferredTime: requestData.preferredTime,
+      duration: requestData.duration || 60, // minutes
+      price: requestData.price || 0,
+      status: 'pending', // pending, accepted, rejected, scheduled, completed, cancelled
+      paymentStatus: 'pending',
+      paymentId: requestData.paymentId || null,
+      userName: requestData.userName || '',
+      userPhone: requestData.userPhone || '',
+      userEmail: requestData.userEmail || '',
+      notes: requestData.notes || '',
+      liveSessionId: null, // Will be set when admin creates live session
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    requests.unshift(newRequest);
+    writeCustomRequests(requests);
+
+    io.emit('custom-requests-update', { action: 'new', request: newRequest });
+    res.json({ success: true, data: newRequest });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Get their custom requests
+app.get('/api/custom-requests', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const userId = req.headers['x-user-id'];
+
+    let filtered = userId ? requests.filter(r => r.userId === userId) : [];
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Get single request
+app.get('/api/custom-requests/:id', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const request = requests.find(r => r.id === req.params.id || r.requestId === req.params.id);
+    if (!request) return res.status(404).json({ success: false, error: 'Request not found' });
+    res.json({ success: true, data: request });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Cancel their request
+app.put('/api/custom-requests/:id/cancel', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const index = requests.findIndex(r => r.id === req.params.id || r.requestId === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Request not found' });
+
+    const request = requests[index];
+    if (['completed', 'cancelled'].includes(request.status)) {
+      return res.status(400).json({ success: false, error: 'Cannot cancel this request' });
+    }
+
+    requests[index] = {
+      ...request,
+      status: 'cancelled',
+      cancellationReason: req.body.reason || 'Cancelled by user',
+      cancelledAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    writeCustomRequests(requests);
+    io.emit('custom-requests-update', { action: 'cancelled', request: requests[index] });
+    res.json({ success: true, data: requests[index] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Get all custom requests
+app.get('/api/admin/custom-requests', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const { status, type } = req.query;
+
+    let filtered = requests;
+    if (status) filtered = filtered.filter(r => r.status === status);
+    if (type) filtered = filtered.filter(r => r.type === type);
+
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Update custom request
+app.put('/api/admin/custom-requests/:id', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const index = requests.findIndex(r => r.id === req.params.id || r.requestId === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Request not found' });
+
+    const updates = req.body;
+    requests[index] = {
+      ...requests[index],
+      status: updates.status || requests[index].status,
+      paymentStatus: updates.paymentStatus || requests[index].paymentStatus,
+      price: updates.price || requests[index].price,
+      notes: updates.notes || requests[index].notes,
+      liveSessionId: updates.liveSessionId || requests[index].liveSessionId,
+      updatedAt: new Date().toISOString()
+    };
+
+    writeCustomRequests(requests);
+
+    // Notify user
+    io.to(`user-${requests[index].userId}`).emit('custom-request-update', requests[index]);
+    io.emit('custom-requests-update', { action: 'updated', request: requests[index] });
+
+    res.json({ success: true, data: requests[index] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Custom requests stats
+app.get('/api/admin/custom-requests/stats', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+    const stats = {
+      total: requests.length,
+      pending: requests.filter(r => r.status === 'pending').length,
+      accepted: requests.filter(r => r.status === 'accepted').length,
+      scheduled: requests.filter(r => r.status === 'scheduled').length,
+      completed: requests.filter(r => r.status === 'completed').length,
+      cancelled: requests.filter(r => r.status === 'cancelled').length,
+      totalRevenue: requests.filter(r => r.paymentStatus === 'completed').reduce((sum, r) => sum + (r.price || 0), 0)
+    };
+    res.json({ success: true, data: stats });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ============================================================================
+// LIVE SESSIONS API (For Video Call Havans)
+// ============================================================================
+
+// ==================== Razorpay Payment Endpoints ====================
+
+// Initialize Razorpay
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+// Create Order (Simulated for verification)
+app.post('/api/payment/create-order', async (req, res) => {
+  try {
+    const { amount, currency = 'INR', receipt } = req.body;
+
+    if (!amount) {
+      return res.status(400).json({ success: false, error: 'Amount is required' });
+    }
+
+    const options = {
+      amount: Math.round(amount * 100), // Convert to paise
+      currency,
+      receipt: receipt || `receipt_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json({ success: true, order });
+  } catch (error) {
+    console.error('Razorpay Order Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Verify Payment
+app.post('/api/payment/verify', async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body.toString())
+      .digest('hex');
+
+    if (expectedSignature === razorpay_signature) {
+      // Payment verified!
+      // In a real app, you would update the database here (e.g., mark order as paid, add wallet balance)
+      console.log(`Payment Verified: ${razorpay_payment_id}`);
+      res.json({ success: true, message: 'Payment verified successfully' });
+    } else {
+      res.status(400).json({ success: false, error: 'Invalid signature' });
+    }
+  } catch (error) {
+    console.error('Razorpay Verification Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Create live session for a custom request
+app.post('/api/admin/live-sessions', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const sessionData = req.body;
+
+    const newSession = {
+      id: `session_${Date.now()}`,
+      sessionId: generateSessionId(),
+      customRequestId: sessionData.customRequestId,
+      userId: sessionData.userId,
+      panditId: sessionData.panditId || 'admin',
+      panditName: sessionData.panditName || 'Vedic Pandit',
+      title: sessionData.title || 'Live Havan/Puja',
+      description: sessionData.description || '',
+      scheduledDate: sessionData.scheduledDate,
+      scheduledTime: sessionData.scheduledTime,
+      duration: sessionData.duration || 60, // minutes
+      status: 'scheduled', // scheduled, live, completed, cancelled
+      roomId: `room_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      isLive: false,
+      startedAt: null,
+      endedAt: null,
+      recordingUrl: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    sessions.push(newSession);
+    writeLiveSessions(sessions);
+
+    // Update the custom request with session ID
+    if (sessionData.customRequestId) {
+      const requests = readCustomRequests();
+      const reqIndex = requests.findIndex(r => r.id === sessionData.customRequestId || r.requestId === sessionData.customRequestId);
+      if (reqIndex !== -1) {
+        requests[reqIndex].liveSessionId = newSession.id;
+        requests[reqIndex].status = 'scheduled';
+        requests[reqIndex].updatedAt = new Date().toISOString();
+        writeCustomRequests(requests);
+
+        // Notify user about scheduled session
+        io.to(`user-${requests[reqIndex].userId}`).emit('session-scheduled', newSession);
+      }
+    }
+
+    io.emit('live-sessions-update', { action: 'created', session: newSession });
+    res.json({ success: true, data: newSession });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get all live sessions (admin)
+app.get('/api/admin/live-sessions', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const { status } = req.query;
+
+    let filtered = sessions;
+    if (status) filtered = filtered.filter(s => s.status === status);
+
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Get their sessions
+app.get('/api/live-sessions', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const userId = req.headers['x-user-id'];
+
+    let filtered = userId ? sessions.filter(s => s.userId === userId) : [];
+    filtered.sort((a, b) => new Date(b.scheduledDate) - new Date(a.scheduledDate));
+
+    res.json({ success: true, data: filtered, count: filtered.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get single session
+app.get('/api/live-sessions/:id', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const session = sessions.find(s => s.id === req.params.id || s.sessionId === req.params.id);
+    if (!session) return res.status(404).json({ success: false, error: 'Session not found' });
+    res.json({ success: true, data: session });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Start live session
+app.put('/api/admin/live-sessions/:id/start', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const index = sessions.findIndex(s => s.id === req.params.id || s.sessionId === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Session not found' });
+
+    sessions[index] = {
+      ...sessions[index],
+      status: 'live',
+      isLive: true,
+      startedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    writeLiveSessions(sessions);
+
+    // Notify user that session is live
+    io.to(`user-${sessions[index].userId}`).emit('session-live', sessions[index]);
+    io.emit('live-sessions-update', { action: 'started', session: sessions[index] });
+
+    res.json({ success: true, data: sessions[index] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: End live session
+app.put('/api/admin/live-sessions/:id/end', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const index = sessions.findIndex(s => s.id === req.params.id || s.sessionId === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Session not found' });
+
+    sessions[index] = {
+      ...sessions[index],
+      status: 'completed',
+      isLive: false,
+      endedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    writeLiveSessions(sessions);
+
+    // Update custom request to completed
+    if (sessions[index].customRequestId) {
+      const requests = readCustomRequests();
+      const reqIndex = requests.findIndex(r => r.id === sessions[index].customRequestId);
+      if (reqIndex !== -1) {
+        requests[reqIndex].status = 'completed';
+        requests[reqIndex].updatedAt = new Date().toISOString();
+        writeCustomRequests(requests);
+      }
+    }
+
+    io.to(`user-${sessions[index].userId}`).emit('session-ended', sessions[index]);
+    io.emit('live-sessions-update', { action: 'ended', session: sessions[index] });
+
+    res.json({ success: true, data: sessions[index] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Join session (get room info)
+app.post('/api/live-sessions/:id/join', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    const session = sessions.find(s => s.id === req.params.id || s.sessionId === req.params.id);
+    if (!session) return res.status(404).json({ success: false, error: 'Session not found' });
+
+    if (session.status !== 'live') {
+      return res.status(400).json({ success: false, error: 'Session is not live yet' });
+    }
+
+    // In production, this would generate a token for video call service (Agora, Twilio, etc.)
+    res.json({
+      success: true,
+      data: {
+        roomId: session.roomId,
+        sessionId: session.sessionId,
+        panditName: session.panditName,
+        title: session.title,
+        // Add video call token here when using real video service
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ============================================================================
+// BOOKINGS HISTORY API (Combined view)
+// ============================================================================
+
+app.get('/api/bookings', (req, res) => {
+  try {
+    const userId = req.headers['x-user-id'];
+    if (!userId) return res.status(400).json({ success: false, error: 'User ID required' });
+
+    const orders = readOrders().filter(o => o.userId === userId);
+    const customRequests = readCustomRequests().filter(r => r.userId === userId);
+    const liveSessions = readLiveSessions().filter(s => s.userId === userId);
+
+    res.json({
+      success: true,
+      data: {
+        orders: orders.slice(0, 10),
+        customRequests: customRequests.slice(0, 10),
+        liveSessions: liveSessions.slice(0, 10),
+        counts: {
+          orders: orders.length,
+          customRequests: customRequests.length,
+          liveSessions: liveSessions.length
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ============================================================================
+// START SERVER
+// ============================================================================
+
+const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
 httpServer.listen(PORT, HOST, () => {
-  console.log(`🚀 Vedic Mate server running on ${HOST}:${PORT}`);
-  console.log(`📡 WebSocket server ready for real-time updates`);
-  console.log(`🤖 AI Service: ${aiService.geminiApiKey ? 'Gemini' : aiService.openaiApiKey ? 'OpenAI' : 'Fallback'}`);
+  console.log('');
+  console.log('╔══════════════════════════════════════════════════════════════╗');
+  console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
+  console.log('╠══════════════════════════════════════════════════════════════╣');
+  console.log(`║  🚀 Server running on http://${HOST}:${PORT}                    ║`);
+  console.log('║                                                              ║');
+  console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
+  console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
+  console.log('║  📦 Products: /api/products, /api/admin/products             ║');
+  console.log('║  💰 Wallet: /api/wallet/balance, /api/wallet/add             ║');
+  console.log('║  🙏 Custom Requests: /api/custom-requests                    ║');
+  console.log('║  📹 Live Sessions: /api/live-sessions                        ║');
+  console.log('║  🤖 AI Chat: /api/ai/chat, /api/ai/welcome                   ║');
+  console.log('║                                                              ║');
+  console.log(`║  🤖 AI: ${GEMINI_API_KEY ? 'Gemini' : OPENAI_API_KEY ? 'OpenAI' : 'Fallback Mode'}                                        ║`);
+  console.log('╚══════════════════════════════════════════════════════════════╝');
+  console.log('');
 });
+

@@ -1,164 +1,196 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/auth_service.dart';
 import '../models/ai_chat_model.dart';
 
 class WalletService {
-  static const String _walletKey = 'user_wallet';
-  static const String _transactionsKey = 'wallet_transactions';
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final AuthService _authService = AuthService();
 
-  // Get wallet balance
+  // Get current wallet balance from Supabase
   Future<double> getBalance(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final walletData = prefs.getString('${_walletKey}_$userId');
-    
-    if (walletData != null) {
-      final wallet = UserWallet.fromJson(jsonDecode(walletData));
-      return wallet.balance;
+    // 1. Check if guest
+    if (userId.startsWith('guest_') || userId.contains('anonymous')) {
+      return 5000.0; // Guest bonus
     }
-    
-    // Check if this is a guest user - return ₹5000
-    final isGuest = userId.startsWith('guest_') || userId.contains('anonymous');
-    if (isGuest) {
-      // Initialize guest wallet with ₹5000
-      final wallet = await getWallet(userId);
-      return wallet.balance;
-    }
-    
-    return 0.0;
-  }
 
-  // Get user wallet
-  Future<UserWallet> getWallet(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final walletData = prefs.getString('${_walletKey}_$userId');
-    
-    if (walletData != null) {
-      return UserWallet.fromJson(jsonDecode(walletData));
-    }
-    
-    // Check if this is a guest user - initialize with ₹5000
-    final isGuest = userId.startsWith('guest_') || userId.contains('anonymous');
-    final initialBalance = isGuest ? 5000.0 : 0.0;
-    
-    // Create new wallet if doesn't exist
-    final newWallet = UserWallet(
-      userId: userId,
-      balance: initialBalance,
-      transactions: isGuest ? [
-        // Add welcome transaction for guest
-        WalletTransaction(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          userId: userId,
-          amount: 5000.0,
-          type: TransactionType.credit,
-          description: 'Welcome Bonus - Guest Account',
-          timestamp: DateTime.now(),
-          referenceId: 'guest_welcome',
-        ),
-      ] : [],
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    
-    await _saveWallet(newWallet);
-    print('✅ Wallet created for $userId with balance: ₹$initialBalance');
-    return newWallet;
-  }
-
-  // Add money to wallet (via Razorpay) - Real-time, instant
-  Future<bool> addMoney(String userId, double amount, String paymentId) async {
     try {
-      final wallet = await getWallet(userId);
-      
-      final transaction = WalletTransaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: userId,
-        amount: amount,
-        type: TransactionType.credit,
-        description: 'Money added via Razorpay',
-        timestamp: DateTime.now(),
-        referenceId: paymentId,
-      );
-      
-      wallet.balance += amount;
-      wallet.transactions = [...wallet.transactions, transaction];
-      wallet.updatedAt = DateTime.now();
-      
-      // Save immediately - no delays
-      await _saveWallet(wallet);
-      print('✅ Money added instantly: ₹$amount to $userId. New balance: ₹${wallet.balance}');
-      return true;
-    } catch (e) {
-      print('❌ Error adding money: $e');
-      return false;
-    }
-  }
-
-  // Deduct money from wallet - Real-time, instant
-  Future<bool> deductMoney(String userId, double amount, String description, {String? referenceId}) async {
-    try {
-      final wallet = await getWallet(userId);
-      
-      if (wallet.balance < amount) {
-        print('❌ Insufficient balance: ₹${wallet.balance} < ₹$amount');
-        return false; // Insufficient balance
+      final response = await _supabase
+          .from('wallets')
+          .select('balance')
+          .eq('user_id', userId)
+          .maybeSingle();
+          
+      if (response == null) {
+        // Create wallet if it doesn't exist
+        await _createWallet(userId);
+        return 0.0;
       }
       
-      final transaction = WalletTransaction(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+      return (response['balance'] as num).toDouble();
+    } catch (e) {
+      debugPrint('WalletService: Error fetching balance -> $e');
+      return 0.0;
+    }
+  }
+
+  // Adapter for WalletProvider: Get full UserWallet object
+  // Synced from Supabase
+  Future<UserWallet> getWallet(String userId) async {
+     // 1. Guest Handling
+    if (userId.startsWith('guest_') || userId.contains('anonymous')) {
+      return UserWallet(
         userId: userId,
-        amount: amount,
-        type: TransactionType.debit,
-        description: description,
-        timestamp: DateTime.now(),
-        referenceId: referenceId,
+        balance: 5000.0,
+        transactions: [],
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
-      
-      wallet.balance -= amount;
-      wallet.transactions = [...wallet.transactions, transaction];
-      wallet.updatedAt = DateTime.now();
-      
-      // Save immediately - no delays
-      await _saveWallet(wallet);
-      print('✅ Money deducted instantly: ₹$amount from $userId. New balance: ₹${wallet.balance}');
+    }
+
+    final balance = await getBalance(userId);
+    final txns = await getRecentTransactions(userId);
+
+    return UserWallet(
+      userId: userId,
+      balance: balance,
+      transactions: txns,
+      createdAt: DateTime.now(), // approximation or fetch from DB
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  Future<void> _createWallet(String uid) async {
+    try {
+      await _supabase.from('wallets').insert({
+        'user_id': uid,
+        'balance': 0.00,
+        'currency': 'INR',
+      });
+    } catch (e) {
+      // Ignore if already exists race condition
+    }
+  }
+
+  // Get transaction history (List<Map> for internal, List<WalletTransaction> for Provider)
+  Future<List<Map<String, dynamic>>> getTransactions(String userId) async {
+    try {
+      final response = await _supabase
+          .from('transactions')
+          .select()
+          .eq('wallet_id', userId)
+          .order('created_at', ascending: false);
+          
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('WalletService: Error fetching detailed txns -> $e');
+      return [];
+    }
+  }
+
+  // Public method matching WalletProvider expectation
+  Future<List<WalletTransaction>> getRecentTransactions(String userId, {int limit = 50}) async {
+    if (userId.startsWith('guest_')) return [];
+
+    try {
+      final response = await _supabase
+          .from('transactions')
+          .select()
+          .eq('wallet_id', userId)
+          .order('created_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((data) {
+        return WalletTransaction(
+          id: data['id'] ?? '',
+          userId: data['wallet_id'] ?? userId, // 'wallet_id' in DB, 'userId' in model
+          amount: (data['amount'] as num).toDouble(),
+          type: data['type'] == 'credit' ? TransactionType.credit : TransactionType.debit,
+          description: data['description'] ?? '',
+          timestamp: DateTime.parse(data['created_at']),
+          referenceId: data['reference_id'],
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('WalletService: Error fetching recent transactions -> $e');
+      return [];
+    }
+  }
+
+  // Add (Recharge) funds
+  Future<bool> addMoney(String userId, double amount, String paymentId) async {
+    try {
+      // 1. Insert Transaction
+      await _supabase.from('transactions').insert({
+        'wallet_id': userId,
+        'amount': amount,
+        'type': 'credit',
+        'category': 'recharge',
+        'description': 'Wallet Recharge via Razorpay',
+        'reference_id': paymentId,
+        'status': 'completed',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      // 2. Fetch current & update
+      final currentBalance = await getBalance(userId);
+      await _supabase.from('wallets').update({
+        'balance': currentBalance + amount,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('user_id', userId);
+
       return true;
     } catch (e) {
-      print('❌ Error deducting money: $e');
+      debugPrint('Error adding money: $e');
       return false;
     }
   }
 
-  // Check if user has sufficient balance
+  // Deduct funds (for Chats/Calls)
+  Future<bool> deductMoney(String userId, double amount, String description, {String? referenceId}) async {
+    if (userId.startsWith('guest_')) return true; // Free for guests
+
+    try {
+      final currentBalance = await getBalance(userId);
+      if (currentBalance < amount) {
+        return false;
+      }
+
+      // 1. Transaction
+      await _supabase.from('transactions').insert({
+        'wallet_id': userId,
+        'amount': amount,
+        'type': 'debit',
+        'category': 'consultation',
+        'description': description,
+        'reference_id': referenceId,
+        'status': 'completed',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      // 2. Update Balance
+      await _supabase.from('wallets').update({
+        'balance': currentBalance - amount,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('user_id', userId);
+
+      return true;
+    } catch (e) {
+      debugPrint('Error deducting money: $e');
+      return false;
+    }
+  }
+
   Future<bool> hasSufficientBalance(String userId, double requiredAmount) async {
     final balance = await getBalance(userId);
     return balance >= requiredAmount;
   }
-
-  // Get recent transactions
-  Future<List<WalletTransaction>> getRecentTransactions(String userId, {int limit = 10}) async {
-    final wallet = await getWallet(userId);
-    final transactions = wallet.transactions.toList();
-    transactions.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-    return transactions.take(limit).toList();
-  }
-
-  // Save wallet to local storage
-  Future<void> _saveWallet(UserWallet wallet) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      '${_walletKey}_${wallet.userId}',
-      jsonEncode(wallet.toJson()),
-    );
-  }
-
-  // Clear wallet data (for testing)
-  Future<void> clearWallet(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('${_walletKey}_$userId');
-  }
 }
 
+// RESTORED AI CHAT SERVICE (Local/Prefs based mostly, but uses WalletService)
 class AIChatService {
   static const String _sessionsKey = 'ai_chat_sessions';
   final WalletService _walletService = WalletService();
@@ -363,7 +395,6 @@ class AIChatService {
       }
     } catch (e) {
       print('⚠️ Error saving session: $e');
-      // Don't throw - allow app to continue
     }
   }
 

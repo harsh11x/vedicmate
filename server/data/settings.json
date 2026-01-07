@@ -1,0 +1,5 @@
+{
+  "platformFeePercent": 35,
+  "minimumBalance": 50,
+  "chatRatePerMinute": 25
+}

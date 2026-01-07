@@ -1,0 +1,352 @@
+Resolving dependencies...
+Downloading packages...
+  _flutterfire_internals 1.3.59 (1.3.65 available)
+  characters 1.4.0 (1.4.1 available)
+  cloud_firestore 5.6.12 (6.1.1 available)
+  cloud_firestore_platform_interface 6.6.12 (7.0.5 available)
+  cloud_firestore_web 4.4.12 (5.1.1 available)
+  cross_file 0.3.5 (0.3.5+1 available)
+  file_selector_linux 0.9.3+2 (0.9.4 available)
+  file_selector_macos 0.9.4+5 (0.9.5 available)
+  file_selector_windows 0.9.3+4 (0.9.3+5 available)
+  firebase_auth 5.7.0 (6.1.3 available)
+  firebase_auth_platform_interface 7.7.3 (8.1.5 available)
+  firebase_auth_web 5.15.3 (6.1.1 available)
+  firebase_core 3.15.2 (4.3.0 available)
+  firebase_core_web 2.24.1 (3.3.1 available)
+  firebase_messaging 15.2.10 (16.1.0 available)
+  firebase_messaging_platform_interface 4.6.10 (4.7.5 available)
+  firebase_messaging_web 3.10.10 (4.1.1 available)
+  firebase_storage 12.4.10 (13.0.5 available)
+  firebase_storage_platform_interface 5.2.10 (5.2.16 available)
+  firebase_storage_web 3.10.17 (3.11.1 available)
+  flutter_launcher_icons 0.13.1 (0.14.4 available)
+  flutter_plugin_android_lifecycle 2.0.32 (2.0.33 available)
+  flutter_riverpod 2.6.1 (3.1.0 available)
+  fluttertoast 8.2.14 (9.0.0 available)
+  go_router 12.1.3 (17.0.1 available)
+  google_fonts 6.3.2 (6.3.3 available)
+  google_sign_in 6.3.0 (7.2.0 available)
+  google_sign_in_android 6.2.1 (7.2.7 available)
+  google_sign_in_ios 5.9.0 (6.2.4 available)
+  google_sign_in_platform_interface 2.5.0 (3.1.0 available)
+  google_sign_in_web 0.12.4+4 (1.1.0 available)
+  http 1.5.0 (1.6.0 available)
+  image 4.5.4 (4.7.2 available)
+  image_picker 1.2.0 (1.2.1 available)
+  image_picker_android 0.8.13+7 (0.8.13+10 available)
+  image_picker_for_web 3.1.0 (3.1.1 available)
+  image_picker_ios 0.8.13+1 (0.8.13+3 available)
+  intl 0.18.1 (0.20.2 available)
+  js 0.6.7 (0.7.2 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  meta 1.16.0 (1.17.0 available)
+  mime 1.0.6 (2.0.0 available)
+  path_provider_android 2.2.20 (2.2.22 available)
+  path_provider_foundation 2.4.3 (2.5.1 available)
+  permission_handler 11.4.0 (12.0.1 available)
+  permission_handler_android 12.1.0 (13.0.1 available)
+  riverpod 2.6.1 (3.1.0 available)
+  share_plus 7.2.2 (12.0.1 available)
+  share_plus_platform_interface 3.4.0 (6.1.0 available)
+  shared_preferences 2.5.3 (2.5.4 available)
+  shared_preferences_android 2.4.15 (2.4.18 available)
+  shared_preferences_foundation 2.5.5 (2.5.6 available)
+  socket_io_client 2.0.3+1 (3.1.3 available)
+  socket_io_common 2.0.3 (3.1.1 available)
+  table_calendar 3.0.9 (3.2.0 available)
+  test_api 0.7.6 (0.7.8 available)
+  url_launcher_linux 3.2.1 (3.2.2 available)
+  url_launcher_windows 3.1.4 (3.1.5 available)
+  video_player_android 2.9.0 (2.9.1 available)
+Got dependencies!
+60 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Running Gradle task 'assembleDebug'...                          
+lib/core/theme/app_theme.dart:272:50: Error: Expected a class member, but got ')'.
+  static ThemeData get darkTheme => lightTheme;  ),
+                                                 ^
+lib/core/theme/app_theme.dart:272:51: Error: Expected a class member, but got ','.
+  static ThemeData get darkTheme => lightTheme;  ),
+                                                  ^
+lib/core/theme/app_theme.dart:273:9: Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+Try adding the name of the type of the variable or the keyword 'var'.
+        displayMedium: GoogleFonts.playfairDisplay(
+        ^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:273:9: Error: Expected ';' after this.
+        displayMedium: GoogleFonts.playfairDisplay(
+        ^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:273:22: Error: Expected a class member, but got ':'.
+        displayMedium: GoogleFonts.playfairDisplay(
+                     ^
+lib/core/theme/app_theme.dart:274:19: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontSize: 28,
+                  ^
+lib/core/theme/app_theme.dart:275:21: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontWeight: FontWeight.w700,
+                    ^
+lib/core/theme/app_theme.dart:276:16: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          color: neutralDark,
+               ^
+lib/core/theme/app_theme.dart:277:24: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          letterSpacing: -0.5,
+                       ^
+lib/core/theme/app_theme.dart:278:10: Error: Expected '{' before this.
+        ),
+         ^
+lib/core/theme/app_theme.dart:273:24: Error: The name of a constructor must match the name of the enclosing class.
+        displayMedium: GoogleFonts.playfairDisplay(
+                       ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:278:10: Error: Expected a class member, but got ','.
+        ),
+         ^
+lib/core/theme/app_theme.dart:279:9: Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+Try adding the name of the type of the variable or the keyword 'var'.
+        titleLarge: GoogleFonts.outfit(
+        ^^^^^^^^^^
+lib/core/theme/app_theme.dart:279:9: Error: Expected ';' after this.
+        titleLarge: GoogleFonts.outfit(
+        ^^^^^^^^^^
+lib/core/theme/app_theme.dart:279:19: Error: Expected a class member, but got ':'.
+        titleLarge: GoogleFonts.outfit(
+                  ^
+lib/core/theme/app_theme.dart:280:19: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontSize: 22,
+                  ^
+lib/core/theme/app_theme.dart:281:21: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontWeight: FontWeight.w600,
+                    ^
+lib/core/theme/app_theme.dart:282:16: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          color: neutralDark,
+               ^
+lib/core/theme/app_theme.dart:283:10: Error: Expected '{' before this.
+        ),
+         ^
+lib/core/theme/app_theme.dart:279:21: Error: The name of a constructor must match the name of the enclosing class.
+        titleLarge: GoogleFonts.outfit(
+                    ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:283:10: Error: Expected a class member, but got ','.
+        ),
+         ^
+lib/core/theme/app_theme.dart:284:9: Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+Try adding the name of the type of the variable or the keyword 'var'.
+        titleMedium: GoogleFonts.outfit(
+        ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:284:9: Error: Expected ';' after this.
+        titleMedium: GoogleFonts.outfit(
+        ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:284:20: Error: Expected a class member, but got ':'.
+        titleMedium: GoogleFonts.outfit(
+                   ^
+lib/core/theme/app_theme.dart:285:19: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontSize: 18,
+                  ^
+lib/core/theme/app_theme.dart:286:21: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontWeight: FontWeight.w600,
+                    ^
+lib/core/theme/app_theme.dart:287:16: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          color: neutralDark,
+               ^
+lib/core/theme/app_theme.dart:288:10: Error: Expected '{' before this.
+        ),
+         ^
+lib/core/theme/app_theme.dart:284:22: Error: The name of a constructor must match the name of the enclosing class.
+        titleMedium: GoogleFonts.outfit(
+                     ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:288:10: Error: Expected a class member, but got ','.
+        ),
+         ^
+lib/core/theme/app_theme.dart:289:9: Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+Try adding the name of the type of the variable or the keyword 'var'.
+        bodyLarge: GoogleFonts.outfit( // Switched to Outfit for body as well for modern tech look
+        ^^^^^^^^^
+lib/core/theme/app_theme.dart:289:9: Error: Expected ';' after this.
+        bodyLarge: GoogleFonts.outfit( // Switched to Outfit for body as well for modern tech look
+        ^^^^^^^^^
+lib/core/theme/app_theme.dart:289:18: Error: Expected a class member, but got ':'.
+        bodyLarge: GoogleFonts.outfit( // Switched to Outfit for body as well for modern tech look
+                 ^
+lib/core/theme/app_theme.dart:290:19: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontSize: 16,
+                  ^
+lib/core/theme/app_theme.dart:291:16: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          color: neutralGrey,
+               ^
+lib/core/theme/app_theme.dart:292:17: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          height: 1.5,
+                ^
+lib/core/theme/app_theme.dart:293:10: Error: Expected '{' before this.
+        ),
+         ^
+lib/core/theme/app_theme.dart:289:20: Error: The name of a constructor must match the name of the enclosing class.
+        bodyLarge: GoogleFonts.outfit( // Switched to Outfit for body as well for modern tech look
+                   ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:293:10: Error: Expected a class member, but got ','.
+        ),
+         ^
+lib/core/theme/app_theme.dart:294:9: Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+Try adding the name of the type of the variable or the keyword 'var'.
+        bodyMedium: GoogleFonts.outfit(
+        ^^^^^^^^^^
+lib/core/theme/app_theme.dart:294:9: Error: Expected ';' after this.
+        bodyMedium: GoogleFonts.outfit(
+        ^^^^^^^^^^
+lib/core/theme/app_theme.dart:294:19: Error: Expected a class member, but got ':'.
+        bodyMedium: GoogleFonts.outfit(
+                  ^
+lib/core/theme/app_theme.dart:295:19: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          fontSize: 14,
+                  ^
+lib/core/theme/app_theme.dart:296:16: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          color: neutralGrey,
+               ^
+lib/core/theme/app_theme.dart:297:17: Error: Non-optional parameters can't have a default value.
+Try removing the default value or making the parameter optional.
+          height: 1.5,
+                ^
+lib/core/theme/app_theme.dart:298:10: Error: Expected '{' before this.
+        ),
+         ^
+lib/core/theme/app_theme.dart:294:21: Error: The name of a constructor must match the name of the enclosing class.
+        bodyMedium: GoogleFonts.outfit(
+                    ^^^^^^^^^^^
+lib/core/theme/app_theme.dart:298:10: Error: Expected a class member, but got ','.
+        ),
+         ^
+lib/core/theme/app_theme.dart:299:7: Error: Expected a class member, but got ')'.
+      ),
+      ^
+lib/core/theme/app_theme.dart:299:8: Error: Expected a class member, but got ','.
+      ),
+       ^
+lib/core/theme/app_theme.dart:300:5: Error: Expected a class member, but got ')'.
+    );
+    ^
+lib/core/theme/app_theme.dart:300:6: Error: Expected a class member, but got ';'.
+    );
+     ^
+lib/core/theme/app_theme.dart:304:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static const Color celestialPurple = Color(0xFF9B59B6);
+  ^^^^^^
+lib/core/theme/app_theme.dart:305:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static const Color celestialBlue = Color(0xFF3498DB);
+  ^^^^^^
+lib/core/theme/app_theme.dart:306:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static const Color saffronPrimary = primaryOrange;
+  ^^^^^^
+lib/core/theme/app_theme.dart:307:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static const Color yellowLight = accentGoldLight;
+  ^^^^^^
+lib/core/theme/app_theme.dart:308:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static const Color primarySoft = primaryLight;
+  ^^^^^^
+lib/core/theme/app_theme.dart:309:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static const Color celestialVoid = cosmicVoid;
+  ^^^^^^
+lib/core/theme/app_theme.dart:311:3: Error: Can't have modifier 'static' here.
+Try removing 'static'.
+  static Border get softBorder => Border.all(color: Colors.black.withOpacity(0.05), width: 1);
+  ^^^^^^
+lib/core/theme/app_theme.dart:312:1: Error: Expected a declaration, but got '}'.
+}
+^
+lib/core/theme/app_theme.dart:284:22: Error: 'AppTheme.outfit' is already declared in this scope.
+        titleMedium: GoogleFonts.outfit(
+                     ^^^^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:279:21: Context: Previous declaration of 'AppTheme.outfit'.
+        titleLarge: GoogleFonts.outfit(
+                    ^^^^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:289:20: Error: 'AppTheme.outfit' is already declared in this scope.
+        bodyLarge: GoogleFonts.outfit( // Switched to Outfit for body as well for modern tech look
+                   ^^^^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:279:21: Context: Previous declaration of 'AppTheme.outfit'.
+        titleLarge: GoogleFonts.outfit(
+                    ^^^^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:294:21: Error: 'AppTheme.outfit' is already declared in this scope.
+        bodyMedium: GoogleFonts.outfit(
+                    ^^^^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:279:21: Context: Previous declaration of 'AppTheme.outfit'.
+        titleLarge: GoogleFonts.outfit(
+                    ^^^^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:306:39: Error: Undefined name 'primaryOrange'.
+  static const Color saffronPrimary = primaryOrange;
+                                      ^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:307:36: Error: Undefined name 'accentGoldLight'.
+  static const Color yellowLight = accentGoldLight;
+                                   ^^^^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:308:36: Error: Undefined name 'primaryLight'.
+  static const Color primarySoft = primaryLight;
+                                   ^^^^^^^^^^^^
+lib/core/theme/app_theme.dart:309:38: Error: Undefined name 'cosmicVoid'.
+  static const Color celestialVoid = cosmicVoid;
+                                     ^^^^^^^^^^
+lib/screens/shared/booking_scheduling_screen.dart:124:41: Error: Member not found: 'yellowLight'.
+                        color: AppTheme.yellowLight,
+                                        ^^^^^^^^^^^
+lib/screens/shared/video_call_screen.dart:63:53: Error: Member not found: 'saffronPrimary'.
+                          backgroundColor: AppTheme.saffronPrimary,
+                                                    ^^^^^^^^^^^^^^
+lib/screens/shared/video_call_screen.dart:90:52: Error: Member not found: 'saffronPrimary'.
+                border: Border.all(color: AppTheme.saffronPrimary, width: 2),
+                                                   ^^^^^^^^^^^^^^
+lib/screens/shared/booking_history_screen.dart:236:43: Error: Member not found: 'saffronPrimary'.
+                          color: AppTheme.saffronPrimary,
+                                          ^^^^^^^^^^^^^^
+lib/screens/client/ai_pandit_chat_screen.dart:1065:28: Error: Member not found: 'primarySoft'.
+                  AppTheme.primarySoft,
+                           ^^^^^^^^^^^
+lib/screens/client/ai_pandit_voice_call_screen.dart:1033:27: Error: Member not found: 'celestialVoid'.
+          color: AppTheme.celestialVoid,
+                          ^^^^^^^^^^^^^
+lib/screens/client/ai_pandit_voice_call_screen.dart:1122:33: Error: Member not found: 'celestialVoid'.
+      backgroundColor: AppTheme.celestialVoid,
+                                ^^^^^^^^^^^^^
+lib/widgets/daily_horoscope_card.dart:97:104: Error: Member not found: 'celestialPurple'.
+                        {'name': 'Sagittarius', 'icon': Icons.arrow_forward_rounded, 'color': AppTheme.celestialPurple, 'gradient': [AppTheme.celestialPurple, const Color(0xFF7C3AED)]},
+                                                                                          ^^^^^^^^^^^^^^^
+lib/widgets/daily_horoscope_card.dart:97:143: Error: Member not found: 'celestialPurple'.
+                        {'name': 'Sagittarius', 'icon': Icons.arrow_forward_rounded, 'color': AppTheme.celestialPurple, 'gradient': [AppTheme.celestialPurple, const Color(0xFF7C3AED)]},
+                                                                                          ^^^^^^^^^^^^^^^
+lib/widgets/auspicious_timings_widget.dart:27:22: Error: Member not found: 'primarySoft'.
+            AppTheme.primarySoft,
+                     ^^^^^^^^^^^
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command '/Users/harshdev/Documents/flutter/bin/flutter'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 3s
+Running Gradle task 'assembleDebug'...                              4.1s
+Gradle task assembleDebug failed with exit code 1

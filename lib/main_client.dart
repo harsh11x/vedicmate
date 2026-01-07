@@ -1,36 +1,132 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routes/app_router.dart';
+import 'core/config/env.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'firebase_options.dart';
+import 'l10n/generated/app_localizations.dart';
+import 'providers/language_provider.dart';
 
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Firebase
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    debugPrint('Firebase initialization error: $e');
+  runApp(const AppInitializationWrapper());
+}
+
+class AppInitializationWrapper extends StatefulWidget {
+  const AppInitializationWrapper({super.key});
+
+  @override
+  State<AppInitializationWrapper> createState() => _AppInitializationWrapperState();
+}
+
+class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
+  bool _isInitialized = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
   }
 
-  // Initialize Supabase
-  try {
-    await Supabase.initialize(
-      url: 'https://vbqqukcbbzwbzgpayleh.supabase.co',
-      anonKey: 'sb_publishable_KGvaotK12Pp9gppGXmL-ww_pGcXKaZy',
-    );
-  } catch (e) {
-    debugPrint('Supabase initialization error: $e');
+  Future<void> _initialize() async {
+    try {
+      debugPrint('AppInit: Starting initialization...');
+      
+      // 1. Firebase
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      // Persistence
+      try {
+        await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      } catch (e) {
+        debugPrint('AppInit: Persistence error (non-fatal): $e');
+      }
+      debugPrint('AppInit: Firebase init done.');
+
+      // 2. Supabase
+      await Supabase.initialize(
+        url: EnvConfig.supabaseUrl,
+        anonKey: EnvConfig.supabaseAnonKey,
+      );
+      debugPrint('AppInit: Supabase init done.');
+
+      if (mounted) {
+        setState(() => _isInitialized = true);
+      }
+    } catch (e) {
+      debugPrint('AppInit: CRITICAL ERROR -> $e');
+      if (mounted) {
+        setState(() => _error = e.toString());
+      }
+    }
   }
 
-  runApp(
-    const ProviderScope(
+  @override
+  Widget build(BuildContext context) {
+    // Show Error Screen if Init failed
+    if (_error != null) {
+      return MaterialApp(
+        home: Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                   const SizedBox(height: 16),
+                   const Text('Initialization Failed', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                   const SizedBox(height: 8),
+                   Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
+                   const SizedBox(height: 24),
+                   ElevatedButton(
+                     onPressed: _initialize,
+                     child: const Text('Retry'),
+                   )
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Show Native-like Splash while initializing
+    if (!_isInitialized) {
+      return MaterialApp(
+        home: Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo.png',
+                  width: 150,
+                  height: 150,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.star, size: 80, color: Colors.orange),
+                ),
+                const SizedBox(height: 24),
+                const CircularProgressIndicator(color: Colors.orange),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // App ready! Mount the Provider Scope
+    return const ProviderScope(
       child: VedicMateClientApp(),
-    ),
-  );
+    );
+  }
 }
 
 class VedicMateClientApp extends ConsumerWidget {
@@ -38,13 +134,20 @@ class VedicMateClientApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+    final locale = ref.watch(languageProvider);
+
     return MaterialApp.router(
       title: 'Vedic Mate - Client',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
-      routerConfig: AppRouter.router,
+      themeMode: ThemeMode.light,
+      routerConfig: router,
+      // Localization Support
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
     );
   }
 }

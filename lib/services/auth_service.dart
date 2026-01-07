@@ -1,16 +1,66 @@
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'supabase_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'email_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'email_service.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+  GoogleSignIn get _googleSignIn => GoogleSignIn();
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  
+  // Safe Supabase client access
+  SupabaseClient get _supabase {
+    try {
+      return Supabase.instance.client;
+    } catch (e) {
+      debugPrint('AuthService: Supabase not initialized.');
+      // Return a dummy or throw a clear error, but for now rethrow safely to prevent field init crash
+      throw Exception('Supabase not initialized');
+    }
+  }
 
   // Auth state changes stream
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   // Get current user
   User? get currentUser => _auth.currentUser;
+
+  // Ensure user profile exists (Auto-register if missing)
+  Future<void> ensureUserProfile({User? user, String? name}) async {
+    user ??= currentUser;
+    if (user == null) return;
+
+    final isRegistered = await isUserRegistered(user.uid);
+    if (!isRegistered) {
+      final displayName = name ?? user.displayName ?? 'User';
+      final email = user.email ?? '';
+      final phone = user.phoneNumber ?? '';
+
+      await _supabase.from('users').insert({
+        'id': user.uid,
+        'name': displayName,
+        'email': email,
+        'phone': phone,
+        'role': 'client',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      try {
+        if (email.isNotEmpty) {
+           await EmailService.sendOnboardingEmail(name: displayName, email: email);
+        }
+      } catch (e) {
+        debugPrint('Failed email: $e');
+      }
+    }
+  }
 
   // Sign in with Google - returning User?
   Future<User?> signInWithGoogle([String? role]) async {
@@ -25,35 +75,101 @@ class AuthService {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
-    final user = userCredential.user;
-    
-    if (user != null) {
-      // Save/Update profile in Supabase
-      // Google provides email and displayName. Phone might be null.
-      await SupabaseService().saveUserProfile(
-        userId: user.uid,
-        email: user.email ?? '',
-        name: user.displayName,
-        phone: user.phoneNumber, 
-      );
+    // Auto-create profile if needed
+    if (userCredential.user != null) {
+      await ensureUserProfile(user: userCredential.user);
     }
-    
-    return user;
+    return userCredential.user;
   }
 
   // Sign out
   Future<void> signOut() async {
     await _googleSignIn.signOut();
     await _auth.signOut();
+    await clearUserSession();
   }
 
-  // Placeholder for OTP
-  Future<void> sendOTP(String phone, String role) async {
-    // Implement Phone Auth here or use a service
+  // --- Manual Persistence Logic ---
+  static const String _sessionKey = 'is_logged_in';
+
+  Future<void> saveUserSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_sessionKey, true);
+    debugPrint('AuthService: Session saved manually.');
   }
-  
-  Future<User?> verifyOTP(String otp, String phone, String role) async { 
-    return null; 
+
+  Future<void> clearUserSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_sessionKey, false);
+    debugPrint('AuthService: Session cleared manually.');
+  }
+
+  Future<bool> isSessionActive() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isActive = prefs.getBool(_sessionKey) ?? false;
+    debugPrint('AuthService: Manual session check -> $isActive');
+    return isActive;
+  }
+
+  String? _verificationId;
+  int? _resendToken;
+
+  // Send OTP
+  Future<void> sendOTP(
+    String phone, 
+    String role, {
+    required Function() onCodeSent,
+    required Function(String) onError,
+    required Function(User) onVerificationCompleted,
+  }) async {
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: '+91$phone',
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Auto-verification (Android)
+          try {
+            final UserCredential userCredential = await _auth.signInWithCredential(credential);
+            if (userCredential.user != null) {
+              onVerificationCompleted(userCredential.user!);
+            }
+          } catch (e) {
+            onError(e.toString());
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          if (e.code == 'invalid-phone-number') {
+             onError('The provided phone number is not valid.');
+          } else {
+             onError(e.message ?? 'Verification failed');
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          _verificationId = verificationId;
+          _resendToken = resendToken;
+          onCodeSent();
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+        forceResendingToken: _resendToken,
+      );
+    } catch (e) {
+      onError(e.toString());
+    }
+  }
+
+  // Verify OTP
+  Future<User?> verifyOTP(String otp, String phone, String role) async {
+    if (_verificationId == null) throw Exception('Verification ID is missing. Request OTP again.');
+    
+    final credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId!,
+      smsCode: otp,
+    );
+
+    final userCredential = await _auth.signInWithCredential(credential);
+    return userCredential.user;
   }
 
   Future<User?> signInAsGuest() async {
@@ -61,32 +177,72 @@ class AuthService {
     return _auth.currentUser;
   }
 
+  // Supabase client is now a getter
+  // final SupabaseClient _supabase = Supabase.instance.client;
+
+  // Check if user is registered in Supabase
+  Future<bool> isUserRegistered(String uid) async {
+    try {
+      final response = await _supabase
+          .from('users')
+          .select()
+          .eq('id', uid)
+          .maybeSingle();
+      return response != null;
+    } catch (e) {
+      // If table doesn't exist or other error, assume not registered
+      return false;
+    }
+  }
+
   Future<User?> register(
     String name,
     String email, 
     String phone, 
     String password, 
-    String role, 
-    {DateTime? dateOfBirth, String? placeOfBirth, String? timeOfBirth}
+    String role,
   ) async {
     try {
-      final userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      // Create user in Firebase Auth
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email, 
+        password: password
       );
+
+      final User? user = userCredential.user;
       
-      final user = userCredential.user;
       if (user != null) {
+        // Update display name in Firebase
         await user.updateDisplayName(name);
+
+        // Save user details to Supabase (instead of Firestore)
+        await _supabase.from('users').insert({
+          'id': user.uid,
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'role': role,
+          'created_at': DateTime.now().toIso8601String(),
+        });
         
-        // Save profile to Supabase
-        await SupabaseService().saveUserProfile(
-          userId: user.uid,
-          name: name,
-          email: email,
-          phone: phone,
-        );
+        // Send E-mail verification
+        try {
+          await user.sendEmailVerification();
+        } catch (e) {
+          debugPrint('Failed to send verification email: $e');
+        }
+
+        // Try to trigger onboarding email (best effort)
+        try {
+          await EmailService.sendOnboardingEmail(
+            name: name,
+            email: email,
+          );
+        } catch (e) {
+          debugPrint('Failed to trigger email: $e');
+        }
       }
+      
       return user;
     } catch (e) {
       rethrow;
@@ -95,9 +251,9 @@ class AuthService {
 
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
-      final userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email, 
+        password: password
       );
       return userCredential.user;
     } catch (e) {
@@ -106,6 +262,10 @@ class AuthService {
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

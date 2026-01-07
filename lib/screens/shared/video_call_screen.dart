@@ -55,7 +55,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             child: Container(
               color: Colors.grey[900],
               child: _isVideoOff
-                  ? const Column(
+                  ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircleAvatar(

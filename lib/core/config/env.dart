@@ -20,4 +20,7 @@ class EnvConfig {
   // For production, uncomment and set your AWS server IP:
   // static const String apiBaseUrl = 'http://YOUR_AWS_SERVER_IP:4000';
   // Or use: 'https://your-domain.com'
+  // Supabase Configuration
+  static const String supabaseUrl = 'https://huudzivjspjfljiqoquh.supabase.co';
+  static const String supabaseAnonKey = 'sb_publishable_0fsJbek0e13wD0MWcFin5w_muQr2gKI';
 }

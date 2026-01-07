@@ -7,7 +7,14 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AIPanditsSection extends StatefulWidget {
-  const AIPanditsSection({super.key});
+  final List<AIPanditModel>? pandits;
+  final String title;
+  
+  const AIPanditsSection({
+    super.key, 
+    this.pandits,
+    this.title = 'All Pandits',
+  });
 
   @override
   State<AIPanditsSection> createState() => _AIPanditsSectionState();
@@ -40,7 +47,7 @@ class _AIPanditsSectionState extends State<AIPanditsSection>
 
   @override
   Widget build(BuildContext context) {
-    final aiPandits = AIPandits.getAllPandits();
+    final aiPandits = widget.pandits ?? AIPandits.getAllPandits();
     
     return FadeTransition(
       opacity: _headerAnimation,
@@ -71,7 +78,7 @@ class _AIPanditsSectionState extends State<AIPanditsSection>
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Our AI Pandits',
+                      widget.title,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 22,
@@ -133,8 +140,10 @@ class _AIPanditsSectionState extends State<AIPanditsSection>
           ),
           const SizedBox(height: 20),
           SizedBox(
-            height: 130,
-            child: ListView.builder(
+            height: 220, // Increased height for bigger cards
+            child: aiPandits.isEmpty 
+              ? Center(child: Text("No pandits found matching criteria", style: TextStyle(color: AppTheme.neutralMedium)))
+              : ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               physics: const BouncingScrollPhysics(),
@@ -217,7 +226,7 @@ class _AIPanditItemState extends State<_AIPanditItem>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: Container(
-              width: 100, // Slightly wider
+              width: 160, // Much wider for "bigger boxes"
               decoration: AppTheme.glassMorphism.copyWith(
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: AppTheme.softShadow,
@@ -315,12 +324,12 @@ class _AIPanditItemState extends State<_AIPanditItem>
                   Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            widget.pandit.name.split(' ').first, // First Name only
+                            widget.pandit.name,
                             style: GoogleFonts.outfit(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -331,16 +340,21 @@ class _AIPanditItemState extends State<_AIPanditItem>
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            widget.pandit.specializations.firstOrNull ?? 'Astrology',
-                            style: GoogleFonts.inter(
-                              fontSize: 9,
-                              color: AppTheme.neutralMedium,
-                              fontWeight: FontWeight.w500,
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryOrange.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
+                            child: Text(
+                              '₹${widget.pandit.ratePerMinute.toInt()}/min',
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                color: AppTheme.primaryOrange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
@@ -364,4 +378,3 @@ class _AIPanditItemState extends State<_AIPanditItem>
     );
   }
 }
-

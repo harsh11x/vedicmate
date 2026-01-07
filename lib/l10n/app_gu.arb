@@ -1,0 +1,23 @@
+{
+  "appTitle": "Vedic Mate",
+  "settings": "Settings",
+  "language": "Language",
+  "darkMode": "Dark Mode",
+  "notifications": "Notifications",
+  "accountSettings": "Account Settings",
+  "logout": "Logout",
+  "login": "Login",
+  "home": "Home",
+  "kundli": "Kundli",
+  "chat": "Chat",
+  "profile": "Profile",
+  "welcome": "Welcome",
+  "generateKundli": "Generate Kundli",
+  "enterDetails": "Enter Details",
+  "name": "Name",
+  "dateOfBirth": "Date of Birth",
+  "timeOfBirth": "Time of Birth",
+  "placeOfBirth": "Place of Birth",
+  "gender": "Gender",
+  "submit": "Submit"
+}

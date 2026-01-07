@@ -1,0 +1,66 @@
+[
+  {
+    "id": "rudraksha_5",
+    "name": "5 Mukhi Rudraksha",
+    "description": "Authentic 5 Mukhi Rudraksha bead for peace and prosperity. Blessed by Vedic priests.",
+    "price": 1499,
+    "originalPrice": 1999,
+    "category": "rudraksha",
+    "images": [
+      "assets/images/remedies/rudraksha.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 50,
+    "createdAt": "2026-01-05T16:49:44.043Z",
+    "updatedAt": "2026-01-05T16:49:44.049Z"
+  },
+  {
+    "id": "gemstone_neelam",
+    "name": "Blue Sapphire (Neelam)",
+    "description": "Natural Blue Sapphire gemstone for Saturn. Certified and authentic.",
+    "price": 15999,
+    "originalPrice": 19999,
+    "category": "gemstone",
+    "images": [
+      "assets/images/remedies/gemstone.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 10,
+    "createdAt": "2026-01-05T16:49:44.049Z",
+    "updatedAt": "2026-01-05T16:49:44.049Z"
+  },
+  {
+    "id": "mala_tulsi",
+    "name": "Tulsi Mala",
+    "description": "Sacred Tulsi beads mala for daily prayers and meditation.",
+    "price": 499,
+    "originalPrice": 699,
+    "category": "mala",
+    "images": [
+      "assets/images/remedies/mala.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 100,
+    "createdAt": "2026-01-05T16:49:44.049Z",
+    "updatedAt": "2026-01-05T16:49:44.049Z"
+  },
+  {
+    "id": "product_1767640792874",
+    "name": "Test Product",
+    "description": "This is a test product for verification.",
+    "price": 100,
+    "originalPrice": 150,
+    "category": "puja-items",
+    "stock": 50,
+    "images": [],
+    "isActive": true,
+    "createdAt": "2026-01-05T19:19:52.874Z",
+    "updatedAt": "2026-01-05T19:19:52.874Z"
+  }
+]

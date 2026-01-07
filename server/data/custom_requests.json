@@ -1,0 +1,24 @@
+[
+  {
+    "id": "request_1767633166063",
+    "requestId": "REQ-2026-5855",
+    "userId": "test-user-123",
+    "type": "havan",
+    "serviceName": "Griha Pravesh Havan",
+    "description": "",
+    "preferredDate": "2026-01-10",
+    "preferredTime": "10:00 AM",
+    "duration": 60,
+    "price": 0,
+    "status": "completed",
+    "paymentStatus": "pending",
+    "paymentId": null,
+    "userName": "Test User",
+    "userPhone": "9876543210",
+    "userEmail": "",
+    "notes": "",
+    "liveSessionId": "session_1767633178334",
+    "createdAt": "2026-01-05T17:12:46.063Z",
+    "updatedAt": "2026-01-05T18:38:36.773Z"
+  }
+]

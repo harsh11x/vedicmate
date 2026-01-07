@@ -1,0 +1,204 @@
+{
+  "zodiac_signs": {
+    "aries": {
+      "ruler": "Mars",
+      "element": "Fire",
+      "quality": "Cardinal",
+      "traits": ["Leadership", "Courage", "Independence", "Impulsiveness"],
+      "compatible": ["Leo", "Sagittarius", "Gemini", "Aquarius"],
+      "career": "Best suited for leadership roles, entrepreneurship, military, sports, and competitive fields. Natural pioneers and innovators.",
+      "health": "Prone to headaches, fevers, and injuries. Focus on stress management and regular exercise. Avoid excessive heat.",
+      "love": "Passionate and direct in relationships. Needs a partner who appreciates independence and can match their energy. Most compatible with Leo and Sagittarius.",
+      "lucky": {
+        "numbers": [1, 8, 17],
+        "colors": ["Red", "Orange"],
+        "days": ["Tuesday", "Sunday"],
+        "stones": ["Red Coral", "Ruby"]
+      },
+      "remedies": [
+        "Wear red or orange colors",
+        "Donate red items on Tuesdays",
+        "Chant 'Om Mangalaya Namah' for Mars",
+        "Fast on Tuesdays",
+        "Avoid conflicts and practice patience"
+      ]
+    },
+    "taurus": {
+      "ruler": "Venus",
+      "element": "Earth",
+      "quality": "Fixed",
+      "traits": ["Stability", "Patience", "Sensuality", "Stubbornness"],
+      "compatible": ["Virgo", "Capricorn", "Cancer", "Pisces"],
+      "career": "Excel in finance, real estate, agriculture, arts, and luxury goods. Natural builders and accumulators of wealth.",
+      "health": "Prone to throat and neck issues. Maintain a balanced diet and avoid overindulgence. Regular exercise important.",
+      "love": "Loyal and devoted. Values security and comfort in relationships. Needs a stable, reliable partner.",
+      "lucky": {
+        "numbers": [2, 6, 24],
+        "colors": ["Pink", "Green"],
+        "days": ["Friday", "Monday"],
+        "stones": ["Diamond", "Emerald"]
+      }
+    }
+  },
+  "planets": {
+    "sun": {
+      "meaning": "Represents soul, ego, authority, and vitality. Strong Sun brings leadership, confidence, and recognition.",
+      "weak_effects": "Lack of confidence, low self-esteem, issues with authority figures, weak immune system.",
+      "remedies": [
+        "Wear copper or gold jewelry",
+        "Donate wheat, jaggery, or red clothes on Sundays",
+        "Chant 'Om Suryaya Namah' 108 times daily",
+        "Fast on Sundays",
+        "Wear red or orange colors",
+        "Offer water to Sun in the morning"
+      ],
+      "houses": {
+        "strong": "1st, 4th, 7th, 10th houses bring excellent results",
+        "weak": "6th, 8th, 12th houses create challenges"
+      }
+    },
+    "moon": {
+      "meaning": "Represents mind, emotions, and mother. Strong Moon brings emotional stability, intuition, and nurturing qualities.",
+      "weak_effects": "Emotional instability, mood swings, lack of intuition, issues with mother.",
+      "remedies": [
+        "Wear silver or pearl jewelry",
+        "Donate white items, rice, or milk on Mondays",
+        "Chant 'Om Chandraya Namah' 108 times daily",
+        "Fast on Mondays",
+        "Wear white or light colors",
+        "Meditate during moon phases"
+      ]
+    },
+    "mars": {
+      "meaning": "Represents energy, courage, and action. Strong Mars brings determination, physical strength, and competitive spirit.",
+      "weak_effects": "Lack of motivation, low energy, anger issues, accidents, conflicts.",
+      "remedies": [
+        "Wear red coral or copper",
+        "Donate red items, lentils, or copper on Tuesdays",
+        "Chant 'Om Mangalaya Namah' 108 times daily",
+        "Fast on Tuesdays",
+        "Wear red colors",
+        "Regular exercise and physical activity"
+      ]
+    },
+    "jupiter": {
+      "meaning": "Represents wisdom, expansion, and fortune. Strong Jupiter brings growth, knowledge, and prosperity.",
+      "weak_effects": "Lack of wisdom, financial difficulties, issues with children, limited growth.",
+      "remedies": [
+        "Wear yellow sapphire or gold",
+        "Donate yellow items, turmeric, or yellow clothes on Thursdays",
+        "Chant 'Om Gurave Namah' 108 times daily",
+        "Fast on Thursdays",
+        "Wear yellow colors",
+        "Study spiritual texts and practice gratitude"
+      ]
+    },
+    "venus": {
+      "meaning": "Represents love, beauty, and luxury. Strong Venus brings harmony, relationships, and material comfort.",
+      "weak_effects": "Relationship issues, lack of creativity, financial problems, health issues.",
+      "remedies": [
+        "Wear diamond or white stones",
+        "Donate white items, silver, or flowers on Fridays",
+        "Chant 'Om Shukraya Namah' 108 times daily",
+        "Fast on Fridays",
+        "Wear white or light colors",
+        "Practice self-love and artistic expression"
+      ]
+    },
+    "saturn": {
+      "meaning": "Represents discipline, karma, and structure. Strong Saturn brings stability, long-term success, and wisdom.",
+      "weak_effects": "Delays, obstacles, discipline issues, health problems, career challenges.",
+      "remedies": [
+        "Wear blue sapphire or iron",
+        "Donate black items, sesame seeds, or oil on Saturdays",
+        "Chant 'Om Shanaye Namah' 108 times daily",
+        "Fast on Saturdays",
+        "Wear black or dark blue colors",
+        "Develop routines and long-term goals"
+      ]
+    }
+  },
+  "nakshatras": {
+    "ashwini": {
+      "meaning": "Healing, quick action, new beginnings",
+      "ruler": "Ketu",
+      "deity": "Ashwini Kumaras",
+      "symbol": "Horse's head",
+      "characteristics": "Quick, healing, pioneering spirit"
+    },
+    "bharani": {
+      "meaning": "Transformation, creativity, fertility",
+      "ruler": "Venus",
+      "deity": "Yama",
+      "symbol": "Vulva",
+      "characteristics": "Creative, transformative, passionate"
+    }
+  },
+  "vastu": {
+    "directions": {
+      "north": {
+        "ruler": "Kuber (Wealth God)",
+        "usage": "Keep cash, valuables, and safe in North. Best for study room.",
+        "color": "Light blue or white",
+        "elements": "Water elements, fountains"
+      },
+      "east": {
+        "ruler": "Sun",
+        "usage": "Best for main entrance, prayer room, and living room. Brings prosperity.",
+        "color": "Green or light yellow",
+        "elements": "Light, air, plants"
+      },
+      "northeast": {
+        "ruler": "Ishan (Most Auspicious)",
+        "usage": "Best for prayer room, meditation, and water elements. Most sacred direction.",
+        "color": "White or light yellow",
+        "elements": "Water, light, sacred items"
+      }
+    },
+    "rooms": {
+      "bedroom": {
+        "direction": "Southwest",
+        "sleep_direction": "Head towards South or East",
+        "avoid": "Mirrors facing bed, clutter under bed",
+        "colors": "Light, calming colors"
+      },
+      "kitchen": {
+        "direction": "Southeast",
+        "cooking_direction": "Face East while cooking",
+        "water_location": "Northeast corner of kitchen",
+        "avoid": "Kitchen in Northeast or center"
+      },
+      "prayer": {
+        "direction": "Northeast",
+        "facing": "Face East or North while praying",
+        "requirements": "Keep clean, well-lit, no clutter",
+        "avoid": "Bathroom above or below prayer room"
+      }
+    }
+  },
+  "numerology": {
+    "1": {
+      "name": "The Leader",
+      "traits": ["Independent", "Ambitious", "Innovative", "Self-centered"],
+      "career": "Leadership roles, entrepreneurship, innovation, and pioneering fields.",
+      "compatibility": [1, 5, 7],
+      "lucky": {
+        "colors": ["Red", "Orange"],
+        "days": ["Sunday", "Tuesday"],
+        "stones": ["Ruby", "Carnelian"]
+      }
+    },
+    "2": {
+      "name": "The Diplomat",
+      "traits": ["Cooperative", "Sensitive", "Intuitive", "Indecisive"],
+      "career": "Partnerships, counseling, diplomacy, and cooperative ventures.",
+      "compatibility": [2, 4, 8],
+      "lucky": {
+        "colors": ["White", "Silver"],
+        "days": ["Monday", "Friday"],
+        "stones": ["Pearl", "Moonstone"]
+      }
+    }
+  }
+}
+

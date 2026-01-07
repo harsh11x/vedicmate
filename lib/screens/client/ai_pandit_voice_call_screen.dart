@@ -1024,6 +1024,87 @@ Please use these details to generate my complete Kundli analysis.]
     }
   }
 
+  void _showLanguageSelector() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: AppTheme.celestialVoid,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Language',
+                    style: GoogleFonts.outfit(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white54),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: Colors.white10),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: _supportedLanguages.length,
+                itemBuilder: (context, index) {
+                  final code = _supportedLanguages.keys.elementAt(index);
+                  final name = _supportedLanguages[code]!;
+                  final isSelected = _currentLanguage == code;
+                  
+                  return ListTile(
+                    onTap: () {
+                      _changeLanguage(code);
+                      Navigator.pop(context);
+                    },
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppTheme.primaryOrange.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        code.toUpperCase(),
+                        style: TextStyle(
+                          color: isSelected ? AppTheme.primaryOrange : Colors.white70,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      name,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.white70,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                    trailing: isSelected ? const Icon(Icons.check_circle, color: AppTheme.primaryOrange) : null,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -1370,11 +1451,15 @@ Please use these details to generate my complete Kundli analysis.]
             ],
           ),
           IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onPressed: _showLanguageSelector,
+          ),
+          IconButton(
             icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
             onPressed: () => context.pushReplacement('/ai-pandit/chat?panditId=${widget.panditId}'),
-                ),
-              ],
-            ),
+          ),
+        ],
+      ),
     );
   }
 

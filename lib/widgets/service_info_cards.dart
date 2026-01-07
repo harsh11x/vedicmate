@@ -1,205 +1,477 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme/app_theme.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ServiceInfoCards extends StatelessWidget {
   const ServiceInfoCards({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                    colors: [AppTheme.primaryOrange, AppTheme.yellowPrimary],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF10B981).withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: AppTheme.goldGlowShadow,
                 ),
                 child: const Icon(
-                  Icons.workspace_premium_rounded,
-                  color: Colors.white,
+                  Icons.auto_awesome,
+                  color: AppTheme.white,
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Text(
-                    'Cosmic Services',
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'AI Astrology Services',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                            color: AppTheme.neutralDark,
+                          ),
                     ),
-                  ),
-                  Text(
-                    'Ancient Wisdom, Modern AI',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: Colors.white.withOpacity(0.5),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Discover your cosmic path',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.neutralMedium,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-        ),
-          const SizedBox(height: 20),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.1,
-            children: [
-              _ServiceCard(
-                icon: Icons.menu_book_rounded,
-                title: 'Lal Kitab',
-                subtitle: 'Ancient Remedies',
-                gradient: const [Color(0xFFE11D48), Color(0xFFF43F5E)],
-                onTap: () {},
-              ),
-              _ServiceCard(
-                icon: Icons.front_hand_rounded,
-                title: 'Palm Reading',
-                subtitle: 'Future Lines',
-                gradient: const [Color(0xFFD97706), Color(0xFFFBBF24)],
-                onTap: () {},
-              ),
-              _ServiceCard(
-                icon: Icons.auto_awesome_rounded,
-                title: 'Vedic',
-                subtitle: 'Traditional',
-                gradient: const [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
-                onTap: () {}, 
-              ),
-              _ServiceCard(
-                icon: Icons.home_work_rounded,
-                title: 'Vastu',
-                subtitle: 'Living Harmony',
-                gradient: const [Color(0xFF059669), Color(0xFF34D399)],
-                onTap: () {},
-              ),
-              _ServiceCard(
-                icon: Icons.looks_one_rounded,
-                title: 'Numerology',
-                subtitle: 'Number Power',
-                gradient: const [Color(0xFF2563EB), Color(0xFF60A5FA)],
-                onTap: () {},
+                  ],
+                ),
               ),
             ],
           ),
+          const SizedBox(height: 24),
+          
+          // Row 1: Lal Kitab & Palm Reading
+          Row(
+            children: [
+              Expanded(
+                child: _ServiceCard(
+                  icon: Icons.auto_stories,
+                  title: 'Lal Kitab',
+                  subtitle: 'Simple Remedies',
+                  description: 'Ancient wisdom for modern life',
+                  accentColor: const Color(0xFFEF4444),
+                  iconGradient: const [Color(0xFFEF4444), Color(0xFFF87171)],
+                  imagePath: 'assets/images/services/lal_kitab.png',
+                  onTap: () => context.push('/birth-details?category=Lal Kitab'),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _ServiceCard(
+                  icon: Icons.back_hand,
+                  title: 'Palm Reading',
+                  subtitle: 'Hand Analysis',
+                  description: 'Unlock your destiny',
+                  accentColor: const Color(0xFFEC4899),
+                  iconGradient: const [Color(0xFFEC4899), Color(0xFFF472B6)],
+                  imagePath: 'assets/images/services/palm_reading.png',
+                  onTap: () => context.push('/service-input/palm-reading'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Row 2: Vedic Astrology & Numerology
+          Row(
+            children: [
+              Expanded(
+                child: _ServiceCard(
+                  icon: Icons.stars,
+                  title: 'Vedic Astrology',
+                  subtitle: 'Life Predictions',
+                  description: 'Ancient wisdom',
+                  accentColor: const Color(0xFFF59E0B),
+                  iconGradient: const [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+                  featured: true,
+                  imagePath: 'assets/images/services/vedic_astrology.png',
+                  onTap: () => context.push('/birth-details?category=Vedic Astrology'),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _ServiceCard(
+                  icon: Icons.calculate,
+                  title: 'Numerology',
+                  subtitle: 'Number Analysis',
+                  description: 'Decode your numbers',
+                  accentColor: const Color(0xFF6366F1),
+                  iconGradient: const [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  imagePath: 'assets/images/services/numerology.png',
+                  onTap: () => context.push('/birth-details?category=Numerology'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Row 3: Vedic Astrology (Full Width)
+          // Row 3: Vastu Shastra (Full Width)
+          _ServiceCard(
+            icon: Icons.home_work,
+            title: 'Vastu Shastra',
+            subtitle: 'Space Harmony',
+            description: 'Get expert guidance on architectural modifications to invite prosperity, health, and happiness into your home or office.',
+            accentColor: const Color(0xFF10B981),
+            iconGradient: const [Color(0xFF10B981), Color(0xFF34D399)],
+            featured: false,
+            fullWidth: true,
+            imagePath: 'assets/images/services/vastu_shastra.png',
+            onTap: () => context.push('/service-input/vastu'),
+          ),
         ],
-        ),
+      ),
     );
   }
 }
 
-class _ServiceCard extends StatelessWidget {
+class _ServiceCard extends StatefulWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final List<Color> gradient;
+  final String description;
+  final Color accentColor;
+  final List<Color> iconGradient;
+  final bool featured;
+  final bool fullWidth;
+  final String? imagePath;
   final VoidCallback onTap;
 
   const _ServiceCard({
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.gradient,
+    required this.description,
+    required this.accentColor,
+    required this.iconGradient,
+    this.featured = false,
+    this.fullWidth = false,
+    this.imagePath,
     required this.onTap,
   });
 
   @override
+  State<_ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Determine card dimensions
+    final double cardHeight = widget.fullWidth ? 180.0 : 250.0;
+
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-      decoration: BoxDecoration(
-        color: AppTheme.celestialBlue.withOpacity(0.6), // Dark BG
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: gradient[0].withOpacity(0.3),
-            width: 1,
-          ),
-          boxShadow: [
-             BoxShadow(
-               color: Colors.black.withOpacity(0.2),
-               blurRadius: 10,
-               offset: const Offset(0, 4),
-             ),
-          ],
-          ),
-        child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: gradient,
+      onTapDown: (_) {
+        setState(() => _isHovered = true);
+        _controller.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _isHovered = false);
+        _controller.reverse();
+        widget.onTap();
+      },
+      onTapCancel: () {
+        setState(() => _isHovered = false);
+        _controller.reverse();
+      },
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: Container(
+              height: cardHeight,
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  width: 1,
+                  color: _isHovered 
+                    ? widget.accentColor.withOpacity(0.5) 
+                    : AppTheme.neutralLight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: _isHovered 
+                      ? widget.accentColor.withOpacity(0.15) 
+                      : AppTheme.shadowColor,
+                    blurRadius: _isHovered ? 24 : 12,
+                    offset: const Offset(0, 8),
                   ),
-                        borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: gradient[0].withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: widget.fullWidth 
+                  ? _buildFullWidthLayout(context)
+                  : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Section: Image Area - Full Bleed (Left, Right, Top)
+                    Expanded(
+                      flex: 4,
+                      child: Stack(
+                        fit: StackFit.expand, // Ensures image fills the expanded area
+                        children: [
+                          if (widget.imagePath != null)
+                            Image.asset(
+                              widget.imagePath!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            )
+                          else
+                            Container(
+                              color: widget.accentColor.withOpacity(0.05),
+                              child: Center(
+                                child: Icon(
+                                  widget.icon,
+                                  color: widget.accentColor,
+                                  size: 48,
+                                ),
+                              ),
+                            ),
+                            
+                          // Featured Tag (Overlay)
+                          if (widget.featured)
+                            Positioned(
+                              top: 12,
+                              left: 12,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.star, size: 10, color: widget.accentColor),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Popular',
+                                      style: TextStyle(
+                                        color: widget.accentColor,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    // Bottom Section: Text Content
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: widget.accentColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    widget.icon,
+                                    size: 16,
+                                    color: widget.accentColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  widget.title,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: AppTheme.neutralDark,
+                                    fontSize: 16,
+                                    letterSpacing: -0.3,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  widget.subtitle,
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppTheme.neutralMedium,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                child: Icon(
-                  icon,
-                    color: Colors.white,
-                  size: 24,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Specialized layout for full-width card (Horizontal)
+  Widget _buildFullWidthLayout(BuildContext context) {
+    return Stack(
+      children: [
+        // Background Gradient
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  widget.accentColor.withOpacity(0.05),
+                  AppTheme.white,
+                ],
+              ),
+            ),
+          ),
+        ),
+        
+        // Image on Right - Fits Top, Right, Bottom
+        if (widget.imagePath != null)
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: MediaQuery.of(context).size.width * 0.4, // Adjust width as needed
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(24),
+                bottomRight: Radius.circular(24),
+              ), // Actually clipped by parent, but good to be explicit/safe or if parent radius changes
+              child: Image.asset(
+                widget.imagePath!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+        // Text Content on Left
+        Positioned(
+          left: 0,
+          top: 0,
+          bottom: 0,
+          right: MediaQuery.of(context).size.width * 0.4, // Constrain width to avoid overlap
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: widget.accentColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(widget.icon, size: 14, color: widget.accentColor),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Recommended',
+                        style: TextStyle(
+                          color: widget.accentColor,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
-              Text(
-                title,
-                style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.white, // White text
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                const SizedBox(height: 12),
+                Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.neutralDark,
+                    fontSize: 20,
                   ),
-              const SizedBox(height: 4),
-                      Text(
-                subtitle,
-                style: GoogleFonts.outfit(
-                      color: Colors.white.withOpacity(0.5), // Dim white text
-                      fontSize: 12,
-                        ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.neutralMedium,
+                    height: 1.4,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-      ),
+        ),
+      ],
     );
   }
 }

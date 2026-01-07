@@ -1,0 +1,3 @@
+class AstrologyService {
+  AstrologyService();
+}

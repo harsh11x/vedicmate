@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
+import '../../providers/cart_provider.dart';
 
-class RemediesScreen extends StatefulWidget {
+class RemediesScreen extends ConsumerStatefulWidget {
   const RemediesScreen({super.key});
 
   @override
-  State<RemediesScreen> createState() => _RemediesScreenState();
+  ConsumerState<RemediesScreen> createState() => _RemediesScreenState();
 }
 
-class _RemediesScreenState extends State<RemediesScreen> {
+class _RemediesScreenState extends ConsumerState<RemediesScreen> {
   final ScrollController _scrollController = ScrollController();
   String _selectedCategory = 'All';
 
@@ -19,7 +21,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Rudraksha Mala',
       'category': 'Spiritual',
       'price': 2999,
-      'image': 'assets/images/remedy1.png',
+      'image': 'assets/images/remedies/rudraksha_mala.png',
       'description': 'Authentic Rudraksha mala for spiritual protection and positive energy. Made from genuine Rudraksha beads sourced from Nepal. Wearing this mala helps in meditation, reduces stress, and brings peace of mind.',
       'benefits': [
         'Enhances spiritual growth',
@@ -33,7 +35,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Ganesh Yantra',
       'category': 'Vastu',
       'price': 1499,
-      'image': 'assets/images/remedy2.png',
+      'image': 'assets/images/remedies/ganesh_yantra.png',
       'description': 'Sacred Ganesh Yantra made of pure copper. This powerful yantra removes obstacles, brings prosperity, and ensures success in all endeavors. Place it in your home or office for maximum benefits.',
       'benefits': [
         'Removes obstacles',
@@ -47,7 +49,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Crystal Healing Set',
       'category': 'Healing',
       'price': 3999,
-      'image': 'assets/images/remedy3.png',
+      'image': 'assets/images/remedies/crystal_healing_set.png',
       'description': 'Premium crystal healing set with 7 different crystals including Amethyst, Rose Quartz, Clear Quartz, Citrine, Black Tourmaline, Selenite, and Tiger Eye. Each crystal has unique healing properties.',
       'benefits': [
         'Emotional healing',
@@ -61,7 +63,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Sage Smudging Kit',
       'category': 'Cleansing',
       'price': 899,
-      'image': 'assets/images/remedy4.png',
+      'image': 'assets/images/remedies/sage_smudging_kit.png',
       'description': 'Complete sage smudging kit with white sage bundle, abalone shell, and feather. Used for space cleansing, removing negative energy, and purifying your environment.',
       'benefits': [
         'Cleanses negative energy',
@@ -75,7 +77,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Vastu Mirror',
       'category': 'Vastu',
       'price': 2499,
-      'image': 'assets/images/remedy5.png',
+      'image': 'assets/images/remedies/vastu_mirror.png',
       'description': 'Authentic Vastu mirror with sacred geometry patterns. This mirror deflects negative energy and enhances positive vibrations in your home or office space.',
       'benefits': [
         'Deflects negative energy',
@@ -89,7 +91,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Lakshmi Puja Kit',
       'category': 'Spiritual',
       'price': 1999,
-      'image': 'assets/images/remedy6.png',
+      'image': 'assets/images/remedies/lakshmi_puja_kit.png',
       'description': 'Complete Lakshmi puja kit with all necessary items for performing Lakshmi puja. Includes idols, incense, diya, flowers, and other puja essentials. Brings wealth and prosperity.',
       'benefits': [
         'Attracts wealth',
@@ -103,7 +105,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Rudraksha Mala Chain',
       'category': 'Jewelry',
       'price': 2499,
-      'image': 'assets/images/mala_chain.png',
+      'image': 'assets/images/remedies/rudraksha_mala_chain.png',
       'description': 'Premium Rudraksha mala chain with 108 beads. Handcrafted with genuine Rudraksha seeds from Nepal. Perfect for daily meditation and spiritual practices. Available in various sizes.',
       'benefits': [
         'Spiritual protection',
@@ -117,7 +119,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Gemstone Bracelet Set',
       'category': 'Jewelry',
       'price': 3499,
-      'image': 'assets/images/bracelet.png',
+      'image': 'assets/images/remedies/gemstone_bracelet_set.png',
       'description': 'Beautiful gemstone bracelet set with natural stones including Ruby, Emerald, Blue Sapphire, Yellow Sapphire, and Pearl. Each stone has specific astrological benefits.',
       'benefits': [
         'Astrological benefits',
@@ -131,7 +133,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Navratna Ring',
       'category': 'Jewelry',
       'price': 4999,
-      'image': 'assets/images/navratna_ring.png',
+      'image': 'assets/images/remedies/navratna_ring.png',
       'description': 'Authentic Navratna ring with 9 precious gemstones arranged in traditional pattern. Includes Ruby, Pearl, Coral, Emerald, Yellow Sapphire, Diamond, Blue Sapphire, Hessonite, and Cat\'s Eye.',
       'benefits': [
         'Complete planetary protection',
@@ -145,7 +147,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Tulsi Mala',
       'category': 'Spiritual',
       'price': 899,
-      'image': 'assets/images/tulsi_mala.png',
+      'image': 'assets/images/remedies/tulsi_mala.png',
       'description': 'Sacred Tulsi (Holy Basil) mala with 108 beads. Made from pure Tulsi wood, known for its spiritual and medicinal properties. Ideal for daily prayers and meditation.',
       'benefits': [
         'Spiritual purification',
@@ -159,7 +161,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Silver Om Pendant',
       'category': 'Jewelry',
       'price': 1799,
-      'image': 'assets/images/om_pendant.png',
+      'image': 'assets/images/remedies/om_pendant.png',
       'description': 'Elegant silver Om symbol pendant with chain. Handcrafted with intricate designs. The Om symbol represents the ultimate reality and consciousness.',
       'benefits': [
         'Spiritual symbol',
@@ -173,7 +175,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Copper Bracelet',
       'category': 'Accessories',
       'price': 1299,
-      'image': 'assets/images/copper_bracelet.png',
+      'image': 'assets/images/remedies/copper_bracelet.png',
       'description': 'Pure copper bracelet with Vedic symbols. Copper is known for its health benefits and positive energy. Features traditional engravings.',
       'benefits': [
         'Health benefits',
@@ -187,7 +189,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Gold Plated Mangalsutra',
       'category': 'Jewelry',
       'price': 5999,
-      'image': 'assets/images/mangalsutra.png',
+      'image': 'assets/images/remedies/mangalsutra.png',
       'description': 'Traditional gold plated mangalsutra with black beads and gold pendant. Symbol of marital bliss and prosperity. Available in various designs.',
       'benefits': [
         'Marital harmony',
@@ -201,7 +203,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
       'title': 'Panchdhatu Ring',
       'category': 'Jewelry',
       'price': 3999,
-      'image': 'assets/images/panchdhatu_ring.png',
+      'image': 'assets/images/remedies/panchdhatu_ring.png',
       'description': 'Sacred Panchdhatu ring made from five metals: Gold, Silver, Copper, Zinc, and Iron. Believed to balance all five elements and bring harmony.',
       'benefits': [
         'Elemental balance',
@@ -240,6 +242,43 @@ class _RemediesScreenState extends State<RemediesScreen> {
             pinned: true,
             backgroundColor: AppTheme.white,
             elevation: 0,
+            actions: [
+              Consumer(
+                builder: (context, ref, child) {
+                  final cartItems = ref.watch(cartProvider);
+                  final itemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
+                  return Stack(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.shopping_cart_outlined, color: AppTheme.neutralDark),
+                        onPressed: () => context.push('/cart'),
+                      ),
+                      if (itemCount > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppTheme.primaryOrange,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              '$itemCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
               title: Text(
@@ -315,7 +354,12 @@ class _RemediesScreenState extends State<RemediesScreen> {
                   final remedy = filteredRemedies[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 20),
-                    child: _RemedyCard(remedy: remedy),
+                    child: GestureDetector(
+                      onTap: () {
+                        context.push('/remedy/product', extra: remedy);
+                      },
+                      child: _RemedyCard(remedy: remedy),
+                    ),
                   );
                 },
                 childCount: filteredRemedies.length,
@@ -329,13 +373,13 @@ class _RemediesScreenState extends State<RemediesScreen> {
   }
 }
 
-class _RemedyCard extends StatelessWidget {
+class _RemedyCard extends ConsumerWidget {
   final Map<String, dynamic> remedy;
 
   const _RemedyCard({required this.remedy});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.white,
@@ -370,11 +414,22 @@ class _RemedyCard extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                Center(
-                  child: Icon(
-                    Icons.spa,
-                    size: 80,
-                    color: AppTheme.primaryOrange.withOpacity(0.3),
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  child: Image.asset(
+                    remedy['image'],
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(
+                          Icons.spa,
+                          size: 80,
+                          color: AppTheme.primaryOrange.withOpacity(0.3),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -385,6 +440,12 @@ class _RemedyCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppTheme.yellowPrimary,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
+                      ],
                     ),
                     child: Text(
                       remedy['category'],
@@ -502,10 +563,17 @@ class _RemedyCard extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: () {
                           // Add to cart functionality
+                          ref.read(cartProvider.notifier).addToCart(
+                            remedy['id'],
+                            remedy['title'],
+                            (remedy['price'] as num).toDouble(),
+                            remedy['image'],
+                          );
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('${remedy['title']} added to cart'),
                               backgroundColor: AppTheme.successGreen,
+                              duration: Duration(seconds: 1),
                             ),
                           );
                         },
@@ -526,12 +594,10 @@ class _RemedyCard extends StatelessWidget {
                       child: ElevatedButton.icon(
                         onPressed: () {
                           // Buy now functionality
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Proceeding to buy ${remedy['title']}'),
-                              backgroundColor: AppTheme.primaryOrange,
-                            ),
-                          );
+                          context.push('/checkout', extra: {
+                            'item': remedy,
+                            'isDirectBuy': true,
+                          });
                         },
                         icon: const Icon(Icons.shopping_bag, size: 18),
                         label: const Text('Buy Now'),

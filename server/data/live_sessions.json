@@ -1,0 +1,23 @@
+[
+  {
+    "id": "session_1767633178334",
+    "sessionId": "LIVE-1767633178334-NIKSKK",
+    "customRequestId": "request_1767633166063",
+    "userId": "test-user-123",
+    "panditId": "admin",
+    "panditName": "Pandit Shastri Ji",
+    "title": "Griha Pravesh Havan",
+    "description": "",
+    "scheduledDate": "2026-01-10",
+    "scheduledTime": "10:00 AM",
+    "duration": 90,
+    "status": "completed",
+    "roomId": "room_1767633178334_lp94if",
+    "isLive": false,
+    "startedAt": "2026-01-05T18:38:27.756Z",
+    "endedAt": "2026-01-05T18:38:36.773Z",
+    "recordingUrl": null,
+    "createdAt": "2026-01-05T17:12:58.334Z",
+    "updatedAt": "2026-01-05T18:38:36.773Z"
+  }
+]

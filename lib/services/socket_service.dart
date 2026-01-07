@@ -6,7 +6,7 @@ import 'dart:async';
 class SocketService {
   IO.Socket? _socket;
   final String baseUrl;
-  final Map<String, StreamController<Map<String, dynamic>>> _controllers = {};
+  final Map<String, StreamController<dynamic>> _controllers = {};
 
   SocketService({String? customUrl})
       : baseUrl = customUrl ?? EnvConfig.apiBaseUrl;
@@ -40,30 +40,24 @@ class SocketService {
 
       // Listen for balance updates
       _socket!.on('balance-update', (data) {
-        if (data is Map<String, dynamic>) {
-          final userId = data['userId'] as String?;
-          if (userId != null) {
-            _emit('balance-$userId', data);
-          }
+        final userId = data['userId'] as String?;
+        if (userId != null) {
+          _emit('balance-$userId', data);
         }
       });
 
       // Listen for chat updates
       _socket!.on('chat-response', (data) {
-        if (data is Map<String, dynamic>) {
-          final sessionId = data['sessionId'] as String?;
-          if (sessionId != null) {
-            _emit('chat-$sessionId', data);
-          }
+        final sessionId = data['sessionId'] as String?;
+        if (sessionId != null) {
+          _emit('chat-$sessionId', data);
         }
       });
 
       _socket!.on('chat-update', (data) {
-        if (data is Map<String, dynamic>) {
-          final sessionId = data['sessionId'] as String?;
-          if (sessionId != null) {
-            _emit('chat-update-$sessionId', data);
-          }
+        final sessionId = data['sessionId'] as String?;
+        if (sessionId != null) {
+          _emit('chat-update-$sessionId', data);
         }
       });
     } catch (e) {
@@ -110,7 +104,7 @@ class SocketService {
     if (!_controllers.containsKey(key)) {
       _controllers[key] = StreamController<Map<String, dynamic>>.broadcast();
     }
-    return _controllers[key]!.stream;
+    return _controllers[key]!.stream.cast<Map<String, dynamic>>();
   }
 
   /// Stream for chat responses
@@ -119,7 +113,7 @@ class SocketService {
     if (!_controllers.containsKey(key)) {
       _controllers[key] = StreamController<Map<String, dynamic>>.broadcast();
     }
-    return _controllers[key]!.stream;
+    return _controllers[key]!.stream.cast<Map<String, dynamic>>();
   }
 
   /// Stream for chat updates
@@ -128,10 +122,10 @@ class SocketService {
     if (!_controllers.containsKey(key)) {
       _controllers[key] = StreamController<Map<String, dynamic>>.broadcast();
     }
-    return _controllers[key]!.stream;
+    return _controllers[key]!.stream.cast<Map<String, dynamic>>();
   }
 
-  void _emit(String key, Map<String, dynamic> data) {
+  void _emit(String key, dynamic data) {
     if (_controllers.containsKey(key)) {
       _controllers[key]!.add(data);
     }

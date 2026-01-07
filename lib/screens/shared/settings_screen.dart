@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/language_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
+import '../../l10n/generated/app_localizations.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _emailNotifications = true;
   bool _pushNotifications = true;
@@ -48,7 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
               title: Text(
-          'Settings',
+          AppLocalizations.of(context)!.settings,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppTheme.neutralDark,
@@ -207,7 +210,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: Icons.account_balance_wallet,
                       label: 'Wallet',
                       color: AppTheme.successGreen,
-                      onTap: () => context.push('/payment/wallet'),
+                      onTap: () => context.push('/client/wallet'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _QuickActionButton(
+                      icon: Icons.shopping_bag,
+                      label: 'Orders',
+                      color: AppTheme.primaryOrange,
+                      onTap: () => context.push('/orders'),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -307,7 +319,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       _SettingsTile(
                         icon: Icons.language,
-              title: 'Language',
+              title: AppLocalizations.of(context)!.language,
                         subtitle: _selectedLanguage,
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -319,7 +331,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             value: _selectedLanguage,
                             underline: const SizedBox(),
                             icon: const Icon(Icons.arrow_drop_down, color: AppTheme.primaryOrange),
-                            items: ['English', 'Hindi', 'Tamil', 'Telugu', 'Bengali', 'Gujarati', 'Marathi']
+                            // Use keys from LanguageNotifier.supportedLanguages
+                            items: LanguageNotifier.supportedLanguages.keys
                                 .map((lang) => DropdownMenuItem(
                                       value: lang,
                                       child: Text(lang, style: const TextStyle(fontSize: 14)),
@@ -328,6 +341,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             onChanged: (value) {
                               if (value != null) {
                                 setState(() => _selectedLanguage = value);
+                                ref.read(languageProvider.notifier).setLanguageByName(value);
                               }
                             },
                           ),
@@ -336,7 +350,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _Divider(),
                       _SettingsTile(
                         icon: Icons.dark_mode_outlined,
-                        title: 'Dark Mode',
+                        title: AppLocalizations.of(context)!.darkMode,
                         subtitle: 'Switch to dark theme',
                         trailing: Switch(
                           value: _darkMode,
@@ -570,12 +584,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.logout, size: 22),
-                      SizedBox(width: 12),
+                    children: [
+                      const Icon(Icons.logout, size: 22),
+                      const SizedBox(width: 12),
                       Text(
-                        'Logout',
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.logout,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
                           letterSpacing: 0.5,
@@ -588,7 +602,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
     );

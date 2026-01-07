@@ -29,9 +29,29 @@ class AIPanditProfileScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: 380,
             pinned: true,
+            stretch: true,
+            backgroundColor: AppTheme.white,
+            elevation: 0,
+            leading: GestureDetector(
+              onTap: () => context.pop(),
+              child: Container(
+                margin: const EdgeInsets.only(left: 8, top: 8),
+                child: ClipOval(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      color: Colors.white.withOpacity(0.2),
+                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                    ),
+                  ),
+                ),
+              ),
+            ),
             flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [StretchMode.zoomBackground, StretchMode.blurBackground],
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -39,19 +59,15 @@ class AIPanditProfileScreen extends StatelessWidget {
                       ? Image.network(
                           pandit.profileImage,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: AppTheme.primaryOrange.withOpacity(0.2),
-                            child: const Icon(Icons.person, size: 100, color: AppTheme.primaryOrange),
-                          ),
+                          errorBuilder: (context, error, stackTrace) => Container(color: AppTheme.primaryOrange.withOpacity(0.1)),
                         )
                       : Image.asset(
                           pandit.profileImage,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: AppTheme.primaryOrange.withOpacity(0.2),
-                            child: const Icon(Icons.person, size: 100, color: AppTheme.primaryOrange),
-                          ),
+                          errorBuilder: (context, error, stackTrace) => Container(color: AppTheme.primaryOrange.withOpacity(0.1)),
                         ),
+                  
+                  // Cinematic Gradient
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -59,193 +75,158 @@ class AIPanditProfileScreen extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.transparent,
+                          AppTheme.neutralDark.withOpacity(0.8),
+                          AppTheme.neutralDark,
                         ],
+                        stops: const [0.0, 0.5, 0.85, 1.0],
                       ),
+                    ),
+                  ),
+
+                  // Title & Badge Over Content
+                  Positioned(
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppTheme.accentGold,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.auto_awesome, size: 12, color: AppTheme.neutralDark),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'AI GUIDANCE',
+                                    style: GoogleFonts.outfit(
+                                      color: AppTheme.neutralDark,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 10,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            if (pandit.isAvailable)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.successGreen.withOpacity(0.2),
+                                  border: Border.all(color: AppTheme.successGreen),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const CircleAvatar(backgroundColor: AppTheme.successGreen, radius: 3),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'ONLINE',
+                                      style: GoogleFonts.outfit(
+                                        color: AppTheme.successGreen,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 10,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          pandit.name,
+                          style: GoogleFonts.playfairDisplay(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                            height: 1.1,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                         Text(
+                          pandit.specializations.join(" • "),
+                          style: GoogleFonts.outfit(
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-              title: Text(
-                pandit.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
           ),
+          
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+            child: Container(
+              color: AppTheme.white,
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Status and AI Badge
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.auto_awesome, size: 16, color: AppTheme.textDark),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'AI Pandit',
-                              style: TextStyle(
-                                color: AppTheme.textDark,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: pandit.isAvailable ? AppTheme.successGreen : AppTheme.neutralMedium,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              pandit.isAvailable ? Icons.check_circle : Icons.schedule,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              pandit.isAvailable ? 'Online' : 'Offline',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Bio
-                  Text(
-                    'About',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    pandit.bio ?? 'Experienced AI Pandit with deep knowledge of Vedic astrology and spiritual guidance.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      height: 1.6,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  // Specializations
-                  Text(
-                    'Specializations',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: pandit.specializations.map((spec) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryOrange.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: AppTheme.primaryOrange.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Text(
-                          spec,
-                          style: TextStyle(
-                            color: AppTheme.primaryOrange,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  // Stats
+                  // Stats Row
                   Row(
                     children: [
                       Expanded(
                         child: _StatCard(
-                          icon: Icons.star,
-                          label: 'Rating',
-                          value: pandit.rating.toStringAsFixed(1),
-                          color: AppTheme.accentGold,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _StatCard(
-                          icon: Icons.calendar_today,
                           label: 'Experience',
-                          value: '${pandit.experienceYears}+ Yrs',
+                          value: '${pandit.experienceYears}+ Years',
+                          icon: Icons.history_edu_rounded,
                           color: AppTheme.primaryOrange,
                         ),
                       ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _StatCard(
+                          label: 'Rating',
+                          value: pandit.rating.toString(),
+                          icon: Icons.star_rounded,
+                          color: AppTheme.accentGold,
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                   
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            context.push('/ai-pandit/chat?panditId=${pandit.id}');
-                          },
-                          icon: const Icon(Icons.chat_bubble_outline),
-                          label: const Text('Chat'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: BorderSide(color: AppTheme.primaryOrange, width: 2),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            context.push('/ai-pandit/voice-call?panditId=${pandit.id}');
-                          },
-                          icon: const Icon(Icons.phone),
-                          label: const Text('Voice Call'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryOrange,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                        ),
-                      ),
-                    ],
+                  // Context Divider
+                  Divider(color: AppTheme.neutralLight, thickness: 1),
+                  const SizedBox(height: 32),
+
+                  // Bio Section
+                  Text(
+                    'Biography',
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.neutralDark,
+                    ),
                   ),
+                  const SizedBox(height: 16),
+                  Text(
+                    pandit.bio ?? 'An experienced AI guide dedicated to providing deep Vedic insights and spiritual direction.',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      color: AppTheme.neutralGrey,
+                      height: 1.8,
+                    ),
+                  ),
+                  
                   const SizedBox(height: 40),
                 ],
               ),
@@ -253,20 +234,88 @@ class AIPanditProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    context.push('/ai-pandit/chat?panditId=${pandit.id}');
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    side: BorderSide(color: AppTheme.neutralLight, width: 2),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: Text(
+                    'Message',
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.neutralDark,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                     context.push('/ai-pandit/voice-call?panditId=${pandit.id}');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    backgroundColor: AppTheme.neutralDark,
+                    foregroundColor: AppTheme.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.call, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Voice Call',
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _StatCard extends StatelessWidget {
-  final IconData icon;
   final String label;
   final String value;
+  final IconData icon;
   final Color color;
 
   const _StatCard({
-    required this.icon,
     required this.label,
     required this.value,
+    required this.icon,
     required this.color,
   });
 
@@ -275,34 +324,44 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-        ),
+        color: AppTheme.neutralLight.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.transparent),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.white,
+              shape: BoxShape.circle,
             ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.neutralMedium,
-            ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: GoogleFonts.outfit(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.neutralDark,
+                ),
+              ),
+              Text(
+                label,
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  color: AppTheme.neutralMedium,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 }
-

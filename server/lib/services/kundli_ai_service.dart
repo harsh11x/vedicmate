@@ -1,0 +1,3 @@
+class KundliAIService {
+  KundliAIService();
+}

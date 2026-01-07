@@ -58,5 +58,11 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app requires access to the microphone for voice calls with AI Pandits.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to upload palm images for analysis.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to your camera to take palm photos for analysis.</string>
+	<key>GIDClientID</key>
+	<string>848781830717-o0560iqt2o0l0d6dl5gt4v2m5nfm1h09.apps.googleusercontent.com</string>
 </dict>
 </plist>

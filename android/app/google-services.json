@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:848781830717:android:0976dc87632e6ad487d854",
+        "mobilesdk_app_id": "1:848781830717:android:ecbab60e46c7e3c887d854",
         "android_client_info": {
-          "package_name": "com.example.vastu_mate"
+          "package_name": "com.vedicmate"
         }
       },
       "oauth_client": [

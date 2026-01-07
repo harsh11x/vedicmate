@@ -1,42 +1,70 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import '../../core/theme/app_theme.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../services/supabase_service.dart';
+import '../../services/user_preferences_service.dart';
 
 class BirthDetailsScreen extends StatefulWidget {
-  final String astrologyType;
-  const BirthDetailsScreen({super.key, required this.astrologyType});
+  final String selectedCategory;
+
+  const BirthDetailsScreen({
+    super.key,
+    required this.selectedCategory,
+  });
 
   @override
   State<BirthDetailsScreen> createState() => _BirthDetailsScreenState();
 }
 
-class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
+class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _dobController = TextEditingController();
-  final _timeController = TextEditingController();
-  final _placeController = TextEditingController();
-  
-  bool _isLoading = false;
-
+  final _placeOfBirthController = TextEditingController();
+  final _prefsService = UserPreferencesService();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
-  Future<void> _selectDate(BuildContext context) async {
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic));
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _placeOfBirthController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 25)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: AppTheme.primaryOrange),
+            colorScheme: const ColorScheme.light(
+              primary: AppTheme.yellowPrimary,
+              onPrimary: AppTheme.textDark,
+              surface: AppTheme.white,
+              onSurface: AppTheme.textDark,
+            ),
           ),
           child: child!,
         );
@@ -45,19 +73,23 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        _dobController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectTime() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(primary: AppTheme.primaryOrange),
+            colorScheme: const ColorScheme.light(
+              primary: AppTheme.yellowPrimary,
+              onPrimary: AppTheme.textDark,
+              surface: AppTheme.white,
+              onSurface: AppTheme.textDark,
+            ),
           ),
           child: child!,
         );
@@ -66,382 +98,439 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
     if (picked != null) {
       setState(() {
         _selectedTime = picked;
-        _timeController.text = picked.format(context);
       });
+    }
+  }
+
+  void _handleContinue() async {
+    if (_formKey.currentState!.validate() && _selectedDate != null) {
+      // Save birth details
+      await _prefsService.saveBirthDetails(
+        dateOfBirth: _selectedDate!,
+        placeOfBirth: _placeOfBirthController.text.isNotEmpty ? _placeOfBirthController.text : null,
+        timeOfBirth: _selectedTime != null
+            ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')}'
+            : null,
+      );
+
+      if (mounted) {
+        context.push('/pandit-selection?category=${widget.selectedCategory}');
+      }
+    }
+  }
+
+  void _handleSkipOptional() {
+    if (_selectedDate != null) {
+      _handleContinue();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Date of Birth is required'),
+          backgroundColor: AppTheme.errorRed,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0B19), // Force Dark
-      extendBodyBehindAppBar: true,
+      backgroundColor: AppTheme.white,
       appBar: AppBar(
-        title: Text('${widget.astrologyType} Details', style: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: Colors.white)),
-        elevation: 0,
         backgroundColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppTheme.textDark),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'Birth Details',
+          style: TextStyle(
+            color: AppTheme.textDark,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: Stack(
-        children: [
-           // 1. Cosmic Background
-           Positioned.fill(
-             child: Container(
-               decoration: const BoxDecoration(
-                 gradient: LinearGradient(
-                   begin: Alignment.topCenter,
-                   end: Alignment.bottomCenter,
-                   colors: [
-                     Color(0xFF0B0B19), 
-                     Color(0xFF2D1B4E), 
-                   ],
-                 ),
-               ),
-             ),
-           ),
-           
-           // 2. Animated Zodiac Wheel (Top Background)
-           Positioned(
-             top: -100,
-             right: -100,
-             child: Opacity(
-               opacity: 0.1,
-               child: _SpinningZodiacWheel(),
-             ),
-           ),
-
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header Section
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white10),
-                      ),
-                      child: Row(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppTheme.primaryLight.withOpacity(0.3),
+              AppTheme.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Progress Indicator
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryOrange.withOpacity(0.2),
-                              shape: BoxShape.circle,
+                          _buildProgressDot(true),
+                          _buildProgressLine(true),
+                          _buildProgressDot(true),
+                          _buildProgressLine(false),
+                          _buildProgressDot(false),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Step 2 of 3',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppTheme.neutralMedium,
                             ),
-                            child: const Icon(Icons.fingerprint, color: AppTheme.primaryOrange, size: 28),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32),
+                      // Header
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.yellowPrimary.withOpacity(0.1),
+                              AppTheme.goldAccent.withOpacity(0.05),
+                            ],
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Your Cosmic Blueprint',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppTheme.yellowPrimary.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
                                 ),
-                                const SizedBox(height: 4),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.cake,
+                                color: AppTheme.textDark,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.selectedCategory == 'Numerology' 
+                                      ? 'Numerology Details' 
+                                      : 'Birth Details',
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    widget.selectedCategory == 'Numerology'
+                                      ? 'Date of birth is key for numerology'
+                                      : 'Accurate details ensure better predictions',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: AppTheme.textLight,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      // Date of Birth (Mandatory)
+                      Text(
+                        'Date of Birth *',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textDark,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: _selectDate,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppTheme.creamPrimary.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _selectedDate != null ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+                              width: _selectedDate != null ? 2 : 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.yellowPrimary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(Icons.calendar_today, color: AppTheme.yellowPrimary, size: 20),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                _selectedDate != null
+                                    ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                                    : 'Select your birth date',
+                                style: TextStyle(
+                                  color: _selectedDate != null ? AppTheme.textDark : AppTheme.neutralMedium,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Place of Birth (Optional) - Hide for Numerology
+                      if (widget.selectedCategory != 'Numerology') ...[
+                        Row(
+                          children: [
+                            Text(
+                              'Place of Birth',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.textDark,
+                                  ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.neutralLight,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'Optional',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppTheme.neutralMedium,
+                                      fontSize: 10,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _placeOfBirthController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter city, state',
+                            prefixIcon: Container(
+                              margin: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppTheme.yellowPrimary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.location_on, color: AppTheme.yellowPrimary, size: 20),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: AppTheme.creamPrimary.withOpacity(0.3),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: AppTheme.yellowPrimary,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        // Time of Birth (Optional)
+                        Row(
+                          children: [
+                            Text(
+                              'Time of Birth',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.textDark,
+                                  ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.neutralLight,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'Optional',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppTheme.neutralMedium,
+                                      fontSize: 10,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: _selectTime,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.creamPrimary.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: _selectedTime != null ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+                                width: _selectedTime != null ? 2 : 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.yellowPrimary.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.access_time, color: AppTheme.yellowPrimary, size: 20),
+                                ),
+                                const SizedBox(width: 12),
                                 Text(
-                                  'Accurate details ensure precise predictions.',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 12,
-                                    color: Colors.white70,
+                                  _selectedTime != null
+                                      ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')}'
+                                      : 'Select your birth time',
+                                  style: TextStyle(
+                                    color: _selectedTime != null ? AppTheme.textDark : AppTheme.neutralMedium,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    
-                    // Temporal Section (Date & Time)
-                    _buildSectionHeader('Temporal Coordinates', Icons.access_time_filled_rounded),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1E1E2E).withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white10),
-                      ),
-                      child: Column(
-                        children: [
-                           // DOB Field
-                            _buildRichField(
-                              controller: _dobController,
-                              label: 'Date of Birth',
-                              subLabel: 'We calculate planetary positions based on this.',
-                              hint: 'DD/MM/YYYY',
-                              icon: Icons.calendar_today_rounded,
-                              readOnly: true,
-                              onTap: () => _selectDate(context),
-                              validator: (value) => value == null || value.isEmpty ? 'Required' : null,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Divider(color: Colors.white10),
-                            ),
-                            // Time Field
-                            _buildRichField(
-                              controller: _timeController,
-                              label: 'Time of Birth',
-                              subLabel: 'Determines your Ascendant (Lagna).',
-                              hint: 'HH:MM AM/PM',
-                              icon: Icons.schedule_rounded,
-                              readOnly: true,
-                              onTap: () => _selectTime(context),
-                            ),
-                        ],
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 32),
-                     // Spatial Section (Place)
-                    _buildSectionHeader('Spatial Coordinates', Icons.public_rounded),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1E1E2E).withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white10),
-                      ),
-                      child: _buildRichField(
-                        controller: _placeController,
-                        label: 'Place of Birth',
-                        subLabel: 'Adjusts for latitude & longitude.',
-                        hint: 'City, Country',
-                        icon: Icons.pin_drop_rounded,
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 48),
-
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryOrange.withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                        gradient: AppTheme.primaryGradient,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _isLoading 
-                            ? null 
-                            : () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => _isLoading = true);
-                            try {
-                              // Save Logic (Keep existing)
-                              final userId = FirebaseAuth.instance.currentUser?.uid;
-                              if (userId != null) {
-                                await SupabaseService().saveBirthDetails(
-                                  userId: userId,
-                                  astrologyType: widget.astrologyType,
-                                  dateOfBirth: _selectedDate!,
-                                  placeOfBirth: _placeController.text,
-                                  timeOfBirth: _timeController.text,
-                                );
-                              }
-                            } catch (e) {
-                              debugPrint('Error saving: $e');
-                            } finally {
-                              if (mounted) {
-                                setState(() => _isLoading = false);
-                                context.push(
-                                  '/onboarding/select-pandit',
-                                  extra: {
-                                    'astrologyType': widget.astrologyType,
-                                    'dob': _selectedDate?.toIso8601String(),
-                                    'tob': _timeController.text,
-                                    'pob': _placeController.text,
-                                  },
-                                );
-                              }
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          shadowColor: Colors.transparent,
                         ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Analyze Horoscope',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Icon(Icons.arrow_forward_rounded, size: 20),
-                                ],
+                        const SizedBox(height: 32),
+                        // Info Box
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppTheme.infoBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppTheme.infoBlue.withOpacity(0.3)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.info_outline, color: AppTheme.infoBlue, size: 20),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Optional fields help provide more accurate predictions',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: AppTheme.infoBlue,
+                                      ),
+                                ),
                               ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 32),
+                      // Continue Button
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: _selectedDate != null
+                              ? const LinearGradient(
+                                  colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                                )
+                              : null,
+                          color: _selectedDate == null ? AppTheme.neutralLight : null,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: _selectedDate != null
+                              ? [
+                                  BoxShadow(
+                                    color: AppTheme.yellowPrimary.withOpacity(0.4),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _selectedDate != null ? _handleContinue : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'CONTINUE',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: _selectedDate != null ? AppTheme.textDark : AppTheme.neutralMedium,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.arrow_forward,
+                                color: _selectedDate != null ? AppTheme.textDark : AppTheme.neutralMedium,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: AppTheme.accentGold, size: 20),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.accentGold,
-            letterSpacing: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRichField({
-    required TextEditingController controller,
-    required String label,
-    required String subLabel,
-    required String hint,
-    required IconData icon,
-    bool readOnly = false,
-    VoidCallback? onTap,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 4),
-        Text(subLabel, style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12)),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white10),
-          ),
-          child: TextFormField(
-            controller: controller,
-            readOnly: readOnly,
-            onTap: onTap,
-            style: GoogleFonts.outfit(color: Colors.white),
-            validator: validator,
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: GoogleFonts.outfit(color: Colors.white30),
-              prefixIcon: Icon(icon, color: Colors.white70),
-              filled: false,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SpinningZodiacWheel extends StatefulWidget {
-  @override
-  State<_SpinningZodiacWheel> createState() => _SpinningZodiacWheelState();
-}
-
-class _SpinningZodiacWheelState extends State<_SpinningZodiacWheel> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 20))..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: _controller,
-      child: Container(
-        width: 400,
-        height: 400,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2),
-        ),
-        child: CustomPaint(
-          painter: _ZodiacPainter(),
         ),
       ),
     );
   }
-}
 
-class _ZodiacPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-      
-    final radius = size.width / 2;
-    final center = Offset(radius, radius);
-    
-    // Draw 12 divisions
-    for (int i = 0; i < 12; i++) {
-      final angle = (i * 30) * 3.14159 / 180;
-      final start = center + Offset(radius * 0.4 * cos(angle), radius * 0.4 * sin(angle));
-      final end = center + Offset(radius * cos(angle), radius * sin(angle));
-      canvas.drawLine(start, end, paint);
-    }
-    
-    canvas.drawCircle(center, radius * 0.4, paint);
-    canvas.drawCircle(center, radius * 0.7, paint);
+  Widget _buildProgressDot(bool isActive) {
+    return Container(
+      width: 12,
+      height: 12,
+      decoration: BoxDecoration(
+        gradient: isActive
+            ? const LinearGradient(
+                colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+              )
+            : null,
+        color: isActive ? null : AppTheme.neutralLight,
+        shape: BoxShape.circle,
+      ),
+    );
   }
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 
+  Widget _buildProgressLine(bool isActive) {
+    return Container(
+      width: 40,
+      height: 2,
+      color: isActive ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+    );
+  }
 }
