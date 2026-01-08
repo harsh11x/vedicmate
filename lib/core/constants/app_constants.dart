@@ -4,7 +4,7 @@ class AppConstants {
   static const String appTagline = 'Connect with Trusted Vedic Experts';
   
   // API Endpoints (Placeholder - replace with actual endpoints)
-  static const String baseUrl = 'https://api.vedicmate.com';
+  static const String baseUrl = 'http://15.207.36.26:3001';
   static const String apiVersion = '/v1';
   
   // Storage Keys

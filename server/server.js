@@ -41,6 +41,9 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // FILE STORAGE SETUP
 // ============================================================================
 
+// Serve static assets (images)
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
 const DATA_DIR = path.join(__dirname, 'data');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
