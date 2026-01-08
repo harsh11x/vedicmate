@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { io } from "socket.io-client";
 
 const API_BASE = "http://15.207.36.26:3001/api";
 
@@ -18,41 +19,54 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setError(null);
-        const [ordersRes, requestsRes, sessionsRes, recentRes] = await Promise.all([
-          fetch(`${API_BASE}/admin/orders/stats`).catch(() => null),
-          fetch(`${API_BASE}/admin/custom-requests/stats`).catch(() => null),
-          fetch(`${API_BASE}/admin/live-sessions`).catch(() => null),
-          fetch(`${API_BASE}/admin/custom-requests`).catch(() => null),
-        ]);
+    // Socket Listeners for Real-time Updates
+    const socket = io(API_BASE.replace('/api', '')); // Connect to root
 
-        const ordersData = ordersRes ? await ordersRes.json().catch(() => ({})) : {};
-        const requestsData = requestsRes ? await requestsRes.json().catch(() => ({})) : {};
-        const sessionsData = sessionsRes ? await sessionsRes.json().catch(() => ({})) : {};
-        const recentData = recentRes ? await recentRes.json().catch(() => ({})) : {};
+    socket.on('custom-requests-update', () => fetchStats());
+    socket.on('live-sessions-update', () => fetchStats());
+    socket.on('orders-update', () => fetchStats());
+    socket.on('products-update', () => fetchStats()); // Listen for stock updates
 
-        setStats({
-          orders: ordersData.data || { total: 0, pending: 0, delivered: 0, revenue: 0 },
-          customRequests: requestsData.data || { total: 0, pending: 0, scheduled: 0, completed: 0, totalRevenue: 0 },
-          liveSessions: {
-            total: sessionsData.count || 0,
-            scheduled: sessionsData.data?.filter((s: any) => s.status === "scheduled").length || 0,
-            live: sessionsData.data?.filter((s: any) => s.status === "live").length || 0,
-            completed: sessionsData.data?.filter((s: any) => s.status === "completed").length || 0,
-          },
-        });
-        setRecentRequests(recentData.data?.slice(0, 5) || []);
-      } catch (err) {
-        setError("Unable to connect to server");
-        console.error("Error fetching stats:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStats();
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
+
+  const fetchStats = async () => {
+    try {
+      setError(null);
+      const [ordersRes, requestsRes, sessionsRes, recentRes] = await Promise.all([
+        fetch(`${API_BASE}/admin/orders/stats`).catch(() => null),
+        fetch(`${API_BASE}/admin/custom-requests/stats`).catch(() => null),
+        fetch(`${API_BASE}/admin/live-sessions`).catch(() => null),
+        fetch(`${API_BASE}/admin/custom-requests`).catch(() => null),
+      ]);
+
+      const ordersData = ordersRes ? await ordersRes.json().catch(() => ({})) : {};
+      const requestsData = requestsRes ? await requestsRes.json().catch(() => ({})) : {};
+      const sessionsData = sessionsRes ? await sessionsRes.json().catch(() => ({})) : {};
+      const recentData = recentRes ? await recentRes.json().catch(() => ({})) : {};
+
+      setStats({
+        orders: ordersData.data || { total: 0, pending: 0, delivered: 0, revenue: 0 },
+        customRequests: requestsData.data || { total: 0, pending: 0, scheduled: 0, completed: 0, totalRevenue: 0 },
+        liveSessions: {
+          total: sessionsData.count || 0,
+          scheduled: sessionsData.data?.filter((s: any) => s.status === "scheduled").length || 0,
+          live: sessionsData.data?.filter((s: any) => s.status === "live").length || 0,
+          completed: sessionsData.data?.filter((s: any) => s.status === "completed").length || 0,
+        },
+      });
+      setRecentRequests(recentData.data?.slice(0, 5) || []);
+    } catch (err) {
+      setError("Unable to connect to server");
+      console.error("Error fetching stats:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (

@@ -60,6 +60,10 @@ class SocketService {
           _emit('chat-update-$sessionId', data);
         }
       });
+      
+      // Listen for general updates
+      _socket!.on('products-update', (data) => _emit('products-update', data));
+      _socket!.on('orders-update', (data) => _emit('orders-update', data));
     } catch (e) {
       print('❌ Socket connection error: $e');
     }
@@ -123,6 +127,23 @@ class SocketService {
       _controllers[key] = StreamController<Map<String, dynamic>>.broadcast();
     }
     return _controllers[key]!.stream.cast<Map<String, dynamic>>();
+  }
+
+  /// Stream for general updates
+  Stream<dynamic> get onProductsUpdate {
+    const key = 'products-update';
+    if (!_controllers.containsKey(key)) {
+      _controllers[key] = StreamController<dynamic>.broadcast();
+    }
+    return _controllers[key]!.stream;
+  }
+
+  Stream<dynamic> get onOrdersUpdate {
+    const key = 'orders-update';
+    if (!_controllers.containsKey(key)) {
+      _controllers[key] = StreamController<dynamic>.broadcast();
+    }
+    return _controllers[key]!.stream;
   }
 
   void _emit(String key, dynamic data) {

@@ -753,6 +753,39 @@ app.put('/api/admin/products/:id', (req, res) => {
   }
 });
 
+// Admin: Upload Image (Base64)
+app.post('/api/admin/upload', (req, res) => {
+  try {
+    const { image, name } = req.body; // image is base64 string
+    if (!image) return res.status(400).json({ success: false, error: 'No image data provided' });
+
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      return res.status(400).json({ success: false, error: 'Invalid base64 string' });
+    }
+
+    const type = matches[1];
+    const buffer = Buffer.from(matches[2], 'base64');
+    const extension = type.split('/')[1];
+    const fileName = `${name || 'upload'}_${Date.now()}.${extension}`;
+
+    // Ensure assets directory exists
+    const assetsDir = path.join(__dirname, 'assets', 'images', 'products');
+    if (!fs.existsSync(assetsDir)) {
+      fs.mkdirSync(assetsDir, { recursive: true });
+    }
+
+    const filePath = path.join(assetsDir, fileName);
+    fs.writeFileSync(filePath, buffer);
+
+    const publicUrl = `assets/images/products/${fileName}`;
+    res.json({ success: true, url: publicUrl });
+  } catch (error) {
+    console.error('Upload Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.delete('/api/admin/products/:id', (req, res) => {
   try {
     let products = readProducts();
@@ -835,6 +868,30 @@ app.post('/api/orders', (req, res) => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
+
+    // DEDUCT STOCK LOGIC
+    const products = readProducts();
+    let stockUpdated = false;
+
+    if (newOrder.items && newOrder.items.length > 0) {
+      newOrder.items.forEach(item => {
+        const productIndex = products.findIndex(p => p.id === item.productId || p.id === item.id);
+        if (productIndex !== -1) {
+          // Reduce stock
+          if (products[productIndex].stock > 0) {
+            products[productIndex].stock = Math.max(0, products[productIndex].stock - (item.quantity || 1));
+            stockUpdated = true;
+          }
+        }
+      });
+    }
+
+    if (stockUpdated) {
+      writeProducts(products);
+      // Notify Admin & App about stock update
+      io.emit('products-update', { action: 'batch_update' });
+    }
+
     orders.unshift(newOrder);
     writeOrders(orders);
     io.emit('orders-update', { action: 'new', order: newOrder });

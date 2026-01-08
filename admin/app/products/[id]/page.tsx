@@ -63,6 +63,51 @@ export default function EditProductPage() {
         setProduct(prev => prev ? { ...prev, isActive: !prev.isActive } : null);
     };
 
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            setError("Image size should be less than 5MB");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64String = reader.result as string;
+
+            // Upload to server
+            try {
+                const res = await fetch(`${API_BASE}/admin/upload`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64String, name: 'product' })
+                });
+
+                if (!res.ok) throw new Error('Upload failed');
+
+                const data = await res.json();
+                if (data.success) {
+                    setProduct(prev => prev ? {
+                        ...prev,
+                        images: [...prev.images, data.url]
+                    } : null);
+                }
+            } catch (err) {
+                console.error("Upload error:", err);
+                setError("Failed to upload image");
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const removeImage = (index: number) => {
+        setProduct(prev => prev ? {
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        } : null);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!product) return;
@@ -164,6 +209,29 @@ export default function EditProductPage() {
                                 <div className={`w-10 h-6 rounded-full p-1 transition-colors ${product.isActive ? "bg-green-500" : "bg-gray-300"}`}>
                                     <div className={`bg-white w-4 h-4 rounded-full shadow-sm transition-transform ${product.isActive ? "translate-x-4" : ""}`} />
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 col-span-2">
+                            <label className="text-sm font-semibold text-gray-600">Product Images</label>
+                            <div className="flex flex-wrap gap-4">
+                                {product.images.map((img, idx) => (
+                                    <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 group">
+                                        <img src={`http://15.207.36.26:3001/${img}`} alt="Product" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(idx)}
+                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
+                                <label className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
+                                    <span className="text-2xl text-gray-400">+</span>
+                                    <span className="text-xs text-gray-500">Upload</span>
+                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                                </label>
                             </div>
                         </div>
 
