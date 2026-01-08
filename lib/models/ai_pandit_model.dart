@@ -287,7 +287,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_15',
       name: 'Dinesh Bhatt',
-      profileImage: 'assets/images/ai_pandits/acharya_dinesh.png',
+      profileImage: 'assets/images/ai_pandits/acharya_dinesh_bhatt.png',
       specializations: ['Lal Kitab', 'Palmistry', 'Face Reading'],
       category: 'Lal Kitab',
       experienceYears: 24,
@@ -302,7 +302,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_16',
       name: 'Ravi Shankar',
-      profileImage: 'assets/images/ai_pandits/jyotish_ravi.png',
+      profileImage: 'assets/images/ai_pandits/jyotish_ravi_shankar.png',
       specializations: ['Horary Astrology', 'Match Making', 'Vedic Remedies'],
       category: 'Vedic Astrology',
       experienceYears: 19,
@@ -332,7 +332,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_18',
       name: 'Balachandra Upadhyay',
-      profileImage: 'assets/images/ai_pandits/guru_balachandra.png',
+      profileImage: 'assets/images/ai_pandits/guru_balachandra_upadhyay.png',
       specializations: ['South Indian Astrology', 'Nadi Jyotish', 'Temple Astrology'],
       category: 'Vedic Astrology',
       experienceYears: 32,
@@ -347,7 +347,7 @@ class AIPandits {
     AIPanditModel(
       id: 'ai_pandit_19',
       name: 'Gopal Das',
-      profileImage: 'assets/images/ai_pandits/pandit_gopal.png',
+      profileImage: 'assets/images/ai_pandits/pandit_gopal_das.png',
       specializations: ['Bhakti Path', 'Krishna Consciousness', 'Devotional Astrology'],
       category: 'Vedic Astrology',
       experienceYears: 27,

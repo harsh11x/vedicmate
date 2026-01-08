@@ -9,52 +9,25 @@ import 'core/config/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'l10n/generated/app_localizations.dart';
-import 'providers/language_provider.dart';
+import 'services/notification_service.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const AppInitializationWrapper());
-}
+// ... imports
 
-class AppInitializationWrapper extends StatefulWidget {
-  const AppInitializationWrapper({super.key});
-
-  @override
-  State<AppInitializationWrapper> createState() => _AppInitializationWrapperState();
-}
-
-class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
-  bool _isInitialized = false;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    try {
-      debugPrint('AppInit: Starting initialization...');
-      
-      // 1. Firebase
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      // Persistence
-      try {
-        await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-      } catch (e) {
-        debugPrint('AppInit: Persistence error (non-fatal): $e');
-      }
-      debugPrint('AppInit: Firebase init done.');
-
+// Inside _AppInitializationWrapperState._initialize:
       // 2. Supabase
       await Supabase.initialize(
         url: EnvConfig.supabaseUrl,
         anonKey: EnvConfig.supabaseAnonKey,
       );
       debugPrint('AppInit: Supabase init done.');
+
+      // 3. Notifications
+      try {
+        await NotificationService.initialize();
+        debugPrint('AppInit: NotificationService init done.');
+      } catch (e) {
+        debugPrint('AppInit: NotificationService error (non-fatal): $e');
+      }
 
       if (mounted) {
         setState(() => _isInitialized = true);

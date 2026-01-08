@@ -14,8 +14,42 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
+import nodemailer from 'nodemailer'; // Added Nodemailer
 
 dotenv.config();
+
+// ... (rest of imports)
+
+// EMAIL CONFIGURATION
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use your preferred service
+  auth: {
+    user: process.env.EMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.EMAIL_PASS || 'your-app-password'
+  }
+});
+
+const sendEmailNotification = async (subject, htmlContent) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log('⚠️ Email credentials not found. Skipping email notification.');
+    console.log(`[Mock Email] Subject: ${subject}`);
+    return;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER, // Send to admin
+    subject: `[VedicMate Admin] ${subject}`,
+    html: htmlContent
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('📧 Email notification sent successfully');
+  } catch (error) {
+    console.error('❌ Failed to send email:', error);
+  }
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -892,10 +926,65 @@ app.post('/api/orders', (req, res) => {
       io.emit('products-update', { action: 'batch_update' });
     }
 
-    orders.unshift(newOrder);
+    // Send Email Notification
+    const orderItemsHtml = newOrder.items.map(i => `<li>${i.name} (x${i.quantity || 1}) - ₹${i.price}</li>`).join('');
+    sendEmailNotification(
+      'New Order Received! 📦',
+      `<h3>New Order #${newOrder.id}</h3>
+       <p><strong>Customer:</strong> ${newOrder.userId} (User ID)</p>
+       <p><strong>Amount:</strong> ₹${newOrder.totalAmount}</p>
+       <p><strong>Items:</strong></p>
+       <ul>${orderItemsHtml}</ul>
+       <p>Login to Admin Panel to view details.</p>`
+    );
+
     writeOrders(orders);
     io.emit('orders-update', { action: 'new', order: newOrder });
-    res.json({ success: true, data: newOrder });
+    res.status(201).json({ success: true, data: newOrder });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Update Order Status
+app.put('/api/admin/orders/:id', (req, res) => {
+  try {
+    const orders = readOrders();
+    const index = orders.findIndex(o => o.id === req.params.id || o.orderId === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Order not found' });
+
+    const updates = req.body;
+    const oldStatus = orders[index].deliveryStatus;
+
+    // Update fields
+    orders[index] = {
+      ...orders[index],
+      deliveryStatus: updates.deliveryStatus || orders[index].deliveryStatus,
+      paymentStatus: updates.paymentStatus || orders[index].paymentStatus,
+      trackingNumber: updates.trackingNumber || orders[index].trackingNumber,
+      updatedAt: new Date().toISOString()
+    };
+
+    writeOrders(orders);
+
+    // Notifications (Email & Socket)
+    const newStatus = orders[index].deliveryStatus;
+    if (oldStatus !== newStatus) {
+      // Send Email
+      sendEmailNotification(
+        `Order Update: ${newStatus.toUpperCase()} 🚚`,
+        `<h3>Order #${orders[index].orderId} Updated</h3>
+          <p>Your order status has been updated to: <strong>${newStatus}</strong></p>
+          <p>Tracking Number: ${orders[index].trackingNumber || 'N/A'}</p>
+          <p>Thanks for choosing Vedic Mate.</p>`
+      );
+
+      // Notify specific user room
+      io.to(`user-${orders[index].userId}`).emit('order-update', orders[index]);
+    }
+
+    io.emit('orders-update', { action: 'updated', order: orders[index] });
+    res.json({ success: true, data: orders[index] });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -1110,23 +1199,34 @@ app.post('/api/custom-requests', (req, res) => {
       preferredTime: requestData.preferredTime,
       duration: requestData.duration || 60, // minutes
       price: requestData.price || 0,
-      status: 'pending', // pending, accepted, rejected, scheduled, completed, cancelled
       paymentStatus: 'pending',
       paymentId: requestData.paymentId || null,
-      userName: requestData.userName || '',
-      userPhone: requestData.userPhone || '',
-      userEmail: requestData.userEmail || '',
-      notes: requestData.notes || '',
-      liveSessionId: null, // Will be set when admin creates live session
+      userId: req.headers['x-user-id'] || requestData.userId || 'guest',
+      userName: requestData.userName || 'Guest',
+      status: 'pending',
+      amount: requestData.amount || 0,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      ...requestData
     };
+
+    // Send Email Notification
+    sendEmailNotification(
+      'New Custom Request! 🕉️',
+      `<h3>New Puja/Havan Request</h3>
+       <p><strong>Type:</strong> ${newRequest.category || 'General'}</p>
+       <p><strong>Customer:</strong> ${newRequest.userName}</p>
+       <p><strong>Details:</strong> ${newRequest.description || 'No details provided'}</p>
+       <p><strong>Date:</strong> ${newRequest.proposedDate || 'N/A'}</p>
+       <p>Login to Admin Panel to schedule this session.</p>`
+    );
 
     requests.unshift(newRequest);
     writeCustomRequests(requests);
 
     io.emit('custom-requests-update', { action: 'new', request: newRequest });
-    res.json({ success: true, data: newRequest });
+
+    res.status(201).json({ success: true, data: newRequest });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

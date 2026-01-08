@@ -1,6 +1,6 @@
-// Socket.IO Service for Real-time Updates
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../core/config/env.dart';
+import 'notification_service.dart';
 import 'dart:async';
 
 class SocketService {
@@ -63,7 +63,39 @@ class SocketService {
       
       // Listen for general updates
       _socket!.on('products-update', (data) => _emit('products-update', data));
-      _socket!.on('orders-update', (data) => _emit('orders-update', data));
+      
+      _socket!.on('orders-update', (data) {
+        _emit('orders-update', data);
+        if (data['action'] == 'updated') {
+           final status = data['order']?['deliveryStatus'];
+           final id = data['order']?['orderId'];
+           if (status != null && id != null) {
+              NotificationService.showNotification(
+                title: 'Order Status Update',
+                body: 'Order #$id is now $status',
+              );
+           }
+        }
+      });
+
+      // Custom Requests (Puja/havan)
+      _socket!.on('custom-request-update', (data) {
+         final status = data['status'];
+         if (status == 'accepted') {
+           NotificationService.showNotification(
+             title: 'Request Accepted',
+             body: 'Your puja request has been accepted! Tap to view details.',
+           );
+         }
+      });
+      
+      // Live Sessions
+      _socket!.on('live-session-start', (data) {
+         NotificationService.showNotification(
+           title: 'Live Session Started 🔴',
+           body: 'Your Pandit is live now! Join the session.',
+         );
+      });
     } catch (e) {
       print('❌ Socket connection error: $e');
     }

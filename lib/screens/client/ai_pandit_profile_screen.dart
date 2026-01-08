@@ -24,65 +24,72 @@ class AIPanditProfileScreen extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: AppTheme.white,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 380,
-            pinned: true,
-            stretch: true,
-            backgroundColor: AppTheme.white,
-            elevation: 0,
-            leading: GestureDetector(
-              onTap: () => context.pop(),
-              child: Container(
-                margin: const EdgeInsets.only(left: 8, top: 8),
-                child: ClipOval(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      color: Colors.white.withOpacity(0.2),
-                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+    return SafeArea(
+      top: true,
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: AppTheme.white,
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 380,
+              pinned: true,
+              stretch: true,
+              backgroundColor: AppTheme.white,
+              elevation: 0,
+              leading: GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: ClipOval(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.arrow_back, color: Colors.black, size: 20), // Changed to black for visibility on white if image fails, or keep white if dark bg
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              stretchModes: const [StretchMode.zoomBackground, StretchMode.blurBackground],
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  pandit.profileImage.startsWith('http')
-                      ? Image.network(
-                          pandit.profileImage,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(color: AppTheme.primaryOrange.withOpacity(0.1)),
-                        )
-                      : Image.asset(
-                          pandit.profileImage,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(color: AppTheme.primaryOrange.withOpacity(0.1)),
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: const [StretchMode.zoomBackground, StretchMode.blurBackground],
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    pandit.profileImage.startsWith('http')
+                        ? Image.network(
+                            pandit.profileImage,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(color: AppTheme.primaryOrange.withOpacity(0.1)),
+                          )
+                        : Image.asset(
+                            pandit.profileImage,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(color: AppTheme.primaryOrange.withOpacity(0.1)),
+                          ),
+                    
+                    // Cinematic Gradient
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.transparent,
+                            AppTheme.neutralDark.withOpacity(0.8),
+                            AppTheme.neutralDark,
+                          ],
+                          stops: const [0.0, 0.5, 0.85, 1.0],
                         ),
-                  
-                  // Cinematic Gradient
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.transparent,
-                          AppTheme.neutralDark.withOpacity(0.8),
-                          AppTheme.neutralDark,
-                        ],
-                        stops: const [0.0, 0.5, 0.85, 1.0],
                       ),
                     ),
-                  ),
+  // (Rest of the stack content remains the same)
 
                   // Title & Badge Over Content
                   Positioned(
