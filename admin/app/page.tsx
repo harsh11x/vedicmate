@@ -141,13 +141,11 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Welcome Card */}
-      <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-orange-200">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-        <div className="relative">
-          <h1 className="text-3xl font-bold mb-2">Welcome back! 🙏</h1>
-          <p className="text-white/80 text-lg">Here's what's happening with your Vedic services today.</p>
+      {/* Welcome Section */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Overview</h1>
+          <p className="text-gray-500 text-sm mt-1">Real-time insights and performance metrics.</p>
         </div>
       </div>
 
@@ -157,114 +155,106 @@ export default function Dashboard() {
           <Link
             key={stat.title}
             href={stat.href}
-            className={`bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${stat.borderClass} stat-card fade-in`}
-            style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
+            className={`bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group ${stat.pulse ? 'ring-2 ring-purple-100' : ''}`}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center text-2xl shadow-lg ${stat.pulse ? 'pulse-live' : ''}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${stat.bgColor} ${stat.textColor}`}>
                 {stat.icon}
               </div>
               {stat.pulse && (
-                <span className="px-3 py-1.5 text-xs font-bold bg-red-100 text-red-600 rounded-full animate-pulse">
-                  LIVE
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
                 </span>
               )}
             </div>
-            <p className={`text-3xl font-bold ${stat.textColor} mb-1`}>{stat.value}</p>
-            <p className="text-sm font-semibold text-gray-700">{stat.title}</p>
-            <p className="text-xs text-gray-400 mt-1">{stat.subtitle}</p>
+            <div className="space-y-1">
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{stat.title}</p>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
+              <span className="text-xs text-gray-400">{stat.subtitle}</span>
+              <span className="text-gray-300 group-hover:text-gray-500 transition-colors">→</span>
+            </div>
           </Link>
         ))}
       </div>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Custom Requests */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm fade-in" style={{ animationDelay: "0.4s", opacity: 0 }}>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-800">Recent Requests</h3>
-            <Link href="/custom-requests" className="text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors">
-              View All →
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Custom Requests - Wants 2/3 width */}
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col">
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+            <h3 className="font-bold text-gray-800">Recent Activity</h3>
+            <Link href="/custom-requests" className="text-xs font-semibold text-orange-600 hover:text-orange-700">
+              View All Requests
             </Link>
           </div>
-          {recentRequests.length > 0 ? (
-            <div className="space-y-3">
-              {recentRequests.map((req: any) => (
-                <div key={req.id} className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-orange-50 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-xl">
-                      🙏
+          <div className="p-2 flex-1">
+            {recentRequests.length > 0 ? (
+              <div className="divide-y divide-gray-50">
+                {recentRequests.map((req: any) => (
+                  <div key={req.id} className="p-4 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center text-sm font-bold">
+                        {req.userName?.[0]?.toUpperCase() || "?"}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">{req.serviceName || "Custom Request"}</p>
+                        <p className="text-xs text-gray-500">{req.userName || "Guest User"}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{req.serviceName}</p>
-                      <p className="text-xs text-gray-400">{req.userName || "Unknown User"}</p>
+                    <div className="flex items-center gap-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${req.status === 'pending' ? 'bg-yellow-50 text-yellow-600' :
+                          req.status === 'scheduled' ? 'bg-blue-50 text-blue-600' :
+                            req.status === 'completed' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                        }`}>
+                        {req.status}
+                      </span>
+                      <span className="text-xs text-gray-400 group-hover:text-orange-500 transition-colors">Manage</span>
                     </div>
                   </div>
-                  <span className={`${req.status === 'pending' ? 'badge-pending' :
-                    req.status === 'scheduled' ? 'badge-scheduled' :
-                      req.status === 'completed' ? 'badge-completed' : 'badge-cancelled'
-                    }`}>
-                    {req.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-xl">
-              <div className="text-5xl mb-3">🙏</div>
-              <p className="text-gray-500 font-medium">No custom requests yet</p>
-              <p className="text-xs text-gray-400 mt-1">Requests will appear here</p>
-            </div>
-          )}
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-2xl text-gray-400 mb-4">Inbox</div>
+                <p className="text-gray-900 font-medium">No recent requests</p>
+                <p className="text-xs text-gray-500 mt-1">New requests will appear here</p>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm fade-in" style={{ animationDelay: "0.5s", opacity: 0 }}>
-          <h3 className="text-lg font-bold text-gray-800 mb-6">Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <Link
-              href="/custom-requests"
-              className="group p-5 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-200 hover:border-orange-400 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl mb-4 shadow-lg shadow-orange-200 group-hover:scale-110 transition-transform">
-                🙏
-              </div>
-              <p className="font-bold text-gray-800">View Requests</p>
-              <p className="text-xs text-gray-500 mt-1">Manage puja bookings</p>
-            </Link>
+        {/* Quick Actions - 1/3 width */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-fit">
+          <h3 className="font-bold text-gray-800 mb-4">Quick Navigation</h3>
+          <div className="space-y-3">
+            {[
+              { label: "Manage Orders", href: "/orders", icon: "📦", color: "text-blue-600", bg: "bg-blue-50" },
+              { label: "Live Sessions", href: "/live-sessions", icon: "📹", color: "text-purple-600", bg: "bg-purple-50" },
+              { label: "Product Inventory", href: "/products", icon: "📊", color: "text-green-600", bg: "bg-green-50" },
+              { label: "Service Requests", href: "/custom-requests", icon: "🙏", color: "text-orange-600", bg: "bg-orange-50" },
+            ].map((action) => (
+              <Link
+                key={action.href}
+                href={action.href}
+                className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all group"
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${action.bg} ${action.color}`}>
+                  {action.icon}
+                </div>
+                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{action.label}</span>
+                <span className="ml-auto text-gray-300 group-hover:text-gray-400">→</span>
+              </Link>
+            ))}
+          </div>
 
-            <Link
-              href="/live-sessions"
-              className="group p-5 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 hover:border-purple-400 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-2xl mb-4 shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform">
-                📹
-              </div>
-              <p className="font-bold text-gray-800">Live Sessions</p>
-              <p className="text-xs text-gray-500 mt-1">Start video sessions</p>
-            </Link>
-
-            <Link
-              href="/orders"
-              className="group p-5 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 hover:border-blue-400 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-2xl mb-4 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
-                🛒
-              </div>
-              <p className="font-bold text-gray-800">View Orders</p>
-              <p className="text-xs text-gray-500 mt-1">Track shipments</p>
-            </Link>
-
-            <Link
-              href="/products"
-              className="group p-5 rounded-xl bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 hover:border-green-400 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-2xl mb-4 shadow-lg shadow-green-200 group-hover:scale-110 transition-transform">
-                📦
-              </div>
-              <p className="font-bold text-gray-800">Products</p>
-              <p className="text-xs text-gray-500 mt-1">Manage inventory</p>
-            </Link>
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <div className="p-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl text-white text-center">
+              <p className="text-xs opacity-70 mb-1">System Status</p>
+              <p className="font-bold text-sm tracking-wide">ALL SYSTEMS OPERATIONAL</p>
+            </div>
           </div>
         </div>
       </div>

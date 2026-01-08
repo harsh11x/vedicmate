@@ -2,6 +2,7 @@
 
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "./globals.css";
@@ -98,12 +99,17 @@ export default function RootLayout({
           <aside className="fixed left-0 top-0 z-40 h-screen w-72 bg-white border-r border-gray-200 shadow-sm">
             {/* Logo */}
             <div className="flex items-center gap-4 p-6 border-b border-gray-100">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl shadow-lg shadow-orange-200">
-                🕉️
+              <div className="relative w-10 h-10">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  fill
+                  className="object-contain"
+                />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Vedic Mate</h1>
-                <p className="text-xs text-orange-500 font-medium">Admin Dashboard</p>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vedic Mate</h1>
+                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">Administration</p>
               </div>
             </div>
 
