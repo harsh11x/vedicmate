@@ -62,5 +62,243 @@
     "isActive": true,
     "createdAt": "2026-01-05T19:19:52.874Z",
     "updatedAt": "2026-01-05T19:19:52.874Z"
+  },
+  {
+    "id": "rudraksha_mala",
+    "name": "Rudraksha Mala",
+    "description": "Authentic Rudraksha mala for spiritual protection and positive energy. Made from genuine Rudraksha beads sourced from Nepal.",
+    "price": 2999,
+    "originalPrice": 3999,
+    "category": "rudrakshas",
+    "images": [
+      "assets/images/remedies/rudraksha_mala_product_1767971181602.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 50,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "ganesh_yantra",
+    "name": "Ganesh Yantra",
+    "description": "Sacred Ganesh Yantra made of pure copper. Removes obstacles, brings prosperity, and ensures success in all endeavors.",
+    "price": 1499,
+    "originalPrice": 1999,
+    "category": "yantras",
+    "images": [
+      "assets/images/remedies/ganesh_yantra_product_1767971210440.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 30,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "crystal_healing_set",
+    "name": "Crystal Healing Set",
+    "description": "Premium crystal healing set with 7 different crystals including Amethyst, Rose Quartz, Clear Quartz, and Black Tourmaline.",
+    "price": 3999,
+    "originalPrice": 4999,
+    "category": "gemstones",
+    "images": [
+      "assets/images/remedies/crystal_healing_set_product_1767971238463.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 25,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "sage_smudging_kit",
+    "name": "Sage Smudging Kit",
+    "description": "Complete sage smudging kit with white sage bundle, abalone shell, and feather. For space cleansing and removing negative energy.",
+    "price": 899,
+    "originalPrice": 1299,
+    "category": "puja-items",
+    "images": [
+      "assets/images/remedies/sage_smudging_kit_product_1767971274822.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 100,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "vastu_mirror",
+    "name": "Vastu Mirror",
+    "description": "Authentic Vastu mirror with sacred geometry patterns. Deflects negative energy and enhances positive vibrations.",
+    "price": 2499,
+    "originalPrice": 2999,
+    "category": "vastu-items",
+    "images": [
+      "assets/images/remedies/vastu_mirror_product_1767971301646.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 20,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "lakshmi_puja_kit",
+    "name": "Lakshmi Puja Kit",
+    "description": "Complete Lakshmi puja kit with idols, incense, diya, and essentials. Brings wealth, prosperity, and financial stability.",
+    "price": 1999,
+    "originalPrice": 2499,
+    "category": "puja-items",
+    "images": [
+      "assets/images/remedies/lakshmi_puja_kit_product_1767971332994.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 40,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "rudraksha_mala_chain",
+    "name": "Rudraksha Mala Chain",
+    "description": "Premium 108-bead Rudraksha mala chain. Handcrafted with genuine seeds. Perfect for daily meditation.",
+    "price": 2499,
+    "originalPrice": 2999,
+    "category": "rudrakshas",
+    "images": [
+      "assets/images/remedies/rudraksha_mala_chain_product_1767971367368.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 45,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "gemstone_bracelet_set",
+    "name": "Gemstone Bracelet Set",
+    "description": "Beautiful set of natural gemstone bracelets including Ruby, Emerald, and Sapphire beads. Enhances planetary energies.",
+    "price": 3499,
+    "originalPrice": 4499,
+    "category": "gemstones",
+    "images": [
+      "assets/images/remedies/gemstone_bracelet_set_product_1767971394953.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 35,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "navratna_ring",
+    "name": "Navratna Ring",
+    "description": "Authentic Navratna ring with 9 precious gemstones. Provides complete planetary protection and astrological balance.",
+    "price": 4999,
+    "originalPrice": 6999,
+    "category": "gemstones",
+    "images": [
+      "assets/images/remedies/navratna_ring_product_1767971423195.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 15,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "tulsi_mala",
+    "name": "Tulsi Mala",
+    "description": "Sacred Tulsi (Holy Basil) mala with 108 beads. Known for spiritual purification and divine connection.",
+    "price": 899,
+    "originalPrice": 1099,
+    "category": "rudrakshas",
+    "images": [
+      "assets/images/remedies/tulsi_mala_product_1767971452239.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 60,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "silver_om_pendant",
+    "name": "Silver Om Pendant",
+    "description": "Elegant sterling silver Om symbol pendant. Represents universal consciousness and spiritual peace.",
+    "price": 1799,
+    "originalPrice": 2199,
+    "category": "pendants",
+    "images": [
+      "assets/images/remedies/om_pendant_product_1767971491009.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 40,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "copper_bracelet",
+    "name": "Copper Bracelet",
+    "description": "Pure copper bracelet with Vedic symbols. Known for health benefits and positive energy flow.",
+    "price": 1299,
+    "originalPrice": 1599,
+    "category": "bracelets",
+    "images": [
+      "assets/images/remedies/copper_bracelet_product.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": false,
+    "stock": 55,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "gold_mangalsutra",
+    "name": "Gold Plated Mangalsutra",
+    "description": "Traditional gold plated mangalsutra with black beads. Symbol of marital bliss and prosperity.",
+    "price": 5999,
+    "originalPrice": 7999,
+    "category": "jewelry",
+    "images": [
+      "assets/images/remedies/mangalsutra_product_1767971525650.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 20,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
+  },
+  {
+    "id": "panchdhatu_ring",
+    "name": "Panchdhatu Ring",
+    "description": "Sacred Panchdhatu ring made from five metals: Gold, Silver, Copper, Zinc, and Iron. Balances body elements.",
+    "price": 3999,
+    "originalPrice": 4999,
+    "category": "rings",
+    "images": [
+      "assets/images/remedies/panchdhatu_ring_product_1767971561127.png"
+    ],
+    "inStock": true,
+    "isActive": true,
+    "featured": true,
+    "stock": 25,
+    "createdAt": "2026-01-09T12:00:00.000Z",
+    "updatedAt": "2026-01-09T12:00:00.000Z"
   }
 ]

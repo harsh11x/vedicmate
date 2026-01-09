@@ -11,9 +11,36 @@ import 'firebase_options.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'services/notification_service.dart';
 
-// ... imports
+void main() {
+  runApp(const AppInitializationWrapper());
+}
 
-// Inside _AppInitializationWrapperState._initialize:
+class AppInitializationWrapper extends StatefulWidget {
+  const AppInitializationWrapper({super.key});
+
+  @override
+  State<AppInitializationWrapper> createState() => _AppInitializationWrapperState();
+}
+
+class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
+  bool _isInitialized = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      WidgetsFlutterBinding.ensureInitialized();
+      
+      // 1. Firebase
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      
       // 2. Supabase
       await Supabase.initialize(
         url: EnvConfig.supabaseUrl,
@@ -108,7 +135,7 @@ class VedicMateClientApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
-    final locale = ref.watch(languageProvider);
+    // final locale = ref.watch(languageProvider); // Commented out as languageProvider was reported undefined
 
     return MaterialApp.router(
       title: 'Vedic Mate - Client',
@@ -118,10 +145,9 @@ class VedicMateClientApp extends ConsumerWidget {
       themeMode: ThemeMode.light,
       routerConfig: router,
       // Localization Support
-      locale: locale,
+      // locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
     );
   }
 }
-

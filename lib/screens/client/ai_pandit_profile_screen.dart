@@ -309,6 +309,7 @@ class AIPanditProfileScreen extends StatelessWidget {
           ),
         ),
       ),
+      ),
     );
   }
 }

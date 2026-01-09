@@ -11,6 +11,17 @@ import '../services/kundli_ai_service.dart';
 import '../services/horoscope_service.dart';
 import '../services/astrology_service.dart';
 import '../services/custom_ai_service.dart';
+import '../services/product_service.dart';
+
+final productServiceProvider = Provider<ProductService>((ref) {
+  final api = ref.watch(apiClientProvider);
+  return ProductService(api);
+});
+
+final productsProvider = FutureProvider.family<List<Map<String, dynamic>>, String?>((ref, category) async {
+  final productService = ref.watch(productServiceProvider);
+  return productService.getProducts(category: category);
+});
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();
