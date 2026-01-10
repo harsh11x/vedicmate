@@ -62,7 +62,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    origin: ["http://15.207.36.26:3000", "http://localhost:3000", "*"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
@@ -613,13 +613,45 @@ io.on('connection', (socket) => {
 
   socket.on('join-pooja', (user) => {
     socket.join('live-pooja-room');
+
+    // Update viewer count
+    const viewers = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
+    io.to('live-pooja-room').emit('viewer-update', { count: viewers });
+
+    // Notify others (Signaling for WebRTC)
+    socket.to('live-pooja-room').emit('user-joined', { userId: socket.id });
+
     if (user && user.name) {
-      console.log(`User ${user.name} joined Live Pooja`);
+      console.log(`User ${user.name} joined Live Pooja (Total: ${viewers})`);
     }
   });
 
   socket.on('leave-pooja', () => {
     socket.leave('live-pooja-room');
+    const viewers = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
+    io.to('live-pooja-room').emit('viewer-update', { count: viewers });
+  });
+
+  // WebRTC Signaling Events
+  socket.on('offer', (data) => {
+    io.to(data.target).emit('offer', {
+      sdp: data.sdp,
+      sender: socket.id
+    });
+  });
+
+  socket.on('answer', (data) => {
+    io.to(data.target).emit('answer', {
+      sdp: data.sdp,
+      sender: socket.id
+    });
+  });
+
+  socket.on('ice-candidate', (data) => {
+    io.to(data.target).emit('ice-candidate', {
+      candidate: data.candidate,
+      sender: socket.id
+    });
   });
 
   socket.on('pooja-message', (data) => {
@@ -636,6 +668,16 @@ io.on('connection', (socket) => {
       timestamp: Date.now()
     });
     console.log(`🎁 Gift: ${data.senderName} sent ${data.giftName} (₹${data.amount})`);
+  });
+
+  socket.on('disconnecting', () => {
+    // Handle disconnects for viewer count
+    if (socket.rooms.has('live-pooja-room')) {
+      // The socket technically hasn't left yet, so size is current. 
+      // After this event it leaves. So we should emit size - 1.
+      const viewers = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
+      io.to('live-pooja-room').emit('viewer-update', { count: Math.max(0, viewers - 1) });
+    }
   });
 
   socket.on('disconnect', () => {

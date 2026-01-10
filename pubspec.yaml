@@ -56,6 +56,7 @@ dependencies:
   supabase_flutter: ^2.12.0
   postgres: ^3.5.9
   country_state_city_pro: ^0.0.6
+  flutter_webrtc: ^1.2.1
 
 dev_dependencies:
   flutter_test:

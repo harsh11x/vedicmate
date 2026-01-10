@@ -239,186 +239,187 @@ class _RemedyCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image Section
-          Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppTheme.primaryOrange.withOpacity(0.2),
-                  AppTheme.yellowPrimary.withOpacity(0.1),
-                ],
-              ),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                  child: _buildImage(imageUrl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image Section
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.primaryOrange.withOpacity(0.2),
+                    AppTheme.yellowPrimary.withOpacity(0.1),
+                  ],
                 ),
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.yellowPrimary,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                    child: _buildImage(imageUrl),
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppTheme.yellowPrimary,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        remedy['category'] ?? 'General',
+                        style: const TextStyle(
+                          color: AppTheme.textDark,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      remedy['category'] ?? 'General',
-                      style: const TextStyle(
-                        color: AppTheme.textDark,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // Content Section
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title and Price
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        remedy['name'] ?? remedy['title'] ?? 'Product',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: AppTheme.neutralDark,
-                            ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '₹${remedy['price']}',
-                        style: const TextStyle(
-                          color: AppTheme.textDark,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+            // Content Section
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title and Price
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          remedy['name'] ?? remedy['title'] ?? 'Product',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: AppTheme.neutralDark,
+                              ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // Description - Properly wrapped
-                Text(
-                  remedy['description'] ?? '',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.neutralMedium,
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                  textAlign: TextAlign.left,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                const SizedBox(height: 20),
-
-                // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // Add to cart functionality
-                          ref.read(cartProvider.notifier).addToCart(
-                            remedy['id'],
-                            remedy['name'] ?? remedy['title'],
-                            (remedy['price'] as num).toDouble(),
-                            imageUrl,
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${remedy['name'] ?? remedy['title']} added to cart'),
-                              backgroundColor: AppTheme.successGreen,
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-                        label: const Text('Add to Cart'),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          side: BorderSide(color: AppTheme.primaryOrange, width: 1.5),
-                          foregroundColor: AppTheme.primaryOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '₹${remedy['price']}',
+                          style: const TextStyle(
+                            color: AppTheme.textDark,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Buy now functionality
-                          context.push('/checkout', extra: {
-                            'item': remedy,
-                            'isDirectBuy': true,
-                          });
-                        },
-                        icon: const Icon(Icons.shopping_bag, size: 18),
-                        label: const Text('Buy Now'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: AppTheme.primaryOrange,
-                          foregroundColor: AppTheme.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Description - Properly wrapped
+                  Text(
+                    remedy['description'] ?? '',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppTheme.neutralMedium,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                    textAlign: TextAlign.left,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Action Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            // Add to cart functionality
+                            ref.read(cartProvider.notifier).addToCart(
+                              remedy['id'],
+                              remedy['name'] ?? remedy['title'],
+                              (remedy['price'] as num).toDouble(),
+                              imageUrl,
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${remedy['name'] ?? remedy['title']} added to cart'),
+                                backgroundColor: AppTheme.successGreen,
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.shopping_cart_outlined, size: 18),
+                          label: const Text('Add to Cart'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: BorderSide(color: AppTheme.primaryOrange, width: 1.5),
+                            foregroundColor: AppTheme.primaryOrange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Buy now functionality
+                            context.push('/checkout', extra: {
+                              'item': remedy,
+                              'isDirectBuy': true,
+                            });
+                          },
+                          icon: const Icon(Icons.shopping_bag, size: 18),
+                          label: const Text('Buy Now'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            backgroundColor: AppTheme.primaryOrange,
+                            foregroundColor: AppTheme.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -433,21 +434,13 @@ class _RemedyCard extends ConsumerWidget {
         errorBuilder: (_, __, ___) => _buildPlaceholder(),
       );
     } else if (path.startsWith('assets/')) {
-        // Since we are likely using a server path like 'assets/images/...', 
-        // we might need to construct the full URL if we can, OR if it's a bundled asset
-        // But for dynamic data from server, we should ideally construct the full URL in the Service.
-        // Assuming the server returns relative path, we'll try to use ApiClient's base URL logic ideally, but here:
-        // For now, if it's from JSON it could be treated as network image if we prepend base URL or as local asset if bundled.
-        // ACTUALLY: Since we uploaded to server, we want Image.network with full URL.
-        // But the previous code used Image.asset.
         return Image.network(
-          // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS - ideally use EnvConfig
+          // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
           'http://15.207.36.26:3001/$path', 
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stack) {
-             // Fallback to asset if connection fails (for old hybrid state or cache)
              return Image.asset(
                 path,
                 width: double.infinity,

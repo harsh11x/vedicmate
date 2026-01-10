@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
 // Connect to socket (AWS IP)
+// Connect to socket (AWS IP)
 const socket = io('http://15.207.36.26:3001', {
     transports: ['websocket'],
     autoConnect: false
@@ -18,8 +19,12 @@ export default function LivePoojaPage() {
     const [isLive, setIsLive] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
     const [gifts, setGifts] = useState<any[]>([]);
+    const [viewerCount, setViewerCount] = useState(0);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [stream, setStream] = useState<MediaStream | null>(null);
+
+    // WebRTC: Keep track of peer connections (userId -> RTCPeerConnection)
+    const peersRef = useRef<{ [key: string]: RTCPeerConnection }>({});
 
     useEffect(() => {
         socket.connect();
@@ -30,6 +35,10 @@ export default function LivePoojaPage() {
         });
 
         socket.on('disconnect', () => setIsConnected(false));
+
+        socket.on('viewer-update', (data: any) => {
+            setViewerCount(data.count);
+        });
 
         socket.on('new-pooja-message', (data: any) => {
             setMessages(prev => [...prev, data]);
@@ -45,21 +54,74 @@ export default function LivePoojaPage() {
             }]);
         });
 
+        // WebRTC Signaling Handlers
+        socket.on('user-joined', async ({ userId }: { userId: string }) => {
+            console.log("User joined, initiating connection:", userId);
+            if (isLive && stream) {
+                createPeerConnection(userId, stream);
+            }
+        });
+
+        socket.on('answer', async ({ sender, sdp }: { sender: string, sdp: any }) => {
+            const pc = peersRef.current[sender];
+            if (pc) {
+                await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+            }
+        });
+
+        socket.on('ice-candidate', async ({ sender, candidate }: { sender: string, candidate: any }) => {
+            const pc = peersRef.current[sender];
+            if (pc) {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+            }
+        });
+
         return () => {
-            socket.off('connect');
-            socket.off('disconnect');
-            socket.off('new-pooja-message');
-            socket.off('gift-received');
             socket.disconnect();
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
+            // Close all peers
+            Object.values(peersRef.current).forEach(pc => pc.close());
         };
-    }, []);
+    }, [isLive, stream]);
+
+    const createPeerConnection = async (targetUserId: string, localStream: MediaStream) => {
+        const pc = new RTCPeerConnection({
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        });
+
+        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+        pc.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit('ice-candidate', {
+                    target: targetUserId,
+                    candidate: event.candidate
+                });
+            }
+        };
+
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+
+        socket.emit('offer', {
+            target: targetUserId,
+            sdp: offer
+        });
+
+        peersRef.current[targetUserId] = pc;
+    };
 
     // Handle Camera Access
     useEffect(() => {
         const startCamera = async () => {
+            // Warn about insecure origin
+
+
             try {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 setStream(mediaStream);
@@ -68,6 +130,7 @@ export default function LivePoojaPage() {
                 }
             } catch (err) {
                 console.error("Error accessing camera:", err);
+                alert("Could not access camera. Ensure you are on localhost/HTTPS and have granted permissions.");
             }
         };
 
@@ -77,6 +140,9 @@ export default function LivePoojaPage() {
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
                 setStream(null);
+                // Close peers when stopping
+                Object.values(peersRef.current).forEach(pc => pc.close());
+                peersRef.current = {};
             }
         }
     }, [isLive]);
@@ -131,7 +197,7 @@ export default function LivePoojaPage() {
                                     LIVE
                                 </div>
                                 <div className="absolute top-4 right-4 bg-black/50 px-3 py-1 rounded text-white font-medium border border-white/20 backdrop-blur-sm">
-                                    👁️ 124 Viewers
+                                    👁️ {viewerCount} Viewers
                                 </div>
                                 {/* Decorative Corner Frames */}
                                 <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-yellow-400 rounded-tl-lg pointer-events-none opacity-80"></div>

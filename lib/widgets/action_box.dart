@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/theme/app_theme.dart';
 
 class ActionBox extends StatelessWidget {
   final String title;
@@ -80,6 +81,4 @@ class ActionBox extends StatelessWidget {
   }
 }
 
-// Need to import AppTheme to access colors if not passed directly, 
-// but sticking to standard pattern: import theme.
-import '../core/theme/app_theme.dart';
+

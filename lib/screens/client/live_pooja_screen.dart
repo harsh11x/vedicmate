@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../../core/theme/app_theme.dart';
 import '../../config/api_config.dart';
 import '../../providers/auth_provider.dart';
@@ -25,6 +26,10 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
   late AnimationController _giftAnimController;
   late Animation<double> _giftScaleAnim;
 
+  // WebRTC
+  final _remoteRenderer = RTCVideoRenderer();
+  RTCPeerConnection? _peerConnection;
+  
   final List<Map<String, dynamic>> _gifts = [
     {'id': 'g1', 'name': 'Flower', 'icon': '🌸', 'price': 11},
     {'id': 'g2', 'name': 'Diya', 'icon': '🪔', 'price': 21},
@@ -46,6 +51,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
   @override
   void initState() {
     super.initState();
+    _initRenderers();
     _connectSocket();
     
     _giftAnimController = AnimationController(
@@ -68,6 +74,10 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
     });
   }
 
+  Future<void> _initRenderers() async {
+    await _remoteRenderer.initialize();
+  }
+
   void _connectSocket() {
     _socket = IO.io(ApiConfig.baseUrl.replaceAll('/api', ''), <String, dynamic>{
       'transports': ['websocket'],
@@ -87,6 +97,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
 
     _socket.on('session-ended', (_) {
       if (mounted) setState(() => _isLive = false);
+      _closePeerConnection();
     });
 
     _socket.on('new-pooja-message', (data) {
@@ -118,6 +129,70 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
         _scrollToBottom();
       }
     });
+
+    // WebRTC Signaling
+    _socket.on('offer', (data) async {
+       print("Received WebRTC Offer from ${data['sender']}");
+       final sdp = data['sdp'];
+       final senderId = data['sender'];
+       
+       await _createPeerConnection(senderId);
+       
+       await _peerConnection?.setRemoteDescription(RTCSessionDescription(sdp['sdp'], sdp['type']));
+       
+       final answer = await _peerConnection?.createAnswer();
+       await _peerConnection?.setLocalDescription(answer!);
+       
+       _socket.emit('answer', {
+         'target': senderId,
+         'sdp': answer!.toMap(),
+       });
+    });
+
+    _socket.on('ice-candidate', (data) async {
+       if (_peerConnection != null) {
+         final candidate = data['candidate'];
+         await _peerConnection?.addCandidate(RTCIceCandidate(
+           candidate['candidate'], 
+           candidate['sdpMid'], 
+           candidate['sdpMLineIndex']
+         ));
+       }
+    });
+  }
+
+  Future<void> _createPeerConnection(String senderId) async {
+    _closePeerConnection();
+    
+    final config = {
+      'iceServers': [
+        {'urls': 'stun:stun.l.google.com:19302'},
+        {'urls': 'stun:stun1.l.google.com:19302'},
+      ]
+    };
+    
+    _peerConnection = await createPeerConnection(config);
+    
+    _peerConnection?.onIceCandidate = (candidate) {
+       _socket.emit('ice-candidate', {
+         'target': senderId,
+         'candidate': candidate.toMap(),
+       });
+    };
+    
+    _peerConnection?.onTrack = (event) {
+       if (event.track.kind == 'video') {
+         setState(() {
+           _remoteRenderer.srcObject = event.streams[0];
+         });
+       }
+    };
+  }
+  
+  void _closePeerConnection() {
+    _peerConnection?.close();
+    _peerConnection = null;
+    _remoteRenderer.srcObject = null;
   }
 
   void _scrollToBottom() {
@@ -234,6 +309,8 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
     _chatController.dispose();
     _scrollController.dispose();
     _giftAnimController.dispose();
+    _remoteRenderer.dispose();
+    _closePeerConnection();
     super.dispose();
   }
 
@@ -254,17 +331,10 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
                     ? Stack(
                         alignment: Alignment.center,
                         children: [
-                          // In a real app, this would be the video player (e.g., Agora/HLS)
-                          Image.network(
-                            'https://img.freepik.com/premium-photo/hindu-priest-performing-yagya-pooja-temple_1048944-19602.jpg',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
+                          RTCVideoView(
+                            _remoteRenderer,
+                            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                           ),
-                          Container(
-                            color: Colors.black45,
-                          ),
-                          const Icon(Icons.play_circle_fill, color: Colors.white, size: 60),
                           Positioned(
                             top: 40,
                             left: 10,
