@@ -11,8 +11,8 @@ import { readFileSync } from 'fs';
 
 // Load Certificates
 const httpsOptions = {
-  key: readFileSync(path.join(process.cwd(), 'certs', 'server.key')),
-  cert: readFileSync(path.join(process.cwd(), 'certs', 'server.cert'))
+  key: readFileSync(path.join(__dirname, '..', 'certs', 'server.key')),
+  cert: readFileSync(path.join(__dirname, '..', 'certs', 'server.cert'))
 };
 
 const app = express();
