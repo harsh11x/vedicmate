@@ -36,9 +36,10 @@ import '../../screens/shared/splash_screen.dart';
 import '../../screens/client/kundli/create_kundli_screen.dart';
 import '../../screens/client/order_history_screen.dart';
 import '../../screens/client/order_detail_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../screens/client/relationship_form_screen.dart';
+import '../../screens/client/relationship_result_screen.dart';
 import '../../screens/client/live_pooja_screen.dart';
-import '../../screens/client/relationship_match_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final initialRouteProvider = Provider<String>((ref) => '/splash');
 
@@ -338,12 +339,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/live-pooja',
-        builder: (context, state) => const LivePoojaScreen(),
+        path: '/relationship/form',
+        builder: (context, state) => const RelationshipFormScreen(),
       ),
       GoRoute(
-        path: '/relationship/match',
-        builder: (context, state) => const RelationshipMatchScreen(),
+        path: '/relationship/result',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return RelationshipResultScreen(data: data);
+        },
+      ),
+      GoRoute(
+        path: '/live-pooja',
+        builder: (context, state) => const LivePoojaScreen(),
       ),
     ],
   );

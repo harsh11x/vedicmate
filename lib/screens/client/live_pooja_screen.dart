@@ -1,83 +1,156 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
+import '../../config/api_config.dart';
+import '../../providers/auth_provider.dart';
 
-class LivePoojaScreen extends StatefulWidget {
+class LivePoojaScreen extends ConsumerStatefulWidget {
   const LivePoojaScreen({super.key});
 
   @override
-  State<LivePoojaScreen> createState() => _LivePoojaScreenState();
+  ConsumerState<LivePoojaScreen> createState() => _LivePoojaScreenState();
 }
 
-class _LivePoojaScreenState extends State<LivePoojaScreen> with TickerProviderStateMixin {
-  final TextEditingController _messageController = TextEditingController();
+class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerProviderStateMixin {
+  late IO.Socket _socket;
+  final TextEditingController _chatController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<ChatMessage> _messages = [];
-  bool _isLiked = false;
-  int _viewerCount = 124;
-  Timer? _randomTimer;
+  
+  List<Map<String, dynamic>> _messages = [];
+  Map<String, dynamic>? _activeGift; // For animation
+  late AnimationController _giftAnimController;
+  late Animation<double> _giftScaleAnim;
+
+  final List<Map<String, dynamic>> _gifts = [
+    {'id': 'g1', 'name': 'Flower', 'icon': '🌸', 'price': 11},
+    {'id': 'g2', 'name': 'Diya', 'icon': '🪔', 'price': 21},
+    {'id': 'g3', 'name': 'Coconut', 'icon': '🥥', 'price': 51},
+    {'id': 'g4', 'name': 'Incense', 'icon': '🥢', 'price': 11},
+    {'id': 'g5', 'name': 'Mala', 'icon': '📿', 'price': 101},
+    {'id': 'g6', 'name': 'Sweets', 'icon': '🍬', 'price': 51},
+    {'id': 'g7', 'name': 'Fruits', 'icon': '🍎', 'price': 51},
+    {'id': 'g8', 'name': 'Modak', 'icon': '🥟', 'price': 21},
+    {'id': 'g9', 'name': 'Bell', 'icon': '🔔', 'price': 101},
+    {'id': 'g10', 'name': 'Conch', 'icon': '🐚', 'price': 151},
+    {'id': 'g11', 'name': 'Thali', 'icon': '🍽️', 'price': 251},
+    {'id': 'g12', 'name': 'Kalash', 'icon': '🏺', 'price': 501},
+    {'id': 'g13', 'name': 'Shawl', 'icon': '🧣', 'price': 501},
+    {'id': 'g14', 'name': 'Cow', 'icon': '🐄', 'price': 1100}, // Gho daan
+    {'id': 'g15', 'name': 'Temple', 'icon': '💒', 'price': 5100},
+  ];
 
   @override
   void initState() {
     super.initState();
-    // Simulate incoming messages/viewers
-    _startSimulation();
-  }
+    _connectSocket();
+    
+    _giftAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    );
+    
+    _giftScaleAnim = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.5).chain(CurveTween(curve: Curves.elasticOut)), weight: 20),
+      TweenSequenceItem(tween: Tween(begin: 1.5, end: 1.0), weight: 10),
+      TweenSequenceItem(tween: ConstantTween(1.0), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeInBack)), weight: 20),
+    ]).animate(_giftAnimController);
 
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _scrollController.dispose();
-    _randomTimer?.cancel();
-    super.dispose();
-  }
-
-  void _startSimulation() {
-    _randomTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (mounted) {
-        setState(() {
-          _viewerCount += (timer.tick % 2 == 0 ? 1 : -1);
-          _messages.add(ChatMessage(
-            name: 'Devotee ${100 + timer.tick}', 
-            message: _getRandomMessage(),
-            isSystem: false,
-          ));
-          if (_messages.length > 50) _messages.removeAt(0);
-        });
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent + 60,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
+    _giftAnimController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() => _activeGift = null);
+        _giftAnimController.reset();
       }
     });
   }
 
-  String _getRandomMessage() {
-    const msgs = ['Jai Shree Ram', 'Om Namah Shivaya', 'Har Har Mahadev', 'Beautiful darshan', 'Jai Mata Di', 'Blessed'];
-    return msgs[DateTime.now().microsecond % msgs.length];
+  void _connectSocket() {
+    _socket = IO.io(ApiConfig.baseUrl.replaceAll('/api', ''), <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
+    _socket.connect();
+
+    _socket.onConnect((_) {
+      print('Connected to Socket for Live Pooja');
+      final user = ref.read(authStateProvider).value;
+      _socket.emit('join-pooja', {'name': user?.displayName ?? 'User'});
+    });
+
+    _socket.on('new-pooja-message', (data) {
+      if (mounted) {
+        setState(() {
+          _messages.add(data);
+        });
+        _scrollToBottom();
+      }
+    });
+
+    _socket.on('gift-received', (data) {
+      if (mounted) {
+        setState(() {
+          _activeGift = data;
+        });
+        _giftAnimController.forward();
+        
+        // Add gift notif to chat too
+        setState(() {
+          _messages.add({
+            'type': 'gift',
+            'senderName': data['senderName'],
+            'giftName': data['giftName'],
+            'amount': data['amount'],
+            'timestamp': DateTime.now().millisecondsSinceEpoch,
+          });
+        });
+        _scrollToBottom();
+      }
+    });
   }
 
-  void _sendMessage() {
-    if (_messageController.text.trim().isEmpty) return;
-    setState(() {
-      _messages.add(ChatMessage(name: 'You', message: _messageController.text, isSystem: false));
-      _messageController.clear();
-    });
-    // Auto scroll
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
-      }
+      });
+    }
+  }
+
+  void _sendMessage() {
+    if (_chatController.text.trim().isEmpty) return;
+    
+    final user = ref.read(authStateProvider).value;
+    final msg = _chatController.text.trim();
+    
+    _socket.emit('pooja-message', {
+      'senderName': user?.displayName ?? 'User',
+      'message': msg,
     });
+    
+    _chatController.clear();
+  }
+
+  void _sendGift(Map<String, dynamic> gift) {
+    // Logic to deduct balance would be here (via API call).
+    // For now we assume successful dedication and emit socket event.
+    
+    final user = ref.read(authStateProvider).value;
+    
+    _socket.emit('send-gift', {
+      'senderName': user?.displayName ?? 'User',
+      'giftName': gift['name'],
+      'giftIcon': gift['icon'],
+      'amount': gift['price'],
+    });
+    
+    Navigator.pop(context); // Close sheet
   }
 
   void _showGiftSheet() {
@@ -85,32 +158,59 @@ class _LivePoojaScreenState extends State<LivePoojaScreen> with TickerProviderSt
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
+        height: 400,
         decoration: const BoxDecoration(
-          color: Color(0xFF1E1E1E),
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
+        padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Send Offering', style: GoogleFonts.outfit(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Send a Gift',
+              style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 4,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              children: [
-                _buildGiftItem('Flower', '₹11', '🌸'),
-                _buildGiftItem('Diya', '₹21', '🪔'),
-                _buildGiftItem('Coconut', '₹51', '🥥'),
-                _buildGiftItem('Sweets', '₹101', '🍬'),
-                _buildGiftItem('Garland', '₹251', '🌺'),
-                _buildGiftItem('Kalash', '₹501', '🏺'),
-                _buildGiftItem('Vastram', '₹1001', '🧣'),
-                _buildGiftItem('Gold Coin', '₹5001', '🪙'),
-              ],
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 0.8,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: _gifts.length,
+                itemBuilder: (context, index) {
+                  final gift = _gifts[index];
+                  return GestureDetector(
+                    onTap: () => _sendGift(gift),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.neutralSoft,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.neutralLight),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(gift['icon'], style: const TextStyle(fontSize: 32)),
+                          const SizedBox(height: 4),
+                          Text(
+                            gift['name'],
+                            style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            '₹${gift['price']}',
+                            style: GoogleFonts.outfit(fontSize: 10, color: AppTheme.primaryOrange),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -118,46 +218,14 @@ class _LivePoojaScreenState extends State<LivePoojaScreen> with TickerProviderSt
     );
   }
 
-  Widget _buildGiftItem(String name, String price, String emoji) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-        _triggerGiftAnimation(emoji, name);
-      },
-      child: Column(
-        children: [
-          Container(
-            height: 50,
-            width: 50,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Text(emoji, style: const TextStyle(fontSize: 24)),
-          ),
-          const SizedBox(height: 4),
-          Text(name, style: const TextStyle(color: Colors.white70, fontSize: 10)),
-          Text(price, style: const TextStyle(color: AppTheme.yellowPrimary, fontSize: 12, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
-  }
-
-  void _triggerGiftAnimation(String emoji, String name) {
-    // Add a system message
-    setState(() {
-      _messages.add(ChatMessage(name: 'You', message: 'offered $name $emoji', isSystem: true));
-    });
-    // Show snackbar or visual confirmation
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Offering sent to Pandit Ji! $emoji'),
-        backgroundColor: AppTheme.primaryOrange,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  @override
+  void dispose() {
+    _socket.disconnect();
+    _socket.dispose();
+    _chatController.dispose();
+    _scrollController.dispose();
+    _giftAnimController.dispose();
+    super.dispose();
   }
 
   @override
@@ -167,117 +235,123 @@ class _LivePoojaScreenState extends State<LivePoojaScreen> with TickerProviderSt
       body: Stack(
         children: [
           // 1. Video Player Placeholder
-          Positioned.fill(
+          Center(
             child: Container(
               color: Colors.black,
               child: Stack(
-                fit: StackFit.expand,
+                alignment: Alignment.center,
                 children: [
-                  Image.network(
-                    'https://images.unsplash.com/photo-1604169728250-9bb6d8a7c293?q=80&w=1000&auto=format&fit=crop', // Fire Temple image
-                    fit: BoxFit.cover,
-                    errorBuilder: (c,e,s) => Container(color: Colors.grey[900]),
+                  Opacity(
+                    opacity: 0.6,
+                    child: Image.network(
+                      'https://img.freepik.com/free-photo/holy-ritual-fire_1157-36067.jpg', // Placeholder
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
                   ),
-                  Container(
-                    color: Colors.black.withOpacity(0.3),
+                  const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
+                  Positioned(
+                    top: 60,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
 
-          // 2. Top Bar
-          Positioned(
-            top: 50,
-            left: 16,
-            right: 16,
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                       const CircleAvatar(
-                        radius: 16,
-                        backgroundImage: AssetImage('assets/images/pandit_avatar.png'), 
-                        // Fallback handling not strictly needed if asset missing, will show grey
-                       ),
-                       const SizedBox(width: 8),
-                       Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           Text('Acharya Ji', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                           Text('$_viewerCount watching', style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10)),
-                         ],
-                       ),
-                       const SizedBox(width: 8),
-                       Container(
-                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                         decoration: BoxDecoration(color: AppTheme.errorRed, borderRadius: BorderRadius.circular(4)),
-                         child: const Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                       ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () => context.pop(),
-                ),
-              ],
-            ),
-          ),
-
-          // 3. Bottom Gradient
+          // 2. Chat Overlay (Bottom Left)
           Positioned(
             left: 0,
-            right: 0,
-            bottom: 0,
-            height: 300,
-            child: Container(
-               decoration: BoxDecoration(
-                 gradient: LinearGradient(
-                   begin: Alignment.topCenter,
-                   end: Alignment.bottomCenter,
-                   colors: [Colors.transparent, Colors.black.withOpacity(0.8), Colors.black],
-                 ),
-               ),
-            ),
-          ),
-
-          // 4. Chat Area
-          Positioned(
-            left: 16,
             bottom: 80,
-            right: 100, // Leave space for side buttons
-            height: 200,
+            width: MediaQuery.of(context).size.width * 0.7,
+            height: 300,
             child: ShaderMask(
               shaderCallback: (Rect bounds) {
                 return const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.white],
-                  stops: [0.0, 0.3],
+                  colors: [Colors.transparent, Colors.black],
+                  stops: [0.0, 0.2],
                 ).createShader(bounds);
               },
               blendMode: BlendMode.dstIn,
               child: ListView.builder(
                 controller: _scrollController,
-                padding: EdgeInsets.zero,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
                   final msg = _messages[index];
+                  if (msg['type'] == 'gift') {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppTheme.yellowPrimary,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: '${msg['senderName']} ',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                  ),
+                                  const TextSpan(
+                                    text: 'sent ',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  TextSpan(
+                                    text: '${msg['giftName']}! ',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${msg.name}: ', style: TextStyle(color: msg.isSystem ? AppTheme.yellowPrimary : Colors.white.withOpacity(0.7), fontWeight: FontWeight.bold, fontSize: 13)),
-                        Expanded(child: Text(msg.message, style: TextStyle(color: msg.isSystem ? AppTheme.yellowPrimary : Colors.white, fontSize: 13))),
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: Colors.white24,
+                          child: Text(
+                            (msg['senderName'] as String)[0].toUpperCase(),
+                            style: const TextStyle(fontSize: 10, color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                msg['senderName'],
+                                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+                              ),
+                              Text(
+                                msg['message'],
+                                style: const TextStyle(color: Colors.white, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   );
@@ -286,78 +360,115 @@ class _LivePoojaScreenState extends State<LivePoojaScreen> with TickerProviderSt
             ),
           ),
 
-          // 5. Bottom Input Bar
+          // 3. Bottom Input Bar
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: Colors.black.withOpacity(0.5),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: 'Say something...',
-                        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.1),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      ),
-                      onSubmitted: (_) => _sendMessage(),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: _showGiftSheet,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE91E63), // Pink Gift Color
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.card_giftcard, color: Colors.white, size: 24),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() => _isLiked = !_isLiked);
-                      if (_isLiked) {
-                        // Animation trigger
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: _isLiked ? Colors.red : Colors.white,
-                        size: 24,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Colors.black.withOpacity(0.9), Colors.transparent],
+                ),
+              ),
+              child: SafeArea(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: TextField(
+                          controller: _chatController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(
+                            hintText: 'Say something...',
+                            hintStyle: TextStyle(color: Colors.white54),
+                            border: InputBorder.none,
+                          ),
+                          onSubmitted: (_) => _sendMessage(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    IconButton(
+                      onPressed: _sendMessage,
+                      icon: const Icon(Icons.send_rounded, color: Colors.white),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: _showGiftSheet,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                          color: AppTheme.primaryOrange,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.card_giftcard, color: Colors.white, size: 24),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
+          
+          // 4. Close Button (Top Right)
+          Positioned(
+            top: 40,
+            right: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () => context.pop(),
+            ),
+          ),
+          
+          // 5. Gift Animation Overlay
+          if (_activeGift != null)
+             Positioned.fill(
+               child: Center(
+                 child: ScaleTransition(
+                   scale: _giftScaleAnim,
+                   child: Column(
+                     mainAxisSize: MainAxisSize.min,
+                     children: [
+                       Text(
+                         _activeGift!['giftIcon'],
+                         style: const TextStyle(fontSize: 100),
+                       ),
+                       Container(
+                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                         decoration: BoxDecoration(
+                           color: Colors.black54,
+                           borderRadius: BorderRadius.circular(20),
+                         ),
+                         child: Column(
+                           children: [
+                             Text(
+                               '${_activeGift!['senderName']}',
+                               style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                             ),
+                             Text(
+                               'sent ${_activeGift!['giftName']}',
+                               style: GoogleFonts.outfit(fontSize: 16, color: AppTheme.yellowPrimary),
+                             ),
+                           ],
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+               ),
+             ),
         ],
       ),
     );
   }
-}
-
-class ChatMessage {
-  final String name;
-  final String message;
-  final bool isSystem;
-
-  ChatMessage({required this.name, required this.message, required this.isSystem});
 }
