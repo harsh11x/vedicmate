@@ -5,7 +5,8 @@
 
 import express from 'express';
 import cors from 'cors';
-import { createServer } from 'http';
+import { createServer as createHttpServer } from 'http';
+import { createServer as createHttpsServer } from 'https';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import Razorpay from 'razorpay';
@@ -59,10 +60,35 @@ const __dirname = path.dirname(__filename);
 // ============================================================================
 
 const app = express();
-const httpServer = createServer(app);
+
+// SSL Certificate Setup
+let httpServer;
+let isHttps = false;
+
+try {
+  const keyPath = path.join(__dirname, 'key.pem');
+  const certPath = path.join(__dirname, 'cert.pem');
+
+  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    console.log('🔒 Found SSL Certificates. Starting in HTTPS mode.');
+    const httpsOptions = {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath)
+    };
+    httpServer = createHttpsServer(httpsOptions, app);
+    isHttps = true;
+  } else {
+    console.log('⚠️ No SSL Certificates found. Starting in HTTP mode.');
+    httpServer = createHttpServer(app);
+  }
+} catch (e) {
+  console.error('Error loading certs:', e);
+  httpServer = createHttpServer(app);
+}
+
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://15.207.36.26:3000", "http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    origin: ["https://15.207.36.26:3000", "http://15.207.36.26:3000", "http://localhost:3000", "http://127.0.0.1:3000", "*"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
@@ -1721,11 +1747,12 @@ const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
 httpServer.listen(PORT, HOST, () => {
+  const protocol = isHttps ? 'https' : 'http';
   console.log('');
   console.log('╔══════════════════════════════════════════════════════════════╗');
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
-  console.log(`║  🚀 Server running on http://${HOST}:${PORT}                    ║`);
+  console.log(`║  🚀 Server running on ${protocol}://${HOST}:${PORT}                   ║`);
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
