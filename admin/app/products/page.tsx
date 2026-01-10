@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const API_BASE = "http://15.207.36.26:3001/api";
+const API_BASE = "https://15.207.36.26:3001/api";
 
 interface Product {
     id: string;

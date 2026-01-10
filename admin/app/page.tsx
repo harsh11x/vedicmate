@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { io } from "socket.io-client";
 
-const API_BASE = "http://15.207.36.26:3001/api";
+const API_BASE = "https://15.207.36.26:3001/api";
 
 interface Stats {
   orders: { total: number; pending: number; delivered: number; revenue: number };

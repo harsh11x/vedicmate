@@ -61,7 +61,7 @@ export default function RootLayout({
     // Check server status (Only if authenticated or on dashboard)
     const checkServer = async () => {
       try {
-        const res = await fetch("http://15.207.36.26:3001/api/health", {
+        const res = await fetch("https://15.207.36.26:3001/api/health", {
           signal: AbortSignal.timeout(3000)
         });
         setServerStatus(res.ok ? "connected" : "disconnected");

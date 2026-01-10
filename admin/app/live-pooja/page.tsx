@@ -9,9 +9,11 @@ import { Badge } from '@/components/ui/badge';
 
 // Connect to socket (AWS IP)
 // Connect to socket (AWS IP)
-const socket = io('http://15.207.36.26:3001', {
+const socket = io('https://15.207.36.26:3001', {
     transports: ['websocket'],
-    autoConnect: false
+    autoConnect: false,
+    secure: true,
+    rejectUnauthorized: false // Self-signed certs need this
 });
 
 export default function LivePoojaPage() {

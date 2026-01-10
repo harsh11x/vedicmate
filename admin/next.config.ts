@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  /*
+  devIndicators: {
+    buildActivity: false,
+  },
+  */
 };
 
 export default nextConfig;
