@@ -61,7 +61,7 @@ export default function RootLayout({
     // Check server status (Only if authenticated or on dashboard)
     const checkServer = async () => {
       try {
-        const res = await fetch("http://localhost:3001/api/health", {
+        const res = await fetch("http://127.0.0.1:3001/api/health", {
           signal: AbortSignal.timeout(3000)
         });
         setServerStatus(res.ok ? "connected" : "disconnected");
@@ -147,7 +147,7 @@ export default function RootLayout({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Server Status</p>
-                  <p className="text-sm text-gray-500 mt-0.5">localhost:3001</p>
+                  <p className="text-sm text-gray-500 mt-0.5">127.0.0.1:3001</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`w-3 h-3 rounded-full ${serverStatus === "connected" ? "bg-green-500 animate-pulse" :
