@@ -14,7 +14,8 @@ const inter = Inter({ subsets: ["latin"] });
 const navItems = [
   { href: "/", label: "Dashboard", icon: "📊", description: "Overview & Stats" },
   { href: "/custom-requests", label: "Custom Requests", icon: "🙏", description: "Puja & Havan" },
-  { href: "/live-sessions", label: "Live Sessions", icon: "📹", description: "Video Calls" },
+  { href: "/live-sessions", label: "Video Calls", icon: "📹", description: "1-on-1 Sessions" },
+  { href: "/live-pooja", label: "Live Pooja", icon: "🔥", description: "Daily Streams" },
   { href: "/orders", label: "Orders", icon: "🛒", description: "Product Orders" },
   { href: "/products", label: "Products", icon: "📦", description: "Inventory" },
 ];
