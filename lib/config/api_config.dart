@@ -2,13 +2,13 @@
 class ApiConfig {
   // Backend server URL - Using local network IP for iPhone testing
   // Change to localhost:4000 for simulator or AWS URL for production
-  static const String baseUrl = 'http://15.207.36.26:3001/api';
+  static const String baseUrl = 'http://127.0.0.1:3001/api';
   
-  // For localhost (simulator only):
-  // static const String baseUrl = 'http://localhost:4000/api';
+  // For Android Emulator:
+  // static const String baseUrl = 'http://10.0.2.2:3001/api';
   
   // For production, use your AWS server URL:
-  // static const String baseUrl = 'https://your-aws-server.com/api';
+  // static const String baseUrl = 'http://15.207.36.26:3001/api';
   
   // API Endpoints
   static const String healthEndpoint = '/health';

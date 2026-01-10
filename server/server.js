@@ -62,8 +62,9 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   }
 });
 
@@ -1560,6 +1561,14 @@ app.put('/api/admin/live-sessions/:id/start', (req, res) => {
     // Notify user that session is live
     io.to(`user-${sessions[index].userId}`).emit('session-live', sessions[index]);
     io.emit('live-sessions-update', { action: 'started', session: sessions[index] });
+
+    // Send notification to all users
+    io.emit('notification', {
+      title: 'Live Pooja Started! 🔔',
+      body: `${sessions[index].title} has started. Join now for blessings!`,
+      type: 'live_pooja',
+      data: { sessionId: sessions[index].id }
+    });
 
     res.json({ success: true, data: sessions[index] });
   } catch (error) {

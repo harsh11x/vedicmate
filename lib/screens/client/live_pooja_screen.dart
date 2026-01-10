@@ -21,6 +21,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
   
   List<Map<String, dynamic>> _messages = [];
   Map<String, dynamic>? _activeGift; // For animation
+  bool _isLive = false;
   late AnimationController _giftAnimController;
   late Animation<double> _giftScaleAnim;
 
@@ -78,6 +79,14 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
       print('Connected to Socket for Live Pooja');
       final user = ref.read(authStateProvider).value;
       _socket.emit('join-pooja', {'name': user?.displayName ?? 'User'});
+    });
+
+    _socket.on('session-live', (_) {
+      if (mounted) setState(() => _isLive = true);
+    });
+
+    _socket.on('session-ended', (_) {
+      if (mounted) setState(() => _isLive = false);
     });
 
     _socket.on('new-pooja-message', (data) {
@@ -234,37 +243,50 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. Video Player Placeholder
-          Center(
-            child: Container(
-              color: Colors.black,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Opacity(
-                    opacity: 0.6,
-                    child: Image.network(
-                      'https://img.freepik.com/free-photo/holy-ritual-fire_1157-36067.jpg', // Placeholder
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                    ),
-                  ),
-                  const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
-                  Positioned(
-                    top: 60,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
+          Column(
+            children: [
+              // 2. Video Player Area (Dynamic)
+              Container(
+                height: 250,
+                width: double.infinity,
+                color: Colors.black,
+                child: _isLive
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // In a real app, this would be the video player (e.g., Agora/HLS)
+                          Image.network(
+                            'https://img.freepik.com/premium-photo/hindu-priest-performing-yagya-pooja-temple_1048944-19602.jpg',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                          Container(
+                            color: Colors.black45,
+                          ),
+                          const Icon(Icons.play_circle_fill, color: Colors.white, size: 60),
+                          Positioned(
+                            top: 40,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                            ),
+                          ),
+                        ],
+                      )
+                    : _buildOfflinePlaceholder(),
               ),
-            ),
+              Expanded(
+                child: Container(
+                  color: Colors.black, // Background for the rest of the screen
+                ),
+              ),
+            ],
           ),
 
           // 2. Chat Overlay (Bottom Left)
@@ -467,6 +489,49 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
                  ),
                ),
              ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfflinePlaceholder() {
+    final now = DateTime.now();
+    final hour = now.hour;
+    String message = '';
+    String subMessage = '';
+    IconData icon = Icons.access_time;
+
+    if (hour < 9) {
+      message = 'Pooja starts at 9:00 AM';
+      subMessage = 'Please wait for the divine blessings.';
+      icon = Icons.hourglass_empty;
+    } else if (hour >= 13) {
+      message = 'Pooja has ended';
+      subMessage = 'Join us tomorrow at 9:00 AM.';
+      icon = Icons.bedtime;
+    } else {
+      message = 'Waiting for Panditji...';
+      subMessage = 'The session will start shortly.';
+      icon = Icons.live_tv;
+    }
+
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFF1A1A1A),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 48, color: Colors.orange),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subMessage,
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
+          ),
         ],
       ),
     );
