@@ -186,7 +186,7 @@ class _AllAIPanditsScreenState extends State<AllAIPanditsScreen> {
                         final pandit = filteredPandits[index];
                         return _AIPanditGridCard(
                           pandit: pandit,
-                          onTap: () => context.push('/ai-pandit/profile?panditId=${pandit.id}'),
+                          onTap: () => context.push('/ai-pandit/profile/${pandit.id}'),
                         );
                       },
                       childCount: filteredPandits.length,

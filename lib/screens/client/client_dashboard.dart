@@ -541,14 +541,21 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
+            // All AI Pandits Section (Moved Up)
+            SliverToBoxAdapter(
+              child: AIPanditsSection(
+                title: 'All Pandits',
+                pandits: _filteredPandits,
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
             // Live Pooja Banner
             SliverToBoxAdapter(
               child: LivePoojaBanner(
                 onTap: () {
-                   // Navigate to Live Pooja (Phase 4)
-                   ScaffoldMessenger.of(context).showSnackBar(
-                     const SnackBar(content: Text('Live Pooja starting at 9 AM!')),
-                   );
+                   context.push('/live-pooja');
                 },
               ),
             ),
@@ -579,11 +586,27 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       child: SizedBox(
                         height: 160,
                         child: ActionBox(
+                          title: 'Make Your\nKundli',
+                          subtitle: 'Detailed Insights',
+                          icon: Icons.auto_awesome,
+                          color: const Color(0xFFFFF4E6),
+                          accentColor: Colors.orange,
+                          backgroundImage: 'assets/images/cards/kundli_card_bg_1768067806248.png',
+                          onTap: () => context.push('/kundli/create'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: SizedBox(
+                        height: 160,
+                        child: ActionBox(
                           title: 'Check\nCompatibility',
                           subtitle: 'Love & Relation',
                           icon: Icons.favorite_rounded,
                           color: const Color(0xFFFFEDF2),
                           accentColor: Colors.pink,
+                          backgroundImage: 'assets/images/cards/relationship_card_bg_1768067828750.png',
                           onTap: () => context.push('/relationship/form'), // Phase 3 Route
                         ),
                       ),
@@ -595,13 +618,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-            // All AI Pandits Section
-            SliverToBoxAdapter(
-              child: AIPanditsSection(
-                title: 'All Pandits',
-                pandits: _filteredPandits,
-              ),
-            ),
+
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
             

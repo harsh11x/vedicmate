@@ -7,7 +7,7 @@
     "originalPrice": 1999,
     "category": "rudraksha",
     "images": [
-      "assets/images/remedies/rudraksha.png"
+      "assets/images/remedies/rudraksha_product_1768067899734.png"
     ],
     "inStock": true,
     "isActive": true,
@@ -24,7 +24,7 @@
     "originalPrice": 19999,
     "category": "gemstone",
     "images": [
-      "assets/images/remedies/gemstone.png"
+      "assets/images/remedies/blue_sapphire_product_1768067880867.png"
     ],
     "inStock": true,
     "isActive": true,
@@ -41,7 +41,7 @@
     "originalPrice": 699,
     "category": "mala",
     "images": [
-      "assets/images/remedies/mala.png"
+      "assets/images/remedies/tulsi_mala_product_1767971452239.png"
     ],
     "inStock": true,
     "isActive": true,
@@ -58,7 +58,9 @@
     "originalPrice": 150,
     "category": "puja-items",
     "stock": 50,
-    "images": [],
+    "images": [
+      "assets/images/remedies/test_product_image_1768067945232.png"
+    ],
     "isActive": true,
     "createdAt": "2026-01-05T19:19:52.874Z",
     "updatedAt": "2026-01-05T19:19:52.874Z"
@@ -224,7 +226,7 @@
     "originalPrice": 1099,
     "category": "rudrakshas",
     "images": [
-      "assets/images/remedies/tulsi_mala_product_1767971452239.png"
+      "assets/images/remedies/tulsi_mala_product_1768067860887.png"
     ],
     "inStock": true,
     "isActive": true,

@@ -12,6 +12,19 @@ class RemedyProductScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Extract image safely
+    String imageUrl = '';
+    if (remedy['images'] is List && (remedy['images'] as List).isNotEmpty) {
+      imageUrl = (remedy['images'] as List).first;
+    } else if (remedy['images'] is String) {
+      imageUrl = remedy['images'];
+    } else if (remedy['image'] is String) {
+      imageUrl = remedy['image'];
+    }
+
+    // Extract name safely
+    final productName = remedy['name'] ?? remedy['title'] ?? 'Product';
+
     return Scaffold(
       backgroundColor: AppTheme.white,
       body: CustomScrollView(
@@ -49,7 +62,7 @@ class RemedyProductScreen extends ConsumerWidget {
                         child: const Icon(Icons.shopping_cart_outlined, color: AppTheme.neutralDark),
                       ),
                       onPressed: () {
-                         // TODO: Navigate to Cart
+                         context.push('/cart');
                       },
                     ),
                     if (itemCount > 0)
@@ -81,10 +94,7 @@ class RemedyProductScreen extends ConsumerWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    remedy['image'],
-                    fit: BoxFit.cover,
-                  ),
+                  _buildImage(imageUrl),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -138,7 +148,7 @@ class RemedyProductScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          remedy['category'],
+                          remedy['category'] ?? 'General',
                           style: TextStyle(
                             color: AppTheme.primaryOrange,
                             fontWeight: FontWeight.w600,
@@ -162,7 +172,7 @@ class RemedyProductScreen extends ConsumerWidget {
 
                   // Title & Price
                   Text(
-                    remedy['name'] ?? remedy['title'],
+                    productName,
                     style: GoogleFonts.outfit(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -194,7 +204,7 @@ class RemedyProductScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: Colors.red.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -222,7 +232,7 @@ class RemedyProductScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    remedy['description'],
+                    remedy['description'] ?? 'No description available.',
                     style: TextStyle(
                       fontSize: 16,
                       color: AppTheme.neutralMedium,
@@ -233,43 +243,45 @@ class RemedyProductScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
 
                   // Benefits
-                  Text(
-                    'Key Benefits',
-                    style: GoogleFonts.outfit(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.neutralDark,
+                  if (remedy['benefits'] != null && remedy['benefits'] is List) ...[
+                    Text(
+                      'Key Benefits',
+                      style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutralDark,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: (remedy['benefits'] as List<String>).map((benefit) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppTheme.neutralSoft,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.neutralLight),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.check_circle_outline, size: 16, color: AppTheme.successGreen),
-                            const SizedBox(width: 8),
-                            Text(
-                              benefit,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: AppTheme.neutralDark,
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: (remedy['benefits'] as List).map((benefit) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.neutralSoft,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppTheme.neutralLight),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.check_circle_outline, size: 16, color: AppTheme.successGreen),
+                              const SizedBox(width: 8),
+                              Text(
+                                benefit.toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.neutralDark,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                   
                   const SizedBox(height: 100), // Space for bottom bar
                 ],
@@ -298,13 +310,13 @@ class RemedyProductScreen extends ConsumerWidget {
                   onPressed: () {
                     ref.read(cartProvider.notifier).addToCart(
                       remedy['id'],
-                      remedy['title'],
+                      productName,
                       (remedy['price'] as num).toDouble(),
-                      remedy['image'],
+                      imageUrl,
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${remedy['title']} added to cart'),
+                        content: Text('$productName added to cart'),
                         backgroundColor: AppTheme.successGreen,
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -358,6 +370,44 @@ class RemedyProductScreen extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+  Widget _buildImage(String path) {
+    if (path.isEmpty) return _buildPlaceholder();
+    
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _buildPlaceholder(),
+      );
+    } else if (path.startsWith('assets/')) {
+        return Image.network(
+          // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
+          'http://15.207.36.26:3001/$path', 
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stack) {
+             return Image.asset(
+                path,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildPlaceholder(),
+             );
+          }
+        );
+    } 
+    return _buildPlaceholder();
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: AppTheme.neutralLight,
+      child: Center(
+        child: Icon(
+          Icons.spa,
+          size: 80,
+          color: AppTheme.primaryOrange.withOpacity(0.3),
         ),
       ),
     );
