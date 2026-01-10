@@ -130,7 +130,7 @@ export default function LivePoojaPage() {
                 }
             } catch (err) {
                 console.error("Error accessing camera:", err);
-                alert("Could not access camera. Ensure you are on localhost/HTTPS and have granted permissions.");
+                // alert("Could not access camera. Ensure you are on localhost/HTTPS and have granted permissions.");
             }
         };
 

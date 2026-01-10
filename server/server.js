@@ -614,22 +614,22 @@ io.on('connection', (socket) => {
   socket.on('join-pooja', (user) => {
     socket.join('live-pooja-room');
 
-    // Update viewer count
+    // Update viewer count (Exclude Admin)
     const viewers = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
-    io.to('live-pooja-room').emit('viewer-update', { count: viewers });
+    io.to('live-pooja-room').emit('viewer-update', { count: Math.max(0, viewers - 1) });
 
     // Notify others (Signaling for WebRTC)
     socket.to('live-pooja-room').emit('user-joined', { userId: socket.id });
 
     if (user && user.name) {
-      console.log(`User ${user.name} joined Live Pooja (Total: ${viewers})`);
+      console.log(`User ${user.name} joined Live Pooja (Total Users: ${viewers})`);
     }
   });
 
   socket.on('leave-pooja', () => {
     socket.leave('live-pooja-room');
     const viewers = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
-    io.to('live-pooja-room').emit('viewer-update', { count: viewers });
+    io.to('live-pooja-room').emit('viewer-update', { count: Math.max(0, viewers - 1) });
   });
 
   // WebRTC Signaling Events
