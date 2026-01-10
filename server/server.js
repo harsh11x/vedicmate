@@ -5,90 +5,21 @@
 
 import express from 'express';
 import cors from 'cors';
-import { createServer as createHttpServer } from 'http';
-import { createServer as createHttpsServer } from 'https';
-import { Server } from 'socket.io';
-import dotenv from 'dotenv';
-import Razorpay from 'razorpay';
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import axios from 'axios';
-import nodemailer from 'nodemailer'; // Added Nodemailer
+import { createServer } from 'https'; // Changed to https
+import { readFileSync } from 'fs';
+// ... other imports
 
-dotenv.config();
-
-// ... (rest of imports)
-
-// EMAIL CONFIGURATION
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // Use your preferred service
-  auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-app-password'
-  }
-});
-
-const sendEmailNotification = async (subject, htmlContent) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.log('⚠️ Email credentials not found. Skipping email notification.');
-    console.log(`[Mock Email] Subject: ${subject}`);
-    return;
-  }
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER, // Send to admin
-    subject: `[VedicMate Admin] ${subject}`,
-    html: htmlContent
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('📧 Email notification sent successfully');
-  } catch (error) {
-    console.error('❌ Failed to send email:', error);
-  }
+// Load Certificates
+const httpsOptions = {
+  key: readFileSync(path.join(process.cwd(), 'certs', 'server.key')),
+  cert: readFileSync(path.join(process.cwd(), 'certs', 'server.cert'))
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// ============================================================================
-// APP & SERVER SETUP
-// ============================================================================
-
 const app = express();
-
-// SSL Certificate Setup
-let httpServer;
-let isHttps = false;
-
-try {
-  const keyPath = path.join(__dirname, 'key.pem');
-  const certPath = path.join(__dirname, 'cert.pem');
-
-  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
-    console.log('🔒 Found SSL Certificates. Starting in HTTPS mode.');
-    const httpsOptions = {
-      key: fs.readFileSync(keyPath),
-      cert: fs.readFileSync(certPath)
-    };
-    httpServer = createHttpsServer(httpsOptions, app);
-    isHttps = true;
-  } else {
-    console.log('⚠️ No SSL Certificates found. Starting in HTTP mode.');
-    httpServer = createHttpServer(app);
-  }
-} catch (e) {
-  console.error('Error loading certs:', e);
-  httpServer = createHttpServer(app);
-}
-
+const httpServer = createServer(httpsOptions, app); // Using HTTPS
 const io = new Server(httpServer, {
   cors: {
-    origin: ["https://15.207.36.26:3000", "http://15.207.36.26:3000", "http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    origin: ["http://15.207.36.26:3000", "http://localhost:3000", "https://localhost:3000", "https://15.207.36.26:3000", "*"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
@@ -1747,12 +1678,11 @@ const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
 httpServer.listen(PORT, HOST, () => {
-  const protocol = isHttps ? 'https' : 'http';
   console.log('');
   console.log('╔══════════════════════════════════════════════════════════════╗');
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
-  console.log(`║  🚀 Server running on ${protocol}://${HOST}:${PORT}                   ║`);
+  console.log(`║  🚀 Server running on https://${HOST}:${PORT}                   ║`);
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
