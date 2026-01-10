@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/api_providers.dart';
+import '../../config/api_config.dart';
 
 class RemediesScreen extends ConsumerStatefulWidget {
   const RemediesScreen({super.key});
@@ -94,8 +95,8 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppTheme.primaryOrange.withOpacity(0.1),
-                        AppTheme.yellowPrimary.withOpacity(0.05),
+                        AppTheme.primaryOrange.withValues(alpha: 0.1),
+                        AppTheme.yellowPrimary.withValues(alpha: 0.05),
                       ],
                     ),
                   ),
@@ -224,9 +225,11 @@ class _RemedyCard extends ConsumerWidget {
       imageUrl = remedy['images'];
     }
     
-    // Ensure imageUrl is full URL if it's relative
-    if (!imageUrl.startsWith('http') && !imageUrl.startsWith('assets/')) {
-       // Assuming it's served from server assets, but for now strict check
+    final double price = (remedy['price'] as num?)?.toDouble() ?? 0.0;
+    final double originalPrice = (remedy['originalPrice'] as num?)?.toDouble() ?? (price * 1.3);
+    int discountPercent = 0;
+    if (originalPrice > price) {
+      discountPercent = ((originalPrice - price) / originalPrice * 100).round();
     }
 
     return Container(
@@ -235,7 +238,7 @@ class _RemedyCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -253,8 +256,8 @@ class _RemedyCard extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppTheme.primaryOrange.withOpacity(0.2),
-                  AppTheme.yellowPrimary.withOpacity(0.1),
+                  AppTheme.primaryOrange.withValues(alpha: 0.2),
+                  AppTheme.yellowPrimary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: const BorderRadius.vertical(
@@ -269,6 +272,25 @@ class _RemedyCard extends ConsumerWidget {
                 ),
                 Positioned(
                   top: 12,
+                  left: 12, // Badge on left
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.errorRed,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '$discountPercent% OFF',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
                   right: 12,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -277,7 +299,7 @@ class _RemedyCard extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                         ),
                       ],
@@ -302,38 +324,40 @@ class _RemedyCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title and Price
+                // Title
+                Text(
+                  remedy['name'] ?? remedy['title'] ?? 'Product',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: AppTheme.neutralDark,
+                      ),
+                ),
+                const SizedBox(height: 8),
+
+                // Pricing Row
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Expanded(
-                      child: Text(
-                        remedy['name'] ?? remedy['title'] ?? 'Product',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: AppTheme.neutralDark,
-                            ),
+                    Text(
+                      '₹$price',
+                      style: const TextStyle(
+                        color: AppTheme.textDark,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '₹${remedy['price']}',
-                        style: const TextStyle(
-                          color: AppTheme.textDark,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                    const SizedBox(width: 8),
+                    if (discountPercent > 0)
+                      Text(
+                        '₹$originalPrice',
+                        style: TextStyle(
+                          color: AppTheme.neutralMedium,
+                          fontSize: 14,
+                          decoration: TextDecoration.lineThrough,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
                   ],
                 ),
 
@@ -420,6 +444,8 @@ class _RemedyCard extends ConsumerWidget {
   }
 
   Widget _buildImage(String path) {
+    if (path.isEmpty) return _buildPlaceholder();
+
     if (path.startsWith('http')) {
       return Image.network(
         path,
@@ -429,21 +455,14 @@ class _RemedyCard extends ConsumerWidget {
         errorBuilder: (_, __, ___) => _buildPlaceholder(),
       );
     } else if (path.startsWith('assets/')) {
-        // Since we are likely using a server path like 'assets/images/...', 
-        // we might need to construct the full URL if we can, OR if it's a bundled asset
-        // But for dynamic data from server, we should ideally construct the full URL in the Service.
-        // Assuming the server returns relative path, we'll try to use ApiClient's base URL logic ideally, but here:
-        // For now, if it's from JSON it could be treated as network image if we prepend base URL or as local asset if bundled.
-        // ACTUALLY: Since we uploaded to server, we want Image.network with full URL.
-        // But the previous code used Image.asset.
+        // Construct full URL using ApiConfig
+        final fullUrl = '${ApiConfig.baseUrl.replaceAll('/api', '')}/$path';
         return Image.network(
-          // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS - ideally use EnvConfig
-          'http://15.207.36.26:3001/$path', 
+          fullUrl, 
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stack) {
-             // Fallback to asset if connection fails (for old hybrid state or cache)
              return Image.asset(
                 path,
                 width: double.infinity,
@@ -462,7 +481,7 @@ class _RemedyCard extends ConsumerWidget {
       child: Icon(
         Icons.spa,
         size: 80,
-        color: AppTheme.primaryOrange.withOpacity(0.3),
+        color: AppTheme.primaryOrange.withValues(alpha: 0.3),
       ),
     );
   }

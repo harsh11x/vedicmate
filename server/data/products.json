@@ -51,19 +51,6 @@
     "updatedAt": "2026-01-05T16:49:44.049Z"
   },
   {
-    "id": "product_1767640792874",
-    "name": "Test Product",
-    "description": "This is a test product for verification.",
-    "price": 100,
-    "originalPrice": 150,
-    "category": "puja-items",
-    "stock": 50,
-    "images": [],
-    "isActive": true,
-    "createdAt": "2026-01-05T19:19:52.874Z",
-    "updatedAt": "2026-01-05T19:19:52.874Z"
-  },
-  {
     "id": "rudraksha_mala",
     "name": "Rudraksha Mala",
     "description": "Authentic Rudraksha mala for spiritual protection and positive energy. Made from genuine Rudraksha beads sourced from Nepal.",

@@ -33,6 +33,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           _OverviewTab(),
           _PanditsTab(),
           _MonitoringTab(),
+          _LivePoojaTab(),
           _SettingsTab(),
         ],
       ),
@@ -56,6 +57,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
             icon: Icon(Icons.monitor_outlined),
             selectedIcon: Icon(Icons.monitor),
             label: 'Monitor',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.live_tv_outlined),
+            selectedIcon: Icon(Icons.live_tv),
+            label: 'Live Pooja',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
@@ -809,6 +815,165 @@ class _SettingsTile extends StatelessWidget {
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
+      ),
+    );
+  }
+}
+
+class _LivePoojaTab extends StatelessWidget {
+  const _LivePoojaTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Live Pooja Control',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.red),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.circle, size: 12, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('OFFLINE', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  const Icon(Icons.live_tv, size: 64, color: AppTheme.neutralMedium),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Daily Havan & Pooja',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('Schedule: 09:00 AM - 01:00 PM'),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Starting Live Pooja...')));
+                          },
+                          icon: const Icon(Icons.play_arrow),
+                          label: const Text('START SESSION'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.successGreen,
+                            padding: const EdgeInsets.all(16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.stop), 
+                          label: const Text('STOP SESSION'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.all(16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         const Text('Live Chat', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                         const Divider(),
+                         SizedBox(
+                           height: 400,
+                           child: ListView.builder(
+                             itemCount: 5,
+                             itemBuilder: (context, index) {
+                               return ListTile(
+                                 leading: const CircleAvatar(child: Icon(Icons.person, size: 16)),
+                                 title: const Text('Devotee'),
+                                 subtitle: Text('Har Har Mahadev ${index + 1} 🙏'),
+                                 dense: true,
+                               );
+                             },
+                           ),
+                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 1,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         const Text('Recent Offerings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                         const Divider(),
+                         SizedBox(
+                           height: 400,
+                           child: ListView.builder(
+                             itemCount: 3,
+                             itemBuilder: (context, index) {
+                               return const ListTile(
+                                 leading: CircleAvatar(
+                                   backgroundColor: AppTheme.yellowPrimary,
+                                   child: Text('🎁'),
+                                 ),
+                                 title: Text('Gold Coin'),
+                                 subtitle: Text('from User A'),
+                                 trailing: Text('₹5001'),
+                               );
+                             },
+                           ),
+                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

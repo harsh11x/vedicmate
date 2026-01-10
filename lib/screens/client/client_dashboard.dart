@@ -558,7 +558,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                 padding: EdgeInsets.symmetric(
                   horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
                 ),
-                child: const _CreateKundliBox(),
+                child: const _HomeActionButtons(),
               ),
             ),
 
@@ -1979,122 +1979,200 @@ class _QuickActionCard extends StatelessWidget {
   }
 }
 
-// Create Kundli Box Widget
-class _CreateKundliBox extends StatelessWidget {
-  const _CreateKundliBox();
+class _HomeActionButtons extends StatelessWidget {
+  const _HomeActionButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Live Pooja Card
+        GestureDetector(
+          onTap: () => context.push('/live-pooja'),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFF416C), Color(0xFFFF4B2B)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFF4B2B).withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.live_tv_rounded, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'LIVE POOJA',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'LIVE',
+                              style: TextStyle(
+                                color: Color(0xFFFF4B2B),
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Join Daily Havan',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '9:00 AM - 1:00 PM',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
+              ],
+            ),
+          ),
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // Row for Kundli and Relationship
+        Row(
+          children: [
+            Expanded(
+              child: _HomeActionCard(
+                title: 'Make Kundli',
+                icon: Icons.article_rounded,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF6B4DFF), Color(0xFF8F73FF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                onTap: () => context.push('/kundli/create'),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _HomeActionCard(
+                title: 'Relationship',
+                icon: Icons.favorite_rounded,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFE91E63), Color(0xFFC2185B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                onTap: () => context.push('/relationship/match'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _HomeActionCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Gradient gradient;
+  final VoidCallback onTap;
+
+  const _HomeActionCard({
+    required this.title,
+    required this.icon,
+    required this.gradient,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push('/kundli/create'),
+      onTap: onTap,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
+        height: 120,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF6B4DFF), // Violet
-              Color(0xFF8F73FF), // Lighter Violet
-            ],
-          ),
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFF6B4DFF).withOpacity(0.3),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-              spreadRadius: 0,
+              color: (gradient.colors.firstOrNull ?? Colors.black).withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Stack(
           children: [
-            // Background Pattern
+            // Decorative background icon
             Positioned(
-              right: -20,
-              top: -20,
+              right: -10,
+              bottom: -10,
               child: Opacity(
                 opacity: 0.1,
-                child: Icon(
-                  Icons.auto_awesome,
-                  size: 150,
-                  color: Colors.white,
-                ),
+                child: Icon(icon, color: Colors.white, size: 80),
               ),
             ),
-            
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.2)),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.star_rounded, color: Colors.amberAccent, size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Most Popular',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: Icon(icon, color: Colors.white, size: 24),
                 ),
-                const SizedBox(height: 16),
                 Text(
-                  'Make Your Kundli',
-                  style: TextStyle(
+                  title,
+                  style: GoogleFonts.outfit(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Get detailed insights about your life path, relationships, and career with our advanced Vedic charts.',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Create Now',
-                        style: TextStyle(
-                          color: Color(0xFF6B4DFF),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        color: Color(0xFF6B4DFF),
-                        size: 16,
-                      ),
-                    ],
                   ),
                 ),
               ],

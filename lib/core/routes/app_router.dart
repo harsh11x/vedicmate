@@ -37,6 +37,8 @@ import '../../screens/client/kundli/create_kundli_screen.dart';
 import '../../screens/client/order_history_screen.dart';
 import '../../screens/client/order_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../screens/client/live_pooja_screen.dart';
+import '../../screens/client/relationship_match_screen.dart';
 
 final initialRouteProvider = Provider<String>((ref) => '/splash');
 
@@ -334,6 +336,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           final orderId = state.pathParameters['id']!;
           return OrderDetailScreen(orderId: orderId);
         },
+      ),
+      GoRoute(
+        path: '/live-pooja',
+        builder: (context, state) => const LivePoojaScreen(),
+      ),
+      GoRoute(
+        path: '/relationship/match',
+        builder: (context, state) => const RelationshipMatchScreen(),
       ),
     ],
   );

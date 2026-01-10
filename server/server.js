@@ -606,6 +606,23 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('join-live', () => {
+    socket.join('live-pooja');
+    state.liveViewerCount = (state.liveViewerCount || 100) + 1;
+    io.to('live-pooja').emit('live-update', { viewerCount: state.liveViewerCount });
+  });
+
+  socket.on('leave-live', () => {
+    socket.leave('live-pooja');
+    state.liveViewerCount = Math.max(0, (state.liveViewerCount || 100) - 1);
+    io.to('live-pooja').emit('live-update', { viewerCount: state.liveViewerCount });
+  });
+
+  socket.on('send-gift', (data) => {
+    // data: { senderName, giftName, amount }
+    io.to('live-pooja').emit('new-gift', data);
+  });
+
   socket.on('disconnect', () => {
     console.log(`Client disconnected: ${socket.id}`);
   });
@@ -711,6 +728,48 @@ app.get('/api/wallet/transactions/:userId', (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+// ==================== RELATIONSHIP ENDPOINTS ====================
+
+app.post('/api/relationship/match', (req, res) => {
+  try {
+    const { male, female } = req.body;
+    // Mock logic for compatibility
+    const score = Math.floor(Math.random() * (36 - 18 + 1)) + 18; // Random score between 18 and 36
+    const mental = Math.random() * 0.5 + 0.5; // 0.5 to 1.0
+    const financial = Math.random() * 0.5 + 0.5;
+    const family = Math.random() * 0.5 + 0.5;
+
+    res.json({
+      success: true,
+      data: {
+        score: score,
+        total: 36,
+        mental: mental,
+        financial: financial,
+        family: family,
+        conclusion: score > 28 ? 'Excellent Match' : 'Good Match',
+        description: 'This match indicates a strong karmic connection. The Guna Milap score suggests high compatibility.'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== LIVE POOJA ADMIN ENDPOINTS ====================
+
+app.post('/api/admin/live/start', (req, res) => {
+  state.isLive = true;
+  io.emit('live-status', { isLive: true });
+  res.json({ success: true, message: 'Live Pooja Started' });
+});
+
+app.post('/api/admin/live/stop', (req, res) => {
+  state.isLive = false;
+  io.emit('live-status', { isLive: false });
+  res.json({ success: true, message: 'Live Pooja Stopped' });
 });
 
 // ==================== PRODUCTS ENDPOINTS ====================
