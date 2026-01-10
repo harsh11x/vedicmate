@@ -5,9 +5,22 @@
 
 import express from 'express';
 import cors from 'cors';
-import { createServer } from 'https'; // Changed to https
+import { createServer } from 'https';
 import { readFileSync } from 'fs';
-// ... other imports
+import { Server } from 'socket.io';
+import dotenv from 'dotenv';
+import Razorpay from 'razorpay';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import axios from 'axios';
+import nodemailer from 'nodemailer';
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load Certificates
 const httpsOptions = {
