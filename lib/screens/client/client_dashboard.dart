@@ -568,20 +568,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 160,
-                        child: ActionBox(
-                          title: 'Make Your\nKundli',
-                          subtitle: 'Detailed Insights',
-                          icon: Icons.auto_awesome,
-                          color: const Color(0xFFFFF4E6),
-                          accentColor: Colors.orange,
-                          onTap: () => context.push('/kundli/create'),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
+
                     Expanded(
                       child: SizedBox(
                         height: 160,

@@ -168,12 +168,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        item['image'],
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                      ),
+                      child: _buildImage(item['image'] ?? ''),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -181,7 +176,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item['title'],
+                            item['title'] ?? item['name'] ?? 'Product',
                             style: GoogleFonts.outfit(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -309,6 +304,58 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      ),
+    );
+  }
+
+  Widget _buildImage(String path) {
+    if (path.isEmpty) return const _PlaceholderImage();
+    
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const _PlaceholderImage(),
+      );
+    } else if (path.startsWith('assets/')) {
+        return Image.network(
+          // HARDCODING BASE URL TO PREVENT LOCALHOST ISSUES ON DEVICE
+          'http://15.207.36.26:3001/$path', 
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stack) {
+             return Image.asset(
+                path,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const _PlaceholderImage(),
+             );
+          }
+        );
+    } 
+    return const _PlaceholderImage();
+  }
+}
+
+class _PlaceholderImage extends StatelessWidget {
+  const _PlaceholderImage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      height: 80,
+      color: AppTheme.neutralSoft,
+      child: Center(
+        child: Icon(
+          Icons.spa,
+          color: AppTheme.neutralMedium.withOpacity(0.3),
+          size: 30,
+        ),
       ),
     );
   }
