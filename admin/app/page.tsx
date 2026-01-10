@@ -136,10 +136,54 @@ export default function Dashboard() {
           <span className="text-2xl">⚠️</span>
           <div>
             <p className="font-semibold text-red-700">{error}</p>
-            <p className="text-sm text-red-500">Make sure the backend server is running on port 4000</p>
+            <p className="text-sm text-red-500">Make sure the backend server is running on port 3001</p>
           </div>
         </div>
       )}
+
+      {/* DAILY LIVE POOJA QUICK CONTROL */}
+      <div className="bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl p-6 text-white shadow-xl shadow-red-200">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-3xl animate-pulse">
+              🔥
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">Daily Havan & Pooja</h2>
+              <p className="text-red-100">Schedule: 09:00 AM - 01:00 PM</p>
+              <div className="flex items-center gap-2 mt-2">
+                <div className={`w-3 h-3 rounded-full ${stats?.liveSessions.live && stats.liveSessions.live > 0 ? 'bg-green-400 animate-ping' : 'bg-red-200'}`}></div>
+                <span className="text-sm font-semibold">{stats?.liveSessions.live && stats.liveSessions.live > 0 ? 'LIVE NOW' : 'OFFLINE'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-4 w-full md:w-auto">
+            <button
+              onClick={async () => {
+                try {
+                  await fetch(`${API_BASE}/admin/live/start`, { method: 'POST' });
+                  fetchStats();
+                } catch (e) { alert('Failed to start'); }
+              }}
+              className="flex-1 md:flex-none px-6 py-3 bg-white text-red-600 font-bold rounded-xl hover:bg-red-50 transition-colors shadow-lg"
+            >
+              ▶ START STREAM
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await fetch(`${API_BASE}/admin/live/stop`, { method: 'POST' });
+                  fetchStats();
+                } catch (e) { alert('Failed to stop'); }
+              }}
+              className="flex-1 md:flex-none px-6 py-3 bg-red-800/50 text-white font-bold rounded-xl hover:bg-red-800 transition-colors border border-red-400"
+            >
+              ⏹ STOP
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Welcome Section */}
       <div className="flex items-center justify-between mb-8">
@@ -206,8 +250,8 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${req.status === 'pending' ? 'bg-yellow-50 text-yellow-600' :
-                          req.status === 'scheduled' ? 'bg-blue-50 text-blue-600' :
-                            req.status === 'completed' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                        req.status === 'scheduled' ? 'bg-blue-50 text-blue-600' :
+                          req.status === 'completed' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                         }`}>
                         {req.status}
                       </span>
