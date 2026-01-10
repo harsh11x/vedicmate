@@ -1,11 +1,11 @@
 /// API Configuration for Vedic Mate Backend
 class ApiConfig {
-  // Backend server URL - Using local network IP for iPhone testing
+  // Backend server URL - AWS Production
   // Change to localhost:4000 for simulator or AWS URL for production
-  static const String baseUrl = 'http://127.0.0.1:3001/api';
+  static const String baseUrl = 'http://15.207.36.26:3001/api';
   
-  // For Android Emulator:
-  // static const String baseUrl = 'http://10.0.2.2:3001/api';
+  // For Localhost:
+  // static const String baseUrl = 'http://127.0.0.1:3001/api';
   
   // For production, use your AWS server URL:
   // static const String baseUrl = 'http://15.207.36.26:3001/api';

@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
-// Connect to socket (use 127.0.0.1 for local dev to match server fix)
-const socket = io('http://127.0.0.1:3001', {
+// Connect to socket (AWS IP)
+const socket = io('http://15.207.36.26:3001', {
     transports: ['websocket'],
     autoConnect: false
 });
