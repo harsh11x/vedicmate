@@ -735,7 +735,7 @@ class _TimelineItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, hh:mm a');
-    final color = isCompleted ? status.color : AppTheme.neutralLight;
+    final color = isCompleted ? status.color : AppTheme.forestBackground;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -772,7 +772,7 @@ class _TimelineItem extends StatelessWidget {
               Container(
                 width: 2,
                 height: 40,
-                color: isCompleted ? color : AppTheme.neutralLight,
+                color: isCompleted ? color : AppTheme.forestBackground,
               ),
           ],
         ),

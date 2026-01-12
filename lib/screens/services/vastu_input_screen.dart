@@ -117,7 +117,7 @@ class _VastuInputScreenState extends State<VastuInputScreen> {
                       color: AppTheme.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: _imageFile != null ? AppTheme.successGreen : AppTheme.neutralLight,
+                        color: _imageFile != null ? AppTheme.successGreen : AppTheme.forestBackground,
                         width: 2,
                         style: _imageFile != null ? BorderStyle.solid : BorderStyle.solid,
                       ),
@@ -176,7 +176,7 @@ class _VastuInputScreenState extends State<VastuInputScreen> {
                     fillColor: AppTheme.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: AppTheme.neutralLight),
+                      borderSide: const BorderSide(color: AppTheme.forestBackground),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),

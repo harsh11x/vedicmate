@@ -203,7 +203,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> with 
                                 colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
                               )
                             : null,
-                        color: _selectedCategory == null ? AppTheme.neutralLight : null,
+                        color: _selectedCategory == null ? AppTheme.forestBackground : null,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: _selectedCategory != null
                             ? [
@@ -294,7 +294,7 @@ class _CategoryCard extends StatelessWidget {
           color: isSelected ? null : AppTheme.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? Colors.transparent : AppTheme.neutralLight,
+            color: isSelected ? Colors.transparent : AppTheme.forestBackground,
             width: 2,
           ),
           boxShadow: [

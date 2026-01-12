@@ -273,7 +273,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
                       decoration: BoxDecoration(
                         color: AppTheme.neutralSoft,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.neutralLight),
+                        border: Border.all(color: AppTheme.forestBackground),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

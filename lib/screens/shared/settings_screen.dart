@@ -85,7 +85,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     end: Alignment.bottomRight,
                     colors: [
                       AppTheme.primaryOrange,
-                      AppTheme.primaryDeep,
+                      AppTheme.forestDark,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(24),
@@ -945,7 +945,7 @@ class _SettingsTile extends StatelessWidget {
               if (trailing != null)
                 trailing!
               else if (onTap != null)
-                Icon(Icons.chevron_right, color: AppTheme.neutralLight, size: 22),
+                Icon(Icons.chevron_right, color: AppTheme.forestBackground, size: 22),
             ],
           ),
         ),
@@ -964,7 +964,7 @@ class _Divider extends StatelessWidget {
       child: Divider(
         height: 1,
         thickness: 1,
-        color: AppTheme.neutralLight.withOpacity(0.5),
+        color: AppTheme.forestBackground.withOpacity(0.5),
       ),
     );
   }

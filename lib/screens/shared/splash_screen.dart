@@ -42,19 +42,27 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFAFAFA), // Hardcoded 'Divine Background' to avoid import circle if any
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               'assets/images/logo.png',
-              width: 200, 
-              height: 200,
-              errorBuilder: (_, __, ___) => const Icon(Icons.star, size: 80, color: Colors.orange),
+              width: 150, 
+              height: 150,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => const Icon(Icons.auto_awesome, size: 80, color: Color(0xFFC39130)),
             ),
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(color: Colors.orange), 
+            const SizedBox(height: 32),
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                color: Color(0xFF121212), // Divine Primary
+                strokeWidth: 2,
+              ),
+            ), 
           ],
         ),
       ),

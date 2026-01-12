@@ -212,7 +212,7 @@ class AIPanditProfileScreen extends StatelessWidget {
                   const SizedBox(height: 32),
                   
                   // Context Divider
-                  Divider(color: AppTheme.neutralLight, thickness: 1),
+                  Divider(color: AppTheme.forestBackground, thickness: 1),
                   const SizedBox(height: 32),
 
                   // Bio Section
@@ -263,7 +263,7 @@ class AIPanditProfileScreen extends StatelessWidget {
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 18),
-                    side: BorderSide(color: AppTheme.neutralLight, width: 2),
+                    side: BorderSide(color: AppTheme.forestBackground, width: 2),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
@@ -332,7 +332,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.neutralLight.withOpacity(0.5),
+        color: AppTheme.forestBackground.withOpacity(0.5),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.transparent),
       ),

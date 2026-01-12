@@ -291,7 +291,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         prefixIcon: Icon(icon, color: AppTheme.neutralMedium),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppTheme.neutralLight),
+          borderSide: BorderSide(color: AppTheme.forestBackground),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -322,7 +322,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     } else if (path.startsWith('assets/')) {
         return Image.network(
           // HARDCODING BASE URL TO PREVENT LOCALHOST ISSUES ON DEVICE
-          'http://15.207.36.26:3001/$path', 
+          'https://15.207.36.26:3001/$path', 
           width: 80,
           height: 80,
           fit: BoxFit.cover,

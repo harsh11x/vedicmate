@@ -143,7 +143,7 @@ class LagnaChartPainter extends CustomPainter {
     // Text Styles
     final houseNumStyle = TextStyle(
       fontSize: 10, 
-      color: AppTheme.primaryDeep.withOpacity(0.5), 
+      color: AppTheme.forestDark.withOpacity(0.5), 
       fontWeight: FontWeight.bold
     );
     final signStyle = TextStyle(
@@ -182,7 +182,7 @@ class LagnaChartPainter extends CustomPainter {
     double offsetY = 15;
     final planetStyle = TextStyle(
       fontSize: 9, 
-      color: AppTheme.primaryDeep, 
+      color: AppTheme.forestDark, 
       fontWeight: FontWeight.bold
     );
 

@@ -137,7 +137,7 @@ class OrderHistoryScreen extends ConsumerWidget {
                         ),
                         backgroundColor: AppTheme.white,
                         side: BorderSide(
-                          color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralLight,
+                          color: isSelected ? AppTheme.primaryOrange : AppTheme.forestBackground,
                         ),
                       ),
                     );

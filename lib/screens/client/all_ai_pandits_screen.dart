@@ -59,7 +59,7 @@ class _AllAIPanditsScreenState extends State<AllAIPanditsScreen> {
     final filteredPandits = _getFilteredPandits();
 
     return Scaffold(
-      backgroundColor: AppTheme.neutralLight,
+      backgroundColor: AppTheme.forestBackground,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -68,7 +68,7 @@ class _AllAIPanditsScreenState extends State<AllAIPanditsScreen> {
             floating: true,
             pinned: true,
             expandedHeight: 120,
-            backgroundColor: AppTheme.neutralLight,
+            backgroundColor: AppTheme.forestBackground,
             elevation: 0,
             leading: Padding(
               padding: const EdgeInsets.only(left: 16),
@@ -90,7 +90,7 @@ class _AllAIPanditsScreenState extends State<AllAIPanditsScreen> {
                    color: AppTheme.neutralDark,
                 ),
               ),
-              background: Container(color: AppTheme.neutralLight),
+              background: Container(color: AppTheme.forestBackground),
             ),
           ),
 
@@ -268,12 +268,12 @@ class _AIPanditGridCard extends StatelessWidget {
                       ? Image.asset(
                           pandit.profileImage,
                           fit: BoxFit.cover,
-                          errorBuilder: (c, e, s) => Container(color: AppTheme.neutralLight, child: const Icon(Icons.person, color: AppTheme.neutralMedium)),
+                          errorBuilder: (c, e, s) => Container(color: AppTheme.forestBackground, child: const Icon(Icons.person, color: AppTheme.neutralMedium)),
                         )
                       : Image.network(
                           pandit.profileImage,
                           fit: BoxFit.cover,
-                           errorBuilder: (c, e, s) => Container(color: AppTheme.neutralLight, child: const Icon(Icons.person, color: AppTheme.neutralMedium)),
+                           errorBuilder: (c, e, s) => Container(color: AppTheme.forestBackground, child: const Icon(Icons.person, color: AppTheme.neutralMedium)),
                         ),
                   
                   // Gradient Overlay
@@ -356,7 +356,7 @@ class _AIPanditGridCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.outfit(
                             fontSize: 12,
-                            color: AppTheme.primaryDeep,
+                            color: AppTheme.forestDark,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -377,7 +377,7 @@ class _AIPanditGridCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: AppTheme.neutralLight,
+                            color: AppTheme.forestBackground,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

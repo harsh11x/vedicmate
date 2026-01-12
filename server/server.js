@@ -1684,6 +1684,188 @@ app.get('/api/bookings', (req, res) => {
 });
 
 // ============================================================================
+// REELS FEATURE API
+// ============================================================================
+
+const REELS_FILE = path.join(DATA_DIR, 'reels.json');
+
+// Initialize Reels File
+if (!fs.existsSync(REELS_FILE)) {
+  fs.writeFileSync(REELS_FILE, JSON.stringify([], null, 2));
+  console.log('📄 Created reels.json');
+}
+
+// Helpers
+const readReels = () => readJsonFile(REELS_FILE, []);
+const writeReels = (data) => writeJsonFile(REELS_FILE, data);
+
+// Ensure video upload directory exists
+const videoDir = path.join(__dirname, 'assets', 'videos', 'reels');
+if (!fs.existsSync(videoDir)) {
+  fs.mkdirSync(videoDir, { recursive: true });
+}
+
+// API: Get Reels Feed (Public/User)
+app.get('/api/reels', (req, res) => {
+  try {
+    const reels = readReels();
+    // Sort by newest first
+    reels.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json({ success: true, data: reels });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Get All Reels (Detailed)
+app.get('/api/admin/reels', (req, res) => {
+  try {
+    const reels = readReels();
+    // Sort by newest first
+    reels.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json({ success: true, data: reels });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Upload Reel (Metadata)
+app.post('/api/admin/reels', (req, res) => {
+  try {
+    const reels = readReels();
+    const newReel = {
+      id: `reel_${Date.now()}`,
+      videoUrl: req.body.videoUrl, // URL from upload endpoint
+      thumbnailUrl: req.body.thumbnailUrl, // Optional URL
+      description: req.body.description || '',
+      hashtags: req.body.hashtags || [],
+      likes: [], // Array of { userId, email, name, timestamp }
+      comments: [], // Array of { id, userId, email, name, text, timestamp }
+      shares: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    reels.unshift(newReel);
+    writeReels(reels);
+
+    io.emit('reels-update', { action: 'new', reel: newReel });
+    res.status(201).json({ success: true, data: newReel });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin: Delete Reel
+app.delete('/api/admin/reels/:id', (req, res) => {
+  try {
+    let reels = readReels();
+    const index = reels.findIndex(r => r.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Reel not found' });
+
+    // Optional: Delete physical file logic is skipped for safety to avoid deleting wrong files
+
+    const deleted = reels[index];
+    reels = reels.filter(r => r.id !== req.params.id);
+    writeReels(reels);
+
+    io.emit('reels-update', { action: 'delete', reelId: req.params.id });
+    res.json({ success: true, message: 'Reel deleted', data: deleted });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Like/Unlike Reel
+app.post('/api/reels/:id/like', (req, res) => {
+  try {
+    const { userId, email, name } = req.body; // User info required
+    if (!userId) return res.status(400).json({ success: false, error: 'UserId required' });
+
+    const reels = readReels();
+    const index = reels.findIndex(r => r.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Reel not found' });
+
+    const reel = reels[index];
+    const likeIndex = reel.likes.findIndex(l => l.userId === userId);
+
+    if (likeIndex === -1) {
+      // Like
+      reel.likes.push({ userId, email, name, timestamp: new Date().toISOString() });
+    } else {
+      // Unlike
+      reel.likes.splice(likeIndex, 1);
+    }
+
+    reels[index] = reel;
+    writeReels(reels);
+
+    // Notify via socket for real-time like count updates
+    io.emit('reel-interaction', { reelId: reel.id, type: 'like', likesCount: reel.likes.length, userId });
+
+    res.json({ success: true, liked: likeIndex === -1, likesCount: reel.likes.length });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// User: Comment on Reel
+app.post('/api/reels/:id/comment', (req, res) => {
+  try {
+    const { userId, email, name, text } = req.body;
+    if (!userId || !text) return res.status(400).json({ success: false, error: 'UserId and text required' });
+
+    const reels = readReels();
+    const index = reels.findIndex(r => r.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Reel not found' });
+
+    const newComment = {
+      id: `c_${Date.now()}`,
+      userId,
+      email,
+      name,
+      text,
+      timestamp: new Date().toISOString()
+    };
+
+    reels[index].comments.push(newComment);
+    writeReels(reels);
+
+    io.emit('reel-interaction', { reelId: reels[index].id, type: 'comment', commentsCount: reels[index].comments.length, comment: newComment });
+    res.json({ success: true, data: newComment });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Video Upload Endpoint
+app.post('/api/admin/upload-video', (req, res) => {
+  try {
+    const { video, name } = req.body; // video is base64 string
+    if (!video) return res.status(400).json({ success: false, error: 'No video data provided' });
+
+    const matches = video.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      return res.status(400).json({ success: false, error: 'Invalid base64 video string' });
+    }
+
+    const type = matches[1];
+    const buffer = Buffer.from(matches[2], 'base64');
+    const extension = type.split('/')[1] || 'mp4';
+    const fileName = `reel_${Date.now()}.${extension}`;
+
+    const filePath = path.join(videoDir, fileName);
+    fs.writeFileSync(filePath, buffer);
+
+    const publicUrl = `assets/videos/reels/${fileName}`;
+    res.json({ success: true, url: publicUrl });
+  } catch (error) {
+    console.error('Video Upload Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ============================================================================
 // START SERVER
 // ============================================================================
 

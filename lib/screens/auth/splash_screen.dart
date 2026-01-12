@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math';
-import 'dart:ui';
 import '../../core/theme/app_theme.dart';
-import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,294 +11,178 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
-  late AnimationController _mainController;
-  late AnimationController _rotateController;
-  
-  // Animations
-  late Animation<double> _contentFadeAnimation;
-  late Animation<Offset> _contentSlideAnimation;
   
   final List<OnboardingPage> _pages = [
     OnboardingPage(
       title: 'Vedic Wisdom',
-      subtitle: 'Ancient knowledge for modern life',
+      subtitle: 'Ancient knowledge, Modern life',
       description: 'Discover the profound insights of Vedic astrology and how they influence your destiny.',
       icon: Icons.auto_awesome,
-      color: const Color(0xFFFFD700), // Gold
     ),
     OnboardingPage(
       title: 'Expert Guidance',
       subtitle: 'Connect with learned Pandits',
       description: 'Get personalized consultations from verified astrologers through chat or call.',
       icon: Icons.psychology,
-      color: const Color(0xFFE0AA3E), // Muted Gold
     ),
     OnboardingPage(
       title: 'Spiritual Harmony',
       subtitle: 'Balance your cosmic energy',
       description: 'Perform rituals and remedies to align your life with the universe.',
       icon: Icons.balance,
-      color: const Color(0xFFD4AF37), // Metallic Gold
     ),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    
-    _mainController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-    
-    _rotateController = AnimationController(
-      duration: const Duration(seconds: 60),
-      vsync: this,
-    )..repeat();
-
-    _contentFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
-      ),
-    );
-
-    _contentSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
-
-    _mainController.forward();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _mainController.dispose();
-    _rotateController.dispose();
-    super.dispose();
-  }
 
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 600),
+        duration: 600.ms,
         curve: Curves.easeOutCubic,
       );
     } else {
-      _navigateToLogin();
+      context.pushReplacement('/login');
     }
-  }
-
-  void _navigateToLogin() {
-    context.pushReplacement('/login');
   }
 
   @override
   Widget build(BuildContext context) {
-    print('🎨 Building SplashScreen');
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1A), // Deep mystical blue-black
-      body: Stack(
-        children: [
-          // 1. Abstract Rotating Mandala/Constellation Background
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _rotateController,
-              builder: (context, child) {
-                return Transform.rotate(
-                  angle: _rotateController.value * 2 * pi,
-                  child: CustomPaint(
-                    painter: AbstractMandalaPainter(
-                      color: _pages[_currentPage].color.withOpacity(0.05),
+      backgroundColor: AppTheme.divineBackground,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Spacer(),
+            
+            // PageView
+            Expanded(
+              flex: 3,
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => _currentPage = index),
+                itemCount: _pages.length,
+                itemBuilder: (context, index) => _buildPageContent(_pages[index]),
+              ),
+            ),
+
+            // Controls
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Indicators
+                  Row(
+                    children: List.generate(
+                      _pages.length,
+                      (index) => AnimatedContainer(
+                        duration: 300.ms,
+                        margin: const EdgeInsets.only(right: 6),
+                        height: 6,
+                        width: _currentPage == index ? 24 : 6,
+                        decoration: BoxDecoration(
+                          color: _currentPage == index
+                              ? AppTheme.divinePrimary
+                              : AppTheme.divinePrimary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
 
-          // 2. Content
-          SafeArea(
-            child: Column(
-              children: [
-                const Spacer(),
-
-                // Main Content Area
-                Expanded(
-                  flex: 3,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() => _currentPage = index);
-                      _mainController.reset();
-                      _mainController.forward();
-                    },
-                    itemCount: _pages.length,
-                    itemBuilder: (context, index) {
-                      return _buildPageContent(_pages[index]);
-                    },
-                  ),
-                ),
-
-                // Bottom Controls
-                Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Page Indicators
-                      Row(
-                        children: List.generate(
-                          _pages.length,
-                          (index) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.only(right: 8),
-                            height: 4,
-                            width: _currentPage == index ? 24 : 8,
-                            decoration: BoxDecoration(
-                              color: _currentPage == index
-                                  ? _pages[_currentPage].color
-                                  : Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
+                  // Next Button (Minimal)
+                  GestureDetector(
+                    onTap: _nextPage,
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: AppTheme.divinePrimary,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.divinePrimary.withOpacity(0.3),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
+                          )
+                        ],
                       ),
-
-                      // Next/Get Started Button
-                      GestureDetector(
-                        onTap: _nextPage,
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: _pages[_currentPage].color.withOpacity(0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Center(
-                            child: Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: _pages[_currentPage].color.withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                _currentPage == _pages.length - 1
-                                    ? Icons.arrow_forward
-                                    : Icons.arrow_forward,
-                                color: _pages[_currentPage].color,
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                        ),
+                      child: Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.white,
                       ),
-                    ],
+                    ).animate(target: _currentPage == _pages.length - 1 ? 1 : 0)
+                     .scale(begin: const Offset(1,1), end: const Offset(1.1, 1.1), duration: 200.ms),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPageContent(OnboardingPage page) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Vedic Mate Logo
-          Center(
-            child: Container(
-              width: 200,
-              height: 200,
-              margin: const EdgeInsets.only(bottom: 40),
-              child: Image.asset(
-                'assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png',
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  // Fallback if image fails to load
-                  return Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: page.color.withOpacity(0.15),
-                      border: Border.all(
-                        color: page.color,
-                        width: 3,
-                      ),
-                    ),
-                    child: Icon(
-                      page.icon,
-                      size: 80,
-                      color: page.color,
-                    ),
-                  );
-                },
+          // Image / Icon
+          Expanded(
+            child: Center(
+              child: Container(
+                width: 250,
+                height: 250,
+                padding: const EdgeInsets.all(40),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.divineSurface,
+                  boxShadow: AppTheme.softShadow,
+                ),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
+                ).animate(target: 1).scale(duration: 600.ms, curve: Curves.easeOutBack),
               ),
             ),
           ),
-          const SizedBox(height: 40),
           
-          // Text Content with Animation
-          FadeTransition(
-            opacity: _contentFadeAnimation,
-            child: SlideTransition(
-              position: _contentSlideAnimation,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    page.title.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1.2,
-                      fontFamily: 'Serif', // Use a serif font if available for professional look
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    page.subtitle,
-                    style: TextStyle(
-                      color: page.color,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    page.description,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 16,
-                      height: 1.8,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ],
-              ),
+          const SizedBox(height: 48),
+
+          Text(
+            page.title,
+            style: AppTheme.titleStyle.copyWith(fontSize: 32),
+            textAlign: TextAlign.center,
+          ).animate().fadeIn().slideY(begin: 0.2, end: 0),
+          
+          const SizedBox(height: 12),
+          
+          Text(
+            page.subtitle.toUpperCase(),
+            style: AppTheme.bodyStyle.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.divineGold,
+              letterSpacing: 1.5,
             ),
-          ),
+             textAlign: TextAlign.center,
+          ).animate().fadeIn(delay: 200.ms),
+
+          const SizedBox(height: 24),
+          
+          Text(
+            page.description,
+            style: AppTheme.bodyStyle.copyWith(
+              color: AppTheme.textGrey,
+              height: 1.6,
+              fontSize: 16,
+            ),
+            textAlign: TextAlign.center,
+          ).animate().fadeIn(delay: 400.ms),
         ],
       ),
     );
@@ -311,55 +194,11 @@ class OnboardingPage {
   final String subtitle;
   final String description;
   final IconData icon;
-  final Color color;
 
   OnboardingPage({
     required this.title,
     required this.subtitle,
     required this.description,
     required this.icon,
-    required this.color,
   });
-}
-
-class AbstractMandalaPainter extends CustomPainter {
-  final Color color;
-
-  AbstractMandalaPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width * 0.8;
-
-    // Draw concentric circles/arcs
-    for (int i = 0; i < 5; i++) {
-      canvas.drawCircle(center, radius * (0.2 + i * 0.2), paint);
-    }
-
-    // Draw geometric patterns
-    final path = Path();
-    for (int i = 0; i < 12; i++) {
-      final angle = (i * 30) * pi / 180;
-      final x = center.dx + radius * cos(angle);
-      final y = center.dy + radius * sin(angle);
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-    }
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant AbstractMandalaPainter oldDelegate) {
-    return oldDelegate.color != color;
-  }
 }

@@ -89,10 +89,10 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
             timePickerTheme: TimePickerThemeData(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-              hourMinuteColor: AppTheme.neutralLight,
+              hourMinuteColor: AppTheme.forestBackground,
               hourMinuteTextColor: AppTheme.primaryOrange,
               dialHandColor: AppTheme.primaryOrange,
-              dialBackgroundColor: AppTheme.neutralLight,
+              dialBackgroundColor: AppTheme.forestBackground,
             ),
           ),
           child: child!,
@@ -165,7 +165,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.neutralLight,
+      backgroundColor: AppTheme.forestBackground,
       body: AbstractBackground(
         child: Column(
           children: [
@@ -212,7 +212,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppTheme.neutralLight,
+              color: AppTheme.forestBackground,
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -343,7 +343,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.neutralLight,
+        color: AppTheme.forestBackground,
         borderRadius: BorderRadius.circular(16),
       ),
       child: CountryStateCityPicker(
@@ -388,7 +388,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         labelStyle: TextStyle(color: AppTheme.neutralMedium, fontWeight: FontWeight.normal),
         prefixIcon: Icon(icon, color: AppTheme.primaryOrange),
         filled: true,
-        fillColor: AppTheme.neutralLight,
+        fillColor: AppTheme.forestBackground,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -414,7 +414,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppTheme.neutralLight,
+          color: AppTheme.forestBackground,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.transparent),
         ),
@@ -451,7 +451,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   Widget _buildGenderSelector() {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.neutralLight,
+        color: AppTheme.forestBackground,
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(4),

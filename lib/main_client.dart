@@ -11,7 +11,22 @@ import 'firebase_options.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'services/notification_service.dart';
 
+import 'dart:io';
+
+// Custom HttpOverrides to handle self-signed certificates
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) {
+        // Trust the specific AWS IP for backend
+        return host == '15.207.36.26';
+      };
+  }
+}
+
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const AppInitializationWrapper());
 }
 

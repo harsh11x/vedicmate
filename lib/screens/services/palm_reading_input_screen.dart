@@ -109,7 +109,7 @@ class _PalmReadingInputScreenState extends State<PalmReadingInputScreen> {
                       color: AppTheme.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: _imageFile != null ? AppTheme.primaryOrange : AppTheme.neutralLight,
+                        color: _imageFile != null ? AppTheme.primaryOrange : AppTheme.forestBackground,
                         width: 2,
                         style: _imageFile != null ? BorderStyle.solid : BorderStyle.solid,
                       ),
@@ -274,7 +274,7 @@ class _GenderCard extends StatelessWidget {
           color: isSelected ? AppTheme.primaryOrange.withOpacity(0.1) : AppTheme.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralLight,
+            color: isSelected ? AppTheme.primaryOrange : AppTheme.forestBackground,
             width: 2,
           ),
         ),

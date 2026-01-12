@@ -22,7 +22,7 @@ class LoadingSkeleton extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppTheme.neutralLight,
+          color: AppTheme.forestBackground,
           borderRadius: borderRadius ?? BorderRadius.circular(8),
         ),
       ),

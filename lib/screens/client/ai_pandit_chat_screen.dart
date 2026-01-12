@@ -1273,7 +1273,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     decoration: BoxDecoration(
                       color: AppTheme.neutralSoft,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.neutralLight.withOpacity(0.3)),
+                      border: Border.all(color: AppTheme.forestBackground.withOpacity(0.3)),
                     ),
                     child: TextField(
                       controller: _messageController,
@@ -1320,8 +1320,8 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                           ? AppTheme.primaryGradient
                           : LinearGradient(
                               colors: [
-                                AppTheme.neutralLight,
-                                AppTheme.neutralLight,
+                                AppTheme.forestBackground,
+                                AppTheme.forestBackground,
                               ],
                             ),
                       boxShadow: _isChatStarted && !_isViewingOnly ? [
@@ -1358,7 +1358,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: AppTheme.white,
-        border: Border(bottom: BorderSide(color: AppTheme.neutralLight.withOpacity(0.5))),
+        border: Border(bottom: BorderSide(color: AppTheme.forestBackground.withOpacity(0.5))),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryOrange.withOpacity(0.05),
@@ -1410,10 +1410,10 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     : () => _showInsufficientFundsDialog()),
             style: ElevatedButton.styleFrom(
               backgroundColor: (_isStartingChat || _isChatStarted)
-                  ? AppTheme.neutralLight
+                  ? AppTheme.forestBackground
                   : (_walletBalance >= _minimumBalance
                       ? AppTheme.primaryOrange
-                      : AppTheme.neutralLight),
+                      : AppTheme.forestBackground),
               foregroundColor: (_isStartingChat || _isChatStarted)
                   ? AppTheme.neutralMedium
                   : (_walletBalance >= _minimumBalance
@@ -1463,7 +1463,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
                     color: AppTheme.white,
-        border: Border(bottom: BorderSide(color: AppTheme.neutralLight.withOpacity(0.5))),
+        border: Border(bottom: BorderSide(color: AppTheme.forestBackground.withOpacity(0.5))),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryOrange.withOpacity(0.05),

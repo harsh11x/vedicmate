@@ -275,7 +275,7 @@ class _PanditSelectionScreenState extends State<PanditSelectionScreen> with Tick
                 colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
               )
             : null,
-        color: isActive ? null : AppTheme.neutralLight,
+        color: isActive ? null : AppTheme.forestBackground,
         shape: BoxShape.circle,
       ),
     );
@@ -285,7 +285,7 @@ class _PanditSelectionScreenState extends State<PanditSelectionScreen> with Tick
     return Container(
       width: 40,
       height: 2,
-      color: isActive ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+      color: isActive ? AppTheme.yellowPrimary : AppTheme.forestBackground,
       margin: const EdgeInsets.symmetric(horizontal: 4),
     );
   }

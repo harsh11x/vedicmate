@@ -274,7 +274,7 @@ class _PaymentWalletScreenState extends ConsumerState<PaymentWalletScreen> {
                     child: Center(
                       child: Column(
                         children: [
-                          Icon(Icons.history, size: 48, color: AppTheme.neutralLight),
+                          Icon(Icons.history, size: 48, color: AppTheme.forestBackground),
                           const SizedBox(height: 12),
                           Text(
                             'No transactions yet',

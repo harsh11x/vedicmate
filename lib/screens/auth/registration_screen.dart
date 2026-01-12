@@ -258,7 +258,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
                     decoration: BoxDecoration(
                       color: AppTheme.white.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.neutralLight),
+                      border: Border.all(color: AppTheme.forestBackground),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.03),
@@ -353,7 +353,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
                   // Divider
                    Row(
                     children: [
-                      Expanded(child: Divider(color: AppTheme.neutralLight.withOpacity(0.8))),
+                      Expanded(child: Divider(color: AppTheme.forestBackground.withOpacity(0.8))),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
@@ -365,7 +365,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
                           ),
                         ),
                       ),
-                      Expanded(child: Divider(color: AppTheme.neutralLight.withOpacity(0.8))),
+                      Expanded(child: Divider(color: AppTheme.forestBackground.withOpacity(0.8))),
                     ],
                   ),
                   SizedBox(height: _spacingMedium),
@@ -377,7 +377,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
                       onPressed: _isLoading ? null : _handleGoogleSignUp,
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
-                        side: const BorderSide(color: AppTheme.neutralLight),
+                        side: const BorderSide(color: AppTheme.forestBackground),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         backgroundColor: AppTheme.white,
                         foregroundColor: AppTheme.neutralDark,
@@ -457,7 +457,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
             prefixIcon: Icon(icon, color: AppTheme.neutralMedium, size: 18),
             suffixIcon: suffix,
             filled: true,
-            fillColor: AppTheme.neutralLight.withOpacity(0.5),
+            fillColor: AppTheme.forestBackground.withOpacity(0.5),
             contentPadding: _isIOS 
               ? const EdgeInsets.symmetric(horizontal: 12, vertical: 12)
               : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

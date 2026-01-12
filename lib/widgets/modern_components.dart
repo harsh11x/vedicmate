@@ -212,7 +212,7 @@ class ModernInfoCard extends StatelessWidget {
                 if (onTap != null)
                   Icon(
                     Icons.arrow_forward_ios,
-                    color: AppTheme.neutralLight,
+                    color: AppTheme.forestBackground,
                     size: 16,
                   ),
               ],

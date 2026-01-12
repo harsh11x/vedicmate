@@ -18,6 +18,7 @@ const navItems = [
   { href: "/live-pooja", label: "Live Pooja", icon: "🔥", description: "Daily Streams" },
   { href: "/orders", label: "Orders", icon: "🛒", description: "Product Orders" },
   { href: "/products", label: "Products", icon: "📦", description: "Inventory" },
+  { href: "/reels", label: "Reels", icon: "🎬", description: "Short Videos" },
 ];
 
 export default function RootLayout({

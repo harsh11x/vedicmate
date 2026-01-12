@@ -271,7 +271,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                             color: AppTheme.creamPrimary.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: _selectedDate != null ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+                              color: _selectedDate != null ? AppTheme.yellowPrimary : AppTheme.forestBackground,
                               width: _selectedDate != null ? 2 : 1,
                             ),
                           ),
@@ -315,7 +315,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppTheme.neutralLight,
+                                color: AppTheme.forestBackground,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -372,7 +372,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppTheme.neutralLight,
+                                color: AppTheme.forestBackground,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -394,7 +394,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                               color: AppTheme.creamPrimary.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: _selectedTime != null ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+                                color: _selectedTime != null ? AppTheme.yellowPrimary : AppTheme.forestBackground,
                                 width: _selectedTime != null ? 2 : 1,
                               ),
                             ),
@@ -456,7 +456,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                                   colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
                                 )
                               : null,
-                          color: _selectedDate == null ? AppTheme.neutralLight : null,
+                          color: _selectedDate == null ? AppTheme.forestBackground : null,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: _selectedDate != null
                               ? [
@@ -519,7 +519,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                 colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
               )
             : null,
-        color: isActive ? null : AppTheme.neutralLight,
+        color: isActive ? null : AppTheme.forestBackground,
         shape: BoxShape.circle,
       ),
     );
@@ -529,7 +529,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
     return Container(
       width: 40,
       height: 2,
-      color: isActive ? AppTheme.yellowPrimary : AppTheme.neutralLight,
+      color: isActive ? AppTheme.yellowPrimary : AppTheme.forestBackground,
       margin: const EdgeInsets.symmetric(horizontal: 4),
     );
   }

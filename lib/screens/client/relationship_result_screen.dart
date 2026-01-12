@@ -87,7 +87,7 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
                        child: CircularProgressIndicator(
                          value: _scoreAnimation.value / 100,
                          strokeWidth: 15,
-                         backgroundColor: AppTheme.neutralLight,
+                         backgroundColor: AppTheme.forestBackground,
                          color: _getScoreColor(_scoreAnimation.value),
                          strokeCap: StrokeCap.round,
                        ),

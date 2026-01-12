@@ -74,7 +74,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       widget.prefixIcon,
                       color: _isFocused 
                         ? AppTheme.primaryOrange 
-                        : AppTheme.neutralLight,
+                        : AppTheme.forestBackground,
                     )
                   : null,
               suffixIcon: widget.suffixIcon,
@@ -89,13 +89,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
-                  color: AppTheme.neutralLight.withOpacity(0.3),
+                  color: AppTheme.forestBackground.withOpacity(0.3),
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
-                  color: AppTheme.neutralLight.withOpacity(0.3),
+                  color: AppTheme.forestBackground.withOpacity(0.3),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -121,7 +121,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               disabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
-                  color: AppTheme.neutralLight.withOpacity(0.2),
+                  color: AppTheme.forestBackground.withOpacity(0.2),
                 ),
               ),
             ),

@@ -39,7 +39,7 @@ class QuickStatsWidget extends StatelessWidget {
           Container(
             width: 1,
             height: 40,
-            color: AppTheme.neutralLight.withOpacity(0.3),
+            color: AppTheme.forestBackground.withOpacity(0.3),
           ),
           Expanded(
             child: _StatItem(
@@ -53,7 +53,7 @@ class QuickStatsWidget extends StatelessWidget {
           Container(
             width: 1,
             height: 40,
-            color: AppTheme.neutralLight.withOpacity(0.3),
+            color: AppTheme.forestBackground.withOpacity(0.3),
           ),
           Expanded(
             child: _StatItem(

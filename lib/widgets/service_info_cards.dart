@@ -15,41 +15,24 @@ class ServiceInfoCards extends StatelessWidget {
           // Header
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppTheme.primaryOrange, AppTheme.yellowPrimary],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: AppTheme.goldGlowShadow,
-                ),
-                child: const Icon(
-                  Icons.auto_awesome,
-                  color: AppTheme.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'AI Astrology Services',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      // Simple Font
+                      style: AppTheme.bodyStyle.copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
-                            color: AppTheme.neutralDark,
+                            color: AppTheme.textBlack,
                           ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Discover your cosmic path',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.neutralMedium,
+                      style: AppTheme.bodyStyle.copyWith(
+                            color: AppTheme.textGrey,
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
@@ -225,21 +208,30 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
             child: Container(
               height: cardHeight,
               decoration: BoxDecoration(
-                color: AppTheme.white,
+                // Richer white gradient
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.white,
+                    widget.accentColor.withOpacity(0.02),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   width: 1,
                   color: _isHovered 
                     ? widget.accentColor.withOpacity(0.5) 
-                    : AppTheme.neutralLight,
+                    : Colors.grey.withOpacity(0.08),
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: _isHovered 
-                      ? widget.accentColor.withOpacity(0.15) 
-                      : AppTheme.shadowColor,
-                    blurRadius: _isHovered ? 24 : 12,
+                      ? widget.accentColor.withOpacity(0.2) 
+                      : Colors.black.withOpacity(0.04), // Softer shadow
+                    blurRadius: _isHovered ? 24 : 16,
                     offset: const Offset(0, 8),
+                    spreadRadius: -2,
                   ),
                 ],
               ),
@@ -250,17 +242,36 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                   : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Top Section: Image Area - Full Bleed (Left, Right, Top)
+                    // Top Section: Image Area - Full Bleed
                     Expanded(
                       flex: 4,
                       child: Stack(
-                        fit: StackFit.expand, // Ensures image fills the expanded area
+                        fit: StackFit.expand,
                         children: [
                           if (widget.imagePath != null)
-                            Image.asset(
-                              widget.imagePath!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
+                             // Image with Overlay Gradient
+                            Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.asset(
+                                  widget.imagePath!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                                // Gradient Overlay for text readability
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.05),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             )
                           else
                             Container(
@@ -319,48 +330,31 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center, // Centered vertically in available space
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: widget.accentColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    widget.icon,
-                                    size: 16,
-                                    color: widget.accentColor,
-                                  ),
+                              Text(
+                                widget.title,
+                                // Simple Font
+                                style: AppTheme.bodyStyle.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppTheme.textBlack,
+                                  fontSize: 16,
+                                  height: 1.2,
                                 ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  widget.title,
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color: AppTheme.neutralDark,
-                                    fontSize: 16,
-                                    letterSpacing: -0.3,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                widget.description, // Changed to description for more info
+                                style: AppTheme.bodyStyle.copyWith(
+                                  color: AppTheme.textGrey,
+                                  fontSize: 12, // Smaller
+                                  height: 1.4,
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  widget.subtitle,
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.neutralMedium,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                           ],
                         ),
                       ),

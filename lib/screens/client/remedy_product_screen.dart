@@ -131,7 +131,7 @@ class RemedyProductScreen extends ConsumerWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: AppTheme.neutralLight,
+                        color: AppTheme.forestBackground,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -262,7 +262,7 @@ class RemedyProductScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: AppTheme.neutralSoft,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.neutralLight),
+                            border: Border.all(color: AppTheme.forestBackground),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -386,7 +386,7 @@ class RemedyProductScreen extends ConsumerWidget {
     } else if (path.startsWith('assets/')) {
         return Image.network(
           // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
-          'http://15.207.36.26:3001/$path', 
+          'https://15.207.36.26:3001/$path', 
           fit: BoxFit.cover,
           errorBuilder: (context, error, stack) {
              return Image.asset(
@@ -402,7 +402,7 @@ class RemedyProductScreen extends ConsumerWidget {
 
   Widget _buildPlaceholder() {
     return Container(
-      color: AppTheme.neutralLight,
+      color: AppTheme.forestBackground,
       child: Center(
         child: Icon(
           Icons.spa,

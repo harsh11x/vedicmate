@@ -11,6 +11,7 @@ import '../../services/user_preferences_service.dart';
 import '../../widgets/abstract_background.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -226,265 +227,239 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     final bool isDense = isIOS; // True for IOS (Compact), False for Android (Spacious)
 
     return Scaffold(
+      backgroundColor: AppTheme.divineBackground,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      body: AbstractBackground(
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: isIOS ? 8 : 24),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: Column(
-                    children: [
-                      // Logo & Branding
-                      SizedBox(
-                        height: logoHeight,
-                        width: logoHeight,
-                        child: Image.asset(
-                          'assets/images/ChatGPT Image Nov 3, 2025 at 09_33_25 PM-2.png',
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.auto_awesome, 
-                            size: 40, 
-                            color: AppTheme.primaryOrange
-                          ),
-                        ),
+      body: Stack(
+        children: [
+          // Background Pattern (Subtle)
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.03,
+              child: Image.asset(
+                'assets/images/logo.png', // Using logo as a watermark pattern if needed, or just clean white
+                repeat: ImageRepeat.repeat,
+              ),
+            ),
+          ),
+          
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: isIOS ? 8 : 24),
+                child: Column(
+                  children: [
+                    // 1. Logo
+                    SizedBox(
+                      height: logoHeight,
+                      width: logoHeight,
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.contain,
                       ),
-                      SizedBox(height: spacingMedium),
-                      Text(
-                        'VEDIC MATE',
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          fontSize: titleSize,
-                          letterSpacing: 1.5,
-                          color: AppTheme.neutralDark,
-                        ),
+                    ).animate().fadeIn(duration: 600.ms).scale(delay: 200.ms),
+                    
+                    SizedBox(height: spacingMedium),
+                    
+                    // 2. Title (Playfair Display)
+                    Text(
+                      'VEDIC MATE',
+                      style: AppTheme.titleStyle.copyWith(
+                        fontSize: titleSize,
+                        letterSpacing: 1.2,
+                        color: AppTheme.divinePrimary,
                       ),
-                      SizedBox(height: spacingSmall),
-                      Text(
-                        'Spiritual guidance for the modern age',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.neutralMedium,
-                          fontSize: isIOS ? 12 : 14,
-                        ),
+                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+                    
+                    Text(
+                      'Spiritual guidance for the modern age',
+                      style: AppTheme.bodyStyle.copyWith(
+                        color: AppTheme.textGrey,
+                        fontSize: isIOS ? 14 : 16,
                       ),
-                      SizedBox(height: spacingLarge),
+                    ).animate().fadeIn(delay: 600.ms),
+                    
+                    SizedBox(height: spacingLarge * 1.5),
 
-                      // Main Card
-                      Container(
-                        decoration: AppTheme.glassMorphism,
-                        padding: EdgeInsets.all(isIOS ? 24 : 32),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                _isOTPSent ? 'Verify OTP' : 'Welcome Back',
-                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.neutralDark,
-                                  fontSize: isIOS ? 24 : 28,
-                                ),
-                                textAlign: TextAlign.center,
+                    // 3. Form Section (Clean, no heavy glass box)
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (!_isOTPSent) ...[
+                            TextFormField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              validator: Validators.validatePhone,
+                              style: AppTheme.bodyStyle.copyWith(fontWeight: FontWeight.w600),
+                              decoration: InputDecoration(
+                                labelText: 'Phone Number',
+                                hintText: '9876543210',
+                                prefixText: '+91 ',
+                                prefixIcon: const Icon(Icons.phone_outlined, color: AppTheme.textGrey),
                               ),
-                              SizedBox(height: spacingMedium),
-                              
-                              if (!_isOTPSent) ...[
-                                TextFormField(
-                                  controller: _phoneController,
-                                  keyboardType: TextInputType.phone,
-                                  validator: Validators.validatePhone,
-                                  style: const TextStyle(fontWeight: FontWeight.w600),
-                                  decoration: InputDecoration(
-                                    labelText: 'Phone Number',
-                                    hintText: '9876543210',
-                                    prefixText: '+91 ',
-                                    prefixIcon: const Icon(Icons.phone_outlined, color: AppTheme.neutralMedium),
-                                    fillColor: AppTheme.neutralSoft, 
-                                    isDense: isDense,
-                                    contentPadding: isDense ? null : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  ),
-                                ),
-                                SizedBox(height: spacingMedium),
-                                SizedBox(
-                                  height: buttonHeight,
-                                  child: ElevatedButton(
-                                    onPressed: _isLoading ? null : _handleSendOTP,
-                                    child: _isLoading
-                                      ? const SizedBox(
-                                          height: 24, 
-                                          width: 24, 
-                                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                                        )
-                                      : const Text('Send OTP'),
-                                  ),
-                                ),
-                              ] else ...[
-                                TextFormField(
-                                  controller: _otpController,
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 6,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 8,
-                                    color: AppTheme.primaryOrange,
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: '••••••',
-                                    counterText: '',
-                                    fillColor: AppTheme.neutralSoft,
-                                    isDense: isDense,
-                                    contentPadding: isDense ? null : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  ),
-                                ),
-                                SizedBox(height: spacingMedium),
-                                SizedBox(
-                                  height: buttonHeight,
-                                  child: ElevatedButton(
-                                    onPressed: _isLoading ? null : _handleVerifyOTP,
-                                    child: _isLoading
-                                      ? const SizedBox(
-                                          height: 24, 
-                                          width: 24, 
-                                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                                        )
-                                      : const Text('Verify & Login'),
-                                  ),
-                                ),
-                                SizedBox(height: isIOS ? 8 : 16),
-                                TextButton(
-                                  onPressed: () => setState(() => _isOTPSent = false),
-                                  child: const Text('Change Phone Number'),
-                                ),
-                              ],
-                            ],
+                            ).animate().fadeIn(delay: 800.ms).slideX(begin: -0.1, end: 0),
+                            
+                            SizedBox(height: spacingMedium),
+                            
+                            SizedBox(
+                              height: buttonHeight,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _handleSendOTP,
+                                child: _isLoading
+                                  ? const SizedBox(
+                                      height: 24, 
+                                      width: 24, 
+                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                                    )
+                                  : Text('Send OTP', style: TextStyle(letterSpacing: 1.0)),
+                              ),
+                            ).animate().fadeIn(delay: 1000.ms).slideX(begin: 0.1, end: 0),
+                          ] else ...[
+                            // OTP Input
+                            TextFormField(
+                              controller: _otpController,
+                              keyboardType: TextInputType.number,
+                              maxLength: 6,
+                              textAlign: TextAlign.center,
+                              style: AppTheme.titleStyle.copyWith(
+                                fontSize: 28,
+                                letterSpacing: 12,
+                                color: AppTheme.divinePrimary,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: '••••••',
+                                counterText: '',
+                                fillColor: AppTheme.divineSurface,
+                              ),
+                            ).animate().fadeIn(),
+                            
+                            SizedBox(height: spacingMedium),
+                            
+                            SizedBox(
+                              height: buttonHeight,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _handleVerifyOTP,
+                                child: _isLoading
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : const Text('Verify & Login'),
+                              ),
+                            ).animate().fadeIn(delay: 200.ms),
+                            
+                            TextButton(
+                              onPressed: () => setState(() => _isOTPSent = false),
+                              child: Text('Change Phone Number', style: TextStyle(color: AppTheme.textGrey)),
+                            ).animate().fadeIn(delay: 400.ms),
+                          ],
+                        ],
+                      ),
+                    ),
+                    
+                    SizedBox(height: spacingLarge),
+                    
+                    // 4. Divider
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.withOpacity(0.2))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'OR CONTINUE WITH',
+                            style: AppTheme.bodyStyle.copyWith(
+                              fontSize: 10, 
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textGrey,
+                              letterSpacing: 1.5,
+                            ),
                           ),
                         ),
-                      ),
-                      
-                      SizedBox(height: spacingMedium),
-                      
-                      // Social / Email
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: AppTheme.neutralLight.withOpacity(0.5))),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'OR',
-                              style: TextStyle(
-                                color: AppTheme.neutralMedium,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                        Expanded(child: Divider(color: Colors.grey.withOpacity(0.2))),
+                      ],
+                    ).animate().fadeIn(delay: 1200.ms),
+                    
+                    SizedBox(height: spacingMedium),
+
+                    // 5. Social Buttons (Minimal Outline)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: buttonHeight,
+                            child: OutlinedButton(
+                              onPressed: _handleGoogleSignIn,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('assets/images/google_logo.png', height: 20),
+                                  const SizedBox(width: 8),
+                                  const Text('Google'),
+                                ],
                               ),
                             ),
                           ),
-                          Expanded(child: Divider(color: AppTheme.neutralLight.withOpacity(0.5))),
-                        ],
-                      ),
-                      SizedBox(height: spacingMedium),
-                      
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: buttonHeight,
-                              child: OutlinedButton(
-                                onPressed: _handleGoogleSignIn,
-                                style: OutlinedButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  side: const BorderSide(color: AppTheme.neutralLight),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  backgroundColor: AppTheme.white,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/google_logo.png',
-                                  height: 24,
-                                  width: 24,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.g_mobiledata, size: 28, color: AppTheme.neutralDark),
-                                ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: SizedBox(
+                            height: buttonHeight,
+                            child: OutlinedButton(
+                              onPressed: () => context.push('/login/email'),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.email_outlined, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('Email'),
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: SizedBox(
-                              height: buttonHeight,
-                              child: OutlinedButton(
-                                onPressed: () => context.push('/login/email'),
-                                style: OutlinedButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  side: const BorderSide(color: AppTheme.neutralLight),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  backgroundColor: AppTheme.white,
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.email_outlined, size: 20, color: AppTheme.neutralDark),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Email',
-                                      style: TextStyle(color: AppTheme.neutralDark, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                        ),
+                      ],
+                    ).animate().fadeIn(delay: 1400.ms).slideY(begin: 0.2, end: 0),
+
+                    SizedBox(height: spacingLarge * 2),
+
+                    // 6. Registration Link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "New to Vedic Mate? ",
+                          style: AppTheme.bodyStyle.copyWith(color: AppTheme.textGrey),
+                        ),
+                        GestureDetector(
+                          onTap: () => context.go('/register'),
+                          child: Text(
+                            'Create Account',
+                            style: AppTheme.bodyStyle.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.divineGold,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppTheme.divineGold.withOpacity(0.5),
                             ),
                           ),
-                        ],
-                      ),
-                      
-                      SizedBox(height: spacingLarge),
-                      
-                      // Registration Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't have an account? ",
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.neutralMedium,
-                              fontSize: isIOS ? 14 : 16,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () => context.go('/register'),
-                            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                            child: Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primaryOrange,
-                                fontSize: isIOS ? 14 : 16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                       SizedBox(height: spacingLarge),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ).animate().fadeIn(delay: 1600.ms),
+                    
+                    SizedBox(height: spacingLarge),
+                  ],
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
+
 
 class _EnhancedRoleButton extends StatelessWidget {
   final String label;

@@ -48,8 +48,8 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
         animation: _controller,
         builder: (context, child) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            height: 160,
+            // Removed internal margin as parent handles it
+            height: 200,
             decoration: BoxDecoration(
               // Gradient as fallback or overlay
                color: Colors.black,

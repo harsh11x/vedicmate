@@ -32,7 +32,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.neutralLight, // Light background
+      backgroundColor: AppTheme.forestBackground, // Light background
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.neutralDark, size: 20),
@@ -83,7 +83,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.neutralLight),
+                border: Border.all(color: AppTheme.forestBackground),
                 boxShadow: AppTheme.softShadow,
               ),
               child: DropdownButtonHideUnderline(
@@ -211,7 +211,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
       decoration: BoxDecoration(
         color: isSelected ? AppTheme.primaryOrange : AppTheme.white,
         borderRadius: BorderRadius.circular(30),
-        border: isSelected ? null : Border.all(color: AppTheme.neutralLight),
+        border: isSelected ? null : Border.all(color: AppTheme.forestBackground),
         boxShadow: isSelected ? AppTheme.glowShadow : AppTheme.softShadow,
       ),
       child: Row(
@@ -298,7 +298,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
                 color: isSelected ? AppTheme.primaryOrange : AppTheme.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? Colors.transparent : AppTheme.neutralLight,
+                  color: isSelected ? Colors.transparent : AppTheme.forestBackground,
                 ),
                 boxShadow: isSelected ? AppTheme.glowShadow : [],
               ),
@@ -376,7 +376,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
             decoration: BoxDecoration(
               color: isSelected ? AppTheme.primaryOrange : AppTheme.white,
               borderRadius: BorderRadius.circular(24),
-              border: isSelected ? null : Border.all(color: AppTheme.neutralLight),
+              border: isSelected ? null : Border.all(color: AppTheme.forestBackground),
               boxShadow: isSelected ? AppTheme.glowShadow : [],
             ),
             child: Text(

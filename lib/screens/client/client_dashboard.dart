@@ -17,6 +17,7 @@ import '../../widgets/abstract_background.dart';
 import '../../providers/api_providers.dart';
 import '../../providers/wallet_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../providers/cart_provider.dart';
 import 'reels_screen.dart';
@@ -322,377 +323,260 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     final greeting = _getGreeting();
 
     return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
-      body: AbstractBackground(
-        child: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              // Top Bar with Greeting and Wallet
-              SliverToBoxAdapter(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(0.8),
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-                    boxShadow: AppTheme.softShadow,
-                  ),
-                child: Padding(
-                  padding: EdgeInsets.all(
-                    (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                  ),
-                  child: Column(
-                    children: [
-                      // Top Row: Greeting & Actions
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  greeting,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppTheme.neutralMedium,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        userName.split(' ').first, // Show only first name
-                                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 24,
-                                          color: AppTheme.neutralDark,
-                                          height: 1.2,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    const Text(
-                                      '👋',
-                                      style: TextStyle(fontSize: 22),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Wallet & Actions (Cleaned up)
-                          Row(
+      backgroundColor: AppTheme.divineBackground,
+      body: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // 1. Minimal Header (Logo + Greeting + Actions)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Wallet
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final walletBalanceAsync = ref.watch(walletBalanceProvider);
-                                  final balance = walletBalanceAsync.valueOrNull ?? 0.0;
-                                  return GestureDetector(
-                                    onTap: () => context.push('/client/wallet'),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.3)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppTheme.primaryOrange.withOpacity(0.05),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.account_balance_wallet_outlined, size: 16, color: AppTheme.primaryOrange),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '₹${balance.toStringAsFixed(0)}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 13,
-                                              color: AppTheme.neutralDark,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 12),
-                              // Cart
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final cartItems = ref.watch(cartProvider);
-                                  final itemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
-                                  return GestureDetector(
-                                    onTap: () => context.push('/cart'),
-                                    child: Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        const Icon(Icons.shopping_bag_outlined, color: AppTheme.neutralDark, size: 24),
-                                        if (itemCount > 0)
-                                          Positioned(
-                                            right: -2,
-                                            top: -2,
-                                            child: Container(
-                                              padding: const EdgeInsets.all(3),
-                                              decoration: const BoxDecoration(
-                                                color: AppTheme.primaryOrange,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Text(
-                                                '$itemCount',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 16),
-                              // Notification
-                              GestureDetector(
-                                onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('No new notifications')),
-                                  );
-                                },
-                                child: Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    const Icon(Icons.notifications_none_rounded, color: AppTheme.neutralDark, size: 24),
-                                    Positioned(
-                                      right: 2,
-                                      top: 2,
-                                      child: Container(
-                                        width: 6,
-                                        height: 6,
-                                        decoration: const BoxDecoration(
-                                          color: AppTheme.errorRed,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              Text(
+                                greeting,
+                                style: AppTheme.bodyStyle.copyWith(
+                                  color: AppTheme.textGrey,
+                                  fontSize: 14,
                                 ),
+                              ),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${userName.split(' ').first}',
+                                      style: AppTheme.titleStyle.copyWith(
+                                        fontSize: 28,
+                                        height: 1.2,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('✨', style: TextStyle(fontSize: 20)),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      // Search Bar (Integrated)
-                      Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: AppTheme.neutralSoft, // Slightly darker than background for contrast
-                          borderRadius: BorderRadius.circular(24),
                         ),
-                        child: TextField(
-                          controller: widget.searchController,
-                          onChanged: (value) => setState(() => _searchQuery = value),
-                          style: TextStyle(fontSize: 14),
-                          decoration: InputDecoration(
-                            hintText: 'Search for astrologers...',
-                            hintStyle: TextStyle(
-                              color: AppTheme.neutralMedium,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            prefixIcon: const Icon(Icons.search, color: AppTheme.neutralMedium, size: 20),
-                            suffixIcon: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.tune, 
-                                    size: 20,
-                                    color: _selectedLanguages.isNotEmpty || _selectedCategories.isNotEmpty || _rateSort.isNotEmpty 
-                                      ? AppTheme.primaryOrange 
-                                      : AppTheme.neutralMedium
+                        // Actions Row (Wallet, Cart, Profile Pic if available)
+                        Row(
+                          children: [
+                            // Wallet
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final walletBalanceAsync = ref.watch(walletBalanceProvider);
+                                final balance = walletBalanceAsync.valueOrNull ?? 0.0;
+                                return GestureDetector(
+                                  onTap: () => context.push('/client/wallet'),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.divineSurface,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.account_balance_wallet_outlined, size: 18, color: AppTheme.textBlack),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '₹${balance.toStringAsFixed(0)}',
+                                          style: AppTheme.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  onPressed: _showFilterModal,
-                                ),
-                              ],
+                                );
+                              },
                             ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
+                            const SizedBox(width: 12),
+                            // Cart
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final cartItems = ref.watch(cartProvider);
+                                final itemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
+                                return GestureDetector(
+                                  onTap: () => context.push('/cart'),
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.divineSurface, // White
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                                        ),
+                                        child: const Icon(Icons.shopping_bag_outlined, color: AppTheme.textBlack, size: 20),
+                                      ),
+                                      if (itemCount > 0)
+                                        Positioned(
+                                          right: -2,
+                                          top: -2,
+                                          child: CircleAvatar(
+                                            radius: 8,
+                                            backgroundColor: AppTheme.divineGold,
+                                            child: Text(
+                                              '$itemCount',
+                                              style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Search Bar (Minimal)
+                    Container(
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: AppTheme.divineSurface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.withOpacity(0.05)),
+                        boxShadow: AppTheme.softShadow,
+                      ),
+                      child: TextField(
+                        controller: widget.searchController,
+                        onChanged: (value) => setState(() => _searchQuery = value),
+                        style: AppTheme.bodyStyle,
+                        decoration: InputDecoration(
+                          hintText: 'Search for guidance...',
+                          hintStyle: TextStyle(color: AppTheme.textLight),
+                          prefixIcon: const Icon(Icons.search, color: AppTheme.textGrey, size: 22),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.tune, color: AppTheme.textGrey, size: 20),
+                            onPressed: _showFilterModal,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          fillColor: Colors.transparent, // Handled by Container
+                        ),
+                      ),
+                    ),
+                  ],
+                ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0),
+              ),
+            ),
+
+            // 2. Featured / AI Pandits Section (Horizontal Scroll)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: AIPanditsSection(
+                  title: 'Divine Consultation',
+                  pandits: _filteredPandits,
+                ),
+              ).animate().fadeIn(delay: 200.ms).slideX(),
+            ),
+
+            // 3. Live Pooja Banner (Moved Up)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    // Match Action Box borders
+                    border: Border.all(color: Colors.grey.withOpacity(0.05)),
+                    // Minimal shadow like action boxes
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                ),
+                  child: LivePoojaBanner(
+                     onTap: () => context.push('/live-pooja'),
+                  ),
+                ).animate().fadeIn(delay: 300.ms),
               ),
             ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-            // All AI Pandits Section (Moved Up)
-            SliverToBoxAdapter(
-              child: AIPanditsSection(
-                title: 'All Pandits',
-                pandits: _filteredPandits,
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Live Pooja Banner
-            SliverToBoxAdapter(
-              child: LivePoojaBanner(
-                onTap: () {
-                   context.push('/live-pooja');
-                },
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // Action Boxes (Kundli & Relationship)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+            // 4. Main Actions (Grid) - Below Live Pooja
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
                 child: Row(
                   children: [
-
                     Expanded(
-                      child: SizedBox(
-                        height: 160,
-                        child: ActionBox(
-                          title: 'Make Your\nKundli',
-                          subtitle: 'Detailed Insights',
-                          icon: Icons.auto_awesome,
-                          color: const Color(0xFFFFF4E6),
-                          accentColor: Colors.orange,
-                          backgroundImage: 'assets/images/cards/kundli_card_bg_1768067806248.png',
-                          onTap: () => context.push('/kundli/create'),
-                        ),
+                      child: _ActionCardV2(
+                        title: 'Kundli',
+                        subtitle: 'Birth Chart',
+                        icon: Icons.star_outline_rounded,
+                        color: const Color(0xFFFDFBF7), // Warm white
+                        accent: AppTheme.divineGold,
+                        onTap: () => context.push('/kundli/create'),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: SizedBox(
-                        height: 160,
-                        child: ActionBox(
-                          title: 'Check\nCompatibility',
-                          subtitle: 'Love & Relation',
-                          icon: Icons.favorite_rounded,
-                          color: const Color(0xFFFFEDF2),
-                          accentColor: Colors.pink,
-                          backgroundImage: 'assets/images/cards/relationship_card_bg_1768067828750.png',
-                          onTap: () => context.push('/relationship/form'), // Phase 3 Route
-                        ),
+                      child: _ActionCardV2(
+                        title: 'Match',
+                        subtitle: 'Compatibility',
+                        icon: Icons.favorite_border_rounded,
+                        color: const Color(0xFFFFF5F8), // Soft pink tint
+                        accent: Colors.pink.shade300,
+                        onTap: () => context.push('/relationship/form'),
                       ),
                     ),
                   ],
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-            
-            // Re-using _CreateKundliBox strictly as banner or removed? 
-            // User asked for "two boxes... under it". The old box might be redundant.
-            // I will hide the old box for now or keep it further down.
-            // Let's keep the ServiceInfoCards.
-
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-            // Service Info Cards - 5 Primary Astrology Categories
-            SliverToBoxAdapter(
-              child: ServiceInfoCards(),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-            // Custom Booking Banner (Below Vastu Shastra)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20, // Match ServiceInfoCards margin
-                ),
-                child: _CustomBookingBanner(
-                  onTap: () => context.push('/booking/custom'),
-                ),
+                ).animate().fadeIn(delay: 400.ms).scale(),
               ),
             ),
             
-            const SliverToBoxAdapter(child: SizedBox(height: 48)),
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
-            // Quick Actions Section
+            // 5. Explore Services (Grid)
             SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: (MediaQuery.of(context).size.width * 0.05).clamp(16.0, 24.0),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quick Actions',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'Explore Services',
+                      // Changed to simple font (sans-serif)
+                      style: AppTheme.bodyStyle.copyWith(
+                        fontSize: 20, 
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textBlack,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.history,
-                            label: 'Booking History',
-                            color: AppTheme.infoBlue,
-                            onTap: () => context.push('/bookings/history'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.account_balance_wallet,
-                            label: 'Recharge Wallet',
-                            color: AppTheme.successGreen,
-                            onTap: () => context.push('/client/wallet'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: Icons.settings,
-                            label: 'Settings',
-                            color: AppTheme.neutralMedium,
-                            onTap: () => context.push('/settings'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                  const SizedBox(height: 16),
+                  ServiceInfoCards(), 
+                ],
+              ).animate().fadeIn(delay: 500.ms),
             ),
 
+            // Bottom Spacing for Nav Bar
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
-      ),
       ),
     );
   }
@@ -702,6 +586,90 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     if (hour < 12) return 'Good Morning';
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
+  }
+}
+
+class _ActionCardV2 extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final Color accent;
+  final VoidCallback onTap;
+
+  const _ActionCardV2({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    required this.accent,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 140,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.grey.withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: accent.withOpacity(0.1), // Subtle color shadow
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: -4,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white, // White circle bg for icon
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: accent, size: 24),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  // Changed to simple font (sans-serif)
+                  style: AppTheme.bodyStyle.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textBlack,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: AppTheme.bodyStyle.copyWith(
+                    fontSize: 13,
+                    color: AppTheme.textGrey,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -1031,7 +999,7 @@ class _ChatTab extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.chat_bubble_outline, size: 64, color: AppTheme.neutralLight),
+                  Icon(Icons.chat_bubble_outline, size: 64, color: AppTheme.forestBackground),
                   const SizedBox(height: 16),
                   Text(
                     'No chats yet',
@@ -1113,7 +1081,7 @@ class _CallTab extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.phone_outlined, size: 64, color: AppTheme.neutralLight),
+            Icon(Icons.phone_outlined, size: 64, color: AppTheme.forestBackground),
             const SizedBox(height: 16),
             Text(
               'No calls yet',
@@ -1167,7 +1135,7 @@ class _OldProfileTab extends StatelessWidget {
                         end: Alignment.bottomRight,
                         colors: [
                           AppTheme.primaryOrange,
-                          AppTheme.primaryDeep,
+                          AppTheme.forestDark,
                         ],
                       ),
                     ),
@@ -1305,9 +1273,9 @@ class _OldProfileTab extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildStatItem(context, 'Wallet', '₹500', Icons.account_balance_wallet, AppTheme.successGreen),
-                      Container(width: 1, height: 40, color: AppTheme.neutralLight),
+                      Container(width: 1, height: 40, color: AppTheme.forestBackground),
                       _buildStatItem(context, 'Bookings', '12', Icons.calendar_today, AppTheme.primaryOrange),
-                      Container(width: 1, height: 40, color: AppTheme.neutralLight),
+                      Container(width: 1, height: 40, color: AppTheme.forestBackground),
                       _buildStatItem(context, 'Minutes', '450', Icons.timer, AppTheme.infoBlue),
                     ],
                   ),
@@ -1681,7 +1649,7 @@ class _ProfileMenuItem extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: AppTheme.neutralLight),
+              Icon(Icons.chevron_right, color: AppTheme.forestBackground),
             ],
           ),
         ),

@@ -8,8 +8,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class KundliPdfService {
-  static const PdfColor primaryColor = PdfColor.fromInt(0xFFFF7A00);
-  static const PdfColor secondaryColor = PdfColor.fromInt(0xFF2D2D2D);
+  // Lush Forest Theme Colors
+  static const PdfColor primaryColor = PdfColor.fromInt(0xFF2E6F40); // Forest Primary
+  static const PdfColor secondaryColor = PdfColor.fromInt(0xFF1E1E1E); // Neutral Dark
 
   /// Generate PDF with chart images captured from actual widgets
   static Future<Uint8List> generatePdf({
@@ -617,7 +618,7 @@ class KundliPdfService {
         final recorder = ui.PictureRecorder();
         final canvas = Canvas(recorder);
         final size = Size(100, 100);
-        final paint = Paint()..color = const Color(0xFFFF7A00)..style = PaintingStyle.fill;
+        final paint = Paint()..color = const Color(0xFF2E6F40)..style = PaintingStyle.fill;
         canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 2, paint);
         final textPainter = TextPainter(text: TextSpan(text: 'VM', style: TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)), textDirection: TextDirection.ltr);
         textPainter.layout();

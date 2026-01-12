@@ -107,7 +107,7 @@ class _DashboardTab extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     AppTheme.primaryOrange,
-                    AppTheme.primaryDeep,
+                    AppTheme.forestDark,
                     AppTheme.accentGold,
                   ],
                 ),
@@ -161,7 +161,7 @@ class _DashboardTab extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         AppTheme.primaryOrange,
-                        AppTheme.primaryDeep,
+                        AppTheme.forestDark,
                         AppTheme.accentGold,
                       ],
                     ),

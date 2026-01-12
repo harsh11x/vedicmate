@@ -57,6 +57,7 @@ dependencies:
   postgres: ^3.5.9
   country_state_city_pro: ^0.0.6
   flutter_webrtc: ^1.2.1
+  flutter_animate: ^4.5.2
 
 dev_dependencies:
   flutter_test:

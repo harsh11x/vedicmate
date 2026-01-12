@@ -134,7 +134,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
                           side: BorderSide(
                             color: isSelected
                                 ? AppTheme.primaryOrange
-                                : AppTheme.neutralLight,
+                                : AppTheme.forestBackground,
                             width: 1.5,
                           ),
                         ),
@@ -145,7 +145,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
               ),
             ),
 
-            // Remedies List
+            // Remedies Grid
             productsAsync.when(
               data: (remedies) {
                 if (remedies.isEmpty) {
@@ -155,9 +155,9 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
                         padding: const EdgeInsets.all(40.0),
                         child: Column(
                           children: [
-                            const Icon(Icons.inventory_2_outlined, size: 64, color: AppTheme.neutralMedium),
+                            const Icon(Icons.inventory_2_outlined, size: 64, color: AppTheme.textGrey),
                             const SizedBox(height: 16),
-                            const Text('No products found', style: TextStyle(color: AppTheme.neutralMedium)),
+                            const Text('No products found', style: TextStyle(color: AppTheme.textGrey)),
                           ],
                         ),
                       ),
@@ -165,19 +165,22 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
                   );
                 }
                 return SliverPadding(
-                  padding: const EdgeInsets.all(20),
-                  sliver: SliverList(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverGrid(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // 2 boxes side by side
+                      childAspectRatio: 0.65, // Adjust for height
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final remedy = remedies[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: GestureDetector(
-                            onTap: () {
-                              context.push('/remedy/product', extra: remedy);
-                            },
-                            child: _RemedyCard(remedy: remedy),
-                          ),
+                        return GestureDetector(
+                          onTap: () {
+                            context.push('/remedy/product', extra: remedy);
+                          },
+                          child: _RemedyCard(remedy: remedy),
                         );
                       },
                       childCount: remedies.length,
@@ -189,7 +192,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(40.0),
-                    child: const CircularProgressIndicator(color: AppTheme.primaryOrange),
+                    child: const CircularProgressIndicator(color: AppTheme.divineGold),
                   ),
                 ),
               ),
@@ -224,202 +227,190 @@ class _RemedyCard extends ConsumerWidget {
       imageUrl = remedy['images'];
     }
     
-    // Ensure imageUrl is full URL if it's relative
-    if (!imageUrl.startsWith('http') && !imageUrl.startsWith('assets/')) {
-       // Assuming it's served from server assets, but for now strict check
-    }
+    final price = (remedy['price'] as num?)?.toDouble() ?? 0.0;
+    // Mock original price logic if not available, simply +20% for demo visualization if missing
+    // In real app, 'originalPrice' should come from backend
+    final originalPrice = (remedy['originalPrice'] as num?)?.toDouble() ?? (price * 1.2); 
+    final discount = ((originalPrice - price) / originalPrice * 100).round();
 
-    return GestureDetector(
-      onTap: () {
-        context.push('/remedy/product', extra: remedy);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image Section
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primaryOrange.withOpacity(0.2),
-                    AppTheme.yellowPrimary.withOpacity(0.1),
-                  ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image Section
+          Expanded(
+            flex: 5,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: _buildImage(imageUrl),
                 ),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-              ),
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                    child: _buildImage(imageUrl),
-                  ),
+                // Discount Badge
+                if (discount > 0)
                   Positioned(
-                    top: 12,
-                    right: 12,
+                    top: 8,
+                    left: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppTheme.yellowPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                          ),
-                        ],
+                        color: AppTheme.errorRed,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        remedy['category'] ?? 'General',
+                        '$discount% OFF',
                         style: const TextStyle(
-                          color: AppTheme.textDark,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
+          ),
 
-            // Content Section
-            Padding(
-              padding: const EdgeInsets.all(20),
+          // Content Section
+          Expanded(
+            flex: 6,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Title and Price
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          remedy['name'] ?? remedy['title'] ?? 'Product',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: AppTheme.neutralDark,
-                              ),
+                      Text(
+                        remedy['category'] ?? 'General',
+                        style: AppTheme.bodyStyle.copyWith(
+                          color: AppTheme.divineGold,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                          ),
-                          borderRadius: BorderRadius.circular(12),
+                      const SizedBox(height: 4),
+                      Text(
+                        remedy['name'] ?? remedy['title'] ?? 'Product',
+                        style: AppTheme.bodyStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppTheme.textBlack,
+                          height: 1.2,
                         ),
-                        child: Text(
-                          '₹${remedy['price']}',
-                          style: const TextStyle(
-                            color: AppTheme.textDark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      // Price Row
+                      Row(
+                        children: [
+                          Text(
+                            '₹${price.toStringAsFixed(0)}',
+                            style: AppTheme.bodyStyle.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: AppTheme.textBlack,
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '₹${originalPrice.toStringAsFixed(0)}',
+                            style: AppTheme.bodyStyle.copyWith(
+                              decoration: TextDecoration.lineThrough,
+                              color: AppTheme.textGrey,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 12),
-
-                  // Description - Properly wrapped
-                  Text(
-                    remedy['description'] ?? '',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.neutralMedium,
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
-                    textAlign: TextAlign.left,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Action Buttons
+                  
+                  // Buttons Row
                   Row(
                     children: [
+                      /*Small Cart Icon Button*/
                       Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            // Add to cart functionality
-                            ref.read(cartProvider.notifier).addToCart(
+                        child: InkWell(
+                          onTap: () {
+                             ref.read(cartProvider.notifier).addToCart(
                               remedy['id'],
                               remedy['name'] ?? remedy['title'],
                               (remedy['price'] as num).toDouble(),
                               imageUrl,
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${remedy['name'] ?? remedy['title']} added to cart'),
+                              const SnackBar(
+                                content: Text('Added to Cart'),
+                                duration: Duration(milliseconds: 600),
                                 backgroundColor: AppTheme.successGreen,
-                                duration: Duration(seconds: 1),
                               ),
                             );
                           },
-                          icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-                          label: const Text('Add to Cart'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            side: BorderSide(color: AppTheme.primaryOrange, width: 1.5),
-                            foregroundColor: AppTheme.primaryOrange,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppTheme.divineGold),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Center(
+                              child: Icon(Icons.add_shopping_cart, size: 16, color: AppTheme.divineGold),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
+                      /*Buy Now Button*/
                       Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Buy now functionality
-                            context.push('/checkout', extra: {
+                        flex: 2,
+                        child: InkWell(
+                          onTap: () {
+                             context.push('/checkout', extra: {
                               'item': remedy,
                               'isDirectBuy': true,
                             });
                           },
-                          icon: const Icon(Icons.shopping_bag, size: 18),
-                          label: const Text('Buy Now'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            backgroundColor: AppTheme.primaryOrange,
-                            foregroundColor: AppTheme.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: AppTheme.divineGold,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Buy',
+                                style: AppTheme.bodyStyle.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -429,22 +420,22 @@ class _RemedyCard extends ConsumerWidget {
       return Image.network(
         path,
         width: double.infinity,
-        height: 200,
+        height: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (_, __, ___) => _buildPlaceholder(),
       );
     } else if (path.startsWith('assets/')) {
         return Image.network(
           // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
-          'http://15.207.36.26:3001/$path', 
+          'https://15.207.36.26:3001/$path', 
           width: double.infinity,
-          height: 200,
+          height: double.infinity,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stack) {
              return Image.asset(
                 path,
                 width: double.infinity,
-                height: 200,
+                height: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => _buildPlaceholder(),
              );
@@ -455,11 +446,14 @@ class _RemedyCard extends ConsumerWidget {
   }
 
   Widget _buildPlaceholder() {
-    return Center(
-      child: Icon(
-        Icons.spa,
-        size: 80,
-        color: AppTheme.primaryOrange.withOpacity(0.3),
+    return Container(
+      color: AppTheme.divineGold.withOpacity(0.1),
+      child: Center(
+        child: Icon(
+          Icons.spa,
+          size: 40,
+          color: AppTheme.divineGold.withOpacity(0.5),
+        ),
       ),
     );
   }

@@ -39,14 +39,14 @@ class _AbstractBackgroundState extends State<AbstractBackground> with SingleTick
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xFFFFFAF5), // Very subtle warm off-white
+                Color(0xFFF5F9F6), // Forest Background (very light green/white)
                 Color(0xFFFAFAFA), // Clean neutral off-white
               ],
             ),
           ),
         ),
         
-        // Subtle Animated Warm Gradient Overlay
+        // Subtle Animated Forest Gradient Overlay
         AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
@@ -75,26 +75,26 @@ class _LightAuroraPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Rect rect = Offset.zero & size;
 
-    // Subtle warm glow at top-right (Saffron hue)
+    // Subtle Forest Green glow at top-right
     final Paint glowPaint = Paint()
       ..shader = RadialGradient(
         center: Alignment(0.8 - (animationValue * 0.1), -0.6 + (animationValue * 0.15)),
         radius: 1.0,
         colors: [
-           const Color(0xFFFF7A00).withOpacity(0.06), // Saffron faint glow
+           const Color(0xFF2E6F40).withOpacity(0.06), // Forest Primary faint glow
            Colors.transparent,
         ],
       ).createShader(rect);
       
     canvas.drawRect(rect, glowPaint);
     
-    // Subtle maroon accent glow at bottom left
+    // Subtle Deep Green/Mint accent glow at bottom left
      final Paint accentPaint = Paint()
       ..shader = RadialGradient(
          center: Alignment(-0.7 + (animationValue * 0.05), 0.6 - (animationValue * 0.1)),
         radius: 0.8,
         colors: [
-           const Color(0xFF8D1B3D).withOpacity(0.04), // Maroon faint glow
+           const Color(0xFF253D2C).withOpacity(0.04), // Forest Dark faint glow
            Colors.transparent,
         ],
       ).createShader(rect);

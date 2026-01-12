@@ -5,7 +5,7 @@ class EnvConfig {
   // Or use environment variable: flutter run --dart-define=API_BASE_URL=http://your-server-ip:4000
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://15.207.36.26:3001', // Change to AWS server IP when ready
+    defaultValue: 'https://15.207.36.26:3001', // Change to AWS server IP when ready
   );
   
   // AI Service Configuration

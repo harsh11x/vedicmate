@@ -86,7 +86,7 @@ class DailyHoroscopeCard extends StatelessWidget {
                     itemCount: 12,
                     itemBuilder: (context, index) {
                       final signs = [
-                        {'name': 'Aries', 'icon': Icons.auto_awesome_rounded, 'color': AppTheme.primaryOrange, 'gradient': [AppTheme.primaryOrange, AppTheme.primaryDeep]},
+                        {'name': 'Aries', 'icon': Icons.auto_awesome_rounded, 'color': AppTheme.primaryOrange, 'gradient': [AppTheme.primaryOrange, AppTheme.forestDark]},
                         {'name': 'Taurus', 'icon': Icons.eco_rounded, 'color': AppTheme.successGreen, 'gradient': [AppTheme.successGreen, const Color(0xFF059669)]},
                         {'name': 'Gemini', 'icon': Icons.people_rounded, 'color': AppTheme.accentGold, 'gradient': [AppTheme.accentGold, const Color(0xFFFFD700)]},
                         {'name': 'Cancer', 'icon': Icons.water_drop_rounded, 'color': AppTheme.infoBlue, 'gradient': [AppTheme.infoBlue, const Color(0xFF2563EB)]},

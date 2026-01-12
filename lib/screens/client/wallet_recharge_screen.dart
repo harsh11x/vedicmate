@@ -318,7 +318,7 @@ class _WalletScreenState extends State<WalletScreen> {
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.neutralLight.withOpacity(0.5)),
+        border: Border.all(color: AppTheme.forestBackground.withOpacity(0.5)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),

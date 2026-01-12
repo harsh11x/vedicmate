@@ -52,7 +52,7 @@ class SpecialOffersWidget extends StatelessWidget {
         'title': 'First Consultation FREE',
         'subtitle': 'Get 100% off on your first chat with AI Pandit',
         'icon': Icons.celebration_rounded,
-        'gradient': [AppTheme.primaryOrange, AppTheme.primaryDeep],
+        'gradient': [AppTheme.primaryOrange, AppTheme.forestDark],
         'type': 'first_consultation',
       },
       {

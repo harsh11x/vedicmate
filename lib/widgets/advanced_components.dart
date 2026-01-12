@@ -425,7 +425,7 @@ class _FloatingActionBtnState extends State<FloatingActionBtn>
             colors: [
               widget.backgroundColor ?? AppTheme.primaryOrange,
               widget.backgroundColor?.withOpacity(0.8) ??
-                  AppTheme.primaryDeep,
+                  AppTheme.forestDark,
             ],
           ),
           boxShadow: AppTheme.glowShadow,
@@ -484,7 +484,7 @@ class SkeletonLoader extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppTheme.neutralLight.withOpacity(0.3),
+          color: AppTheme.forestBackground.withOpacity(0.3),
           borderRadius: borderRadius ?? BorderRadius.circular(12),
         ),
       ),
