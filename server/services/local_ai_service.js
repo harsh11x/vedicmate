@@ -9,7 +9,8 @@ const __dirname = path.dirname(__filename);
 class LocalAIService {
     constructor() {
         this.config = this._loadConfig();
-        this.systemPrompt = this._loadSystemPrompt();
+        this.personalities = this._loadPersonalities();
+        this.defaultSystemPrompt = this.personalities['default'] || "You are a helpful assistant.";
         this.history = {}; // Simple in-memory history per session/user
     }
 
@@ -22,44 +23,46 @@ class LocalAIService {
         } catch (e) {
             console.error('Error loading AI config:', e);
         }
-        // Default fallback
         return {
-            api_base_url: "http://localhost:1234/v1",
+            api_base_url: "http://localhost:1234/v1", // Default fallback
             model_name: "qwen2.5-1.5b-instruct",
             temperature: 0.7,
             max_tokens: 500
         };
     }
 
-    _loadSystemPrompt() {
+    _loadPersonalities() {
         try {
-            const promptPath = path.join(__dirname, '../../ai_engine/system_prompt.txt');
+            const promptPath = path.join(__dirname, '../../ai_engine/personalities.json');
             if (fs.existsSync(promptPath)) {
-                return fs.readFileSync(promptPath, 'utf8');
+                return JSON.parse(fs.readFileSync(promptPath, 'utf8'));
             }
         } catch (e) {
-            console.error('Error loading System Prompt:', e);
+            console.error('Error loading Personalities:', e);
         }
-        return "You are a helpful assistant.";
+        return { "default": "You are a Vedic Pandit." };
     }
 
-    async generateResponse(userId, userMessage) {
+    async generateResponse(userId, userMessage, panditId = 'default') {
         try {
+            // Select Personality
+            const systemPrompt = this.personalities[panditId] || this.personalities['default'] || this.defaultSystemPrompt;
+
             // Build context
             const messages = [
-                { role: "system", content: this.systemPrompt }
+                { role: "system", content: systemPrompt }
             ];
 
             // Add history (last 5 turns)
             if (this.history[userId]) {
-                const recentHistory = this.history[userId].slice(-10); // Keep last 10 messages (5 turns)
+                const recentHistory = this.history[userId].slice(-10); // Keep last 10 messages
                 messages.push(...recentHistory);
             }
 
             // Add current message
             messages.push({ role: "user", content: userMessage });
 
-            console.log(`[LocalAI] Sending request to ${this.config.api_base_url}...`);
+            console.log(`[LocalAI] Sending request to ${this.config.api_base_url} for Pandit: ${panditId}...`);
 
             const response = await axios.post(`${this.config.api_base_url}/chat/completions`, {
                 model: this.config.model_name,

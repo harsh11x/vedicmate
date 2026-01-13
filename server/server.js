@@ -1408,13 +1408,13 @@ import localAIService from './services/local_ai_service.js';
 
 app.post('/api/ai-pandit/chat', async (req, res) => {
   try {
-    const { userId, message } = req.body;
+    const { userId, message, panditId } = req.body;
     if (!userId || !message) {
       return res.status(400).json({ success: false, error: 'UserId and message required' });
     }
 
     // Delegate to Qwen 2.5 via LM Studio
-    const response = await localAIService.generateResponse(userId, message);
+    const response = await localAIService.generateResponse(userId, message, panditId);
 
     res.json({ success: true, data: response });
   } catch (error) {
