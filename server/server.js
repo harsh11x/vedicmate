@@ -1403,6 +1403,38 @@ app.get('/api/admin/custom-requests/stats', (req, res) => {
 
 // ==================== Razorpay Payment Endpoints ====================
 
+// ==================== Local AI Integration ====================
+import localAIService from './services/local_ai_service.js';
+
+app.post('/api/ai-pandit/chat', async (req, res) => {
+  try {
+    const { userId, message } = req.body;
+    if (!userId || !message) {
+      return res.status(400).json({ success: false, error: 'UserId and message required' });
+    }
+
+    // Delegate to Qwen 2.5 via LM Studio
+    const response = await localAIService.generateResponse(userId, message);
+
+    res.json({ success: true, data: response });
+  } catch (error) {
+    console.error('AI Pandit Endpoint Error:', error);
+    res.status(500).json({ success: false, error: 'Failed to consult the digital stars.' });
+  }
+});
+
+app.post('/api/ai-pandit/clear-history', (req, res) => {
+  try {
+    const { userId } = req.body;
+    localAIService.clearHistory(userId);
+    res.json({ success: true, message: 'History cleared' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// ==================== Razorpay Payment Endpoints ====================
+
 // Initialize Razorpay
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,

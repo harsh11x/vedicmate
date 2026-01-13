@@ -111,25 +111,41 @@ class _WalletScreenState extends State<WalletScreen> {
     final amountText = _amountController.text.replaceAll(',', '');
     final amount = double.tryParse(amountText);
     
-    if (amount == null || amount <= 0) {
+    if (amount == null || amount < 50) { // Fix: Min ₹50
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid amount')),
+        const SnackBar(
+          content: Text('Minimum recharge amount is ₹50'),
+          backgroundColor: AppTheme.errorRed,
+        ),
       );
       return;
     }
 
     final user = _authService.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+         const SnackBar(content: Text('Please login to recharge wallet')),
+      );
+      return;
+    }
 
-    // We can fetch user details here if needed, or pass dummy
-    // Assuming we have basic user info or default to placeholders
-    await _razorpayService.openCheckout(
-      amount: amount,
-      userId: user.uid,
-      userName: _authService.currentUser?.displayName ?? 'User',
-      userEmail: _authService.currentUser?.email ?? 'user@example.com',
-      userPhone: '9876543210', // Ideal: Fetch actual phone
-    );
+    setState(() => _isLoading = true); // accurate loading state
+    
+    try {
+      await _razorpayService.openCheckout(
+        amount: amount,
+        userId: user.uid,
+        userName: user.displayName ?? 'User', // Use actual data
+        userEmail: user.email ?? 'user@vedicmate.com',
+        userPhone: '+919999999999', // Placeholder until phone is stored in auth profile
+      );
+      // Loading remains true until payment success/error callback
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('Error initiating payment: $e')),
+      );
+    }
   }
 
   @override
@@ -284,25 +300,32 @@ class _WalletScreenState extends State<WalletScreen> {
             }).toList(),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _initiateRecharge,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryOrange,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Text(
-                'Proceed to Pay',
-                style: GoogleFonts.outfit(
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold, 
-                  color: Colors.white
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _initiateRecharge,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryOrange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 2,
                 ),
+                child: _isLoading 
+                  ? const SizedBox(
+                      height: 20, 
+                      width: 20, 
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
+                    )
+                  : Text(
+                      'Proceed to Pay',
+                      style: GoogleFonts.outfit(
+                        fontSize: 16, 
+                        fontWeight: FontWeight.bold, 
+                      ),
+                    ),
               ),
             ),
-          ),
         ],
       ),
     );

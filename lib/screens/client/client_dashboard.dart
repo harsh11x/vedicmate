@@ -557,14 +557,26 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                 children: [
                    Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      'Explore Services',
-                      // Changed to simple font (sans-serif)
-                      style: AppTheme.bodyStyle.copyWith(
-                        fontSize: 20, 
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textBlack,
-                      ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: AppTheme.primaryGradient,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.auto_awesome_mosaic_rounded, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Explore Services',
+                          style: GoogleFonts.outfit(
+                            fontSize: 22, 
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textBlack,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -572,9 +584,77 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                 ],
               ).animate().fadeIn(delay: 500.ms),
             ),
+            
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+            // 6. Quick Actions (Restored)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildQuickActionBtn(
+                      context, 
+                      icon: Icons.account_balance_wallet_rounded, 
+                      label: 'Recharge', 
+                      onTap: () => context.push('/client/wallet')
+                    ),
+                    _buildQuickActionBtn(
+                      context, 
+                      icon: Icons.history_rounded, 
+                      label: 'History', 
+                      onTap: () => context.push('/bookings/history')
+                    ),
+                    _buildQuickActionBtn(
+                      context, 
+                      icon: Icons.settings_rounded, 
+                      label: 'Settings', 
+                      onTap: () => context.push('/settings')
+                    ),
+                  ],
+                ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.2, end: 0),
+              ),
+            ),
 
             // Bottom Spacing for Nav Bar
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionBtn(BuildContext context, {required IconData icon, required String label, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: AppTheme.primaryOrange, size: 28),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: AppTheme.bodyStyle.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textBlack,
+              ),
+            ),
           ],
         ),
       ),

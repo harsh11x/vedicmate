@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Added
+import '../../providers/cart_provider.dart'; // Added
 import '../../core/theme/app_theme.dart';
 import '../../services/user_preferences_service.dart';
 
-class CheckoutScreen extends StatefulWidget {
+
+class CheckoutScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic>? item;
   final bool isDirectBuy;
 
@@ -16,10 +19,10 @@ class CheckoutScreen extends StatefulWidget {
   });
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -80,6 +83,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         backgroundColor: AppTheme.successGreen,
       ),
     );
+    
+    // Clear cart if it was a cart checkout
+    if (widget.item == null) {
+       ref.read(cartProvider.notifier).clearCart();
+    }
+    
     // Navigate to Success Screen or Home
     context.go('/client/dashboard'); 
   }
@@ -101,7 +110,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _initiatePayment() async {
     if (_formKey.currentState!.validate()) {
+      double amount = 0.0;
+      String description = '';
       
+      if (widget.item != null) {
+        amount = (widget.item!['price'] as num).toDouble();
+        description = widget.item!['title'];
+      } else {
+        amount = ref.read(cartProvider.notifier).totalAmount;
+        description = 'Cart Checkout (${ref.read(cartProvider).length} items)';
+      }
+
       // Save details if checkbox is checked
       if (_saveAddress) {
         await _prefsService.saveShippingDetails(
@@ -117,9 +136,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       var options = {
         'key': 'rzp_test_YourTestKey', // REPLACE WITH REAL KEY
-        'amount': (widget.item!['price'] as int) * 100, // in paise
+        'amount': (amount * 100).toInt(), // in paise
         'name': 'AstroApp Remedies',
-        'description': widget.item!['title'],
+        'description': description,
         'prefill': {
           'contact': _phoneController.text,
           'email': _emailController.text
@@ -137,9 +156,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final item = widget.item!;
+    Map<String, dynamic>? singleItem = widget.item;
+    // Calculate total
+    double totalAmount = 0.0;
+    String displayTitle = '';
+    String displayImage = '';
+    
+    if (singleItem != null) {
+      totalAmount = (singleItem['price'] as num).toDouble();
+      displayTitle = singleItem['title'] ?? singleItem['name'] ?? 'Product';
+      displayImage = singleItem['image'] ?? '';
+    } else {
+      // Cart Checkout
+      final cartItems = ref.watch(cartProvider);
+      if (cartItems.isEmpty) {
+         return Scaffold(
+          appBar: AppBar(leading: BackButton(color: Colors.black)),
+          body: Center(child: Text("Cart is empty")),
+        );
+      }
+      totalAmount = ref.watch(cartProvider.notifier).totalAmount;
+      displayTitle = 'Cart Total (${cartItems.length} items)';
+      displayImage = cartItems.first.image; // Show first item image or generic cart icon
+    }
     
     return Scaffold(
       backgroundColor: AppTheme.neutralSoft,
@@ -168,7 +210,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: _buildImage(item['image'] ?? ''),
+                      child: _buildImage(displayImage),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -176,7 +218,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item['title'] ?? item['name'] ?? 'Product',
+                            displayTitle,
                             style: GoogleFonts.outfit(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -189,7 +231,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '₹${item['price']}',
+                            '₹$totalAmount',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -263,7 +305,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     elevation: 4,
                   ),
                   child: Text(
-                    'Proceed to Pay ₹${item['price']}',
+                    'Proceed to Pay ₹$totalAmount',
                     style: GoogleFonts.outfit(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

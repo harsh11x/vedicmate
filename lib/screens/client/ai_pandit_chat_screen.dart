@@ -908,21 +908,22 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           .map((m) => {'isUser': m.isUser.toString(), 'message': m.message})
           .toList();
 
-      // 2. Try Gemini
+      // 2. Try Local AI (Qwen 2.5)
       try {
         if (_usingFallback) throw Exception('Already using fallback');
         
-      final geminiService = ref.read(geminiServiceProvider);
-        print('📤 Sending to Gemini...');
-        aiResponse = await geminiService.sendMessage(
-        enhancedMessage,
-        conversationHistory,
+        final localAIService = ref.read(localAIServiceProvider);
+        print('📤 Sending to Local AI (Qwen 2.5)...');
+        aiResponse = await localAIService.sendMessage(
+          enhancedMessage,
+          conversationHistory,
           panditId: _panditId,
-        ).timeout(const Duration(seconds: 15));
+          userId: _userId,
+        ).timeout(const Duration(seconds: 60)); // Give local model time to think
         
       } catch (e) {
         // 3. Fallback to Custom AI
-        print('⚠️ Gemini failed ($e), switching to fallback...');
+        print('⚠️ Local AI failed ($e), switching to fallback...');
         _usingFallback = true;
         
         final customAI = ref.read(customAIServiceProvider);

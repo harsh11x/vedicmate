@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import '../config/app_config.dart';
+import '../config/api_config.dart';
 import 'auth_provider.dart';
 
 // --- Models ---
@@ -93,7 +93,7 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
 
   Future<void> fetchReels() async {
     try {
-      final response = await http.get(Uri.parse('${AppConfig.apiBaseUrl}/reels'));
+      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/reels'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {
@@ -108,7 +108,7 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
   }
 
   Future<void> toggleLike(String reelId) async {
-    final user = ref.read(authProvider).user;
+    final user = ref.read(authStateProvider).value;
     if (user == null) return;
 
     // Optimistic Update
@@ -122,7 +122,7 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
         if (hasLiked) {
           newLikes.removeWhere((l) => l.userId == user.uid);
         } else {
-          newLikes.add(ReelLike(userId: user.uid, name: user.name ?? 'User'));
+          newLikes.add(ReelLike(userId: user.uid, name: user.displayName ?? 'User'));
         }
 
         final updatedReel = Reel(
@@ -144,32 +144,31 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
 
     try {
       await http.post(
-        Uri.parse('${AppConfig.apiBaseUrl}/reels/$reelId/like'),
+        Uri.parse('${ApiConfig.baseUrl}/reels/$reelId/like'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': user.uid,
           'email': user.email,
-          'name': user.name,
+          'name': user.displayName,
         }),
       );
     } catch (e) {
-      // Revert if needed, but keeping it simple for now
       print('Error liking reel: $e');
     }
   }
 
   Future<void> addComment(String reelId, String text) async {
-    final user = ref.read(authProvider).user;
+    final user = ref.read(authStateProvider).value;
     if (user == null) return;
 
     try {
       final response = await http.post(
-        Uri.parse('${AppConfig.apiBaseUrl}/reels/$reelId/comment'),
+        Uri.parse('${ApiConfig.baseUrl}/reels/$reelId/comment'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': user.uid,
           'email': user.email,
-          'name': user.name,
+          'name': user.displayName,
           'text': text,
         }),
       );
@@ -208,3 +207,4 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
     }
   }
 }
+

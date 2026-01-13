@@ -12,6 +12,7 @@ import '../services/horoscope_service.dart';
 import '../services/astrology_service.dart';
 import '../services/custom_ai_service.dart';
 import '../services/product_service.dart';
+import '../services/local_ai_service.dart';
 
 final productServiceProvider = Provider<ProductService>((ref) {
   final api = ref.watch(apiClientProvider);
@@ -74,4 +75,8 @@ final kundliAIServiceProvider = Provider<KundliAIService>((ref) {
 
 final customAIServiceProvider = Provider<CustomAIService>((ref) {
   return CustomAIService();
+});
+
+final localAIServiceProvider = Provider<LocalAIService>((ref) {
+  return LocalAIService();
 });

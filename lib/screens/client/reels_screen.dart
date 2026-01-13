@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../providers/reels_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../config/api_config.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
@@ -82,7 +83,7 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
     // Construct full URL
     final url = widget.reel.videoUrl.startsWith('http') 
         ? widget.reel.videoUrl 
-        : 'https://15.207.36.26:3001/${widget.reel.videoUrl}'; // Using direct server URL
+        : '${ApiConfig.baseUrl}/${widget.reel.videoUrl}';
 
     _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
     try {
@@ -113,7 +114,7 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider).user;
+    final user = ref.watch(authStateProvider).value;
     final isLiked = widget.reel.likes.any((l) => l.userId == user?.uid);
 
     return Stack(

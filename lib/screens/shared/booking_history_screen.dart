@@ -237,16 +237,17 @@ class _BookingCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  if (booking.status == BookingStatus.confirmed)
+                  if (booking.status == BookingStatus.confirmed || booking.status == BookingStatus.completed)
                     Row(
                       children: [
                         OutlinedButton(
                           onPressed: () {
                             context.push('/chat/${booking.id}');
                           },
-                          child: const Text('Chat'),
+                          child: Text(booking.status == BookingStatus.completed ? 'View Chat' : 'Chat'),
                         ),
                         const SizedBox(width: 8),
+                        if (booking.status == BookingStatus.confirmed)
                         ElevatedButton(
                           onPressed: () {
                             context.push('/call/video/${booking.id}');
