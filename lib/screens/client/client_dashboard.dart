@@ -56,6 +56,22 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
       extendBody: true,
       body: Stack(
         children: [
+          // Background Gradient only (No image to prevent overlap with Scaffold/Theme background)
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFFFF8E1), // Light cream/gold top
+                    Colors.white,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          
           IndexedStack(
             index: _currentIndex,
             children: [
@@ -355,9 +371,11 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                                   Flexible(
                                     child: Text(
                                       '${userName.split(' ').first}',
-                                      style: AppTheme.titleStyle.copyWith(
+                                      style: GoogleFonts.inter(
                                         fontSize: 28,
-                                        height: 1.2,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FontStyle.italic,
+                                        color: AppTheme.textBlack,
                                       ),
                                     ),
                                   ),
@@ -526,20 +544,16 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       child: _ActionCardV2(
                         title: 'Kundli',
                         subtitle: 'Birth Chart',
-                        icon: Icons.star_outline_rounded,
-                        color: const Color(0xFFFDFBF7), // Warm white
-                        accent: AppTheme.divineGold,
+                        imagePath: 'assets/images/services/kundli_box.png',
                         onTap: () => context.push('/kundli/create'),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: _ActionCardV2(
-                        title: 'Match',
-                        subtitle: 'Compatibility',
-                        icon: Icons.favorite_border_rounded,
-                        color: const Color(0xFFFFF5F8), // Soft pink tint
-                        accent: Colors.pink.shade300,
+                        title: 'Match Making',
+                        subtitle: 'Compatiblity',
+                        imagePath: 'assets/images/services/matchmaking_box.png',
                         onTap: () => context.push('/relationship/form'),
                       ),
                     ),
@@ -672,17 +686,13 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 class _ActionCardV2 extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData icon;
-  final Color color;
-  final Color accent;
+  final String imagePath;
   final VoidCallback onTap;
 
   const _ActionCardV2({
     required this.title,
     required this.subtitle,
-    required this.icon,
-    required this.color,
-    required this.accent,
+    required this.imagePath,
     required this.onTap,
   });
 
@@ -691,62 +701,63 @@ class _ActionCardV2 extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 140,
-        padding: const EdgeInsets.all(20),
+        height: 160,
         decoration: BoxDecoration(
-          color: color,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.grey.withOpacity(0.05)),
+          image: DecorationImage(
+            image: AssetImage(imagePath),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.3), 
+              BlendMode.darken
+            ),
+          ),
           boxShadow: [
             BoxShadow(
-              color: accent.withOpacity(0.1), // Subtle color shadow
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-              spreadRadius: -4,
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white, // White circle bg for icon
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(icon, color: accent, size: 24),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  // Changed to simple font (sans-serif)
-                  style: AppTheme.bodyStyle.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textBlack,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: AppTheme.bodyStyle.copyWith(
-                    fontSize: 13,
-                    color: AppTheme.textGrey,
-                  ),
-                ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withOpacity(0.8),
               ],
+              stops: const [0.4, 1.0],
             ),
-          ],
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withOpacity(0.9),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

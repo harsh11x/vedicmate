@@ -43,7 +43,7 @@ class LocalAIService {
         return { "default": "You are a Vedic Pandit." };
     }
 
-    async generateResponse(userId, userMessage, panditId = 'default') {
+    async generateResponse(userId, userMessage, panditId = 'default', clientHistory = []) {
         try {
             // Select Personality
             const systemPrompt = this.personalities[panditId] || this.personalities['default'] || this.defaultSystemPrompt;
@@ -53,9 +53,20 @@ class LocalAIService {
                 { role: "system", content: systemPrompt }
             ];
 
-            // Add history (last 5 turns)
-            if (this.history[userId]) {
-                const recentHistory = this.history[userId].slice(-10); // Keep last 10 messages
+            // Add history
+            // 1. Prefer Client History (Robust)
+            if (clientHistory && clientHistory.length > 0) {
+                // Map client history format (isUser/message) to OpenAI format (role/content)
+                const formattedHistory = clientHistory.map(msg => ({
+                    role: (msg.isUser === 'true' || msg.isUser === true) ? "user" : "assistant",
+                    content: msg.message
+                }));
+                // Keep last 15 messages for context window
+                messages.push(...formattedHistory.slice(-15));
+            }
+            // 2. Fallback to Server Memory (Flaky)
+            else if (this.history[userId]) {
+                const recentHistory = this.history[userId].slice(-10);
                 messages.push(...recentHistory);
             }
 

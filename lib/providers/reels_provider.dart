@@ -103,7 +103,9 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
         }
       }
     } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      debugPrint('Error fetching reels: $e. Returning empty list to prevent crash.');
+      // Return empty list instead of error to keep UI alive
+      state = const AsyncValue.data([]);
     }
   }
 

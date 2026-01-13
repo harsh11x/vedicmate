@@ -236,15 +236,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
       ),
       body: Stack(
         children: [
-          // Background Pattern (Subtle)
+          // Background Pattern (subtle gradient/color only)
           Positioned.fill(
-            child: Opacity(
-              opacity: 0.03,
-              child: Image.asset(
-                'assets/images/logo.png', // Using logo as a watermark pattern if needed, or just clean white
-                repeat: ImageRepeat.repeat,
-              ),
-            ),
+             child: Container(color: Colors.transparent), // Placeholder if needed, or just remove
           ),
           
           SafeArea(
@@ -307,18 +301,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                             
                             SizedBox(height: spacingMedium),
                             
-                            SizedBox(
-                              height: buttonHeight,
-                              child: ElevatedButton(
-                                onPressed: _isLoading ? null : _handleSendOTP,
-                                child: _isLoading
-                                  ? const SizedBox(
+                            ElevatedButton(
+                              onPressed: _isLoading ? null : _handleSendOTP,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                minimumSize: const Size(double.infinity, 50),
+                              ),
+                              child: _isLoading
+                                ? const SizedBox(
                                       height: 24, 
                                       width: 24, 
                                       child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
                                     )
                                   : Text('Send OTP', style: TextStyle(letterSpacing: 1.0)),
-                              ),
                             ).animate().fadeIn(delay: 1000.ms).slideX(begin: 0.1, end: 0),
                           ] else ...[
                             // OTP Input
@@ -341,14 +336,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                             
                             SizedBox(height: spacingMedium),
                             
-                            SizedBox(
-                              height: buttonHeight,
-                              child: ElevatedButton(
-                                onPressed: _isLoading ? null : _handleVerifyOTP,
-                                child: _isLoading
-                                  ? const CircularProgressIndicator(color: Colors.white)
-                                  : const Text('Verify & Login'),
+                            ElevatedButton(
+                              onPressed: _isLoading ? null : _handleVerifyOTP,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                minimumSize: const Size(double.infinity, 50),
                               ),
+                              child: _isLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text('Verify & Login'),
                             ).animate().fadeIn(delay: 200.ms),
                             
                             TextButton(
@@ -388,40 +384,66 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     Row(
                       children: [
                         Expanded(
-                          child: SizedBox(
-                            height: buttonHeight,
-                            child: OutlinedButton(
-                              onPressed: _handleGoogleSignIn,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset('assets/images/google_logo.png', height: 20),
-                                  const SizedBox(width: 8),
-                                  const Text('Google'),
-                                ],
-                              ),
+                          child: OutlinedButton(
+                            onPressed: _handleGoogleSignIn,
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/google_logo.png', height: 20),
+                                const SizedBox(width: 8),
+                                const Text('Google'),
+                              ],
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(
-                          child: SizedBox(
-                            height: buttonHeight,
-                            child: OutlinedButton(
-                              onPressed: () => context.push('/login/email'),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.email_outlined, size: 20),
-                                  SizedBox(width: 8),
-                                  Text('Email'),
-                                ],
-                              ),
+                         Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => context.push('/login/email'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.email_outlined, size: 20),
+                                SizedBox(width: 8),
+                                Text('Email'),
+                              ],
                             ),
                           ),
                         ),
                       ],
                     ).animate().fadeIn(delay: 1400.ms).slideY(begin: 0.2, end: 0),
+                    
+                    SizedBox(height: spacingMedium),
+                    
+                    // 6. Guest Mode Button
+                    TextButton(
+                      onPressed: () async {
+                         setState(() => _isLoading = true);
+                         try {
+                           final user = await _authService.signInAsGuest();
+                           if (mounted && user != null) {
+                             await _navigateAfterLogin(user);
+                           }
+                         } catch (e) {
+                           _handleAuthError(e);
+                         } finally {
+                           if (mounted) setState(() => _isLoading = false);
+                         }
+                      },
+                      child: Text(
+                        'Continue as Guest', 
+                        style: AppTheme.bodyStyle.copyWith(
+                          color: AppTheme.divineGold,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ).animate().fadeIn(delay: 1600.ms),
 
                     SizedBox(height: spacingLarge * 2),
 

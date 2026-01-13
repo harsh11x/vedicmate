@@ -114,7 +114,24 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
       );
 
       if (mounted) {
-        context.push('/pandit-selection?category=${widget.selectedCategory}');
+        // Direct Navigation Logic (AI 2.0)
+        String targetPanditId = 'ai_pandit_1'; // Default: Vedic (Rajesh Shastri)
+        
+        switch (widget.selectedCategory) {
+          case 'Numerology':
+            targetPanditId = 'ai_pandit_2'; // Suresh Joshi
+            break;
+          case 'Lal Kitab':
+            targetPanditId = 'ai_pandit_15'; // Acharya Dinesh Bhatt
+            break;
+          // Add other mappings as needed
+          case 'Vedic Astrology':
+          default:
+            targetPanditId = 'ai_pandit_1';
+            break;
+        }
+
+        context.push('/ai-pandit/chat?panditId=$targetPanditId');
       }
     }
   }

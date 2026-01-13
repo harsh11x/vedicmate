@@ -6,6 +6,7 @@ class ProductService {
 
   ProductService(this._client);
 
+
   Future<List<Map<String, dynamic>>> getProducts({String? category}) async {
     try {
       final endpoint = category != null && category != 'All'

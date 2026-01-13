@@ -68,13 +68,22 @@ class ServiceInfoCards extends StatelessWidget {
                   description: 'Unlock your destiny',
                   accentColor: const Color(0xFFEC4899),
                   iconGradient: const [Color(0xFFEC4899), Color(0xFFF472B6)],
+                  isComingSoon: true,
                   imagePath: 'assets/images/services/palm_reading.png',
-                  onTap: () => context.push('/service-input/palm-reading'),
-                ),
+                  onTap: () {
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                   content: Text('Palm Reading AI is coming soon!', style: TextStyle(color: Colors.white)),
+                   backgroundColor: AppTheme.primaryOrange,
+                   behavior: SnackBarBehavior.floating,
+                 ),
+               );
+             },
               ),
-            ],
-          ),
-          const SizedBox(height: 16),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
 
           // Row 2: Vedic Astrology & Numerology
           Row(
@@ -109,7 +118,6 @@ class ServiceInfoCards extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           
-          // Row 3: Vedic Astrology (Full Width)
           // Row 3: Vastu Shastra (Full Width)
           _ServiceCard(
             icon: Icons.home_work,
@@ -119,9 +127,18 @@ class ServiceInfoCards extends StatelessWidget {
             accentColor: const Color(0xFF10B981),
             iconGradient: const [Color(0xFF10B981), Color(0xFF34D399)],
             featured: false,
+            isComingSoon: true,
             fullWidth: true,
             imagePath: 'assets/images/services/vastu_shastra.png',
-            onTap: () => context.push('/service-input/vastu'),
+            onTap: () {
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                   content: Text('Vastu AI is coming soon!', style: TextStyle(color: Colors.white)),
+                   backgroundColor: AppTheme.primaryOrange,
+                   behavior: SnackBarBehavior.floating,
+                 ),
+               );
+             },
           ),
         ],
       ),
@@ -137,6 +154,7 @@ class _ServiceCard extends StatefulWidget {
   final Color accentColor;
   final List<Color> iconGradient;
   final bool featured;
+  final bool isComingSoon;
   final bool fullWidth;
   final String? imagePath;
   final VoidCallback onTap;
@@ -149,6 +167,7 @@ class _ServiceCard extends StatefulWidget {
     required this.accentColor,
     required this.iconGradient,
     this.featured = false,
+    this.isComingSoon = false,
     this.fullWidth = false,
     this.imagePath,
     required this.onTap,
@@ -316,6 +335,29 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                                       ),
                                     ),
                                   ],
+                                ),
+                              ),
+                            ),
+
+                          // Coming Soon Tag (Overlay)
+                          if (widget.isComingSoon)
+                            Positioned(
+                              top: 12,
+                              right: 12,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                ),
+                                child: const Text(
+                                  'Coming Soon',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),

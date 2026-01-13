@@ -68,7 +68,7 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
               children: [
                 // Background Image
                 Image.asset(
-                   'assets/images/cards/live_pooja_card_bg_1768067784488.png', 
+                   'assets/images/services/live_pooja_box.png', 
                    fit: BoxFit.cover,
                    errorBuilder: (c,e,s) => Container(
                      decoration: const BoxDecoration(
@@ -92,17 +92,6 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
                   ),
                 ),
 
-                // Background Pattern or Icon (Subtle)
-                Positioned(
-                  right: -30,
-                  top: -30,
-                  child: Icon(
-                    Icons.fireplace_rounded,
-                    size: 180,
-                    color: Colors.white.withOpacity(0.1),
-                  ),
-                ),
-                
                 // Content
                 Padding(
                   padding: const EdgeInsets.all(24),
@@ -113,31 +102,41 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.white.withOpacity(0.2)),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 4,
-                                    backgroundColor: Colors.redAccent,
+                            Builder(
+                              builder: (context) {
+                                final now = DateTime.now();
+                                final isLive = now.hour >= 9 && now.hour < 13;
+                                
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: isLive ? Colors.redAccent.withOpacity(0.9) : Colors.black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: Colors.white.withOpacity(0.2)),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'LIVE NOW • 9 AM - 1 PM',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (isLive) ...[
+                                        CircleAvatar(
+                                          radius: 3,
+                                          backgroundColor: Colors.white,
+                                        ),
+                                        const SizedBox(width: 6),
+                                      ],
+                                      Text(
+                                        isLive ? 'LIVE NOW • 9 AM - 1 PM' : 'NEXT: 9 AM TOMORROW',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                );
+                              }
                             ),
                             const SizedBox(height: 12),
                             Text(

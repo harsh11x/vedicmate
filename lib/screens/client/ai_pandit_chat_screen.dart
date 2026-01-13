@@ -1252,21 +1252,23 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         top: false,
         child: Column(
           children: [
-            SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                  _QuickActionChip('🔮 Future', onTap: () => _fillAndSend('Predict my future based on my chart')),
-                const SizedBox(width: 8),
-                  _QuickActionChip('❤️ Love', onTap: () => _fillAndSend('How is my love life looking?')),
-                const SizedBox(width: 8),
-                  _QuickActionChip('💼 Career', onTap: () => _fillAndSend('What are my career prospects?')),
-                const SizedBox(width: 8),
-                   _QuickActionChip('✨ Luck', onTap: () => _fillAndSend('What are my lucky colors and numbers?')),
-              ],
-            ),
-          ),
+            if (!_panditId.startsWith('ai_pandit_')) ...[
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  children: [
+                      _QuickActionChip('🔮 Future', onTap: () => _fillAndSend('Predict my future based on my chart')),
+                    const SizedBox(width: 8),
+                      _QuickActionChip('❤️ Love', onTap: () => _fillAndSend('How is my love life looking?')),
+                    const SizedBox(width: 8),
+                      _QuickActionChip('💼 Career', onTap: () => _fillAndSend('What are my career prospects?')),
+                    const SizedBox(width: 8),
+                       _QuickActionChip('✨ Luck', onTap: () => _fillAndSend('What are my lucky colors and numbers?')),
+                  ],
+                ),
+              ),
+            ],
             Row(
               children: [
                 Expanded(
@@ -1512,9 +1514,17 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       backgroundColor: AppTheme.white,
       elevation: 0,
       shadowColor: AppTheme.primaryOrange.withOpacity(0.1),
+      titleSpacing: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: AppTheme.neutralDark),
-        onPressed: () => context.pop(),
+        onPressed: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            // Fallback for deep links or broken stack
+            context.go('/client/dashboard');
+          }
+        },
       ),
       title: Row(
         children: [
@@ -1563,7 +1573,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       actions: [
         IconButton(
           icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
-          onPressed: () => context.push('/ai-pandit/voice-call?panditId=$_panditId'),
+          tooltip: 'Voice Call',
+          onPressed: () {
+            // Navigate to Voice Call Screen
+            context.push('/ai-pandit/voice-call?panditId=$_panditId');
+          },
         ),
         IconButton(
           icon: const Icon(Icons.more_vert, color: AppTheme.neutralDark),
