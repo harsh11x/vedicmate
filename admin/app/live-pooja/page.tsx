@@ -83,6 +83,14 @@ export default function LivePoojaPage() {
         });
 
         return () => {
+            // Remove all socket listeners to prevent duplication
+            socket.off('viewer-update');
+            socket.off('new-pooja-message');
+            socket.off('gift-received');
+            socket.off('user-joined');
+            socket.off('answer');
+            socket.off('ice-candidate');
+
             socket.disconnect();
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
@@ -224,7 +232,8 @@ export default function LivePoojaPage() {
                                     autoPlay
                                     muted
                                     playsInline
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover rounded-lg"
+                                    style={{ transform: 'scaleX(-1)' }}
                                 />
                                 <div className="absolute top-4 left-4 bg-red-600 px-3 py-1 rounded text-white font-bold animate-pulse shadow-lg flex items-center gap-2">
                                     <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
