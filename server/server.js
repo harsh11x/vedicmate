@@ -1602,8 +1602,8 @@ app.put('/api/admin/live-sessions/:id/start', (req, res) => {
 
     writeLiveSessions(sessions);
 
-    // Notify user that session is live
-    io.to(`user-${sessions[index].userId}`).emit('session-live', sessions[index]);
+    // Notify ALL users in live-pooja-room that session is live
+    io.to('live-pooja-room').emit('session-live', sessions[index]);
     io.emit('live-sessions-update', { action: 'started', session: sessions[index] });
 
     // Send notification to all users
@@ -1648,7 +1648,8 @@ app.put('/api/admin/live-sessions/:id/end', (req, res) => {
       }
     }
 
-    io.to(`user-${sessions[index].userId}`).emit('session-ended', sessions[index]);
+    // Notify ALL users in live-pooja-room that session ended
+    io.to('live-pooja-room').emit('session-ended', sessions[index]);
     io.emit('live-sessions-update', { action: 'ended', session: sessions[index] });
 
     res.json({ success: true, data: sessions[index] });

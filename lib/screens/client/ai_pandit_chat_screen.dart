@@ -68,6 +68,13 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    
+    // Strict Session Termination: End if app is paused, minimized or detached
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+       print('📱 App backgrounded/closed: Ending session strictly.');
+       _endSession(isBackground: true);
+    }
+
     // Refresh wallet balance when app comes back to foreground
     if (state == AppLifecycleState.resumed && _userId != null) {
       _checkWalletBalance();
@@ -101,6 +108,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   @override
   void dispose() {
+    print('👋 Chat Screen Disposing: Ending session.');
+    _endSession(); // Ensure session ends when screen is closed
+    
     WidgetsBinding.instance.removeObserver(this);
     _costTimer?.cancel();
     _walletCheckTimer?.cancel();
@@ -799,6 +809,78 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     }
   }
 
+
+  // NEW: Strict Session Ending Logic
+  Future<void> _endSession({bool isBackground = false}) async {
+    if (_currentSession == null || !_currentSession!.isActive) return;
+    
+    // Stop timers immediately
+    _costTimer?.cancel();
+    _walletCheckTimer?.cancel();
+    
+    print('🛑 Ending session ${_currentSession!.id} (Background: $isBackground)');
+    
+    try {
+      await _chatService.endSession(_userId!, _currentSession!.id);
+      
+      // Update local state if UI is still active
+      if (mounted) {
+        setState(() {
+          _isChatStarted = false;
+          _isViewingOnly = true;
+        });
+      }
+    } catch (e) {
+      print('❌ Error strictly ending session: $e');
+    }
+  }
+
+  // NEW: Clear Chat Implementation
+  Future<void> _clearChat() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clear Chat History?'),
+        content: const Text(
+          'This will permanently delete all messages for this Pandit. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.errorRed),
+            child: const Text('Clear'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      if (_userId != null) {
+        // End active session first if running
+        await _endSession();
+        
+        await _chatService.clearPanditHistory(_userId!, _panditId);
+        setState(() {
+          _messages.clear();
+          _currentSession = null;
+          _isChatStarted = false;
+          _isViewingOnly = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Chat history cleared')),
+        );
+        
+        // Re-initialize to reset state correctly
+        _initializeChat(); 
+      }
+    }
+  }
+
   void _startCostTimer() {
     _costTimer?.cancel();
     _costTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -959,71 +1041,6 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     }
   }
 
-  Future<void> _endSession() async {
-    if (_userId == null || _currentSession == null || !_isChatStarted) {
-      // If not started, just go back
-      if (mounted) context.pop();
-      return;
-    }
-
-    _walletBalance = await _walletService.getBalance(_userId!);
-    
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: AppTheme.white,
-        title: const Text('End Consultation?'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow('Duration', '${(_elapsedSeconds / 60).toStringAsFixed(1)} mins'),
-            const SizedBox(height: 8),
-            _buildInfoRow('Total Cost', '₹${_currentCost.toStringAsFixed(2)}', isBold: true),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Continue Chat', style: TextStyle(color: AppTheme.neutralMedium)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryOrange,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('End & Pay'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && _currentSession != null) {
-      setState(() => _isLoading = true);
-      final result = await _chatService.endSession(_userId!, _currentSession!.id);
-      setState(() => _isLoading = false);
-      
-      if (result['success']) {
-        _costTimer?.cancel();
-        ref.invalidate(walletBalanceProvider);
-        if (mounted) {
-          context.pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Session ended. ₹${result['totalCost'].toStringAsFixed(2)} paid.'),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppTheme.successGreen,
-            ),
-          );
-        }
-      } else {
-        _showError(result['message'] ?? 'Failed to end session');
-      }
-    }
-  }
 
   Widget _buildInfoRow(String label, String value, {bool isBold = false}) {
     return Row(
@@ -1580,13 +1597,20 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           },
         ),
         IconButton(
-          icon: const Icon(Icons.more_vert, color: AppTheme.neutralDark),
+          icon: const Icon(Icons.delete_outline, color: AppTheme.errorRed),
+          tooltip: 'Clear Chat',
+          onPressed: _clearChat,
+        ),
+        IconButton(
+          icon: const Icon(Icons.exit_to_app, color: AppTheme.neutralDark),
+          tooltip: 'End Session',
           onPressed: _endSession,
         ),
       ],
     );
   }
 }
+
 
 
 

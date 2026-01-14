@@ -419,4 +419,18 @@ class AIChatService {
     sessions.sort((a, b) => b.startTime.compareTo(a.startTime));
     return sessions;
   }
+
+  // Clear chat history for a specific pandit
+  Future<void> clearPanditHistory(String userId, String panditId) async {
+    final sessions = await getUserSessionsByPandit(userId, panditId);
+    final prefs = await SharedPreferences.getInstance();
+    
+    for (var session in sessions) {
+      await prefs.remove('${_sessionsKey}_${session.id}');
+      if (session.isActive) {
+        await prefs.remove('active_session_${userId}_${panditId}');
+      }
+    }
+  }
 }
+
