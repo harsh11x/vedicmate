@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,6 +55,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
     super.initState();
     _initRenderers();
     _connectSocket();
+    _checkSessionStatus(); // Check if session is already live
     
     _giftAnimController = AnimationController(
       vsync: this,
@@ -76,6 +79,26 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
 
   Future<void> _initRenderers() async {
     await _remoteRenderer.initialize();
+  }
+
+  Future<void> _checkSessionStatus() async {
+    try {
+      // Check if the session is already live when user joins
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl.replaceAll('/api', '')}/api/admin/live-sessions/session_1768376801443'),
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true && data['data']['isLive'] == true) {
+          print('✅ Session is already LIVE when user joined!');
+          if (mounted) setState(() => _isLive = true);
+        } else {
+          print('⏸️ Session is not live yet');
+        }
+      }
+    } catch (e) {
+      print('❌ Error checking session status: $e');
+    }
   }
 
   void _connectSocket() {
