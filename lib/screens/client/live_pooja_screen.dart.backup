@@ -250,67 +250,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     _chatController.clear();
   }
 
-  void _showGiftSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.grey[900],
-      builder: (context) {
-        final gifts = [
-          {'name': '🙏 Blessing', 'price': 11},
-          {'name': '🌺 Flower', 'price': 21},
-          {'name': '🪔 Diya', 'price': 51},
-          {'name': '🔔 Bell', 'price': 101},
-          {'name': '🕉️ Om', 'price': 251},
-        ];
-
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Send a Gift',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ...gifts.map((gift) => ListTile(
-                leading: Text(
-                  gift['name'].toString().split(' ')[0],
-                  style: const TextStyle(fontSize: 32),
-                ),
-                title: Text(
-                  gift['name'].toString().split(' ')[1],
-                  style: GoogleFonts.outfit(color: Colors.white),
-                ),
-                trailing: Text(
-                  '₹${gift['price']}',
-                  style: GoogleFonts.outfit(
-                    color: AppTheme.yellowPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  final user = ref.read(authStateProvider).value;
-                  _socket.emit('send-gift', {
-                    'giftName': gift['name'],
-                    'giftIcon': gift['name'].toString().split(' ')[0],
-                    'senderName': user?.displayName ?? 'User',
-                    'amount': gift['price'],
-                  });
-                  Navigator.pop(context);
-                },
-              )),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   void dispose() {
     _chatController.dispose();
@@ -324,10 +263,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    if (_isFullscreen) {
-      return _buildFullscreenView();
-    }
-    
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -376,15 +311,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                                   ),
                                 ),
                               ),
-                              // Fullscreen button
-                              Positioned(
-                                top: 16,
-                                right: 60,
-                                child: IconButton(
-                                  icon: const Icon(Icons.fullscreen, color: Colors.white),
-                                  onPressed: () => setState(() => _isFullscreen = true),
-                                ),
-                              ),
                               // Close button
                               Positioned(
                                 top: 16,
@@ -394,43 +320,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                                   onPressed: () => context.pop(),
                                 ),
                               ),
-                              // Gift Animation
-                              if (_activeGift != null)
-                                Positioned.fill(
-                                  child: Center(
-                                    child: ScaleTransition(
-                                      scale: _giftScaleAnim,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            _activeGift!['giftIcon'],
-                                            style: const TextStyle(fontSize: 100),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black54,
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  '${_activeGift!['senderName']}',
-                                                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                                                ),
-                                                Text(
-                                                  'sent ${_activeGift!['giftName']}',
-                                                  style: GoogleFonts.outfit(fontSize: 16, color: AppTheme.yellowPrimary),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
                             ],
                           )
                         : Center(
@@ -490,11 +379,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                               color: Colors.white,
                             ),
                           ),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.card_giftcard, color: AppTheme.yellowPrimary),
-                            onPressed: _showGiftSheet,
-                          ),
                         ],
                       ),
                     ),
@@ -535,7 +419,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                     // Input
                     Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.black,
                         border: Border(
                           top: BorderSide(color: Colors.white24),
@@ -578,90 +462,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildFullscreenView() {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Fullscreen video
-          Positioned.fill(
-            child: RTCVideoView(
-              _remoteRenderer,
-              objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-              mirror: false,
-            ),
-          ),
-          // LIVE badge
-          Positioned(
-            top: 50,
-            left: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'LIVE',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-          // Exit fullscreen
-          Positioned(
-            top: 50,
-            right: 16,
-            child: IconButton(
-              icon: const Icon(Icons.fullscreen_exit, color: Colors.white),
-              onPressed: () => setState(() => _isFullscreen = false),
-            ),
-          ),
-          // Gift animation in fullscreen
-          if (_activeGift != null)
-            Positioned.fill(
-              child: Center(
-                child: ScaleTransition(
-                  scale: _giftScaleAnim,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _activeGift!['giftIcon'],
-                        style: const TextStyle(fontSize: 150),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              '${_activeGift!['senderName']}',
-                              style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
-                            Text(
-                              'sent ${_activeGift!['giftName']}',
-                              style: GoogleFonts.outfit(fontSize: 18, color: AppTheme.yellowPrimary),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ],
       ),
     );
   }
