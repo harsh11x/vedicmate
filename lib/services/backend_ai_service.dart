@@ -7,7 +7,7 @@ class BackendAIService {
   final String baseUrl;
 
   BackendAIService({String? customUrl})
-      : baseUrl = customUrl ?? EnvConfig.apiBaseUrl;
+      : baseUrl = customUrl ?? EnvConfig.aiServiceUrl;
 
   /// Get welcome message from backend
   Future<String> getWelcomeMessage({String? panditId}) async {
