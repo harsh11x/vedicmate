@@ -32,7 +32,7 @@ import '../../screens/client/remedy_product_screen.dart';
 import '../../screens/client/cart_screen.dart';
 import '../../screens/client/checkout_screen.dart';
 import '../../screens/client/custom_booking_screen.dart';
-import '../../screens/shared/splash_screen.dart';
+import '../../screens/auth/splash_screen.dart';
 import '../../screens/client/kundli/create_kundli_screen.dart';
 import '../../screens/client/order_history_screen.dart';
 import '../../screens/client/order_detail_screen.dart';
