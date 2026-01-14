@@ -569,41 +569,23 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
   }
 
   Widget _buildOfflinePlaceholder() {
-    final now = DateTime.now();
-    final hour = now.hour;
-    String message = '';
-    String subMessage = '';
-    IconData icon = Icons.access_time;
-
-    if (hour < 9) {
-      message = 'Pooja starts at 9:00 AM';
-      subMessage = 'Please wait for the divine blessings.';
-      icon = Icons.hourglass_empty;
-    } else if (hour >= 13) {
-      message = 'Pooja has ended';
-      subMessage = 'Join us tomorrow at 9:00 AM.';
-      icon = Icons.bedtime;
-    } else {
-      message = 'Waiting for Panditji...';
-      subMessage = 'The session will start shortly.';
-      icon = Icons.live_tv;
-    }
-
+    // Always show "Waiting for Panditji" regardless of time
+    // Stream will appear whenever admin starts it
     return Container(
       width: double.infinity,
       color: const Color(0xFF1A1A1A),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 48, color: Colors.orange),
+          Icon(Icons.live_tv, size: 48, color: Colors.orange),
           const SizedBox(height: 16),
           Text(
-            message,
+            'Waiting for Panditji...',
             style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            subMessage,
+            'The session will start shortly.',
             style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
         ],
