@@ -176,6 +176,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
 
   Future<void> _handleOffer(dynamic sdp, String senderId) async {
     try {
+      print('🔄 Creating peer connection...');
       // Create peer connection
       _peerConnection = await createPeerConnection({
         'iceServers': [
@@ -183,10 +184,21 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
           {'urls': 'stun:stun1.l.google.com:19302'},
         ]
       });
+      print('✅ Peer connection created');
+
+      // Track connection state
+      _peerConnection!.onConnectionState = (state) {
+        print('🔗 Connection state: $state');
+      };
+
+      _peerConnection!.onIceConnectionState = (state) {
+        print('🧊 ICE connection state: $state');
+      };
 
       // Handle ICE candidates
       _peerConnection!.onIceCandidate = (candidate) {
         if (candidate.candidate != null) {
+          print('📤 Sending ICE candidate to admin');
           _socket.emit('ice-candidate', {
             'target': senderId,
             'candidate': {
@@ -201,34 +213,50 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
       // Handle incoming tracks (VIDEO!)
       _peerConnection!.onTrack = (event) {
         print('🎥 RECEIVED TRACK: ${event.track.kind}');
-        if (event.track.kind == 'video') {
+        print('📊 Track enabled: ${event.track.enabled}');
+        print('📊 Streams count: ${event.streams.length}');
+        
+        if (event.track.kind == 'video' && event.streams.isNotEmpty) {
           print('✅ Setting video track to renderer!');
+          print('📺 Stream ID: ${event.streams[0].id}');
+          print('📺 Video tracks: ${event.streams[0].getVideoTracks().length}');
+          
           if (mounted) {
             setState(() {
               _remoteRenderer.srcObject = event.streams[0];
+              _isConnecting = false; // Stop loading indicator
             });
+            print('✅ Video renderer updated!');
           }
         }
       };
 
       // Set remote description (offer)
+      print('📥 Setting remote description...');
       await _peerConnection!.setRemoteDescription(
         RTCSessionDescription(sdp['sdp'], sdp['type']),
       );
+      print('✅ Remote description set');
 
       // Create answer
+      print('📝 Creating answer...');
       final answer = await _peerConnection!.createAnswer();
       await _peerConnection!.setLocalDescription(answer);
+      print('✅ Local description set');
 
       // Send answer back
+      print('📤 Sending answer to admin...');
       _socket.emit('answer', {
         'target': senderId,
         'sdp': answer.toMap(),
       });
 
-      print('✅ Answer sent to admin');
+      print('✅ Answer sent to admin - WebRTC handshake complete!');
     } catch (e) {
       print('❌ Error handling offer: $e');
+      if (mounted) {
+        setState(() => _isConnecting = false);
+      }
     }
   }
 
@@ -332,6 +360,8 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
 
   @override
   void dispose() {
+    print('🚪 Leaving Live Pooja screen...');
+    _socket.emit('leave-pooja');
     _chatController.dispose();
     _giftAnimController.dispose();
     _socket.disconnect();
