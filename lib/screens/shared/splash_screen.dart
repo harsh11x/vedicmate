@@ -10,33 +10,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  // SplashScreen is just a passive loader. 
+  // The AppRouter handles the navigation based on AuthState changes.
   @override
   void initState() {
     super.initState();
-    _checkSession();
-  }
-
-  Future<void> _checkSession() async {
-    // Artificial delay to show logo
-    await Future.delayed(const Duration(seconds: 1));
-    
-    if (!mounted) return;
-
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
-
-      debugPrint('SplashScreen: Manual Session Check -> $isLoggedIn');
-
-      if (isLoggedIn) {
-        context.go('/client/dashboard');
-      } else {
-        context.go('/login');
-      }
-    } catch (e) {
-      debugPrint('SplashScreen error: $e');
-      context.go('/login');
-    }
   }
 
   @override
