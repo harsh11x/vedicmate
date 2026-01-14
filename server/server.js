@@ -2173,6 +2173,222 @@ app.post('/api/admin/upload-video', (req, res) => {
   }
 });
 
+// ==================== Custom Request Endpoints ====================
+
+// 1. Create Custom Request Order
+app.post('/api/custom-requests/create', async (req, res) => {
+  try {
+    const { userId, userName, userEmail, userPhone, serviceType, date, timeSlot, requirements, amount } = req.body;
+
+    if (!userId || !serviceType || !date || !timeSlot || !amount) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
+      });
+    }
+
+    // Generate unique order ID
+    const orderId = `CR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Create Razorpay order
+    const razorpayOrder = await razorpay.orders.create({
+      amount: amount * 100, // Convert to paise
+      currency: 'INR',
+      receipt: orderId,
+      notes: {
+        userId,
+        serviceType,
+        date,
+        timeSlot
+      }
+    });
+
+    // Create order object
+    const order = {
+      orderId,
+      userId,
+      userName: userName || 'User',
+      userEmail: userEmail || '',
+      userPhone: userPhone || '',
+      serviceType,
+      date,
+      timeSlot,
+      requirements: requirements || '',
+      amount,
+      status: 'pending', // pending, accepted, rejected
+      paymentStatus: 'pending', // pending, paid, failed
+      razorpayOrderId: razorpayOrder.id,
+      razorpayPaymentId: null,
+      joiningLink: null,
+      adminNotes: null,
+      finalDate: null, // Admin can set final date/time
+      finalTime: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      acceptedAt: null,
+      rejectedAt: null
+    };
+
+    // Save order
+    const requests = readCustomRequests();
+    requests.push(order);
+    writeCustomRequests(requests);
+
+    res.json({
+      success: true,
+      orderId,
+      razorpayOrderId: razorpayOrder.id,
+      amount,
+      razorpayKeyId: process.env.RAZORPAY_KEY_ID
+    });
+  } catch (error) {
+    console.error('Create Custom Request Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 2. Verify Payment
+app.post('/api/custom-requests/verify-payment', (req, res) => {
+  try {
+    const { orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
+
+    if (!orderId || !razorpayPaymentId || !razorpayOrderId || !razorpaySignature) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing payment verification fields'
+      });
+    }
+
+    // Verify signature
+    const crypto = require('crypto');
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+      .digest('hex');
+
+    if (expectedSignature !== razorpaySignature) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid payment signature'
+      });
+    }
+
+    // Update order
+    const requests = readCustomRequests();
+    const orderIndex = requests.findIndex(r => r.orderId === orderId);
+
+    if (orderIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: 'Order not found'
+      });
+    }
+
+    requests[orderIndex].paymentStatus = 'paid';
+    requests[orderIndex].razorpayPaymentId = razorpayPaymentId;
+    requests[orderIndex].updatedAt = new Date().toISOString();
+
+    writeCustomRequests(requests);
+
+    res.json({
+      success: true,
+      message: 'Payment verified successfully',
+      order: requests[orderIndex]
+    });
+  } catch (error) {
+    console.error('Payment Verification Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 3. Get User Orders
+app.get('/api/custom-requests/user/:userId', (req, res) => {
+  try {
+    const { userId } = req.params;
+    const requests = readCustomRequests();
+    const userOrders = requests.filter(r => r.userId === userId);
+
+    // Sort by creation date (newest first)
+    userOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.json({
+      success: true,
+      orders: userOrders
+    });
+  } catch (error) {
+    console.error('Get User Orders Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 4. Admin: Get All Custom Requests
+app.get('/api/admin/custom-requests', (req, res) => {
+  try {
+    const requests = readCustomRequests();
+
+    // Sort by creation date (newest first)
+    requests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.json({
+      success: true,
+      requests
+    });
+  } catch (error) {
+    console.error('Get All Requests Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 5. Admin: Update Order Status
+app.post('/api/admin/custom-requests/update-status', (req, res) => {
+  try {
+    const { orderId, status, joiningLink, adminNotes, finalDate, finalTime } = req.body;
+
+    if (!orderId || !status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Order ID and status are required'
+      });
+    }
+
+    const requests = readCustomRequests();
+    const orderIndex = requests.findIndex(r => r.orderId === orderId);
+
+    if (orderIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        error: 'Order not found'
+      });
+    }
+
+    // Update order
+    requests[orderIndex].status = status;
+    requests[orderIndex].updatedAt = new Date().toISOString();
+
+    if (joiningLink) requests[orderIndex].joiningLink = joiningLink;
+    if (adminNotes) requests[orderIndex].adminNotes = adminNotes;
+    if (finalDate) requests[orderIndex].finalDate = finalDate;
+    if (finalTime) requests[orderIndex].finalTime = finalTime;
+
+    if (status === 'accepted') {
+      requests[orderIndex].acceptedAt = new Date().toISOString();
+    } else if (status === 'rejected') {
+      requests[orderIndex].rejectedAt = new Date().toISOString();
+    }
+
+    writeCustomRequests(requests);
+
+    res.json({
+      success: true,
+      message: 'Order updated successfully',
+      order: requests[orderIndex]
+    });
+  } catch (error) {
+    console.error('Update Order Status Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ============================================================================
 // START SERVER
 // ============================================================================

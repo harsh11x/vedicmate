@@ -23,6 +23,8 @@ import '../../providers/cart_provider.dart';
 import 'reels_screen.dart';
 import 'remedies_screen.dart';
 import 'ai_pandit_chat_screen.dart';
+import '../../widgets/live_pooja_banner.dart';
+import '../../widgets/custom_request_banner.dart';
 import '../shared/booking_scheduling_screen.dart';
 import '../shared/chat_screen.dart';
 import '../shared/video_call_screen.dart';
@@ -538,46 +540,52 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverToBoxAdapter(
-                child: Column(
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _ActionCardV2(
-                            title: 'Kundli',
-                            subtitle: 'Birth Chart',
-                            imagePath: 'assets/images/services/kundli_box.png',
-                            onTap: () => context.push('/kundli/create'),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _ActionCardV2(
-                            title: 'Match Making',
-                            subtitle: 'Compatiblity',
-                            imagePath: 'assets/images/services/matchmaking_box.png',
-                            onTap: () => context.push('/relationship/form'),
-                          ),
-                        ),
-                      ],
+                    Expanded(
+                      child: _ActionCardV2(
+                        title: 'Kundli',
+                        subtitle: 'Birth Chart',
+                        imagePath: 'assets/images/services/kundli_box.png',
+                        onTap: () => context.push('/kundli/create'),
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    _ActionCardV2(
-                      title: 'Custom Pooja Request',
-                      subtitle: 'Personalized Ritual',
-                      imagePath: 'assets/images/services/custom_pooja.png',
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Custom Pooja Request feature coming soon!', style: TextStyle(color: Colors.white)),
-                            backgroundColor: AppTheme.primaryOrange,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _ActionCardV2(
+                        title: 'Match Making',
+                        subtitle: 'Compatiblity',
+                        imagePath: 'assets/images/services/matchmaking_box.png',
+                        onTap: () => context.push('/relationship/form'),
+                      ),
                     ),
                   ],
                 ).animate().fadeIn(delay: 400.ms).scale(),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+            // 5. Custom Request Banner (Large rectangular like Daily Pooja)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.grey.withOpacity(0.05)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: CustomRequestBanner(
+                    onTap: () => context.push('/booking/custom'),
+                  ),
+                ).animate().fadeIn(delay: 450.ms),
               ),
             ),
             

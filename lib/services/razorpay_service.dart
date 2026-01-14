@@ -85,7 +85,50 @@ class RazorpayService {
       return false;
     } catch (e) {
       print('Error handling payment success: $e');
-      return false;
+  }
+}
+
+// Custom Request Payment Methods
+extension CustomRequestPayment on RazorpayService {
+  Future<void> openCustomRequestCheckout({
+    required String razorpayKeyId,
+    required String razorpayOrderId,
+    required int amount,
+    required String userName,
+    required String userEmail,
+    required String userPhone,
+    required String serviceType,
+  }) async {
+    var options = {
+      'key': razorpayKeyId,
+      'amount': amount * 100, // Amount in paise
+      'currency': 'INR',
+      'name': 'VedicMate',
+      'description': 'Custom Request - $serviceType',
+      'order_id': razorpayOrderId,
+      'prefill': {
+        'contact': userPhone,
+        'email': userEmail,
+        'name': userName,
+      },
+      'theme': {
+        'color': '#FF6B35',
+      },
+      'modal': {
+        'ondismiss': () {
+          debugPrint('Payment cancelled by user');
+        }
+      },
+      'notes': {
+        'service_type': serviceType,
+        'purpose': 'custom_request',
+      },
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error opening Razorpay: $e');
     }
   }
 }

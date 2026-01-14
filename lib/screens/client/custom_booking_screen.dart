@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../core/theme/app_theme.dart';
 import '../shared/payment_wallet_screen.dart';
+import '../../services/razorpay_service.dart';
+import '../../services/custom_request_service.dart';
 
 class CustomBookingScreen extends StatefulWidget {
   const CustomBookingScreen({super.key});
@@ -13,9 +17,10 @@ class CustomBookingScreen extends StatefulWidget {
 }
 
 class _CustomBookingScreenState extends State<CustomBookingScreen> {
-  String _selectedType = 'Custom Pooja';
+  String _selectedType = 'Custom Request';
   
-  final Map<String, int> _servicePrices = {
+  final Map<String, dynamic> _servicePrices = {
+    'Custom Request': 'TBD', // Price to be discussed
     'Custom Pooja': 4999,
     'Private Havan': 2999,
     'Personal Consultation': 1999,
@@ -25,9 +30,221 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
 
   DateTime _selectedDate = DateTime.now();
   String? _selectedTimeSlot;
+  final TextEditingController _requirementsController = TextEditingController();
   
   // Method is fixed to Video Call as per requirements
   final String _method = 'Video Call';
+  
+  // Payment
+  late RazorpayService _razorpayService;
+  bool _isProcessing = false;
+  String? _currentOrderId;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpayService = RazorpayService();
+    _razorpayService.initialize(
+      onSuccess: _handlePaymentSuccess,
+      onFailure: _handlePaymentFailure,
+      onExternalWallet: _handleExternalWallet,
+    );
+  }
+
+  @override
+  void dispose() {
+    _razorpayService.dispose();
+    _requirementsController.dispose();
+    super.dispose();
+  }
+
+  // Payment Processing
+  Future<void> _processPayment() async {
+    // Validate
+    if (_selectedTimeSlot == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a time slot')),
+      );
+      return;
+    }
+
+    final priceValue = _servicePrices[_selectedType];
+    
+    // Handle TBD pricing
+    if (priceValue == 'TBD') {
+      _showContactDialog();
+      return;
+    }
+
+    setState(() => _isProcessing = true);
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('User not logged in');
+
+      // Create order
+      final orderResponse = await CustomRequestService.createOrder(
+        userId: user.uid,
+        userName: user.displayName ?? 'User',
+        userEmail: user.email ?? '',
+        userPhone: user.phoneNumber ?? '',
+        serviceType: _selectedType,
+        date: DateFormat('yyyy-MM-dd').format(_selectedDate),
+        timeSlot: _selectedTimeSlot!,
+        requirements: _requirementsController.text,
+        amount: priceValue as int,
+      );
+
+      if (orderResponse['success'] == true) {
+        _currentOrderId = orderResponse['orderId'];
+        
+        // Open Razorpay
+        await _razorpayService.openCustomRequestCheckout(
+          razorpayKeyId: orderResponse['razorpayKeyId'],
+          razorpayOrderId: orderResponse['razorpayOrderId'],
+          amount: priceValue,
+          userName: user.displayName ?? 'User',
+          userEmail: user.email ?? '',
+          userPhone: user.phoneNumber ?? '',
+          serviceType: _selectedType,
+        );
+      }
+    } catch (e) {
+      debugPrint('Payment Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    try {
+      // Verify payment
+      final verifyResponse = await CustomRequestService.verifyPayment(
+        orderId: _currentOrderId!,
+        razorpayPaymentId: response.paymentId!,
+        razorpayOrderId: response.orderId!,
+        razorpaySignature: response.signature!,
+      );
+
+      if (verifyResponse['success'] == true) {
+        _showSuccessDialog();
+      }
+    } catch (e) {
+      debugPrint('Verification Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Payment verification failed')),
+      );
+    }
+  }
+
+  void _handlePaymentFailure(PaymentFailureResponse response) {
+    debugPrint('Payment Failed: ${response.message}');
+    _showRetryDialog(response.message ?? 'Payment failed');
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    debugPrint('External Wallet: ${response.walletName}');
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check_circle, color: Colors.green, size: 48),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Booking Confirmed!',
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Your custom request has been submitted successfully. Our team will review and confirm the details shortly.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.outfit(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.pop(); // Close dialog
+              context.pop(); // Go back to dashboard
+            },
+            child: Text('OK', style: GoogleFonts.outfit(color: AppTheme.primaryOrange)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRetryDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red),
+            const SizedBox(width: 8),
+            Text('Payment Failed', style: GoogleFonts.outfit(fontSize: 18)),
+          ],
+        ),
+        content: Text(error, style: GoogleFonts.outfit(fontSize: 14)),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text('Cancel', style: GoogleFonts.outfit()),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.pop();
+              _processPayment();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+            ),
+            child: Text('Try Again', style: GoogleFonts.outfit(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showContactDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Contact Us', style: GoogleFonts.outfit(fontSize: 18)),
+        content: Text(
+          'For custom requests, please contact our team to discuss pricing and requirements.',
+          style: GoogleFonts.outfit(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text('OK', style: GoogleFonts.outfit(color: AppTheme.primaryOrange)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +321,9 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
                         children: [
                           Text(type),
                           Text(
-                            '₹${_servicePrices[type]}',
+                            _servicePrices[type] == 'TBD' 
+                                ? 'Price TBD' 
+                                : '₹${_servicePrices[type]}',
                             style: GoogleFonts.outfit(
                               color: AppTheme.neutralMedium,
                               fontSize: 12,
@@ -394,7 +613,8 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
   }
 
   Widget _buildBottomBar() {
-    final price = _servicePrices[_selectedType] ?? 0;
+    final priceValue = _servicePrices[_selectedType];
+    final priceText = priceValue == 'TBD' ? 'Price TBD' : '₹$priceValue';
     
     return Container(
       padding: const EdgeInsets.all(24),
@@ -418,7 +638,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
                   ),
                 ),
                 Text(
-                  '₹$price', // Dynamic Price
+                  priceText, // Dynamic Price or TBD
                   style: GoogleFonts.outfit(
                     color: AppTheme.neutralDark,
                     fontSize: 20,
@@ -430,13 +650,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
             const SizedBox(width: 24),
             Expanded(
               child: ElevatedButton(
-                onPressed: () {
-                   // Navigate to payment/wallet
-                   context.push('/payment/wallet');
-                   ScaffoldMessenger.of(context).showSnackBar(
-                     const SnackBar(content: Text('Redirecting to payment. Calendly link will be sent after confirmation.')),
-                   );
-                },
+                onPressed: _isProcessing ? null : _processPayment,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryOrange,
                   foregroundColor: AppTheme.white,
@@ -445,14 +659,23 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
                   elevation: 4,
                   shadowColor: AppTheme.primaryOrange.withOpacity(0.4),
                 ),
-                child: Text(
-                  'Book Session',
-                  style: GoogleFonts.outfit(
-                    color: AppTheme.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                child: _isProcessing
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: AppTheme.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        priceValue == 'TBD' ? 'Contact Us' : 'Proceed to Payment',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ),
           ],
