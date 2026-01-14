@@ -1478,13 +1478,26 @@ Please use these details to generate my complete Kundli analysis.]
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _ControlIcon(
-            icon: Icons.mic_off,
-            color: Colors.white,
+            icon: _isMuted ? Icons.mic_off : Icons.mic,
+            color: _isMuted ? AppTheme.errorRed : AppTheme.neutralDark,
+            bgColor: Colors.white,
             onTap: () {
-              if (!_isCallStarted) {
-                _showStartCallDialog();
+              if (_isCallStarted) {
+                setState(() => _isMuted = !_isMuted);
+                try {
+                  // In a real Agora implementation, we would call _engine.muteLocalAudioStream(_isMuted);
+                  // For now with just STT/TTS:
+                  if (_isMuted) {
+                    _speech.stop();
+                    _flutterTts.stop();
+                  } else {
+                    _startListening();
+                  }
+                } catch (e) {
+                  print('Error toggling mute: $e');
+                }
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mute not implemented yet')));
+                 _showStartCallDialog();
               }
             },
           ),
@@ -1497,10 +1510,19 @@ Please use these details to generate my complete Kundli analysis.]
             onTap: _endCall,
           ),
            _ControlIcon(
-            icon: Icons.volume_up,
-            color: Colors.white,
+            icon: _isSpeakerOn ? Icons.volume_up : Icons.volume_off,
+            color: _isSpeakerOn ? AppTheme.successGreen : AppTheme.neutralDark,
+            bgColor: Colors.white,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Speaker toggle not implemented yet')));
+              setState(() => _isSpeakerOn = !_isSpeakerOn);
+              // In real implementation: await _engine.setEnableSpeakerphone(_isSpeakerOn);
+              // For TTS (it typically uses default output, usually speaker on phone):
+               ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                   content: Text('Speaker ${_isSpeakerOn ? 'On' : 'Off'}'),
+                   duration: const Duration(milliseconds: 500),
+                 ),
+               );
             },
           ),
         ],

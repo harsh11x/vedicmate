@@ -1560,6 +1560,18 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                   : (_walletBalance >= _minimumBalance
                       ? AppTheme.primaryOrange
                       : AppTheme.forestBackground),
+          ElevatedButton(
+            onPressed: (_isStartingChat || _isChatStarted)
+                ? null
+                : (_walletBalance >= _minimumBalance
+                    ? () => _showStartChatDialog()
+                    : () => _showInsufficientFundsDialog()),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: (_isStartingChat || _isChatStarted)
+                  ? AppTheme.forestBackground
+                  : (_walletBalance >= _minimumBalance
+                      ? AppTheme.primaryOrange
+                      : AppTheme.forestBackground),
               foregroundColor: (_isStartingChat || _isChatStarted)
                   ? AppTheme.neutralMedium
                   : (_walletBalance >= _minimumBalance
@@ -1595,6 +1607,42 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      // Add Language Selector Row below the balance/start row
+      const SizedBox(height: 12),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryOrange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'Language:',
+                  style: GoogleFonts.inter(
+                    color: AppTheme.neutralMedium,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                LanguageSelector(
+                  initialLanguageCode: _currentLanguage,
+                  onLanguageSelected: (code, name) {
+                    setState(() {
+                      _currentLanguage = code;
+                    });
+                    print('🌐 Chat language set to: $name ($code)');
+                  },
                 ),
               ],
             ),
@@ -1714,15 +1762,6 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         ],
       ),
       actions: [
-        LanguageSelector(
-          initialLanguageCode: _currentLanguage,
-          onLanguageSelected: (code, name) {
-            setState(() {
-              _currentLanguage = code;
-            });
-            print('🌐 Chat language set to: $name ($code)');
-          },
-        ),
         IconButton(
           icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
           tooltip: 'Voice Call',

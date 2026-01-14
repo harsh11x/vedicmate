@@ -122,11 +122,15 @@ class LocalAIService {
             return aiMessage;
 
         } catch (error) {
-            console.error('Local AI Error:', error.message);
-            if (error.code === 'ECONNREFUSED') {
-                return "I apologize, but my spiritual connection (local server) seems to be offline. Please ensure LM Studio is running.";
+            console.error('Local AI Error Details:', error.message);
+            if (error.response) {
+                console.error('Local AI Response Error:', error.response.status, error.response.data);
             }
-            return "I sensed a disturbance in the cosmic energy. Please try again later.";
+
+            if (error.code === 'ECONNREFUSED') {
+                return "I apologize, but my spiritual connection (local server) seems to be offline. Please ensure LM Studio is running on Port 1234.";
+            }
+            return `I sensed a disturbance in the cosmic energy. (Error: ${error.message})`;
         }
     }
 
