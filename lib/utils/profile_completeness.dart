@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
 /// Utility class for checking and managing user profile completeness
 class ProfileCompleteness {
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Use Supabase client directly
+  static final SupabaseClient _supabase = Supabase.instance.client;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// Check if user profile is complete for AI chat
@@ -17,8 +18,12 @@ class ProfileCompleteness {
     }
 
     try {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      final data = doc.data();
+      // Query Supabase instead of Firestore
+      final data = await _supabase
+          .from('users')
+          .select()
+          .eq('id', user.uid)
+          .maybeSingle();
 
       if (data == null) {
         return ProfileCheckResult(
@@ -29,18 +34,37 @@ class ProfileCompleteness {
 
       final missingFields = <String>[];
 
-      // Check birth details
-      final birthDetails = data['birthDetails'] as Map<String, dynamic>?;
+      // Check birth details - Supabase structure might be flat or JSONB
+      // Assuming JSONB column 'birth_details' or flat fields. 
+      // Based on typical Supabase usage in this app, let's check for specific columns or a json column.
+      // If the schema isn't strictly defined, we fallback to checking keys in the returned map.
+
+      // Strategy: Check if data contains 'birthDetails' (JSON) or individual fields.
+      // Adjusting to common Supabase patterns. Let's assume 'birth_details' column for JSON data 
+      // OR direct columns. given the previous code used a map 'birthDetails', 
+      // let's try to find that key or similar.
+      
+      final birthDetails = data['birth_details'] ?? data['birthDetails']; // Handle camelCase or snake_case
+      
       if (birthDetails == null) {
-        missingFields.addAll(['Date of Birth', 'Time of Birth', 'Place of Birth']);
+         // If no JSON block, check for individual columns if they exist
+         bool hasDate = data['date_of_birth'] != null || data['dateOfBirth'] != null;
+         bool hasTime = data['time_of_birth'] != null || data['timeOfBirth'] != null;
+         bool hasPlace = data['place_of_birth'] != null || data['placeOfBirth'] != null;
+         
+         if (!hasDate) missingFields.add('Date of Birth');
+         if (!hasTime) missingFields.add('Time of Birth');
+         if (!hasPlace) missingFields.add('Place of Birth');
       } else {
-        if (birthDetails['dateOfBirth'] == null) missingFields.add('Date of Birth');
-        if (birthDetails['timeOfBirth'] == null) missingFields.add('Time of Birth');
-        if (birthDetails['placeOfBirth'] == null) missingFields.add('Place of Birth');
+        // It's a map/json
+        final bd = birthDetails as Map<String, dynamic>;
+        if (bd['date_of_birth'] == null && bd['dateOfBirth'] == null) missingFields.add('Date of Birth');
+        if (bd['time_of_birth'] == null && bd['timeOfBirth'] == null) missingFields.add('Time of Birth');
+        if (bd['place_of_birth'] == null && bd['placeOfBirth'] == null) missingFields.add('Place of Birth');
       }
 
       // Check numerology
-      final numerology = data['numerology'] as Map<String, dynamic>?;
+      final numerology = data['numerology'] ?? data['numerologyProperties'];
       if (numerology == null) {
         missingFields.add('Numerology Preference');
       }
@@ -51,10 +75,10 @@ class ProfileCompleteness {
         profileData: data,
       );
     } catch (e) {
-      print('Error checking profile: $e');
+      print('Error checking profile (Supabase): $e');
       return ProfileCheckResult(
         isComplete: false,
-        missingFields: ['Error loading profile'],
+        missingFields: ['Error loading profile: ${e.toString()}'],
       );
     }
   }
@@ -74,7 +98,7 @@ class ProfileCompleteness {
         if (inputType == 'day_only' && dayOfBirth != null)
           'dayOfBirth': dayOfBirth,
         if (inputType == 'full_date' && fullDateOfBirth != null)
-          'fullDateOfBirth': Timestamp.fromDate(fullDateOfBirth),
+          'fullDateOfBirth': fullDateOfBirth?.toIso8601String(), // Supabase likes strings for dates
         'calculatedNumber': _calculateLifePathNumber(
           inputType == 'day_only' ? dayOfBirth! : fullDateOfBirth!.day,
         ),
@@ -82,14 +106,14 @@ class ProfileCompleteness {
           'bhagyaank': _calculateDestinyNumber(fullDateOfBirth),
       };
 
-      await _firestore.collection('users').doc(user.uid).set({
+      await _supabase.from('users').update({
         'numerology': numerologyData,
-        'lastUpdated': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+        'last_updated': DateTime.now().toIso8601String(),
+      }).eq('id', user.uid);
 
       return true;
     } catch (e) {
-      print('Error saving numerology: $e');
+      print('Error saving numerology (Supabase): $e');
       return false;
     }
   }
@@ -104,18 +128,18 @@ class ProfileCompleteness {
     if (user == null) return false;
 
     try {
-      await _firestore.collection('users').doc(user.uid).set({
-        'birthDetails': {
-          'dateOfBirth': Timestamp.fromDate(dateOfBirth),
+      await _supabase.from('users').update({
+        'birth_details': {
+          'dateOfBirth': dateOfBirth.toIso8601String(),
           'timeOfBirth': timeOfBirth,
           'placeOfBirth': placeOfBirth,
         },
-        'lastUpdated': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+        'last_updated': DateTime.now().toIso8601String(),
+      }).eq('id', user.uid);
 
       return true;
     } catch (e) {
-      print('Error saving birth details: $e');
+      print('Error saving birth details (Supabase): $e');
       return false;
     }
   }
@@ -149,10 +173,14 @@ class ProfileCompleteness {
     if (user == null) return null;
 
     try {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      return doc.data();
+      final data = await _supabase
+          .from('users')
+          .select()
+          .eq('id', user.uid)
+          .maybeSingle();
+      return data;
     } catch (e) {
-      print('Error getting profile for AI: $e');
+      print('Error getting profile for AI (Supabase): $e');
       return null;
     }
   }

@@ -39,6 +39,8 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   bool _isCallActive = false;
   bool _isCallStarted = false; // Whether user has started the call
   bool _isLoading = false;
+  bool _isMuted = false;
+  bool _isSpeakerOn = false;
   String _recognizedText = '';
   String _currentLanguage = 'en';
   double _walletBalance = 0.0;

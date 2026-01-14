@@ -1513,139 +1513,130 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Icon(
-            Icons.account_balance_wallet,
-            size: 18,
-            color: _walletBalance >= _minimumBalance
-                ? AppTheme.successGreen
-                : AppTheme.errorRed,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Balance: ₹${_walletBalance.toStringAsFixed(2)}',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: _walletBalance >= _minimumBalance
-                        ? AppTheme.successGreen
-                        : AppTheme.errorRed,
-                  ),
-                ),
-                if (_walletBalance < _minimumBalance)
-                  Text(
-                    'Minimum ₹${_minimumBalance.toStringAsFixed(0)} required',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      color: AppTheme.errorRed,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            onPressed: (_isStartingChat || _isChatStarted)
-                ? null
-                : (_walletBalance >= _minimumBalance
-                    ? () => _showStartChatDialog()
-                    : () => _showInsufficientFundsDialog()),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: (_isStartingChat || _isChatStarted)
-                  ? AppTheme.forestBackground
-                  : (_walletBalance >= _minimumBalance
-                      ? AppTheme.primaryOrange
-                      : AppTheme.forestBackground),
-          ElevatedButton(
-            onPressed: (_isStartingChat || _isChatStarted)
-                ? null
-                : (_walletBalance >= _minimumBalance
-                    ? () => _showStartChatDialog()
-                    : () => _showInsufficientFundsDialog()),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: (_isStartingChat || _isChatStarted)
-                  ? AppTheme.forestBackground
-                  : (_walletBalance >= _minimumBalance
-                      ? AppTheme.primaryOrange
-                      : AppTheme.forestBackground),
-              foregroundColor: (_isStartingChat || _isChatStarted)
-                  ? AppTheme.neutralMedium
-                  : (_walletBalance >= _minimumBalance
-                      ? Colors.white
-                      : AppTheme.neutralMedium),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+          Row(
+            children: [
+              Icon(
+                Icons.account_balance_wallet,
+                size: 18,
+                color: _walletBalance >= _minimumBalance
+                    ? AppTheme.successGreen
+                    : AppTheme.errorRed,
               ),
-              elevation: (_isStartingChat || _isChatStarted || _walletBalance < _minimumBalance) ? 0 : 4,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_isStartingChat)
-                  const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.neutralMedium),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: _walletBalance >= _minimumBalance
+                            ? AppTheme.successGreen
+                            : AppTheme.errorRed,
+                      ),
                     ),
-                  )
-                else
-                  Icon(
-                    Icons.play_arrow,
-                    size: 18,
-                  ),
-                const SizedBox(width: 4),
-                Text(
-                  _isStartingChat ? 'Starting...' : 'Start Chat',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                    if (_walletBalance < _minimumBalance)
+                      Text(
+                        'Minimum ₹${_minimumBalance.toStringAsFixed(0)} required',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: AppTheme.errorRed,
+                        ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              ElevatedButton(
+                onPressed: (_isStartingChat || _isChatStarted)
+                    ? null
+                    : (_walletBalance >= _minimumBalance
+                        ? () => _showStartChatDialog()
+                        : () => _showInsufficientFundsDialog()),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: (_isStartingChat || _isChatStarted)
+                      ? AppTheme.forestBackground
+                      : (_walletBalance >= _minimumBalance
+                          ? AppTheme.primaryOrange
+                          : AppTheme.forestBackground),
+                  foregroundColor: (_isStartingChat || _isChatStarted)
+                      ? AppTheme.neutralMedium
+                      : (_walletBalance >= _minimumBalance
+                          ? Colors.white
+                          : AppTheme.neutralMedium),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  elevation: (_isStartingChat || _isChatStarted || _walletBalance < _minimumBalance) ? 0 : 4,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_isStartingChat)
+                      const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.neutralMedium),
+                        ),
+                      )
+                    else
+                      Icon(
+                        Icons.play_arrow,
+                        size: 18,
+                      ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _isStartingChat ? 'Starting...' : 'Start Chat',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      // Add Language Selector Row below the balance/start row
-      const SizedBox(height: 12),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryOrange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  'Language:',
-                  style: GoogleFonts.inter(
-                    color: AppTheme.neutralMedium,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryOrange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                const SizedBox(width: 8),
-                LanguageSelector(
-                  initialLanguageCode: _currentLanguage,
-                  onLanguageSelected: (code, name) {
-                    setState(() {
-                      _currentLanguage = code;
-                    });
-                    print('🌐 Chat language set to: $name ($code)');
-                  },
+                child: Row(
+                  children: [
+                    Text(
+                      'Language:',
+                      style: GoogleFonts.inter(
+                        color: AppTheme.neutralMedium,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    LanguageSelector(
+                      initialLanguageCode: _currentLanguage,
+                      onLanguageSelected: (code, name) {
+                        setState(() {
+                          _currentLanguage = code;
+                        });
+                        print('🌐 Chat language set to: $name ($code)');
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
