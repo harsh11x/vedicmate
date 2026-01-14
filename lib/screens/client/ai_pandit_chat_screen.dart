@@ -14,6 +14,9 @@ import '../../widgets/modern_components.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/ai_pandit_model.dart';
+import '../../widgets/numerology_input_dialog.dart';
+import '../../widgets/ai_message_widgets.dart';
+import '../../utils/profile_completeness.dart';
 
 class AIPanditChatScreen extends ConsumerStatefulWidget {
   final String? panditId;
@@ -191,6 +194,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       });
       
       setState(() => _isLoading = false);
+      
+      // Check profile completeness for AI enhancements
+      _checkProfileCompleteness();
       
       // Don't show dialog automatically - wait for user to click Start button
       if (_isChatStarted) {
@@ -833,6 +839,123 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     } catch (e) {
       print('❌ Error strictly ending session: $e');
     }
+  }
+
+  // Check profile completeness for AI enhancements
+  Future<void> _checkProfileCompleteness() async {
+    try {
+      final profileCheck = await ProfileCompleteness.checkProfile();
+      
+      if (!profileCheck.isComplete && mounted) {
+        // Check if numerology is missing
+        if (profileCheck.missingFields.contains('Numerology Preference')) {
+          final numerologyResult = await showDialog<Map<String, dynamic>>(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const NumerologyInputDialog(),
+          );
+          
+          if (numerologyResult != null) {
+            final success = await ProfileCompleteness.saveNumerologyPreferences(
+              inputType: numerologyResult['inputType'] as String,
+              dayOfBirth: numerologyResult['dayOfBirth'] as int?,
+              fullDateOfBirth: numerologyResult['fullDateOfBirth'] as DateTime?,
+            );
+            
+            if (success && mounted) {
+              print('✅ Numerology preferences saved');
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Numerology preferences saved!'),
+                  backgroundColor: AppTheme.successGreen,
+                ),
+              );
+            }
+          }
+        }
+        
+        // Check for other missing fields
+        final updatedCheck = await ProfileCompleteness.checkProfile();
+        if (!updatedCheck.isComplete && mounted) {
+          _showProfileCompletionDialog(updatedCheck.missingFieldsMessage);
+        }
+      }
+    } catch (e) {
+      print('⚠️ Error checking profile completeness: $e');
+    }
+  }
+
+  void _showProfileCompletionDialog(String missingFields) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                gradient: AppTheme.primaryGradient,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.person_outline, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Complete Your Profile',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'For personalized AI predictions, please complete your profile with:',
+              style: TextStyle(fontSize: 15, color: AppTheme.neutralMedium),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryOrange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.2)),
+              ),
+              child: Text(
+                missingFields,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.neutralDark,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Later'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              context.push('/profile/edit');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('Complete Profile'),
+          ),
+        ],
+      ),
+    );
   }
 
   // NEW: Clear Chat Implementation

@@ -55,8 +55,17 @@ class ServiceInfoCards extends StatelessWidget {
                   description: 'Ancient wisdom for modern life',
                   accentColor: const Color(0xFFEF4444),
                   iconGradient: const [Color(0xFFEF4444), Color(0xFFF87171)],
+                  isComingSoon: true,
                   imagePath: 'assets/images/services/lal_kitab.png',
-                  onTap: () => context.push('/birth-details?category=Lal Kitab'),
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Lal Kitab AI is coming soon!', style: TextStyle(color: Colors.white)),
+                        backgroundColor: AppTheme.primaryOrange,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 16),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -267,6 +268,25 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     _remoteRenderer.srcObject = null;
   }
 
+  void _enterFullscreen() {
+    // Set landscape orientation and hide system UI
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    setState(() => _isFullscreen = true);
+  }
+
+  void _exitFullscreen() {
+    // Return to portrait and show system UI
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    setState(() => _isFullscreen = false);
+  }
+
   void _sendMessage() {
     if (_chatController.text.trim().isEmpty) return;
     
@@ -362,6 +382,13 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
   @override
   void dispose() {
     print('🚪 Leaving Live Pooja screen...');
+    
+    // Reset orientation to portrait
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    
     _socket.emit('leave-pooja');
     _chatController.dispose();
     _giftAnimController.dispose();
@@ -403,7 +430,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                                     child: RTCVideoView(
                                       _remoteRenderer,
                                       objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-                                      mirror: false,
+                                      mirror: true,
                                     ),
                                   );
                                 },
@@ -437,7 +464,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                                 right: 60,
                                 child: IconButton(
                                   icon: const Icon(Icons.fullscreen, color: Colors.white),
-                                  onPressed: () => setState(() => _isFullscreen = true),
+                                  onPressed: _enterFullscreen,
                                 ),
                               ),
                               // Close button
@@ -647,7 +674,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
             child: RTCVideoView(
               _remoteRenderer,
               objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-              mirror: false,
+              mirror: true,
             ),
           ),
           // LIVE badge
@@ -676,7 +703,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
             right: 16,
             child: IconButton(
               icon: const Icon(Icons.fullscreen_exit, color: Colors.white),
-              onPressed: () => setState(() => _isFullscreen = false),
+              onPressed: _exitFullscreen,
             ),
           ),
           // Gift animation in fullscreen

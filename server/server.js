@@ -1433,6 +1433,278 @@ app.post('/api/ai-pandit/clear-history', (req, res) => {
   }
 });
 
+// ==================== USER PROFILE & NUMEROLOGY ENDPOINTS ====================
+
+// File paths for user profiles
+const USER_PROFILES_FILE = path.join(DATA_DIR, 'user_profiles.json');
+
+// Initialize user profiles file
+if (!fs.existsSync(USER_PROFILES_FILE)) {
+  fs.writeFileSync(USER_PROFILES_FILE, JSON.stringify([], null, 2));
+  console.log('📄 Created user_profiles.json');
+}
+
+const readUserProfiles = () => readJsonFile(USER_PROFILES_FILE, []);
+const writeUserProfiles = (data) => writeJsonFile(USER_PROFILES_FILE, data);
+
+// Numerology calculation helper
+const calculateNumerologyNumber = (input) => {
+  let sum = 0;
+  const digits = input.toString().replace(/\D/g, ''); // Remove non-digits
+
+  for (const digit of digits) {
+    sum += parseInt(digit);
+  }
+
+  // Reduce to single digit (except master numbers 11, 22, 33)
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+    sum = sum.toString().split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
+  }
+
+  return sum;
+};
+
+// GET user profile
+app.get('/api/user/profile/:userId', (req, res) => {
+  try {
+    const { userId } = req.params;
+    const profiles = readUserProfiles();
+    const profile = profiles.find(p => p.userId === userId);
+
+    if (!profile) {
+      return res.json({
+        success: true,
+        data: null,
+        message: 'Profile not found'
+      });
+    }
+
+    res.json({ success: true, data: profile });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST/UPDATE user profile
+app.post('/api/user/profile', (req, res) => {
+  try {
+    const { userId, name, dateOfBirth, timeOfBirth, placeOfBirth, latitude, longitude } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'UserId is required' });
+    }
+
+    const profiles = readUserProfiles();
+    let profile = profiles.find(p => p.userId === userId);
+
+    if (profile) {
+      // Update existing profile
+      if (name) profile.name = name;
+      if (dateOfBirth) profile.dateOfBirth = dateOfBirth;
+      if (timeOfBirth) profile.timeOfBirth = timeOfBirth;
+      if (placeOfBirth) profile.placeOfBirth = placeOfBirth;
+      if (latitude) profile.latitude = latitude;
+      if (longitude) profile.longitude = longitude;
+      profile.updatedAt = new Date().toISOString();
+    } else {
+      // Create new profile
+      profile = {
+        userId,
+        name: name || '',
+        dateOfBirth: dateOfBirth || null,
+        timeOfBirth: timeOfBirth || null,
+        placeOfBirth: placeOfBirth || null,
+        latitude: latitude || null,
+        longitude: longitude || null,
+        numerologyPreference: null,
+        numerologyNumber: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      profiles.push(profile);
+    }
+
+    writeUserProfiles(profiles);
+    res.json({ success: true, data: profile });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST numerology preferences
+app.post('/api/user/numerology', (req, res) => {
+  try {
+    const { userId, inputType, dayOfBirth, fullDateOfBirth } = req.body;
+
+    if (!userId || !inputType) {
+      return res.status(400).json({
+        success: false,
+        error: 'UserId and inputType are required'
+      });
+    }
+
+    const profiles = readUserProfiles();
+    let profile = profiles.find(p => p.userId === userId);
+
+    if (!profile) {
+      // Create new profile if doesn't exist
+      profile = {
+        userId,
+        name: '',
+        dateOfBirth: null,
+        timeOfBirth: null,
+        placeOfBirth: null,
+        latitude: null,
+        longitude: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      profiles.push(profile);
+    }
+
+    // Calculate numerology number based on input type
+    let numerologyNumber;
+    if (inputType === 'day_only' && dayOfBirth) {
+      numerologyNumber = calculateNumerologyNumber(dayOfBirth);
+      profile.numerologyPreference = 'day_only';
+      profile.numerologyDayOfBirth = dayOfBirth;
+    } else if (inputType === 'full_date' && fullDateOfBirth) {
+      // For full date, use DDMMYYYY format
+      const date = new Date(fullDateOfBirth);
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      const fullNumber = `${day}${month}${year}`;
+      numerologyNumber = calculateNumerologyNumber(fullNumber);
+      profile.numerologyPreference = 'full_date';
+      profile.numerologyFullDate = fullDateOfBirth;
+
+      // Also update dateOfBirth if not set
+      if (!profile.dateOfBirth) {
+        profile.dateOfBirth = fullDateOfBirth;
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid input type or missing date'
+      });
+    }
+
+    profile.numerologyNumber = numerologyNumber;
+    profile.updatedAt = new Date().toISOString();
+
+    writeUserProfiles(profiles);
+
+    res.json({
+      success: true,
+      data: {
+        numerologyNumber,
+        inputType,
+        profile
+      }
+    });
+  } catch (error) {
+    console.error('Error saving numerology:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET profile completeness check
+app.get('/api/user/profile/check/:userId', (req, res) => {
+  try {
+    const { userId } = req.params;
+    const profiles = readUserProfiles();
+    const profile = profiles.find(p => p.userId === userId);
+
+    const missingFields = [];
+
+    if (!profile) {
+      return res.json({
+        success: true,
+        isComplete: false,
+        missingFields: ['All profile data'],
+        message: 'Please complete your profile for personalized predictions'
+      });
+    }
+
+    if (!profile.name) missingFields.push('Name');
+    if (!profile.dateOfBirth) missingFields.push('Date of Birth');
+    if (!profile.timeOfBirth) missingFields.push('Time of Birth');
+    if (!profile.placeOfBirth) missingFields.push('Place of Birth');
+    if (!profile.numerologyPreference) missingFields.push('Numerology Preference');
+
+    const isComplete = missingFields.length === 0;
+
+    res.json({
+      success: true,
+      isComplete,
+      missingFields,
+      message: isComplete
+        ? 'Profile is complete'
+        : `Missing: ${missingFields.join(', ')}`
+    });
+  } catch (error) {
+    console.error('Error checking profile:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Enhanced AI chat endpoint with user profile context
+app.post('/api/ai-pandit/chat-enhanced', async (req, res) => {
+  try {
+    const { userId, message, panditId, history } = req.body;
+
+    if (!userId || !message) {
+      return res.status(400).json({
+        success: false,
+        error: 'UserId and message required'
+      });
+    }
+
+    // Fetch user profile
+    const profiles = readUserProfiles();
+    const profile = profiles.find(p => p.userId === userId);
+
+    // Build enhanced context
+    let userContext = '';
+    if (profile) {
+      userContext = '\n\n[USER PROFILE CONTEXT]\n';
+      if (profile.name) userContext += `Name: ${profile.name}\n`;
+      if (profile.dateOfBirth) {
+        const dob = new Date(profile.dateOfBirth);
+        userContext += `Date of Birth: ${dob.toLocaleDateString('en-IN')}\n`;
+      }
+      if (profile.timeOfBirth) userContext += `Time of Birth: ${profile.timeOfBirth}\n`;
+      if (profile.placeOfBirth) userContext += `Place of Birth: ${profile.placeOfBirth}\n`;
+      if (profile.numerologyNumber) {
+        userContext += `Numerology Number (${profile.numerologyPreference === 'day_only' ? 'Mulank' : 'Bhagyaank'}): ${profile.numerologyNumber}\n`;
+      }
+      userContext += '[END PROFILE CONTEXT]\n\n';
+    }
+
+    // Add context to message for AI
+    const enhancedMessage = userContext + message;
+
+    // Call local AI service with enhanced context
+    const response = await localAIService.generateResponse(
+      userId,
+      enhancedMessage,
+      panditId,
+      history
+    );
+
+    res.json({ success: true, data: response });
+  } catch (error) {
+    console.error('Enhanced AI Chat Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate response'
+    });
+  }
+});
+
 // ==================== Razorpay Payment Endpoints ====================
 
 // Initialize Razorpay

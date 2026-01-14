@@ -538,24 +538,43 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverToBoxAdapter(
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: _ActionCardV2(
-                        title: 'Kundli',
-                        subtitle: 'Birth Chart',
-                        imagePath: 'assets/images/services/kundli_box.png',
-                        onTap: () => context.push('/kundli/create'),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _ActionCardV2(
+                            title: 'Kundli',
+                            subtitle: 'Birth Chart',
+                            imagePath: 'assets/images/services/kundli_box.png',
+                            onTap: () => context.push('/kundli/create'),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _ActionCardV2(
+                            title: 'Match Making',
+                            subtitle: 'Compatiblity',
+                            imagePath: 'assets/images/services/matchmaking_box.png',
+                            onTap: () => context.push('/relationship/form'),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _ActionCardV2(
-                        title: 'Match Making',
-                        subtitle: 'Compatiblity',
-                        imagePath: 'assets/images/services/matchmaking_box.png',
-                        onTap: () => context.push('/relationship/form'),
-                      ),
+                    const SizedBox(height: 16),
+                    _ActionCardV2(
+                      title: 'Custom Pooja Request',
+                      subtitle: 'Personalized Ritual',
+                      imagePath: 'assets/images/services/custom_pooja.png',
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Custom Pooja Request feature coming soon!', style: TextStyle(color: Colors.white)),
+                            backgroundColor: AppTheme.primaryOrange,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ).animate().fadeIn(delay: 400.ms).scale(),
