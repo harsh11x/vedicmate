@@ -9,6 +9,7 @@ class LocalAIService {
     String? panditId,
     String? userId,
     String? targetLanguage,
+    Map<String, dynamic>? userProfile,
   }) async {
     try {
       final response = await http.post(
@@ -20,6 +21,7 @@ class LocalAIService {
           'panditId': panditId,
           'history': history, // Optional, depending on backend implementation
           'targetLanguage': targetLanguage,
+          'userProfile': userProfile,
         }),
       );
 

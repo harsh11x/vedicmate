@@ -845,18 +845,26 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   // Check profile completeness for AI enhancements
   Future<void> _checkProfileCompleteness() async {
-    // Only check numerology fields if the Pandit is a Numerology specialist
+    // Determine profile requirements based on Pandit category
     final pandit = AIPandits.getById(_panditId);
-    final isNumerologyPandit = pandit?.category == 'Numerology';
+    final category = pandit?.category ?? '';
+    
+    // Check Numerology for Numerology category
+    final isNumerologyPandit = category == 'Numerology';
+    
+    // Check Birth Details for Vedic-related categories
+    // Vedic Astrology, Lal Kitab, Vastu Shastra usually require birth details for accurate predictions
+    final isVedicPandit = ['Vedic Astrology', 'Lal Kitab'].contains(category);
     
     try {
       final profileCheck = await ProfileCompleteness.checkProfile(
-        checkIdentity: true,
-        checkBirthDetails: false, // Don't block chat for birth details, as per user request
         checkNumerology: isNumerologyPandit,
+        checkBirthDetails: isVedicPandit,
       );
       
       if (!profileCheck.isComplete && mounted) {
+        // Show dialog based on missing fields...
+        // ... (rest of logic handles missing fields dynamically)
         // Check if numerology is missing
         if (profileCheck.missingFields.contains('Numerology Preference')) {
           final numerologyResult = await showDialog<Map<String, dynamic>>(
@@ -884,10 +892,34 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           }
         }
         
-        // Check for other missing fields
-        final updatedCheck = await ProfileCompleteness.checkProfile();
-        if (!updatedCheck.isComplete && mounted) {
-          _showProfileCompletionDialog(updatedCheck.missingFieldsMessage);
+        // Check for other missing fields (using same criteria)
+        final updatedCheck = await ProfileCompleteness.checkProfile(
+          checkNumerology: isNumerologyPandit,
+          checkBirthDetails: isVedicPandit,
+        );
+        
+        // Filter out Numerology if we just handled it (though checkProfile re-run would see it as present/saved ideally)
+        // But if distinct missing fields exist (like Name or Birth Details), show generic dialog
+        
+        final remainingMissing = List<String>.from(updatedCheck.missingFields);
+        if (isNumerologyPandit) {
+           // We handled Numerology dialog above. If it is still missing (user cancelled), 
+           // we might not want to show generic dialog immediately or maybe we do?
+           // Provide loop protection?
+           // If user cancelled numerology dialog, numerologyresult is null.
+           // But here we are just showing the generic dialog. 
+           // Ideally, the generic dialog handles Name/DOB. 
+           // Numerology has its own specialized dialog.
+           remainingMissing.remove('Numerology Preference');
+        }
+        
+        if (remainingMissing.isNotEmpty && mounted) {
+           // Re-construct message
+           String message = remainingMissing.join(', ');
+           if (remainingMissing.length > 1) {
+             message = '${remainingMissing.take(remainingMissing.length - 1).join(', ')} and ${remainingMissing.last}';
+           }
+          _showProfileCompletionDialog(message);
         }
       }
     } catch (e) {
@@ -1089,34 +1121,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     try {
       String aiResponse;
       
-      // 1. Prepare context
-      String enhancedMessage = messageText;
-      if (messageText.toLowerCase().contains(RegExp(r'(kundli|birth chart|horoscope|janam kundli|rasi|lagna)'))) {
-        try {
-          final user = FirebaseAuth.instance.currentUser;
-          final firestoreUserId = user?.uid ?? _userId;
-          
-          final userDoc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(firestoreUserId)
-              .get();
-          
-          if (userDoc.exists) {
-            final userData = userDoc.data();
-            final dob = userData?['dateOfBirth'] as Timestamp?;
-            final place = userData?['placeOfBirth'] as String?;
-            final time = userData?['timeOfBirth'] as String?;
-            final name = userData?['displayName'] as String? ?? 'User';
-            
-            if (dob != null && place != null && time != null) {
-              enhancedMessage = '''$messageText
-[Context: Name: $name, DOB: ${dob.toDate()}, Time: $time, Place: $place]''';
-            }
-          }
-        } catch (e) {
-          print('Could not fetch birth details: $e');
-        }
-      }
+      // Fetch user profile for context efficiently
+      // This uses Supabase and respects the data collected earlier (Name, Vedic details, Numerology)
+      final userProfile = await ProfileCompleteness.getUserProfileForAI();
       
       final conversationHistory = _messages
           .where((m) => m.id != _messages.last.id)
@@ -1130,12 +1137,13 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         final localAIService = ref.read(localAIServiceProvider);
         print('📤 Sending to Local AI (Qwen 2.5)...');
         aiResponse = await localAIService.sendMessage(
-          enhancedMessage,
+          messageText, // Send raw message, backend handles context
           conversationHistory,
           panditId: _panditId,
           userId: _userId,
           targetLanguage: _currentLanguage,
-        ).timeout(const Duration(seconds: 60)); // Give local model time to think
+          userProfile: userProfile, // Pass profile object
+        ).timeout(const Duration(seconds: 60));
         
       } catch (e) {
         // 3. Fallback to Custom AI

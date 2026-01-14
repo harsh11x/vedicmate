@@ -17,7 +17,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   bool _isLoading = false;
-  final SupabaseClient _supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -36,7 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       // Load from Supabase
       try {
-        final data = await _supabase
+        final data = await Supabase.instance.client
             .from('users')
             .select()
             .eq('id', user.uid)
@@ -49,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           });
         }
       } catch (e) {
-        debugPrint('Error loading user data from Supabase: $e');
+        print('Error loading user data from Supabase: $e');
       }
     }
   }
@@ -62,19 +61,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      // Update Firebase Auth Display Name
-      try {
-          await user.updateDisplayName(_nameController.text);
-      } catch (e) {
-          debugPrint('Error updating Firebase display name: $e');
-      }
+      // Update Firebase Auth
+      await user.updateDisplayName(_nameController.text);
+      await user.reload();
 
       // Update Supabase
-      await _supabase.from('users').update({
+      print('Updating Supabase profile...');
+      await Supabase.instance.client.from('users').update({
         'name': _nameController.text,
         'phone': _phoneController.text,
         'last_updated': DateTime.now().toIso8601String(),
       }).eq('id', user.uid);
+      print('Supabase update successful');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,7 +87,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error updating profile: $e'),
+            content: Text('Error: $e'),
             backgroundColor: AppTheme.errorRed,
           ),
         );
@@ -251,27 +249,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Save Button
               SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _saveProfile,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryOrange,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryOrange,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Save Changes',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
                   ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                 ),
+              ),
             ],
           ),
         ),

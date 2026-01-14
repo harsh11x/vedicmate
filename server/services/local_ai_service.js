@@ -43,7 +43,7 @@ class LocalAIService {
         return { "default": "You are a Vedic Pandit." };
     }
 
-    async generateResponse(userId, userMessage, panditId = 'default', clientHistory = [], targetLanguage = 'en') {
+    async generateResponse(userId, userMessage, panditId = 'default', clientHistory = [], targetLanguage = 'en', userProfile = null) {
         try {
             // Language Map
             const languageMap = {
@@ -59,6 +59,32 @@ class LocalAIService {
 
             // Select Personality
             let systemPrompt = this.personalities[panditId] || this.personalities['default'] || this.defaultSystemPrompt;
+
+            // Inject User Profile Context
+            if (userProfile) {
+                let contextStr = `\n\nUSER CONTEXT:\nName: ${userProfile.name || 'User'}`;
+
+                // Add Birth Details if available
+                const bd = userProfile.birth_details || userProfile.birthDetails;
+                if (bd) {
+                    const dob = bd.dateOfBirth || bd.date_of_birth;
+                    const tob = bd.timeOfBirth || bd.time_of_birth;
+                    const pob = bd.placeOfBirth || bd.place_of_birth;
+                    if (dob && tob && pob) {
+                        contextStr += `\nBirth Details: DOB: ${dob}, Time: ${tob}, Place: ${pob}`;
+                    }
+                }
+
+                // Add Numerology if available
+                const num = userProfile.numerology;
+                if (num) {
+                    contextStr += `\nNumerology: Mulank (Life Path): ${num.calculatedNumber || 'Unknown'}`;
+                    if (num.bhagyaank) contextStr += `, Bhagyaank (Destiny): ${num.bhagyaank}`;
+                }
+
+                systemPrompt += contextStr;
+                console.log('[LocalAI] Injected User Profile Context');
+            }
 
             // Inject Language Instruction
             systemPrompt += `\n\nCRITICAL: You MUST reply ONLY in ${langName}. Ignore previous language context if different.`;

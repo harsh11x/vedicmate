@@ -30,7 +30,7 @@ class ApiConfig {
   static const String walletTransactionsEndpoint = '/wallet/transactions';
   
   // AI
-  static const String aiChatEndpoint = '/ai/chat';
+  static const String aiChatEndpoint = '/ai-pandit/chat';
   static const String aiWelcomeEndpoint = '/ai/welcome';
   
   // Custom Requests (Puja/Havan Bookings)

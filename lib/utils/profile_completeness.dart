@@ -9,8 +9,7 @@ class ProfileCompleteness {
 
   /// Check if user profile is complete for AI chat
   static Future<ProfileCheckResult> checkProfile({
-    bool checkIdentity = true,
-    bool checkBirthDetails = true,
+    bool checkBirthDetails = false,
     bool checkNumerology = true,
   }) async {
     final user = _auth.currentUser;
@@ -38,23 +37,12 @@ class ProfileCompleteness {
 
       final missingFields = <String>[];
 
-      // Check birth details - Supabase structure might be flat or JSONB
-      // Assuming JSONB column 'birth_details' or flat fields. 
-      // Based on typical Supabase usage in this app, let's check for specific columns or a json column.
-      // If the schema isn't strictly defined, we fallback to checking keys in the returned map.
-
-      // Strategy: Check if data contains 'birthDetails' (JSON) or individual fields.
-      // Adjusting to common Supabase patterns. Let's assume 'birth_details' column for JSON data 
-      // OR direct columns. given the previous code used a map 'birthDetails', 
-      // let's try to find that key or similar.
-      
-      // Check Identity (Name & Phone)
-      if (checkIdentity) {
-        if (data['name'] == null || data['name'].toString().isEmpty) missingFields.add('Name');
-        if (data['phone'] == null || data['phone'].toString().isEmpty) missingFields.add('Phone Number');
+      // Always check for Name (Basic Requirement)
+      if (data['name'] == null || data['name'].toString().isEmpty) {
+        missingFields.add('Name');
       }
 
-      // Check birth details
+      // Check birth details ONLY if required (Vedic Chat)
       if (checkBirthDetails) {
         final birthDetails = data['birth_details'] ?? data['birthDetails']; // Handle camelCase or snake_case
         
