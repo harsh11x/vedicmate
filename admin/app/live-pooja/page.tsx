@@ -149,14 +149,42 @@ export default function LivePoojaPage() {
         }
     }, [isLive]);
 
-    const toggleLive = () => {
+    const toggleLive = async () => {
         const newState = !isLive;
-        setIsLive(newState);
 
-        if (newState) {
-            socket.emit('admin-start-session', { title: 'Daily Pooja' });
-        } else {
-            socket.emit('admin-end-session');
+        try {
+            if (newState) {
+                // Start session via API
+                const response = await fetch('https://15.207.36.26:3001/api/admin/live-sessions/daily-pooja/start', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    setIsLive(true);
+                    console.log('✅ Live session started successfully');
+                } else {
+                    console.error('❌ Failed to start session:', await response.text());
+                    alert('Failed to start live session');
+                }
+            } else {
+                // End session via API
+                const response = await fetch('https://15.207.36.26:3001/api/admin/live-sessions/daily-pooja/end', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    setIsLive(false);
+                    console.log('✅ Live session ended successfully');
+                } else {
+                    console.error('❌ Failed to end session:', await response.text());
+                    alert('Failed to end live session');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error toggling live session:', error);
+            alert('Network error - check console');
         }
     };
 

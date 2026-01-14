@@ -1,0 +1,14 @@
+[
+    {
+        "id": "daily-pooja",
+        "sessionId": "daily-pooja",
+        "title": "Daily Morning Pooja",
+        "description": "Join us for daily morning prayers and blessings",
+        "userId": "admin",
+        "status": "scheduled",
+        "isLive": false,
+        "scheduledAt": "2026-01-14T09:00:00.000Z",
+        "createdAt": "2026-01-14T06:00:00.000Z",
+        "updatedAt": "2026-01-14T06:00:00.000Z"
+    }
+]
