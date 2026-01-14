@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 
@@ -17,6 +17,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   bool _isLoading = false;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -33,17 +34,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _phoneController.text = user.phoneNumber ?? '';
       });
 
-      // Load from Firestore
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      if (doc.exists) {
-        final data = doc.data()!;
-        setState(() {
-          _nameController.text = data['displayName'] ?? user.displayName ?? '';
-          _phoneController.text = data['phoneNumber'] ?? user.phoneNumber ?? '';
-        });
+      // Load from Supabase
+      try {
+        final data = await _supabase
+            .from('users')
+            .select()
+            .eq('id', user.uid)
+            .maybeSingle();
+            
+        if (data != null && mounted) {
+          setState(() {
+            _nameController.text = data['name'] ?? user.displayName ?? '';
+            _phoneController.text = data['phone'] ?? user.phoneNumber ?? '';
+          });
+        }
+      } catch (e) {
+        debugPrint('Error loading user data from Supabase: $e');
       }
     }
   }
@@ -56,16 +62,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      // Update Firebase Auth
-      await user.updateDisplayName(_nameController.text);
-      await user.reload();
+      // Update Firebase Auth Display Name
+      try {
+          await user.updateDisplayName(_nameController.text);
+      } catch (e) {
+          debugPrint('Error updating Firebase display name: $e');
+      }
 
-      // Update Firestore
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-        'displayName': _nameController.text,
-        'phoneNumber': _phoneController.text,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      // Update Supabase
+      await _supabase.from('users').update({
+        'name': _nameController.text,
+        'phone': _phoneController.text,
+        'last_updated': DateTime.now().toIso8601String(),
+      }).eq('id', user.uid);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -80,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text('Error updating profile: $e'),
             backgroundColor: AppTheme.errorRed,
           ),
         );
@@ -242,27 +251,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               // Save Button
               SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryOrange,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryOrange,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Save Changes',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'Save Changes',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

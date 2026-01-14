@@ -8,7 +8,11 @@ class ProfileCompleteness {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// Check if user profile is complete for AI chat
-  static Future<ProfileCheckResult> checkProfile() async {
+  static Future<ProfileCheckResult> checkProfile({
+    bool checkIdentity = true,
+    bool checkBirthDetails = true,
+    bool checkNumerology = true,
+  }) async {
     final user = _auth.currentUser;
     if (user == null) {
       return ProfileCheckResult(
@@ -44,29 +48,40 @@ class ProfileCompleteness {
       // OR direct columns. given the previous code used a map 'birthDetails', 
       // let's try to find that key or similar.
       
-      final birthDetails = data['birth_details'] ?? data['birthDetails']; // Handle camelCase or snake_case
-      
-      if (birthDetails == null) {
-         // If no JSON block, check for individual columns if they exist
-         bool hasDate = data['date_of_birth'] != null || data['dateOfBirth'] != null;
-         bool hasTime = data['time_of_birth'] != null || data['timeOfBirth'] != null;
-         bool hasPlace = data['place_of_birth'] != null || data['placeOfBirth'] != null;
-         
-         if (!hasDate) missingFields.add('Date of Birth');
-         if (!hasTime) missingFields.add('Time of Birth');
-         if (!hasPlace) missingFields.add('Place of Birth');
-      } else {
-        // It's a map/json
-        final bd = birthDetails as Map<String, dynamic>;
-        if (bd['date_of_birth'] == null && bd['dateOfBirth'] == null) missingFields.add('Date of Birth');
-        if (bd['time_of_birth'] == null && bd['timeOfBirth'] == null) missingFields.add('Time of Birth');
-        if (bd['place_of_birth'] == null && bd['placeOfBirth'] == null) missingFields.add('Place of Birth');
+      // Check Identity (Name & Phone)
+      if (checkIdentity) {
+        if (data['name'] == null || data['name'].toString().isEmpty) missingFields.add('Name');
+        if (data['phone'] == null || data['phone'].toString().isEmpty) missingFields.add('Phone Number');
+      }
+
+      // Check birth details
+      if (checkBirthDetails) {
+        final birthDetails = data['birth_details'] ?? data['birthDetails']; // Handle camelCase or snake_case
+        
+        if (birthDetails == null) {
+           // If no JSON block, check for individual columns if they exist
+           bool hasDate = data['date_of_birth'] != null || data['dateOfBirth'] != null;
+           bool hasTime = data['time_of_birth'] != null || data['timeOfBirth'] != null;
+           bool hasPlace = data['place_of_birth'] != null || data['placeOfBirth'] != null;
+           
+           if (!hasDate) missingFields.add('Date of Birth');
+           if (!hasTime) missingFields.add('Time of Birth');
+           if (!hasPlace) missingFields.add('Place of Birth');
+        } else {
+          // It's a map/json
+          final bd = birthDetails as Map<String, dynamic>;
+          if (bd['date_of_birth'] == null && bd['dateOfBirth'] == null) missingFields.add('Date of Birth');
+          if (bd['time_of_birth'] == null && bd['timeOfBirth'] == null) missingFields.add('Time of Birth');
+          if (bd['place_of_birth'] == null && bd['placeOfBirth'] == null) missingFields.add('Place of Birth');
+        }
       }
 
       // Check numerology
-      final numerology = data['numerology'] ?? data['numerologyProperties'];
-      if (numerology == null) {
-        missingFields.add('Numerology Preference');
+      if (checkNumerology) {
+        final numerology = data['numerology'] ?? data['numerologyProperties'];
+        if (numerology == null) {
+          missingFields.add('Numerology Preference');
+        }
       }
 
       return ProfileCheckResult(

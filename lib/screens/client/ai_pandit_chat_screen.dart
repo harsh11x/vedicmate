@@ -845,8 +845,16 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   // Check profile completeness for AI enhancements
   Future<void> _checkProfileCompleteness() async {
+    // Only check numerology fields if the Pandit is a Numerology specialist
+    final pandit = AIPandits.getById(_panditId);
+    final isNumerologyPandit = pandit?.category == 'Numerology';
+    
     try {
-      final profileCheck = await ProfileCompleteness.checkProfile();
+      final profileCheck = await ProfileCompleteness.checkProfile(
+        checkIdentity: true,
+        checkBirthDetails: false, // Don't block chat for birth details, as per user request
+        checkNumerology: isNumerologyPandit,
+      );
       
       if (!profileCheck.isComplete && mounted) {
         // Check if numerology is missing
