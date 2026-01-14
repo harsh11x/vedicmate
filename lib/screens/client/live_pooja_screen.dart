@@ -254,17 +254,31 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.grey[900],
+      isScrollControlled: true,
       builder: (context) {
         final gifts = [
           {'name': '🙏 Blessing', 'price': 11},
           {'name': '🌺 Flower', 'price': 21},
           {'name': '🪔 Diya', 'price': 51},
           {'name': '🔔 Bell', 'price': 101},
-          {'name': '🕉️ Om', 'price': 251},
+          {'name': '🕉️ Om', 'price': 151},
+          {'name': '🌸 Lotus', 'price': 201},
+          {'name': '🪷 Sacred Lotus', 'price': 251},
+          {'name': '📿 Mala', 'price': 301},
+          {'name': '🎋 Bamboo', 'price': 351},
+          {'name': '🍃 Tulsi', 'price': 401},
+          {'name': '⭐ Star', 'price': 501},
+          {'name': '🌙 Moon', 'price': 551},
+          {'name': '☀️ Sun', 'price': 701},
+          {'name': '💎 Diamond', 'price': 851},
+          {'name': '👑 Crown', 'price': 1001},
         ];
 
         return Container(
           padding: const EdgeInsets.all(20),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -277,33 +291,38 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                 ),
               ),
               const SizedBox(height: 20),
-              ...gifts.map((gift) => ListTile(
-                leading: Text(
-                  gift['name'].toString().split(' ')[0],
-                  style: const TextStyle(fontSize: 32),
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: gifts.map((gift) => ListTile(
+                    leading: Text(
+                      gift['name'].toString().split(' ')[0],
+                      style: const TextStyle(fontSize: 32),
+                    ),
+                    title: Text(
+                      gift['name'].toString().split(' ').sublist(1).join(' '),
+                      style: GoogleFonts.outfit(color: Colors.white),
+                    ),
+                    trailing: Text(
+                      '₹${gift['price']}',
+                      style: GoogleFonts.outfit(
+                        color: AppTheme.yellowPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onTap: () {
+                      final user = ref.read(authStateProvider).value;
+                      _socket.emit('send-gift', {
+                        'giftName': gift['name'],
+                        'giftIcon': gift['name'].toString().split(' ')[0],
+                        'senderName': user?.displayName ?? 'User',
+                        'amount': gift['price'],
+                      });
+                      Navigator.pop(context);
+                    },
+                  )).toList(),
                 ),
-                title: Text(
-                  gift['name'].toString().split(' ')[1],
-                  style: GoogleFonts.outfit(color: Colors.white),
-                ),
-                trailing: Text(
-                  '₹${gift['price']}',
-                  style: GoogleFonts.outfit(
-                    color: AppTheme.yellowPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  final user = ref.read(authStateProvider).value;
-                  _socket.emit('send-gift', {
-                    'giftName': gift['name'],
-                    'giftIcon': gift['name'].toString().split(' ')[0],
-                    'senderName': user?.displayName ?? 'User',
-                    'amount': gift['price'],
-                  });
-                  Navigator.pop(context);
-                },
-              )),
+              ),
             ],
           ),
         );
