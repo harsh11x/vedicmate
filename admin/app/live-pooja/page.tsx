@@ -58,9 +58,13 @@ export default function LivePoojaPage() {
 
         // WebRTC Signaling Handlers
         socket.on('user-joined', async ({ userId }: { userId: string }) => {
-            console.log("User joined, initiating connection:", userId);
+            console.log("🎥 User joined, initiating connection:", userId);
+            console.log("📡 isLive:", isLive, "stream:", stream);
             if (isLive && stream) {
+                console.log("✅ Creating peer connection for user:", userId);
                 createPeerConnection(userId, stream);
+            } else {
+                console.warn("⚠️ Cannot create peer - isLive:", isLive, "stream exists:", !!stream);
             }
         });
 
