@@ -23,7 +23,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
   List<Map<String, dynamic>> _messages = [];
   Map<String, dynamic>? _activeGift; // For animation
   bool _isLive = false;
-  bool _isFullscreen = false; // Fullscreen mode
   late AnimationController _giftAnimController;
   late Animation<double> _giftScaleAnim;
 
@@ -325,62 +324,47 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _isFullscreen ? _buildFullscreenView() : _buildNormalView(),
-    );
-  }
-
-  Widget _buildNormalView() {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            // Video Player Area (Horizontal mode)
-            Container(
-              height: 250,
-              width: double.infinity,
-              color: Colors.black,
-              child: _isLive
-                  ? Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        RTCVideoView(
-                          _remoteRenderer,
-                          objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                          mirror: false,
-                        ),
-                        // LIVE Badge
-                        Positioned(
-                          top: 40,
-                          left: 10,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                          ),
-                        ),
-                        // Fullscreen Button
-                        Positioned(
-                          bottom: 10,
-                          right: 10,
-                          child: IconButton(
-                            icon: const Icon(Icons.fullscreen, color: Colors.white, size: 28),
-                            onPressed: () => setState(() => _isFullscreen = true),
-                          ),
-                        ),
-                      ],
-                    )
-                  : _buildOfflinePlaceholder(),
-            ),
-            Expanded(
-              child: Container(
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              // 2. Video Player Area (Dynamic)
+              Container(
+                height: 250,
+                width: double.infinity,
                 color: Colors.black,
+                child: _isLive
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          RTCVideoView(
+                            _remoteRenderer,
+                            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                            mirror: false,
+                          ),
+                          Positioned(
+                            top: 40,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                            ),
+                          ),
+                        ],
+                      )
+                    : _buildOfflinePlaceholder(),
               ),
-            ),
-          ],
-        ),
+              Expanded(
+                child: Container(
+                  color: Colors.black, // Background for the rest of the screen
+                ),
+              ),
+            ],
+          ),
 
           // 2. Chat Overlay (Bottom Left)
           Positioned(
@@ -584,253 +568,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
              ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFullscreenView() {
-    return Stack(
-      children: [
-        // Full-screen video
-        Positioned.fill(
-          child: _isLive
-              ? RTCVideoView(
-                  _remoteRenderer,
-                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                  mirror: false,
-                )
-              : _buildOfflinePlaceholder(),
-        ),
-        
-        // Top overlay with LIVE badge and close button
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // LIVE Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.circle, color: Colors.white, size: 8),
-                        SizedBox(width: 6),
-                        Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                      ],
-                    ),
-                  ),
-                  // Exit fullscreen button
-                  IconButton(
-                    icon: const Icon(Icons.fullscreen_exit, color: Colors.white, size: 28),
-                    onPressed: () => setState(() => _isFullscreen = false),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        
-        // Instagram-style chat overlay (left side, vertical)
-        Positioned(
-          left: 16,
-          bottom: 100,
-          top: 100,
-          width: MediaQuery.of(context).size.width * 0.65,
-          child: Column(
-            children: [
-              Expanded(
-                child: ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    return const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Colors.black],
-                      stops: [0.0, 0.15],
-                    ).createShader(bounds);
-                  },
-                  blendMode: BlendMode.dstIn,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.zero,
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = _messages[index];
-                      if (msg['type'] == 'gift') {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [AppTheme.yellowPrimary.withOpacity(0.9), Colors.orange.withOpacity(0.9)],
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: '${msg['senderName']} ',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13),
-                                  ),
-                                  const TextSpan(
-                                    text: 'sent ',
-                                    style: TextStyle(color: Colors.black87, fontSize: 12),
-                                  ),
-                                  TextSpan(
-                                    text: '${msg['giftName']}! ',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '${msg['senderName']}: ',
-                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-                                ),
-                                TextSpan(
-                                  text: msg['message'],
-                                  style: const TextStyle(color: Colors.white, fontSize: 13),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        // Bottom input bar
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [Colors.black.withOpacity(0.8), Colors.transparent],
-              ),
-            ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white.withOpacity(0.3)),
-                      ),
-                      child: TextField(
-                        controller: _chatController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          hintText: 'Say something...',
-                          hintStyle: TextStyle(color: Colors.white60),
-                          border: InputBorder.none,
-                        ),
-                        onSubmitted: (_) => _sendMessage(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: _showGiftSheet,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppTheme.primaryOrange, Colors.deepOrange],
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryOrange.withOpacity(0.5),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.card_giftcard, color: Colors.white, size: 24),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        
-        // Gift animation overlay
-        if (_activeGift != null)
-          Positioned.fill(
-            child: Center(
-              child: ScaleTransition(
-                scale: _giftScaleAnim,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _activeGift!['giftIcon'],
-                      style: const TextStyle(fontSize: 120),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.black87,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: AppTheme.yellowPrimary, width: 2),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '${_activeGift!['senderName']}',
-                            style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                          Text(
-                            'sent ${_activeGift!['giftName']}!',
-                            style: GoogleFonts.outfit(fontSize: 18, color: AppTheme.yellowPrimary),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-      ],
     );
   }
 
