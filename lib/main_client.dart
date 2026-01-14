@@ -49,36 +49,54 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
 
   Future<void> _initialize() async {
     try {
+      print('🚀 AppInit: Starting initialization...');
       WidgetsFlutterBinding.ensureInitialized();
+      print('✅ AppInit: Flutter binding initialized');
       
-      // 1. Firebase
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      
-      // 2. Supabase
-      await Supabase.initialize(
-        url: EnvConfig.supabaseUrl,
-        anonKey: EnvConfig.supabaseAnonKey,
-      );
-      debugPrint('AppInit: Supabase init done.');
-
-      // 3. Notifications
-      try {
-        await NotificationService.initialize();
-        debugPrint('AppInit: NotificationService init done.');
-      } catch (e) {
-        debugPrint('AppInit: NotificationService error (non-fatal): $e');
-      }
+      // Add timeout to prevent infinite loading
+      await Future.any([
+        _initializeServices(),
+        Future.delayed(const Duration(seconds: 10), () {
+          throw Exception('Initialization timeout after 10 seconds');
+        }),
+      ]);
 
       if (mounted) {
         setState(() => _isInitialized = true);
+        print('✅ AppInit: All services initialized successfully!');
       }
-    } catch (e) {
-      debugPrint('AppInit: CRITICAL ERROR -> $e');
+    } catch (e, stackTrace) {
+      print('❌ AppInit: CRITICAL ERROR -> $e');
+      print('Stack trace: $stackTrace');
       if (mounted) {
         setState(() => _error = e.toString());
       }
+    }
+  }
+
+  Future<void> _initializeServices() async {
+    // 1. Firebase
+    print('🔥 AppInit: Initializing Firebase...');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('✅ AppInit: Firebase initialized');
+    
+    // 2. Supabase
+    print('🗄️ AppInit: Initializing Supabase...');
+    await Supabase.initialize(
+      url: EnvConfig.supabaseUrl,
+      anonKey: EnvConfig.supabaseAnonKey,
+    );
+    print('✅ AppInit: Supabase initialized');
+
+    // 3. Notifications
+    print('🔔 AppInit: Initializing NotificationService...');
+    try {
+      await NotificationService.initialize();
+      print('✅ AppInit: NotificationService initialized');
+    } catch (e) {
+      print('⚠️ AppInit: NotificationService error (non-fatal): $e');
     }
   }
 

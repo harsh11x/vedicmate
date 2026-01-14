@@ -225,8 +225,9 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
             setState(() {
               _remoteRenderer.srcObject = event.streams[0];
               _isConnecting = false; // Stop loading indicator
+              _isLive = true; // Mark as live when we receive video
             });
-            print('✅ Video renderer updated!');
+            print('✅ Video renderer updated and marked as LIVE!');
           }
         }
       };
@@ -391,16 +392,21 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                     ? const Center(
                         child: CircularProgressIndicator(color: Colors.white),
                       )
-                    : _isLive
+                    : (_isLive || _remoteRenderer.srcObject != null)
                         ? Stack(
                             children: [
                               // VIDEO PLAYER
-                              Center(
-                                child: RTCVideoView(
-                                  _remoteRenderer,
-                                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-                                  mirror: false,
-                                ),
+                              Builder(
+                                builder: (context) {
+                                  print('🎬 Rendering video: srcObject=${_remoteRenderer.srcObject != null}, isLive=$_isLive');
+                                  return Center(
+                                    child: RTCVideoView(
+                                      _remoteRenderer,
+                                      objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+                                      mirror: false,
+                                    ),
+                                  );
+                                },
                               ),
                               // LIVE Badge
                               Positioned(
