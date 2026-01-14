@@ -1603,6 +1603,9 @@ app.put('/api/admin/live-sessions/:id/start', (req, res) => {
     writeLiveSessions(sessions);
 
     // Notify ALL users in live-pooja-room that session is live
+    console.log(`🎥 Emitting 'session-live' to 'live-pooja-room' for session: ${sessions[index].id}`);
+    const roomSize = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
+    console.log(`👥 Current users in live-pooja-room: ${roomSize}`);
     io.to('live-pooja-room').emit('session-live', sessions[index]);
     io.emit('live-sessions-update', { action: 'started', session: sessions[index] });
 

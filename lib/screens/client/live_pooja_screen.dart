@@ -86,16 +86,20 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with TickerPr
     _socket.connect();
 
     _socket.onConnect((_) {
-      print('Connected to Socket for Live Pooja');
+      print('✅ Connected to Socket for Live Pooja');
+      print('🔌 Socket ID: ${_socket.id}');
       final user = ref.read(authStateProvider).value;
+      print('👤 Joining as: ${user?.displayName ?? 'User'}');
       _socket.emit('join-pooja', {'name': user?.displayName ?? 'User'});
     });
 
-    _socket.on('session-live', (_) {
+    _socket.on('session-live', (data) {
+      print('🎥 RECEIVED session-live event! Data: $data');
       if (mounted) setState(() => _isLive = true);
     });
 
-    _socket.on('session-ended', (_) {
+    _socket.on('session-ended', (data) {
+      print('🛑 RECEIVED session-ended event! Data: $data');
       if (mounted) setState(() => _isLive = false);
       _closePeerConnection();
     });
