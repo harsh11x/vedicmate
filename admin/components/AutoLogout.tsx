@@ -11,9 +11,25 @@ export default function AutoLogout() {
     const pathname = usePathname();
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const logout = () => {
+    const logout = async () => {
         if (pathname === "/login") return; // Don't logout if already on login page
 
+        // Check if Live Pooja is active before logging out
+        try {
+            const response = await fetch('https://15.207.36.26:3001/api/admin/live-sessions/session_1768376801443');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.data.isLive) {
+                    console.log('⏸️ Auto-logout prevented: Live Pooja is active');
+                    resetTimer(); // Reset timer instead of logging out
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error checking live session status:', error);
+        }
+
+        // Proceed with logout if no live session
         console.log("Auto-logging out due to inactivity...");
         deleteCookie("admin_authenticated");
         window.location.href = "/login";
