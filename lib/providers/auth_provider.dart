@@ -6,7 +6,10 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
 
-final authStateProvider = StreamProvider<User?>((ref) {
+final authStateProvider = StreamProvider<User?>((ref) async* {
   final authService = ref.watch(authServiceProvider);
-  return authService.authStateChanges();
+  // Yield current user immediately to prevent "Loading" state from blocking routes
+  // This ensures we start with AsyncData(user) or AsyncData(null), not AsyncLoading
+  yield authService.currentUser;
+  yield* authService.authStateChanges();
 });
