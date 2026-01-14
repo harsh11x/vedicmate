@@ -85,6 +85,8 @@ class RazorpayService {
       return false;
     } catch (e) {
       print('Error handling payment success: $e');
+      return false;
+    }
   }
 }
 

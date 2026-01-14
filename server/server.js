@@ -1408,13 +1408,15 @@ import localAIService from './services/local_ai_service.js';
 
 app.post('/api/ai-pandit/chat', async (req, res) => {
   try {
-    const { userId, message, panditId, history } = req.body; // Extract history
+    const { userId, message, panditId, history, targetLanguage } = req.body; // Extract history
+    console.log(`[API] Received Chat Request: User=${userId}, Lang=${targetLanguage}, Msg=${message.substring(0, 20)}...`);
+
     if (!userId || !message) {
       return res.status(400).json({ success: false, error: 'UserId and message required' });
     }
 
     // Delegate to Qwen 2.5 via LM Studio, passing history
-    const response = await localAIService.generateResponse(userId, message, panditId, history);
+    const response = await localAIService.generateResponse(userId, message, panditId, history, targetLanguage);
 
     res.json({ success: true, data: response });
   } catch (error) {
@@ -1654,7 +1656,7 @@ app.get('/api/user/profile/check/:userId', (req, res) => {
 // Enhanced AI chat endpoint with user profile context
 app.post('/api/ai-pandit/chat-enhanced', async (req, res) => {
   try {
-    const { userId, message, panditId, history } = req.body;
+    const { userId, message, panditId, history, targetLanguage } = req.body;
 
     if (!userId || !message) {
       return res.status(400).json({
@@ -1692,7 +1694,8 @@ app.post('/api/ai-pandit/chat-enhanced', async (req, res) => {
       userId,
       enhancedMessage,
       panditId,
-      history
+      history,
+      targetLanguage
     );
 
     res.json({ success: true, data: response });

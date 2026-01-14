@@ -43,10 +43,37 @@ class LocalAIService {
         return { "default": "You are a Vedic Pandit." };
     }
 
-    async generateResponse(userId, userMessage, panditId = 'default', clientHistory = []) {
+    async generateResponse(userId, userMessage, panditId = 'default', clientHistory = [], targetLanguage = 'en') {
         try {
+            // Language Map
+            const languageMap = {
+                'en': 'English', 'hi': 'Hindi', 'mr': 'Marathi', 'gu': 'Gujarati',
+                'bn': 'Bengali', 'te': 'Telugu', 'ta': 'Tamil', 'kn': 'Kannada',
+                'ml': 'Malayalam', 'pa': 'Punjabi', 'or': 'Odia', 'as': 'Assamese',
+                'ur': 'Urdu', 'ne': 'Nepali', 'si': 'Sindhi', 'kok': 'Konkani',
+                'mni': 'Manipuri', 'doi': 'Dogri', 'brx': 'Bodo', 'sat': 'Santali',
+                'mai': 'Maithili', 'sa': 'Sanskrit', 'ks': 'Kashmiri'
+            };
+            const langName = languageMap[targetLanguage] || 'English';
+            console.log(`[LocalAI] Target Language: ${targetLanguage} -> ${langName}`);
+
             // Select Personality
-            const systemPrompt = this.personalities[panditId] || this.personalities['default'] || this.defaultSystemPrompt;
+            let systemPrompt = this.personalities[panditId] || this.personalities['default'] || this.defaultSystemPrompt;
+
+            // Inject Language Instruction
+            systemPrompt += `\n\nCRITICAL: You MUST reply ONLY in ${langName}. Ignore previous language context if different.`;
+
+            // Inject Fluency/Voice Instructions
+            systemPrompt += `\n\nVOICE GUIDELINES:
+            - Be concise and human-like. Avoid long monologues.
+            - Use a warm, empathetic, and conversational tone.
+            - Speak naturally, like a real Vedic Pandit talking on a phone call.
+            - If the user greeting is short, keep your greeting short.
+            - Do not start every sentence with "Namaste" or formal greetings if already in conversation.`;
+
+            // Enforce language in User Message for smaller models
+            // Prepend instruction to user message so it's fresh in context
+            const enforcedUserMessage = `[INSTRUCTION: Reply in ${langName} only] ${userMessage}`;
 
             // Build context
             const messages = [
@@ -71,7 +98,7 @@ class LocalAIService {
             }
 
             // Add current message
-            messages.push({ role: "user", content: userMessage });
+            messages.push({ role: "user", content: enforcedUserMessage });
 
             console.log(`[LocalAI] Sending request to ${this.config.api_base_url} for Pandit: ${panditId}...`);
 
@@ -87,6 +114,8 @@ class LocalAIService {
 
             // Update history
             if (!this.history[userId]) this.history[userId] = [];
+
+            // Store original message in history (without instruction tag) to keep it clean
             this.history[userId].push({ role: "user", content: userMessage });
             this.history[userId].push({ role: "assistant", content: aiMessage });
 

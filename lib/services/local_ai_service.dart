@@ -8,6 +8,7 @@ class LocalAIService {
     List<Map<String, String>> history, {
     String? panditId,
     String? userId,
+    String? targetLanguage,
   }) async {
     try {
       final response = await http.post(
@@ -18,6 +19,7 @@ class LocalAIService {
           'message': message,
           'panditId': panditId,
           'history': history, // Optional, depending on backend implementation
+          'targetLanguage': targetLanguage,
         }),
       );
 

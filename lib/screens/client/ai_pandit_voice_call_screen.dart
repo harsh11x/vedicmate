@@ -14,6 +14,7 @@ import '../../providers/api_providers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/ai_pandit_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../widgets/language_selector.dart';
 
 class AIPanditVoiceCallScreen extends ConsumerStatefulWidget {
   final String? panditId;
@@ -1450,9 +1451,12 @@ Please use these details to generate my complete Kundli analysis.]
                     ),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.language, color: Colors.white),
-            onPressed: _showLanguageSelector,
+          LanguageSelector(
+            initialLanguageCode: _currentLanguage,
+            isDark: true, // Voice screen has dark background
+            onLanguageSelected: (code, name) {
+              _changeLanguage(code);
+            },
           ),
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),

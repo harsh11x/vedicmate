@@ -17,6 +17,7 @@ import '../../models/ai_pandit_model.dart';
 import '../../widgets/numerology_input_dialog.dart';
 import '../../widgets/ai_message_widgets.dart';
 import '../../utils/profile_completeness.dart';
+import '../../widgets/language_selector.dart';
 
 class AIPanditChatScreen extends ConsumerStatefulWidget {
   final String? panditId;
@@ -50,6 +51,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
   bool _isChatStarted = false; // Whether user has started the chat
   bool _isViewingOnly = false; // Whether user is just viewing history
   bool _isStartingChat = false; // Whether chat is currently being started
+  String _currentLanguage = 'en';
   
   String? _userId;
   static const double _minimumBalance = 50.0; // Minimum ₹50 required
@@ -1124,6 +1126,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
           conversationHistory,
           panditId: _panditId,
           userId: _userId,
+          targetLanguage: _currentLanguage,
         ).timeout(const Duration(seconds: 60)); // Give local model time to think
         
       } catch (e) {
@@ -1711,6 +1714,15 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         ],
       ),
       actions: [
+        LanguageSelector(
+          initialLanguageCode: _currentLanguage,
+          onLanguageSelected: (code, name) {
+            setState(() {
+              _currentLanguage = code;
+            });
+            print('🌐 Chat language set to: $name ($code)');
+          },
+        ),
         IconButton(
           icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
           tooltip: 'Voice Call',
