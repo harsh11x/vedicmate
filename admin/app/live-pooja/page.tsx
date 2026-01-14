@@ -101,6 +101,7 @@ export default function LivePoojaPage() {
     }, [isLive, stream]);
 
     const createPeerConnection = async (targetUserId: string, localStream: MediaStream) => {
+        console.log('📡 Creating peer connection for:', targetUserId);
         const pc = new RTCPeerConnection({
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
@@ -108,10 +109,15 @@ export default function LivePoojaPage() {
             ]
         });
 
-        localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+        console.log('➕ Adding tracks to peer connection...');
+        localStream.getTracks().forEach(track => {
+            console.log(`  Adding ${track.kind} track`);
+            pc.addTrack(track, localStream);
+        });
 
         pc.onicecandidate = (event) => {
             if (event.candidate) {
+                console.log('🧊 Sending ICE candidate to:', targetUserId);
                 socket.emit('ice-candidate', {
                     target: targetUserId,
                     candidate: event.candidate
@@ -119,13 +125,16 @@ export default function LivePoojaPage() {
             }
         };
 
+        console.log('📝 Creating offer...');
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
+        console.log('✅ Offer created, sending to:', targetUserId);
 
         socket.emit('offer', {
             target: targetUserId,
             sdp: offer
         });
+        console.log('📤 Offer sent!');
 
         peersRef.current[targetUserId] = pc;
     };
