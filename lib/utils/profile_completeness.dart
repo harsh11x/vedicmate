@@ -1,11 +1,58 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import '../services/user_preferences_service.dart';
 
 /// Utility class for checking and managing user profile completeness
 class ProfileCompleteness {
   // Use Supabase client directly
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  /// Get user profile data for AI context
+  static Future<Map<String, dynamic>?> getUserProfileForAI() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    try {
+      final data = await _supabase
+          .from('users')
+          .select()
+          .eq('id', user.uid)
+          .maybeSingle();
+      
+      // Merge with local prefs for AI context
+      // This ensures that if we only have local data (like Numerology Day), the AI still sees it
+      final prefs = UserPreferencesService();
+      final numerologyDay = await prefs.getNumerologyDay();
+      
+      var profileData = Map<String, dynamic>.from(data ?? {});
+      
+      if (numerologyDay != null) {
+         // Create or update numerology section
+         var numerology = profileData['numerology'] != null 
+             ? Map<String, dynamic>.from(profileData['numerology']) 
+             : <String, dynamic>{};
+         
+         numerology['dayOfBirth'] = numerologyDay;
+         // Calculate Mulank if missing
+         if (numerology['calculatedNumber'] == null) {
+            numerology['calculatedNumber'] = _calculateLifePathNumber(numerologyDay);
+         }
+         profileData['numerology'] = numerology;
+      }
+
+      // Merge local name if missing
+      final localName = await prefs.getUserName();
+      if ((profileData['name'] == null || profileData['name'].toString().isEmpty) && localName != null) {
+        profileData['name'] = localName;
+      }
+
+      return profileData;
+    } catch (e) {
+      print('Error getting profile for AI (Supabase): $e');
+      return null;
+    }
+  }
 
   /// Check if user profile is complete for AI chat
   static Future<ProfileCheckResult> checkProfile({
@@ -67,7 +114,12 @@ class ProfileCompleteness {
       // Check numerology
       if (checkNumerology) {
         final numerology = data['numerology'] ?? data['numerologyProperties'];
-        if (numerology == null) {
+        
+        // Check local prefs fallback
+        final prefs = UserPreferencesService();
+        final localDay = await prefs.getNumerologyDay();
+
+        if (numerology == null && localDay == null) {
           missingFields.add('Numerology Preference');
         }
       }
@@ -85,7 +137,6 @@ class ProfileCompleteness {
       );
     }
   }
-
   /// Save numerology preferences
   static Future<bool> saveNumerologyPreferences({
     required String inputType,
@@ -101,7 +152,7 @@ class ProfileCompleteness {
         if (inputType == 'day_only' && dayOfBirth != null)
           'dayOfBirth': dayOfBirth,
         if (inputType == 'full_date' && fullDateOfBirth != null)
-          'fullDateOfBirth': fullDateOfBirth?.toIso8601String(), // Supabase likes strings for dates
+          'fullDateOfBirth': fullDateOfBirth?.toIso8601String(),
         'calculatedNumber': _calculateLifePathNumber(
           inputType == 'day_only' ? dayOfBirth! : fullDateOfBirth!.day,
         ),
@@ -170,21 +221,21 @@ class ProfileCompleteness {
     return num;
   }
 
-  /// Get user profile data for AI context
-  static Future<Map<String, dynamic>?> getUserProfileForAI() async {
+  /// Save Name
+  static Future<bool> saveUserName(String name) async {
     final user = _auth.currentUser;
-    if (user == null) return null;
+    if (user == null) return false;
 
     try {
-      final data = await _supabase
-          .from('users')
-          .select()
-          .eq('id', user.uid)
-          .maybeSingle();
-      return data;
+      await _supabase.from('users').update({
+        'name': name,
+        // Avoid last_updated for now
+      }).eq('id', user.uid);
+
+      return true;
     } catch (e) {
-      print('Error getting profile for AI (Supabase): $e');
-      return null;
+      print('Error saving name (Supabase): $e');
+      return false;
     }
   }
 }

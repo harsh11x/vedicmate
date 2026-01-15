@@ -21,6 +21,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../providers/cart_provider.dart';
 import 'reels_screen.dart';
+import '../../providers/auth_provider.dart'; // Correctly placed import
 import 'remedies_screen.dart';
 import 'ai_pandit_chat_screen.dart';
 import '../../widgets/live_pooja_banner.dart';
@@ -333,9 +334,12 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    // Watch auth state for reactive updates
+    final authState = ref.watch(authStateProvider);
+    final user = authState.valueOrNull;
     final userName = user?.displayName ?? 
                      (user?.email?.split('@').first ?? 'User');
     final greeting = _getGreeting();

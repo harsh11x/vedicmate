@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/language_provider.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/generated/app_localizations.dart';
+
+import '../../providers/auth_provider.dart'; // Added import
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -14,17 +16,18 @@ class SettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _emailNotifications = true;
   bool _pushNotifications = true;
   bool _darkMode = false;
-  String _selectedLanguage = 'English';
+  // String _selectedLanguage = 'English'; // Removed
   final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    // Watch auth state for live updates
+    final authState = ref.watch(authStateProvider);
+    final user = authState.valueOrNull ?? FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: AppTheme.neutralSoft,
@@ -317,37 +320,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 12),
                   _SettingsCard(
                     children: [
-                      _SettingsTile(
-                        icon: Icons.language,
-              title: AppLocalizations.of(context)!.language,
-                        subtitle: _selectedLanguage,
-              trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                            color: AppTheme.primaryOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                          child: DropdownButton<String>(
-                            value: _selectedLanguage,
-                            underline: const SizedBox(),
-                            icon: const Icon(Icons.arrow_drop_down, color: AppTheme.primaryOrange),
-                            // Use keys from LanguageNotifier.supportedLanguages
-                            items: LanguageNotifier.supportedLanguages.keys
-                                .map((lang) => DropdownMenuItem(
-                                      value: lang,
-                                      child: Text(lang, style: const TextStyle(fontSize: 14)),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() => _selectedLanguage = value);
-                                ref.read(languageProvider.notifier).setLanguageByName(value);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      _Divider(),
+// Language settings removed as per user request (handled in chat only)
                       _SettingsTile(
                         icon: Icons.dark_mode_outlined,
                         title: AppLocalizations.of(context)!.darkMode,

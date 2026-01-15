@@ -11,5 +11,5 @@ final authStateProvider = StreamProvider<User?>((ref) async* {
   // Yield current user immediately to prevent "Loading" state from blocking routes
   // This ensures we start with AsyncData(user) or AsyncData(null), not AsyncLoading
   yield authService.currentUser;
-  yield* authService.authStateChanges();
+  yield* authService.userChanges();
 });

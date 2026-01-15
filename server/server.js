@@ -686,7 +686,7 @@ app.post('/api/ai/welcome', async (req, res) => {
   }
 });
 
-app.post('/api/ai/chat', async (req, res) => {
+app.post('/api/ai-pandit/chat', async (req, res) => {
   try {
     const { message, history, panditId } = req.body;
     if (!message || !panditId) {

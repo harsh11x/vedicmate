@@ -46,6 +46,20 @@ class UserPreferencesService {
     return null;
   }
 
+  static const String _keyNumerologyDay = 'numerology_day';
+
+  // Save numerology day (1-31)
+  Future<void> saveNumerologyDay(int day) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyNumerologyDay, day);
+  }
+
+  // Get numerology day
+  Future<int?> getNumerologyDay() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyNumerologyDay);
+  }
+
   // Get place of birth
   Future<String?> getPlaceOfBirth() async {
     final prefs = await SharedPreferences.getInstance();
@@ -141,5 +155,18 @@ class UserPreferencesService {
     await prefs.remove(_keyPlaceOfBirth);
     await prefs.remove(_keyTimeOfBirth);
     await prefs.remove(_keyOnboardingComplete);
+  }
+  static const String _keyUserName = 'user_name';
+  
+  // Save user name
+  Future<void> saveUserName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyUserName, name);
+  }
+  
+  // Get user name
+  Future<String?> getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyUserName);
   }
 }

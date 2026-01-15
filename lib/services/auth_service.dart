@@ -193,6 +193,28 @@ class AuthService {
       // If table doesn't exist or other error, assume not registered
       return false;
     }
+      return false;
+    }
+  }
+
+  // Check if mobile number is already taken
+  Future<bool> isMobileNumberTaken(String phone) async {
+    try {
+      // Normalize: check both raw (98...) and formatted (+9198...)
+      final String rawPhone = phone.replaceAll(RegExp(r'\D'), ''); // Strip non-digits
+      final String formattedPhone = phone.startsWith('+') ? phone : '+91$phone';
+      
+      final response = await _supabase
+          .from('users')
+          .select('id')
+          .or('phone.eq.$rawPhone,phone.eq.$formattedPhone,phone.eq.$phone')
+          .maybeSingle(); // Returns null if no match found
+          
+      return response != null;
+    } catch (e) {
+      debugPrint('Error checking mobile number: $e');
+      return false; // Fail safe
+    }
   }
 
   Future<User?> register(

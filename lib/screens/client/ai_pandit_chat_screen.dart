@@ -845,15 +845,12 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   // Check profile completeness for AI enhancements
   Future<void> _checkProfileCompleteness() async {
-    // Determine profile requirements based on Pandit category
+    // User requested to disable profile completion popup
+    // We will just log the status for debugging purposes
     final pandit = AIPandits.getById(_panditId);
     final category = pandit?.category ?? '';
     
-    // Check Numerology for Numerology category
     final isNumerologyPandit = category == 'Numerology';
-    
-    // Check Birth Details for Vedic-related categories
-    // Vedic Astrology, Lal Kitab, Vastu Shastra usually require birth details for accurate predictions
     final isVedicPandit = ['Vedic Astrology', 'Lal Kitab'].contains(category);
     
     try {
@@ -862,65 +859,11 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         checkBirthDetails: isVedicPandit,
       );
       
-      if (!profileCheck.isComplete && mounted) {
-        // Show dialog based on missing fields...
-        // ... (rest of logic handles missing fields dynamically)
-        // Check if numerology is missing
-        if (profileCheck.missingFields.contains('Numerology Preference')) {
-          final numerologyResult = await showDialog<Map<String, dynamic>>(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const NumerologyInputDialog(),
-          );
-          
-          if (numerologyResult != null) {
-            final success = await ProfileCompleteness.saveNumerologyPreferences(
-              inputType: numerologyResult['inputType'] as String,
-              dayOfBirth: numerologyResult['dayOfBirth'] as int?,
-              fullDateOfBirth: numerologyResult['fullDateOfBirth'] as DateTime?,
-            );
-            
-            if (success && mounted) {
-              print('✅ Numerology preferences saved');
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Numerology preferences saved!'),
-                  backgroundColor: AppTheme.successGreen,
-                ),
-              );
-            }
-          }
-        }
-        
-        // Check for other missing fields (using same criteria)
-        final updatedCheck = await ProfileCompleteness.checkProfile(
-          checkNumerology: isNumerologyPandit,
-          checkBirthDetails: isVedicPandit,
-        );
-        
-        // Filter out Numerology if we just handled it (though checkProfile re-run would see it as present/saved ideally)
-        // But if distinct missing fields exist (like Name or Birth Details), show generic dialog
-        
-        final remainingMissing = List<String>.from(updatedCheck.missingFields);
-        if (isNumerologyPandit) {
-           // We handled Numerology dialog above. If it is still missing (user cancelled), 
-           // we might not want to show generic dialog immediately or maybe we do?
-           // Provide loop protection?
-           // If user cancelled numerology dialog, numerologyresult is null.
-           // But here we are just showing the generic dialog. 
-           // Ideally, the generic dialog handles Name/DOB. 
-           // Numerology has its own specialized dialog.
-           remainingMissing.remove('Numerology Preference');
-        }
-        
-        if (remainingMissing.isNotEmpty && mounted) {
-           // Re-construct message
-           String message = remainingMissing.join(', ');
-           if (remainingMissing.length > 1) {
-             message = '${remainingMissing.take(remainingMissing.length - 1).join(', ')} and ${remainingMissing.last}';
-           }
-          _showProfileCompletionDialog(message);
-        }
+      if (!profileCheck.isComplete) {
+        print('ℹ️ Profile incomplete for AI context: ${profileCheck.missingFields}');
+        // Dialog suppressed as per user request
+      } else {
+        print('✅ Profile complete for AI context');
       }
     } catch (e) {
       print('⚠️ Error checking profile completeness: $e');

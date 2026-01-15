@@ -81,8 +81,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
     if (_phoneFormKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       
+      final phone = _phoneController.text.trim();
+
+      // Check uniqueness
+      final isTaken = await _authService.isMobileNumberTaken(phone); // Check raw or +91
+      if (isTaken) {
+        if (mounted) {
+           setState(() => _isLoading = false);
+           _showSnackBar('This mobile number is already registered. Please login.', isError: true);
+        }
+        return;
+      }
+
       await _authService.sendOTP(
-        _phoneController.text, 
+        phone, 
         AppConstants.roleClient,
         onCodeSent: () {
           if (mounted) {
@@ -90,7 +102,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
               _isOTPSent = true;
               _isLoading = false;
             });
-            _showSnackBar('OTP sent to +91 ${_phoneController.text}', isSuccess: true);
+            _showSnackBar('OTP sent to +91 $phone', isSuccess: true);
           }
         },
         onVerificationCompleted: (User user) async {
@@ -141,11 +153,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
   void _handleEmailRegister() async {
     if (_emailFormKey.currentState!.validate()) {
       setState(() => _isLoading = true);
+      
+      final phoneInput = _emailPhoneController.text.trim();
+      String phoneToSave = '';
+
+      if (phoneInput.isNotEmpty) {
+        // Enforce +91 prefix for saving
+        phoneToSave = '+91$phoneInput'; 
+        
+        // Check uniqueness
+        final isTaken = await _authService.isMobileNumberTaken(phoneInput);
+        if (isTaken) {
+          if (mounted) {
+             setState(() => _isLoading = false);
+             _showSnackBar('This mobile number is already registered.', isError: true);
+          }
+          return;
+        }
+      }
+
       try {
         User? user = await _authService.register(
           _nameController.text.trim(),
           _emailController.text.trim(),
-          _emailPhoneController.text.trim(),
+          phoneToSave, // Pass formatted phone
           _passwordController.text,
           AppConstants.roleClient,
         );

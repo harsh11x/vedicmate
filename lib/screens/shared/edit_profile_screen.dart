@@ -70,7 +70,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await Supabase.instance.client.from('users').update({
         'name': _nameController.text,
         'phone': _phoneController.text,
-        'last_updated': DateTime.now().toIso8601String(),
       }).eq('id', user.uid);
       print('Supabase update successful');
 
