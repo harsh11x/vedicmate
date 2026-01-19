@@ -16,6 +16,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 
@@ -365,10 +366,167 @@ const WalletService = {
 };
 
 // ============================================================================
+// LOCAL AI SERVICE (Inline)
+// ============================================================================
+
+const LocalAIService = {
+  config: {
+    api_base_url: "https://eb1d2d0d4fc8.ngrok-free.app/v1", // Using ngrok tunnel for AI
+    model_name: "qwen2.5-1.5b-instruct",
+    temperature: 0.7,
+    max_tokens: 500
+  },
+  personalities: { "default": "You are a Vedic Pandit." },
+  defaultSystemPrompt: "You are a helpful assistant.",
+  history: {},
+
+  loadConfig() {
+    try {
+      const configPath = path.join(__dirname, '..', 'ai_engine', 'model_config.json');
+      if (fs.existsSync(configPath)) {
+        this.config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      }
+    } catch (e) {
+      console.error('Error loading AI config:', e);
+    }
+  },
+
+  loadPersonalities() {
+    try {
+      const promptPath = path.join(__dirname, '..', 'ai_engine', 'personalities.json');
+      if (fs.existsSync(promptPath)) {
+        this.personalities = JSON.parse(fs.readFileSync(promptPath, 'utf8'));
+      }
+    } catch (e) {
+      console.error('Error loading Personalities:', e);
+    }
+  },
+
+  async generateResponse(userId, userMessage, panditId = 'default', clientHistory = [], targetLanguage = 'en', userProfile = null) {
+    try {
+      // Language Map
+      const languageMap = {
+        'en': 'English', 'hi': 'Hindi', 'mr': 'Marathi', 'gu': 'Gujarati',
+        'bn': 'Bengali', 'te': 'Telugu', 'ta': 'Tamil', 'kn': 'Kannada',
+        'ml': 'Malayalam', 'pa': 'Punjabi', 'or': 'Odia', 'as': 'Assamese',
+        'ur': 'Urdu', 'ne': 'Nepali', 'si': 'Sindhi', 'kok': 'Konkani',
+        'mni': 'Manipuri', 'doi': 'Dogri', 'brx': 'Bodo', 'sat': 'Santali',
+        'mai': 'Maithili', 'sa': 'Sanskrit', 'ks': 'Kashmiri'
+      };
+      const langName = languageMap[targetLanguage] || 'English';
+      console.log(`[LocalAI] Target Language: ${targetLanguage} -> ${langName}`);
+
+      // Select Personality
+      let systemPrompt = this.personalities[panditId] || this.personalities['default'] || this.defaultSystemPrompt;
+
+      // Inject User Profile Context
+      if (userProfile) {
+        let contextStr = `\n\nUSER CONTEXT:\nName: ${userProfile.name || 'User'}`;
+
+        // Add Birth Details if available
+        const bd = userProfile.birth_details || userProfile.birthDetails;
+        if (bd) {
+          const dob = bd.dateOfBirth || bd.date_of_birth;
+          const tob = bd.timeOfBirth || bd.time_of_birth;
+          const pob = bd.placeOfBirth || bd.place_of_birth;
+          if (dob && tob && pob) {
+            contextStr += `\nBirth Details: DOB: ${dob}, Time: ${tob}, Place: ${pob}`;
+          }
+        }
+
+        // Add Numerology if available
+        const num = userProfile.numerology;
+        if (num) {
+          contextStr += `\nNumerology: Mulank (Life Path): ${num.calculatedNumber || 'Unknown'}`;
+          if (num.bhagyaank) contextStr += `, Bhagyaank (Destiny): ${num.bhagyaank}`;
+        }
+
+        systemPrompt += contextStr;
+        console.log('[LocalAI] Injected User Profile Context');
+      }
+
+      // Inject Language Instruction
+      systemPrompt += `\n\nCRITICAL: You MUST reply ONLY in ${langName}. Ignore previous language context if different.`;
+
+      // Inject Fluency/Voice Instructions
+      systemPrompt += `\n\nVOICE GUIDELINES:
+            - Be concise and human-like. Avoid long monologues.
+            - Use a warm, empathetic, and conversational tone.
+            - Speak naturally, like a real Vedic Pandit talking on a phone call.
+            - If the user greeting is short, keep your greeting short.
+            - Do not start every sentence with "Namaste" or formal greetings if already in conversation.`;
+
+      // Enforce language in User Message for smaller models
+      const enforcedUserMessage = `[INSTRUCTION: Reply in ${langName} only] ${userMessage}`;
+
+      // Build context
+      const messages = [
+        { role: "system", content: systemPrompt }
+      ];
+
+      // Add history
+      if (clientHistory && clientHistory.length > 0) {
+        const formattedHistory = clientHistory.map(msg => ({
+          role: (msg.isUser === 'true' || msg.isUser === true) ? "user" : "assistant",
+          content: msg.message
+        }));
+        messages.push(...formattedHistory.slice(-15));
+      } else if (this.history[userId]) {
+        const recentHistory = this.history[userId].slice(-10);
+        messages.push(...recentHistory);
+      }
+
+      // Add current message
+      messages.push({ role: "user", content: enforcedUserMessage });
+
+      console.log(`[LocalAI] Sending request to ${this.config.api_base_url} for Pandit: ${panditId}...`);
+
+      const response = await axios.post(`${this.config.api_base_url}/chat/completions`, {
+        model: this.config.model_name,
+        messages: messages,
+        temperature: this.config.temperature,
+        max_tokens: this.config.max_tokens,
+        stream: false
+      });
+
+      const aiMessage = response.data.choices[0].message.content;
+
+      // Update history
+      if (!this.history[userId]) this.history[userId] = [];
+      this.history[userId].push({ role: "user", content: userMessage });
+      this.history[userId].push({ role: "assistant", content: aiMessage });
+
+      return aiMessage;
+
+    } catch (error) {
+      console.error('Local AI Error Details:', error.message);
+      if (error.response) {
+        console.error('Local AI Response Error:', error.response.status, error.response.data);
+      }
+
+      if (error.code === 'ECONNREFUSED') {
+        return "I apologize, but my spiritual connection (local server) seems to be offline. Please ensure LM Studio is running on Port 1234.";
+      }
+      return `I sensed a disturbance in the cosmic energy. (Error: ${error.message})`;
+    }
+  },
+
+  clearHistory(userId) {
+    if (this.history[userId]) {
+      delete this.history[userId];
+    }
+  }
+};
+
+// Initialize Local AI Config
+LocalAIService.loadConfig();
+LocalAIService.loadPersonalities();
+
+// ============================================================================
 // AI SERVICE (Inline)
 // ============================================================================
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBg3cN0LfQWuQ4-jhbEqRe5cciJEmrwono';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 const OPENAI_BASE_URL = 'https://api.openai.com/v1/chat/completions';
@@ -417,15 +575,21 @@ GUIDELINES:
     return `Pranam! I am ${name}, your guide in ${specializations[0]}. How may I assist you today? 🙏`;
   },
 
-  async sendMessage(message, history, panditId) {
+  async sendMessage(message, history, panditId, userId = 'guest', targetLanguage = 'en', userProfile = null) {
     try {
+      if (process.env.USE_LOCAL_AI === 'true') {
+        return await LocalAIService.generateResponse(userId, message, panditId, history, targetLanguage, userProfile);
+      }
       if (GEMINI_API_KEY && GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY_HERE') {
         return await this.sendGeminiMessage(message, history, panditId);
       }
       if (OPENAI_API_KEY && OPENAI_API_KEY !== 'YOUR_OPENAI_API_KEY_HERE') {
         return await this.sendOpenAIMessage(message, history, panditId);
       }
-      return this.getFallbackResponse(message, panditId);
+
+      // Fallback to Local AI if no keys are configured
+      console.log('No external AI keys found. Attempting to use Local AI Service (LM Studio)...');
+      return await LocalAIService.generateResponse(userId, message, panditId, history, targetLanguage, userProfile);
     } catch (error) {
       console.error('AI Service Error:', error);
       return this.getFallbackResponse(message, panditId);
@@ -688,11 +852,18 @@ app.post('/api/ai/welcome', async (req, res) => {
 
 app.post('/api/ai-pandit/chat', async (req, res) => {
   try {
-    const { message, history, panditId } = req.body;
+    const { message, history, panditId, userId, targetLanguage, userProfile } = req.body;
     if (!message || !panditId) {
       return res.status(400).json({ success: false, error: 'Message and panditId are required' });
     }
-    const response = await AIService.sendMessage(message, history || [], panditId);
+    const response = await AIService.sendMessage(
+      message,
+      history || [],
+      panditId,
+      userId,
+      targetLanguage,
+      userProfile
+    );
     res.json({ success: true, response, timestamp: Date.now() });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

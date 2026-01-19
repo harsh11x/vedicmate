@@ -16,11 +16,11 @@ class SettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _emailNotifications = true;
   bool _pushNotifications = true;
   bool _darkMode = false;
-  // String _selectedLanguage = 'English'; // Removed
   final AuthService _authService = AuthService();
 
   @override

@@ -28,6 +28,9 @@ class AuthService {
 
   // Auth state changes stream
   Stream<User?> authStateChanges() => _auth.authStateChanges();
+  
+  // User changes stream (includes profile changes like displayName)
+  Stream<User?> userChanges() => _auth.userChanges();
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -191,8 +194,6 @@ class AuthService {
       return response != null;
     } catch (e) {
       // If table doesn't exist or other error, assume not registered
-      return false;
-    }
       return false;
     }
   }

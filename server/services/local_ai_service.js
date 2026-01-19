@@ -24,7 +24,7 @@ class LocalAIService {
             console.error('Error loading AI config:', e);
         }
         return {
-            api_base_url: "http://localhost:1234/v1", // Default fallback
+            api_base_url: "https://eb1d2d0d4fc8.ngrok-free.app/v1", // Using ngrok tunnel for AI
             model_name: "qwen2.5-1.5b-instruct",
             temperature: 0.7,
             max_tokens: 500
