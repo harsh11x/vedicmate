@@ -5,7 +5,7 @@
 
 import express from 'express';
 import cors from 'cors';
-import { createServer } from 'https';
+import { createServer } from 'http'; // Changing to HTTP for local dev
 import { readFileSync } from 'fs';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
@@ -16,21 +16,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
-import nodemailer from 'nodemailer';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load Certificates
-const httpsOptions = {
-  key: readFileSync(path.join(__dirname, '..', 'certs', 'server.key')),
-  cert: readFileSync(path.join(__dirname, '..', 'certs', 'server.cert'))
-};
+// Load Certificates (Ignored for HTTP mode)
+const httpsOptions = {};
 
 const app = express();
-const httpServer = createServer(httpsOptions, app); // Using HTTPS
+const httpServer = createServer(app); // Using HTTP for local dev compatibility
+
 const io = new Server(httpServer, {
   cors: {
     origin: ["http://15.207.36.26:3000", "http://localhost:3000", "https://localhost:3000", "https://15.207.36.26:3000", "*"],
@@ -2586,7 +2583,7 @@ httpServer.listen(PORT, HOST, () => {
   console.log('╔══════════════════════════════════════════════════════════════╗');
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
-  console.log(`║  🚀 Server running on https://${HOST}:${PORT}                   ║`);
+  console.log(`║  🚀 Server running on http://${HOST}:${PORT}                   ║`);
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');

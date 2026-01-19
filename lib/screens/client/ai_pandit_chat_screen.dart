@@ -64,10 +64,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       Future.microtask(() => _initializeChat());
     });
     
-    // Watch wallet provider for real-time updates
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _watchWalletBalance();
-    });
+
   }
 
   @override
@@ -86,30 +83,8 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     }
   }
 
-  void _watchWalletBalance() {
-    // Watch wallet provider for real-time updates
-    ref.listen<AsyncValue<double>>(walletBalanceProvider, (previous, next) {
-      next.whenData((balance) {
-        if (mounted && (_walletBalance != balance || previous?.value != balance)) {
-          setState(() {
-            _walletBalance = balance;
-          });
-          print('✅ Wallet balance updated from provider: ₹$_walletBalance');
-        }
-      });
-    });
-    
-    // Also get initial balance from provider
-    final balanceAsync = ref.read(walletBalanceProvider);
-    balanceAsync.whenData((balance) {
-      if (mounted) {
-        setState(() {
-          _walletBalance = balance;
-        });
-        print('✅ Initial wallet balance from provider: ₹$_walletBalance');
-      }
-    });
-  }
+  // ref.listen should be placed in the build method
+
 
   @override
   void dispose() {
@@ -1153,6 +1128,18 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   @override
   Widget build(BuildContext context) {
+    // Watch wallet provider for real-time updates
+    ref.listen<AsyncValue<double>>(walletBalanceProvider, (previous, next) {
+      next.whenData((balance) {
+        if (mounted && (_walletBalance != balance || previous?.value != balance)) {
+          setState(() {
+            _walletBalance = balance;
+          });
+          print('✅ Wallet balance updated from provider: ₹$_walletBalance');
+        }
+      });
+    });
+
     return Scaffold(
       backgroundColor: AppTheme.neutralSoft,
       body: Stack(
