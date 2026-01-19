@@ -455,9 +455,6 @@ Birth Place: ${placeName}
         console.log('[LocalAI] Injected User Profile Context');
       }
 
-      // Inject Language Instruction
-      systemPrompt += `\n\nCRITICAL: You MUST reply ONLY in ${langName}. Ignore previous language context if different.`;
-
       // Inject Fluency/Voice Instructions
       systemPrompt += `\n\nVOICE GUIDELINES:
             - Be super friendly, warm, and casual. Talk like a caring elder brother or a best friend.
@@ -466,6 +463,9 @@ Birth Place: ${placeName}
             - Speak naturally, like a real human chatting on WhatsApp.
             - Don't lecture. Keep it conversational and engaging.
             - If the user starts with "Hi" or "Hello", just say "Hey! How are you doing?" or similar. No need for long "Namaste" every time.`;
+
+      // Inject Language Instruction (Last for highest priority)
+      systemPrompt += `\n\nCRITICAL: You MUST reply ONLY in ${langName}. Do not use English unless the user explicitly asks. Translate your thoughts to ${langName} if needed.`;
 
       // Enforce language in User Message for smaller models
       const enforcedUserMessage = `[INSTRUCTION: Reply in ${langName} only] ${userMessage}`;
