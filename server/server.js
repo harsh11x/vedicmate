@@ -429,8 +429,18 @@ const LocalAIService = {
           const dob = bd.dateOfBirth || bd.date_of_birth;
           const tob = bd.timeOfBirth || bd.time_of_birth;
           const pob = bd.placeOfBirth || bd.place_of_birth;
-          if (dob && tob && pob) {
-            contextStr += `\nBirth Details: DOB: ${dob}, Time: ${tob}, Place: ${pob}`;
+
+          let placeName = pob;
+          if (typeof pob === 'object' && pob !== null) {
+            placeName = pob.name || pob.city || pob.description || JSON.stringify(pob);
+          }
+
+          if (dob && tob && placeName) {
+            contextStr += `\n\n[IMPORTANT USER DATA - USE THIS FOR KUNDLI GENERATION]
+Birth Date: ${dob}
+Birth Time: ${tob}
+Birth Place: ${placeName}
+(You already have this information. DO NOT ask the user for these details again. Proceed directly to the analysis.)`;
           }
         }
 
@@ -450,11 +460,12 @@ const LocalAIService = {
 
       // Inject Fluency/Voice Instructions
       systemPrompt += `\n\nVOICE GUIDELINES:
-            - Be concise and human-like. Avoid long monologues.
-            - Use a warm, empathetic, and conversational tone.
-            - Speak naturally, like a real Vedic Pandit talking on a phone call.
-            - If the user greeting is short, keep your greeting short.
-            - Do not start every sentence with "Namaste" or formal greetings if already in conversation.`;
+            - Be super friendly, warm, and casual. Talk like a caring elder brother or a best friend.
+            - Avoid stiff, robotic, or overly professional language. Use simple words.
+            - You can use emojis occasionally to make it feel alive 🌟.
+            - Speak naturally, like a real human chatting on WhatsApp.
+            - Don't lecture. Keep it conversational and engaging.
+            - If the user starts with "Hi" or "Hello", just say "Hey! How are you doing?" or similar. No need for long "Namaste" every time.`;
 
       // Enforce language in User Message for smaller models
       const enforcedUserMessage = `[INSTRUCTION: Reply in ${langName} only] ${userMessage}`;

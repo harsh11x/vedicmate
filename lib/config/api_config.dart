@@ -1,14 +1,13 @@
 /// API Configuration for Vedic Mate Backend
 class ApiConfig {
   // Backend server URL - AWS Production
-  // Change to localhost:4000 for simulator or AWS URL for production
-  static const String baseUrl = 'https://15.207.36.26:3001/api';
+  // static const String baseUrl = 'https://15.207.36.26:3001/api';
   
-  // For Localhost:
+  // For Localhost (Simulator):
   // static const String baseUrl = 'http://127.0.0.1:3001/api';
-  
-  // For production, use your AWS server URL:
-  // static const String baseUrl = 'http://15.207.36.26:3001/api';
+
+  // For Physical Device (Local Network):
+  static const String baseUrl = 'http://192.168.29.144:3001/api';
   
   // API Endpoints
   static const String healthEndpoint = '/health';
