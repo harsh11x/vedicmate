@@ -16,17 +16,28 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
+import next from 'next'; // Import Next.js
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// ===================================
+// NEXT.JS INTEGRATION (ADMIN PANEL)
+// ===================================
+const dev = process.env.NODE_ENV !== 'production';
+const nextApp = next({ dev, dir: path.join(__dirname, '../admin') });
+const handle = nextApp.getRequestHandler();
+
+// Wait for Next.js to prepare
+await nextApp.prepare();
+
 // Load Certificates (Ignored for HTTP mode)
 const httpsOptions = {};
 
 const app = express();
-const httpServer = createServer(app); // Using HTTP for local dev compatibility
+const httpServer = createServer(app); // Note: Keep HTTP for now to avoid certificate complexity unless user provided keys
 
 const io = new Server(httpServer, {
   cors: {
@@ -2622,21 +2633,31 @@ app.post('/api/admin/custom-requests/update-status', (req, res) => {
 });
 
 // ============================================================================
+// SERVE ADMIN PANEL (Next.js Fallback)
+// ============================================================================
+
+app.all('*', (req, res) => {
+  return handle(req, res);
+});
+
+// ============================================================================
 // START SERVER
 // ============================================================================
 
-const PORT = process.env.PORT || 3001;
+const PORT = 3001; // Unified Port
 const HOST = process.env.HOST || '0.0.0.0';
 
 httpServer.listen(PORT, HOST, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════════════════════════╗');
-  console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
+  console.log('║               VEDIC MATE UNIFIED SERVER                      ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
   console.log(`║  🚀 Server running on http://${HOST}:${PORT}                 ║`);
-  console.log(`║  🌐 Public URL: https://15.207.36.26:${PORT}                 ║`);
+  console.log(`║  🌐 Admin Panel: https://15.207.36.26:${PORT}                ║`);
+  console.log(`║  🌐 API Base:    https://15.207.36.26:${PORT}/api            ║`);
   console.log('║                                                              ║');
-  console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
+  console.log('║  📡 WebSocket: Shared instance (Port 3001)                   ║');
+  console.log('║  🖥️  Frontend: Served via Next.js Integration                ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
   console.log('║  📦 Products: /api/products, /api/admin/products             ║');
   console.log('║  💰 Wallet: /api/wallet/balance, /api/wallet/add             ║');
