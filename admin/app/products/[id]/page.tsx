@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 
-const API_BASE = "https://15.207.36.26:3001/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://15.207.36.26:3001/api";
 
 interface Product {
     id: string;
@@ -217,7 +217,7 @@ export default function EditProductPage() {
                             <div className="flex flex-wrap gap-4">
                                 {product.images.map((img, idx) => (
                                     <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 group">
-                                        <img src={`https://15.207.36.26:3001/${img}`} alt="Product" className="w-full h-full object-cover" />
+                                        <img src={`${API_BASE.replace('/api', '')}/${img}`} alt="Product" className="w-full h-full object-cover" />
                                         <button
                                             type="button"
                                             onClick={() => removeImage(idx)}

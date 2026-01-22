@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'; // Added
 import '../../providers/cart_provider.dart'; // Added
 import '../../core/theme/app_theme.dart';
 import '../../services/user_preferences_service.dart';
+import '../../core/config/env.dart';
 
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -364,7 +365,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     } else if (path.startsWith('assets/')) {
         return Image.network(
           // HARDCODING BASE URL TO PREVENT LOCALHOST ISSUES ON DEVICE
-          'https://15.207.36.26:3001/$path', 
+          '${EnvConfig.apiBaseUrl}/$path', 
           width: 80,
           height: 80,
           fit: BoxFit.cover,

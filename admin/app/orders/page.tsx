@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_BASE = "https://15.207.36.26:3001/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://15.207.36.26:3001/api";
 
 interface Order {
     id: string;

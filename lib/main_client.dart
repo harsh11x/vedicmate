@@ -19,8 +19,8 @@ class MyHttpOverrides extends HttpOverrides {
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback = (X509Certificate cert, String host, int port) {
-        // Trust the specific AWS IP for backend
-        return host == '15.207.36.26';
+        // Trust the specific AWS IP for backend configured in EnvConfig
+        return host == Uri.parse(EnvConfig.apiBaseUrl).host;
       };
   }
 }

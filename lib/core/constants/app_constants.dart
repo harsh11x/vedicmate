@@ -1,10 +1,12 @@
+import '../config/env.dart';
+
 class AppConstants {
   // App Info
   static const String appName = 'Vedic Mate';
   static const String appTagline = 'Connect with Trusted Vedic Experts';
   
   // API Endpoints (Placeholder - replace with actual endpoints)
-  static const String baseUrl = 'https://15.207.36.26:3001';
+  static const String baseUrl = EnvConfig.apiBaseUrl;
   static const String apiVersion = '/v1';
   
   // Storage Keys

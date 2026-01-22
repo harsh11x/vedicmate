@@ -1,3 +1,5 @@
+import '../core/config/env.dart';
+
 /// API Configuration for Vedic Mate Backend
 class ApiConfig {
   // Backend server URL - AWS Production
@@ -7,7 +9,7 @@ class ApiConfig {
   // static const String baseUrl = 'http://127.0.0.1:3001/api';
 
   // For Physical Device (Local Network):
-  static const String baseUrl = 'https://15.207.36.26:3001/api';
+  static const String baseUrl = '${EnvConfig.apiBaseUrl}/api';
   
   // API Endpoints
   static const String healthEndpoint = '/health';

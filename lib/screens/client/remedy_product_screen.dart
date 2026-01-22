@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
+import '../../core/config/env.dart';
 
 class RemedyProductScreen extends ConsumerWidget {
   final Map<String, dynamic> remedy;
@@ -386,7 +387,7 @@ class RemedyProductScreen extends ConsumerWidget {
     } else if (path.startsWith('assets/')) {
         return Image.network(
           // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
-          'https://15.207.36.26:3001/$path', 
+          '${EnvConfig.apiBaseUrl}/$path', 
           fit: BoxFit.cover,
           errorBuilder: (context, error, stack) {
              return Image.asset(

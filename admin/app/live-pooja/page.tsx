@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 
 // Connect to socket (AWS IP)
 // Connect to socket (AWS IP)
-const socket = io('https://15.207.36.26:3001', {
+const socket = io(process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') : 'https://15.207.36.26:3001', {
     transports: ['websocket'],
     autoConnect: false,
     secure: true,
@@ -176,7 +176,8 @@ export default function LivePoojaPage() {
         try {
             if (newState) {
                 // Start session via API - using actual session ID from AWS
-                const response = await fetch('https://15.207.36.26:3001/api/admin/live-sessions/session_1768376801443/start', {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://15.207.36.26:3001/api";
+                const response = await fetch(`${apiUrl}/admin/live-sessions/session_1768376801443/start`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -190,7 +191,8 @@ export default function LivePoojaPage() {
                 }
             } else {
                 // End session via API
-                const response = await fetch('https://15.207.36.26:3001/api/admin/live-sessions/session_1768376801443/end', {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://15.207.36.26:3001/api";
+                const response = await fetch(`${apiUrl}/admin/live-sessions/session_1768376801443/end`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' }
                 });

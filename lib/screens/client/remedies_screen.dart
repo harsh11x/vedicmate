@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/api_providers.dart';
+import '../../core/config/env.dart';
 
 class RemediesScreen extends ConsumerStatefulWidget {
   const RemediesScreen({super.key});
@@ -427,7 +428,7 @@ class _RemedyCard extends ConsumerWidget {
     } else if (path.startsWith('assets/')) {
         return Image.network(
           // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
-          'https://15.207.36.26:3001/$path', 
+          '${EnvConfig.apiBaseUrl}/$path', 
           width: double.infinity,
           height: double.infinity,
           fit: BoxFit.cover,

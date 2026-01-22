@@ -15,7 +15,7 @@ interface Reel {
     createdAt: string;
 }
 
-const API_BASE = "https://15.207.36.26:3001/api"; // Updated IP
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://15.207.36.26:3001/api";
 
 export default function ReelsPage() {
     const [reels, setReels] = useState<Reel[]>([]);
@@ -167,7 +167,7 @@ export default function ReelsPage() {
                             {/* Video Thumbnail / Preview */}
                             <div className="aspect-[9/16] bg-black relative">
                                 <video
-                                    src={`https://15.207.36.26:3001/${reel.videoUrl}`}
+                                    src={`${API_BASE.replace('/api', '')}/${reel.videoUrl}`}
                                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                                     muted
                                     loop
@@ -318,7 +318,7 @@ export default function ReelsPage() {
                             {/* Video Preview Small */}
                             <div className="flex gap-4 items-start bg-gray-50 p-4 rounded-xl">
                                 <video
-                                    src={`https://15.207.36.26:3001/${selectedReel.videoUrl}`}
+                                    src={`${API_BASE.replace('/api', '')}/${selectedReel.videoUrl}`}
                                     className="w-24 h-40 object-cover rounded-lg bg-black"
                                 />
                                 <div>
