@@ -180,6 +180,18 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
         _giftAnimController.forward(from: 0.0);
       }
     });
+
+    // Handle Gift Errors (Insufficient Funds)
+    _socket.on('gift-error', (data) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(data['message'] ?? 'Gift failed'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
   }
 
   Future<void> _handleOffer(dynamic sdp, String senderId) async {
@@ -368,10 +380,13 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                     ),
                     onTap: () {
                       final user = ref.read(authStateProvider).value;
+                      if (user == null) return;
+                      
                       _socket.emit('send-gift', {
+                        'userId': user.uid, // Add User ID for wallet deduction
                         'giftName': gift['name'],
                         'giftIcon': gift['name'].toString().split(' ')[0],
-                        'senderName': user?.displayName ?? 'User',
+                        'senderName': user.displayName ?? 'User',
                         'amount': gift['price'],
                       });
                       Navigator.pop(context);

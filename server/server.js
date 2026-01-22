@@ -815,12 +815,50 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send-gift', (data) => {
-    // Broadcast for animation
-    io.to('live-pooja-room').emit('gift-received', {
-      ...data,
-      timestamp: Date.now()
-    });
-    console.log(`🎁 Gift: ${data.senderName} sent ${data.giftName} (₹${data.amount})`);
+    try {
+      // 1. Deduct Money from Wallet
+      // We assume data.senderId is passed along with senderName; 
+      // if not, we must rely on socket auth or pass userId from client
+      // Looking at `live_pooja_screen.dart`, it only sends `senderName`. 
+      // WE NEED USER ID. 
+      // Fortunately earlier in `join-pooja`, we might have tracked it? 
+      // ACTUALLY: The mobile app code emits:
+      // 'giftName', 'giftIcon', 'senderName', 'amount'
+      // It DOES NOT send userId. This is a problem.
+
+      // FIX: We need to trust the socket knows the user? 
+      // Or safer: Update mobile app to send clientId/userId in the payload.
+      // 
+      // For now, I'll update the server to EXPECT `userId` in `data`.
+      // If it fails, we log it. I will ALSO need to update Mobile App.
+
+      if (!data.userId) {
+        throw new Error('User ID missing for gift transaction');
+      }
+
+      WalletService.deductMoney(
+        data.userId,
+        data.amount,
+        'gift',
+        `Sent gift: ${data.giftName}`
+      );
+
+      // 2. Broadcast ONLY if deduction succeeded
+      io.to('live-pooja-room').emit('gift-received', {
+        ...data,
+        timestamp: Date.now()
+      });
+
+      console.log(`🎁 Gift: ${data.senderName} sent ${data.giftName} (₹${data.amount})`);
+
+      // 3. Notify Sender of new balance
+      const newBalance = WalletService.getBalance(data.userId);
+      socket.emit('wallet-update', { balance: newBalance });
+
+    } catch (error) {
+      console.error(`❌ Gift Failed: ${error.message}`);
+      socket.emit('gift-error', { message: error.message });
+    }
   });
 
   socket.on('disconnecting', () => {
