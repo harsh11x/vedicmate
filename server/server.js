@@ -2584,6 +2584,7 @@ httpServer.listen(PORT, HOST, () => {
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
   console.log(`║  🚀 Server running on http://${HOST}:${PORT}                   ║`);
+  console.log(`║  🌐 Public URL: https://15.207.36.26:${PORT}                   ║`);
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
