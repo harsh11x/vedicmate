@@ -176,9 +176,8 @@ export default function LivePoojaPage() {
 
         try {
             if (newState) {
-                // Start session via API - using actual session ID from AWS
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
-                const response = await fetch(`${apiUrl}/admin/live-sessions/session_1768376801443/start`, {
+                // Start session via API - using relative path for Proxy
+                const response = await fetch(`/api/admin/live-sessions/session_1768376801443/start`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -191,9 +190,8 @@ export default function LivePoojaPage() {
                     alert('Failed to start live session');
                 }
             } else {
-                // End session via API
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://15.207.36.26:3001/api";
-                const response = await fetch(`${apiUrl}/admin/live-sessions/session_1768376801443/end`, {
+                // End session via API - using relative path for Proxy
+                const response = await fetch(`/api/admin/live-sessions/session_1768376801443/end`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' }
                 });
