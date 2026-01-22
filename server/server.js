@@ -754,13 +754,13 @@ io.on('connection', (socket) => {
   // ===========================================
 
   socket.on('join-pooja', (user) => {
-    console.log(`[SOCKET] join-pooja received from ${socket.id} (${user?.name})`);
+
     socket.join('live-pooja-room');
 
     // Update viewer count (Exclude Admin)
     const room = io.sockets.adapter.rooms.get('live-pooja-room');
     const viewers = room ? room.size : 0;
-    console.log(`[SOCKET] live-pooja-room count: ${viewers}`);
+
 
     // Broadcast updates
     io.to('live-pooja-room').emit('viewer-update', { count: Math.max(0, viewers - 1) });
@@ -768,7 +768,7 @@ io.on('connection', (socket) => {
     // Notify others (Signaling for WebRTC)
     // IMPORTANT: Broadcast to everyone ELSE in the room
     socket.to('live-pooja-room').emit('user-joined', { userId: socket.id });
-    console.log(`[SOCKET] Emitted 'user-joined' for ${socket.id} to room`);
+
 
     if (user && user.name) {
       console.log(`User ${user.name} joined Live Pooja (Total Users: ${viewers})`);
@@ -776,7 +776,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave-pooja', () => {
-    console.log(`[SOCKET] leave-pooja from ${socket.id}`);
+
     socket.leave('live-pooja-room');
     const viewers = io.sockets.adapter.rooms.get('live-pooja-room')?.size || 0;
     io.to('live-pooja-room').emit('viewer-update', { count: Math.max(0, viewers - 1) });
@@ -784,7 +784,7 @@ io.on('connection', (socket) => {
 
   // WebRTC Signaling Events
   socket.on('offer', (data) => {
-    console.log(`[SOCKET] Relay OFFER from ${socket.id} to ${data.target}`);
+
     io.to(data.target).emit('offer', {
       sdp: data.sdp,
       sender: socket.id
@@ -792,7 +792,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('answer', (data) => {
-    console.log(`[SOCKET] Relay ANSWER from ${socket.id} to ${data.target}`);
+
     io.to(data.target).emit('answer', {
       sdp: data.sdp,
       sender: socket.id
@@ -800,7 +800,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('ice-candidate', (data) => {
-    console.log(`[SOCKET] Relay ICE from ${socket.id} to ${data.target}`);
+
     io.to(data.target).emit('ice-candidate', {
       candidate: data.candidate,
       sender: socket.id

@@ -108,71 +108,37 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     }
   }
 
-  // Debug logs
-  String _socketStatus = 'Disconnected';
-  final List<String> _logs = [];
-
-  void _addLog(String log) {
-    if (mounted) {
-      setState(() {
-        _logs.add('${DateTime.now().second}: $log');
-        if (_logs.length > 20) _logs.removeAt(0);
-      });
-      print(log);
-    }
-  }
-
   void _connectSocket() {
-    _addLog('Initializing Socket...');
-    try {
-      // FORCE HARDCODED URL
-      const socketUrl = 'http://15.207.36.26:3001';
-      _addLog('Target: $socketUrl');
+    _socket = IO.io(
+      ApiConfig.baseUrl.replaceAll('/api', ''),
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build(),
+    );
 
-      _socket = IO.io(
-        socketUrl,
-        IO.OptionBuilder()
-            .setTransports(['websocket'])
-            .enableAutoConnect()
-            .setReconnectionDelay(1000)
-            .build(),
-      );
+    _socket.connect();
 
-      _socket.connect();
+    _socket.onConnect((_) {
+      print('✅ Socket connected: ${_socket.id}');
+      final user = ref.read(authStateProvider).value;
+      _socket.emit('join-pooja', {'name': user?.displayName ?? 'User'});
+    });
 
-      _socket.onConnect((_) {
-        _addLog('✅ Socket Connected! ID: ${_socket.id}');
-        setState(() => _socketStatus = 'Connected');
-        final user = ref.read(authStateProvider).value;
-        _socket.emit('join-pooja', {'name': user?.displayName ?? 'User'});
-      });
+    _socket.on('session-live', (_) {
+      print('🎥 Session went LIVE!');
+      if (mounted) setState(() => _isLive = true);
+    });
 
-      _socket.onConnectError((data) {
-        _addLog('❌ Connect Error: $data');
-        setState(() => _socketStatus = 'Error');
-      });
+    _socket.on('session-ended', (_) {
+      print('🛑 Session ended');
+      if (mounted) setState(() => _isLive = false);
+      _closePeerConnection();
+    });
 
-      _socket.onError((data) {
-        _addLog('⚠️ Socket Error: $data');
-      });
-
-      _socket.on('session-live', (_) {
-        _addLog('🎥 Event: session-live');
-        if (mounted) setState(() => _isLive = true);
-      });
-
-      _socket.on('session-ended', (_) {
-        _addLog('🛑 Event: session-ended');
-        if (mounted) setState(() => _isLive = false);
-        _closePeerConnection();
-      });
-
-      _socket.on('user-joined', (data) {
-        _addLog('👤 User Joined: $data');
-      });
-    } catch (e) {
-      _addLog('💥 Socket Exception: $e');
-    }
+    _socket.on('user-joined', (data) {
+      print('👤 User joined: $data');
+    });
 
 
     _socket.on('offer', (data) async {
@@ -496,30 +462,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
-                                  ),
-                                ),
-                              ),
-                              
-                              /* DEBUG OVERLAY */
-                              Positioned(
-                                top: 60,
-                                left: 10,
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  color: Colors.black54,
-                                  width: 200,
-                                  height: 200,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Status: $_socketStatus', style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
-                                      const Divider(color: Colors.white54, height: 4),
-                                      Expanded(
-                                        child: ListView(
-                                          children: _logs.map((e) => Text(e, style: const TextStyle(color: Colors.white, fontSize: 10))).toList(),
-                                        ),
-                                      ),
-                                    ],
                                   ),
                                 ),
                               ),
