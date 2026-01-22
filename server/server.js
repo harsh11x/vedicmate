@@ -1890,10 +1890,20 @@ app.post('/api/ai-pandit/chat-enhanced', async (req, res) => {
 // ==================== Razorpay Payment Endpoints ====================
 
 // Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay = null;
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+    console.log('✅ Razorpay initialized');
+  } else {
+    console.warn('⚠️ Razorpay credentials missing. Payment features will be disabled.');
+  }
+} catch (error) {
+  console.warn('⚠️ Failed to initialize Razorpay:', error.message);
+}
 
 // Create Order (Simulated for verification)
 app.post('/api/payment/create-order', async (req, res) => {
@@ -1909,6 +1919,10 @@ app.post('/api/payment/create-order', async (req, res) => {
       currency,
       receipt: receipt || `receipt_${Date.now()}`,
     };
+
+    if (!razorpay) {
+      throw new Error('Razorpay is not configured on the server');
+    }
 
     const order = await razorpay.orders.create(options);
     res.json({ success: true, order });
@@ -2373,6 +2387,11 @@ app.post('/api/custom-requests/create', async (req, res) => {
     const orderId = `CR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Create Razorpay order
+    // Create Razorpay order
+    if (!razorpay) {
+      throw new Error('Razorpay is not configured on the server');
+    }
+
     const razorpayOrder = await razorpay.orders.create({
       amount: amount * 100, // Convert to paise
       currency: 'INR',
@@ -2583,8 +2602,8 @@ httpServer.listen(PORT, HOST, () => {
   console.log('╔══════════════════════════════════════════════════════════════╗');
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
-  console.log(`║  🚀 Server running on http://${HOST}:${PORT}                   ║`);
-  console.log(`║  🌐 Public URL: https://15.207.36.26:${PORT}                   ║`);
+  console.log(`║  🚀 Server running on http://${HOST}:${PORT}                 ║`);
+  console.log(`║  🌐 Public URL: https://15.207.36.26:${PORT}                 ║`);
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
