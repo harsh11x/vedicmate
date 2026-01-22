@@ -15,7 +15,7 @@ interface Reel {
     createdAt: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://15.207.36.26:3001/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 export default function ReelsPage() {
     const [reels, setReels] = useState<Reel[]>([]);

@@ -62,7 +62,7 @@ export default function RootLayout({
     // Check server status (Only if authenticated or on dashboard)
     const checkServer = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://15.207.36.26:3001/api";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
         const res = await fetch(`${apiUrl}/health`, {
           signal: AbortSignal.timeout(3000)
         });

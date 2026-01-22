@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://15.207.36.26:3001/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 interface LiveSession {
     id: string;
