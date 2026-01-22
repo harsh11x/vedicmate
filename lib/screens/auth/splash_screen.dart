@@ -2,26 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToLogin();
+    _checkAuth();
   }
 
-  Future<void> _navigateToLogin() async {
-    // Show splash for 2 seconds then go to login
+  Future<void> _checkAuth() async {
+    // Show splash for at least 2 seconds
     await Future.delayed(const Duration(seconds: 2));
+    
     if (mounted) {
-      context.pushReplacement('/login');
+      final user = ref.read(authStateProvider).value;
+      if (user != null) {
+        context.go('/client/home');
+      } else {
+        context.pushReplacement('/login');
+      }
     }
   }
 

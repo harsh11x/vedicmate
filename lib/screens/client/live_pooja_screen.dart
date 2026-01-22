@@ -77,21 +77,27 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
 
   Future<void> _checkIfLive() async {
     try {
+      // Use the new active endpoint
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl.replaceAll('/api', '')}/api/admin/live-sessions/session_1768376801443'),
+        Uri.parse('${ApiConfig.baseUrl.replaceAll('/api', '')}/api/live-sessions/active'),
       );
       
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final isLive = data['success'] == true && data['data']['isLive'] == true;
+        final isActive = data['success'] == true && data['active'] == true;
         
-        print('📡 Session status: ${isLive ? "LIVE" : "OFFLINE"}');
+        print('📡 Session status: ${isActive ? "LIVE" : "OFFLINE"}');
         
         if (mounted) {
           setState(() {
-            _isLive = isLive;
+            _isLive = isActive;
             _isConnecting = false;
           });
+        }
+      } else {
+        print('❌ Failed to check session: ${response.statusCode}');
+        if (mounted) {
+          setState(() => _isConnecting = false);
         }
       }
     } catch (e) {

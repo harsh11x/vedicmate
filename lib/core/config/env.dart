@@ -2,7 +2,7 @@ class EnvConfig {
   // AWS Server Configuration
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://15.207.36.26:3001',
+    defaultValue: 'http://15.207.36.26:3001',
   );
   
   // AI Service Configuration (ngrok)

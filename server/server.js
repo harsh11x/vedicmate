@@ -2026,6 +2026,26 @@ app.get('/api/admin/live-sessions', (req, res) => {
   }
 });
 
+// Public: Get currently ACTIVE live session (for Broadcast/Live Pooja)
+app.get('/api/live-sessions/active', (req, res) => {
+  try {
+    const sessions = readLiveSessions();
+    // Find the first session that is 'live'
+    // Sort by startedAt desc (newest first)
+    const activeSession = sessions
+      .filter(s => s.status === 'live' && s.isLive === true)
+      .sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))[0];
+
+    if (!activeSession) {
+      return res.json({ success: true, active: false, message: 'No active session' });
+    }
+
+    res.json({ success: true, active: true, data: activeSession });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // User: Get their sessions
 app.get('/api/live-sessions', (req, res) => {
   try {

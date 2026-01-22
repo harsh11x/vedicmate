@@ -9,11 +9,12 @@ import { Badge } from '@/components/ui/badge';
 
 // Connect to socket (AWS IP)
 // Connect to socket (AWS IP)
-const socket = io(process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace('/api', '') : 'http://15.207.36.26:3001', {
+// Connect to socket via Proxy (Relative path handles HTTPS automatically)
+const socket = io({
+    path: '/socket.io',
     transports: ['websocket'],
     autoConnect: false,
-    secure: true,
-    rejectUnauthorized: false // Self-signed certs need this
+    // No explicit URL needed, defaults to window.location (which is proxied)
 });
 
 export default function LivePoojaPage() {

@@ -20,7 +20,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Socket Listeners for Real-time Updates
-    const socket = io(API_BASE.replace('/api', '')); // Connect to root
+    // Connect to socket via Proxy (Relative path)
+    const socket = io({
+      path: '/socket.io',
+      transports: ['websocket']
+    });
 
     socket.on('custom-requests-update', () => fetchStats());
     socket.on('live-sessions-update', () => fetchStats());
