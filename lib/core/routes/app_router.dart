@@ -68,10 +68,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       debugPrint('Router: Path: $path, Loading: $isLoading, User: ${user?.uid}');
 
       // 1. Loading State -> Stay on Splash
-      if (isLoading) {
-        debugPrint('Router: Auth Loading -> Splash');
-        return '/splash';
-      }
+      // if (isLoading) {
+      //   debugPrint('Router: Auth Loading -> Splash');
+      //   return null; // Don't force redirect, just let it be.
+      // }
 
       // 2. Error State -> Login (Safe fallback)
       if (hasError) {
@@ -97,6 +97,11 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // 4. Not Logged In Logic
       if (!isLoggedIn) {
+        // Allow explicit login attempts ALWAYS
+        if (isLoggingIn) {
+           return null; 
+        }
+
         // Async check for manual persistence
         final prefs = await SharedPreferences.getInstance();
         final manualAuth = prefs.getBool('is_logged_in') ?? false;
@@ -104,25 +109,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         debugPrint('Router: Auth Lost. Manual Flag: $manualAuth');
 
         if (manualAuth) {
-           // We have a manual flag but Firebase is null.
-           // This means Firebase is either slow or the session is properly dead.
-           // We redirect to Splash to let it spin/wait/retry (if implemented)
-           // or simply to prevent "Login" screen flash if it's just slow.
-           // But if it's dead-dead, we need a way to fail.
-           
-           // For now, if we are on splash, stay there so we don't loop endlessly 
-           // between Splash -> Dashboard -> Splash.
+           // ... (manual auth logic) ...
            if (isSplash) return null;
            
-           // If we are elsewhere, go to Splash
            return '/splash';
-        }
-
-        if (isLoggingIn) {
-          return null; 
         }
         
         if (isSplash) {
+          // Fix: Allow Splash to show so the widget timer can work.
+          // Don't force immediate redirect.
           return null; 
         }
 

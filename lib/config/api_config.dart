@@ -7,7 +7,7 @@ class ApiConfig {
   // static const String baseUrl = 'http://127.0.0.1:3001/api';
 
   // For Physical Device (Local Network):
-  static const String baseUrl = 'http://192.168.29.144:3001/api';
+  static const String baseUrl = 'https://15.207.36.26:3001/api';
   
   // API Endpoints
   static const String healthEndpoint = '/health';
