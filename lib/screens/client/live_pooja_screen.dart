@@ -173,7 +173,7 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     } catch (e) {
       _addLog('💥 Socket Exception: $e');
     }
-  }
+
 
     _socket.on('offer', (data) async {
       print('📨 Received offer from admin');
