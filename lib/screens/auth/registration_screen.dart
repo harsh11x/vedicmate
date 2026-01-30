@@ -416,12 +416,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/images/google_logo.png',
-                            height: 24,
-                            width: 24,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 28),
-                          ),
+                            // Image.asset(
+                            //   'assets/images/google_logo.png',
+                            //   height: 24,
+                            //   width: 24,
+                            //   errorBuilder: (_, __, ___) => const Icon(Icons.g_mobiledata, size: 28),
+                            // ),
+                            const Icon(Icons.g_mobiledata, size: 28, color: AppTheme.primaryOrange),
                           const SizedBox(width: 12),
                           Text(
                             'Sign up with Google',

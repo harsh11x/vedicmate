@@ -56,8 +56,8 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
       // Add timeout to prevent infinite loading
       await Future.any([
         _initializeServices(),
-        Future.delayed(const Duration(seconds: 10), () {
-          throw Exception('Initialization timeout after 10 seconds');
+        Future.delayed(const Duration(seconds: 120), () {
+          throw Exception('Initialization timeout after 120 seconds');
         }),
       ]);
 

@@ -1,7 +1,7 @@
 name: vedicmate
 description: VedicMate — Spiritual technology connecting Clients and Pandits.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.0.0+15
 environment:
   sdk: '>=2.18.0 <3.0.0'
 

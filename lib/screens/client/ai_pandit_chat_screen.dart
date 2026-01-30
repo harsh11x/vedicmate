@@ -18,6 +18,7 @@ import '../../widgets/numerology_input_dialog.dart';
 import '../../widgets/ai_message_widgets.dart';
 import '../../utils/profile_completeness.dart';
 import '../../widgets/language_selector.dart';
+import 'kundli/widgets/kundli_details_sheet.dart';
 
 class AIPanditChatScreen extends ConsumerStatefulWidget {
   final String? panditId;
@@ -1360,9 +1361,33 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
             ],
             Row(
               children: [
+                if (_isChatStarted && !_isViewingOnly)
+                  IconButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppTheme.neutralMedium.withOpacity(0.3)),
+                      ),
+                      child: const Icon(Icons.add, color: AppTheme.primaryOrange, size: 20),
+                    ),
+                    onPressed: () async {
+                      final result = await showModalBottomSheet<String>(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const KundliDetailsSheet(),
+                      );
+                      
+                      if (result != null && result.isNotEmpty) {
+                        _fillAndSend("Here are my birth details for Kundli analysis:\n\n$result");
+                      }
+                    },
+                  ),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
+              child: Container(
+                decoration: BoxDecoration(
                       color: AppTheme.neutralSoft,
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: AppTheme.forestBackground.withOpacity(0.3)),

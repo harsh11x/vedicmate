@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		G6HAjbp7twVDh4NeduQD3Lze56M=
+		7dNl0oqy2nq+793u141MRBcahgI=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		pXj+O0dmanzmDuh9xny9P6VsOTs=
+		j6eCynmoSWjsdpb+9g/77hCjCv4=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,11 +22,15 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		vF/EYPVeq57tpV2gCtnqYSFAkcE=
+		wgh/MlGhq8pje19mWnDZtMYM3AY=
 		</data>
 		<key>flutter_assets/NativeAssetsManifest.json</key>
 		<data>
 		re4p7E8rPLLsN+wzaPN/+AVpXTY=
+		</data>
+		<key>flutter_assets/assets/images/.DS_Store</key>
+		<data>
+		3y++sUAKzaCQmjLBz2v0kvESHgc=
 		</data>
 		<key>flutter_assets/assets/images/ChatGPT%20Image%20Nov%203,%202025%20at%2009_33_25%20PM-2.png</key>
 		<data>
@@ -76,9 +80,29 @@
 		<data>
 		EqbHfv1d79PryO3u/8xja5Lt1Ow=
 		</data>
+		<key>flutter_assets/assets/images/kundli_bg.png</key>
+		<data>
+		CC5rGvnXIs/RfoCRuYyVVb9ar6M=
+		</data>
+		<key>flutter_assets/assets/images/live_pooja_bg.png</key>
+		<data>
+		9vvOVo6gMRHEJlOpVmP7sig52W8=
+		</data>
 		<key>flutter_assets/assets/images/logo.png</key>
 		<data>
 		+f0qOfqoXhs+/8azhLz+Cz9dmsU=
+		</data>
+		<key>flutter_assets/assets/images/logo_new.png</key>
+		<data>
+		+f0qOfqoXhs+/8azhLz+Cz9dmsU=
+		</data>
+		<key>flutter_assets/assets/images/match_making_bg.png</key>
+		<data>
+		i0L4ATH88nPSH7JzEcznvGhED1s=
+		</data>
+		<key>flutter_assets/assets/images/remedies/blue_sapphire_product_1768067880867.png</key>
+		<data>
+		o3T+GFMYZ8lSbJlDHcZKp5N7PIU=
 		</data>
 		<key>flutter_assets/assets/images/remedies/copper_bracelet.png</key>
 		<data>
@@ -124,6 +148,10 @@
 		<data>
 		ctsiBpFfkfKZJC3pJEOL2RXKgUU=
 		</data>
+		<key>flutter_assets/assets/images/remedies/rudraksha_product_1768067899734.png</key>
+		<data>
+		BFOuSSXJ/61bGy93j58ZIOwdmgI=
+		</data>
 		<key>flutter_assets/assets/images/remedies/sage_smudging_kit.png</key>
 		<data>
 		QVCN0Vz2hEm8/refdXbikIkpd2w=
@@ -132,13 +160,33 @@
 		<data>
 		rPxO/upMTnrq5UniW0wbs/Wcc8A=
 		</data>
+		<key>flutter_assets/assets/images/remedies/tulsi_mala_product_1768067860887.png</key>
+		<data>
+		8r/z5jEjVhNNJ/vupnlc/TXADcA=
+		</data>
 		<key>flutter_assets/assets/images/remedies/vastu_mirror.png</key>
 		<data>
 		lBwb21hsjySNOcoSWP7l0c0/I9E=
 		</data>
+		<key>flutter_assets/assets/images/services/custom_request.png</key>
+		<data>
+		IyXkmVl1/n0GmTYbTSKyba4cIBc=
+		</data>
+		<key>flutter_assets/assets/images/services/kundli_box.png</key>
+		<data>
+		EiIhR3f1R4WdvB7RvkkNrH09Sr4=
+		</data>
 		<key>flutter_assets/assets/images/services/lal_kitab.png</key>
 		<data>
 		Ru8BnSwAFc+JDcPiLHvQ4sT+PNM=
+		</data>
+		<key>flutter_assets/assets/images/services/live_pooja_box.png</key>
+		<data>
+		dQh9SitfHHLb9IpZ1cQaZIpQXtU=
+		</data>
+		<key>flutter_assets/assets/images/services/matchmaking_box.png</key>
+		<data>
+		NdVtmpQXB4IHmC52X1XdUgIhuw4=
 		</data>
 		<key>flutter_assets/assets/images/services/numerology.png</key>
 		<data>
@@ -158,7 +206,19 @@
 		</data>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
-		Y+Dtrf6A5AOdreJkkg1tFxpAL2U=
+		bDI4JSiehozbOm5vik/HsWpHDBk=
+		</data>
+		<key>flutter_assets/packages/country_state_city_pro/assets/city.json</key>
+		<data>
+		gQRO3kRDTaq50mLSB4JDu6K2134=
+		</data>
+		<key>flutter_assets/packages/country_state_city_pro/assets/country.json</key>
+		<data>
+		j9YYICiNrMcSEDL8a8shS9M+5lU=
+		</data>
+		<key>flutter_assets/packages/country_state_city_pro/assets/state.json</key>
+		<data>
+		JJA7dIQXQa1Fa4gdjmJsoyS/Rz8=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -183,14 +243,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			02Ra1RhntZqPXO7espfdAZ937pdBSlTyyMQEzURUNqs=
+			E7zIATqAu9yaQd4Fl1eaYTHJ3nMm68AGzBGcAi/C2LQ=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			W1tXf01geXAtZIsXPTd/9GkUdN9ElnbFQ6YX0tZLB+c=
+			ATmWFGUhgxlANO9TZ1xqNFUCWLN9x3LOEkdQzsajNNA=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -204,7 +264,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cX/93joyT85tX4O5c8Spz8z5G+yBu6i/JWb51R7DR7k=
+			k7VIAsb9NtuVcB95xTCNpYFPkme02KKEB7ACOAxfoY4=
 			</data>
 		</dict>
 		<key>flutter_assets/NativeAssetsManifest.json</key>
@@ -298,11 +358,46 @@
 			P1n12UpHSlXEyWjY4P7xdHp4b5aEBKfmqWg0QRmoRzg=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/kundli_bg.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Bbmpvsw1GUDOKrJCJvtHUt7rg26VOuYyeiZvyFeAT3o=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/live_pooja_bg.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			r8949G5jjfin+lz+aUvnVt5vFhDotIekdi29gKDq8nQ=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/logo.png</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			JG3D0IJ1ukHa9wBgzgznIuWRUnD/pFfj6xFBwSd24Qg=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/logo_new.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JG3D0IJ1ukHa9wBgzgznIuWRUnD/pFfj6xFBwSd24Qg=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/match_making_bg.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0d07xG0ZIrLQI87VDpLwRvfkzVg2b5nbiE9ewBCmjAs=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/remedies/blue_sapphire_product_1768067880867.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			rMwMYGdcOPh28VjPy6S8vgxptHCKkwvLrM758JXhTQ8=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/remedies/copper_bracelet.png</key>
@@ -382,6 +477,13 @@
 			NzSNgTfDlaonEssfQYcCJ4kPFFlLWQ4/rdUCHZL2PT8=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/remedies/rudraksha_product_1768067899734.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			05ySUomroNZ8SBGC6g/nGhrBuCfs+FVSWa17/0AXqMI=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/remedies/sage_smudging_kit.png</key>
 		<dict>
 			<key>hash2</key>
@@ -396,6 +498,13 @@
 			3isYZbodnyz1YyptLdFpGCrJoerM9C83Av0/djIjrOk=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/remedies/tulsi_mala_product_1768067860887.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			z+ndt3TGi7bz4EAa5eEjP0Au64n5xFxRQVD3JHA7zIA=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/remedies/vastu_mirror.png</key>
 		<dict>
 			<key>hash2</key>
@@ -403,11 +512,39 @@
 			+uqQJhSAmfnUBeDusGl9Ujo9EzLBWnN1u87j1Y+fGek=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/services/custom_request.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			F7NIXqTFi5h57EoNFXJ8reeJt80a43fpx0AY3/+YDA4=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/services/kundli_box.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+K7ITwIkLAJORrgTV+4AOJkmnNcwdO7nHhywMXeODSk=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/services/lal_kitab.png</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			9JX5whGpjJu1qiuZwKB5KB8s4K5G96ySYXhP9Mg5RFU=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/services/live_pooja_box.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FjO75BxtzQwfF+OvK0XJkEmFKJ14wYJcwA9FJXnZmWE=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/services/matchmaking_box.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aqDZBuHIgLo8Fdl4OZIz7nOWFfYO+z5iyOjYS1jXQ5A=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/services/numerology.png</key>
@@ -442,7 +579,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			apCWbxrx52m1MG/P2m/e/50E28PXuZIyyuDdze0Qcrs=
+			Jcwx0pLEGGnoVKz/lUZnNVMqXFdsoiIFo9UXBg5TOlo=
+			</data>
+		</dict>
+		<key>flutter_assets/packages/country_state_city_pro/assets/city.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mFiniu8kDzweN8PoRtYxDdTl5wg9U248HPXsDCa80Ow=
+			</data>
+		</dict>
+		<key>flutter_assets/packages/country_state_city_pro/assets/country.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FM1iSppygH4rbw3K59SSpA5V9PbhQ0KiAYBdUQIbKnw=
+			</data>
+		</dict>
+		<key>flutter_assets/packages/country_state_city_pro/assets/state.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6iJ5NGERRR2qiqVqmR9XiEo6AFzKDxNgT92DCLVfifQ=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

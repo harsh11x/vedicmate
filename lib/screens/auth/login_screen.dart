@@ -392,7 +392,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset('assets/images/google_logo.png', height: 20),
+                                // Image.asset('assets/images/google_logo.png', height: 20),
+                                const Icon(Icons.g_mobiledata, size: 32, color: AppTheme.primaryOrange),
                                 const SizedBox(width: 8),
                                 const Text('Google'),
                               ],
