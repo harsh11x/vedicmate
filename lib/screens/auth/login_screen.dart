@@ -192,17 +192,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     setState(() => _isLoading = true);
     try {
       User? user = await _authService.signInWithGoogle(_userRole);
-      
       if (mounted && user != null) {
         await _navigateAfterLogin(user);
-        if (mounted) setState(() => _isLoading = false);
-      } else {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
       }
     } catch (e) {
       _handleAuthError(e);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _handleAppleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.signInWithApple(_userRole);
+      if (mounted && user != null) {
+        await _navigateAfterLogin(user);
+      }
+    } catch (e) {
+      _handleAuthError(e);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -380,12 +390,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     
                     SizedBox(height: spacingMedium),
 
-                    // 5. Social Buttons (Minimal Outline)
+                    // 5. Sign in with Apple (required by App Store when offering Google)
+                    if (Platform.isIOS)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: _isLoading ? null : _handleAppleSignIn,
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              foregroundColor: Colors.black,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.apple, size: 24, color: Colors.black),
+                                const SizedBox(width: 8),
+                                const Text('Sign in with Apple'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ).animate().fadeIn(delay: 1300.ms),
+
+                    // 6. Social Buttons (Google, Email)
                     Row(
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: _handleGoogleSignIn,
+                            onPressed: _isLoading ? null : _handleGoogleSignIn,
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),

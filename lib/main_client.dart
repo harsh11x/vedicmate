@@ -47,19 +47,15 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
     _initialize();
   }
 
+  static const Duration _initTimeout = Duration(seconds: 45);
+
   Future<void> _initialize() async {
     try {
       print('🚀 AppInit: Starting initialization...');
       WidgetsFlutterBinding.ensureInitialized();
       print('✅ AppInit: Flutter binding initialized');
-      
-      // Add timeout to prevent infinite loading
-      await Future.any([
-        _initializeServices(),
-        Future.delayed(const Duration(seconds: 120), () {
-          throw Exception('Initialization timeout after 120 seconds');
-        }),
-      ]);
+
+      await _initializeServices();
 
       if (mounted) {
         setState(() => _isInitialized = true);
@@ -79,21 +75,28 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
     print('🔥 AppInit: Initializing Firebase...');
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-    );
+    ).timeout(_initTimeout, onTimeout: () {
+      throw Exception('Firebase initialization timed out. Check network connection.');
+    });
     print('✅ AppInit: Firebase initialized');
-    
+
     // 2. Supabase
     print('🗄️ AppInit: Initializing Supabase...');
     await Supabase.initialize(
       url: EnvConfig.supabaseUrl,
       anonKey: EnvConfig.supabaseAnonKey,
-    );
+    ).timeout(_initTimeout, onTimeout: () {
+      throw Exception('Supabase initialization timed out. Check network connection.');
+    });
     print('✅ AppInit: Supabase initialized');
 
-    // 3. Notifications
+    // 3. Notifications (often slow/hanging in simulator; skip if takes too long)
     print('🔔 AppInit: Initializing NotificationService...');
     try {
-      await NotificationService.initialize();
+      await NotificationService.initialize()
+          .timeout(const Duration(seconds: 15), onTimeout: () {
+        throw Exception('NotificationService timed out (OK to skip in simulator)');
+      });
       print('✅ AppInit: NotificationService initialized');
     } catch (e) {
       print('⚠️ AppInit: NotificationService error (non-fatal): $e');

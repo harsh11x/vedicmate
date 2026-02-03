@@ -1,17 +1,18 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:supabase_flutter/supabase_flutter.dart' hide User, OAuthProvider;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'email_service.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'email_service.dart';
 
 class AuthService {
-  FirebaseAuth get _auth => FirebaseAuth.instance;
+  firebase_auth.FirebaseAuth get _auth => firebase_auth.FirebaseAuth.instance;
   GoogleSignIn get _googleSignIn => GoogleSignIn();
   FirebaseFirestore get _firestore => FirebaseFirestore.instance;
   
@@ -27,16 +28,16 @@ class AuthService {
   }
 
   // Auth state changes stream
-  Stream<User?> authStateChanges() => _auth.authStateChanges();
-  
+  Stream<firebase_auth.User?> authStateChanges() => _auth.authStateChanges();
+
   // User changes stream (includes profile changes like displayName)
-  Stream<User?> userChanges() => _auth.userChanges();
+  Stream<firebase_auth.User?> userChanges() => _auth.userChanges();
 
   // Get current user
-  User? get currentUser => _auth.currentUser;
+  firebase_auth.User? get currentUser => _auth.currentUser;
 
   // Ensure user profile exists (Auto-register if missing)
-  Future<void> ensureUserProfile({User? user, String? name}) async {
+  Future<void> ensureUserProfile({firebase_auth.User? user, String? name}) async {
     user ??= currentUser;
     if (user == null) return;
 
@@ -66,13 +67,13 @@ class AuthService {
   }
 
   // Sign in with Google - returning User?
-  Future<User?> signInWithGoogle([String? role]) async {
+  Future<firebase_auth.User?> signInWithGoogle([String? role]) async {
     // Let errors propagate to be handled by the UI
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser == null) return null; // User canceled
 
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final OAuthCredential credential = GoogleAuthProvider.credential(
+    final credential = firebase_auth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
@@ -81,6 +82,45 @@ class AuthService {
     // Auto-create profile if needed
     if (userCredential.user != null) {
       await ensureUserProfile(user: userCredential.user);
+    }
+    return userCredential.user;
+  }
+
+  static String _generateNonce([int length = 32]) {
+    final random = Random.secure();
+    final values = List<int>.generate(length, (_) => random.nextInt(256));
+    return base64Url.encode(values).replaceAll('=', '').replaceAll('+', '-').replaceAll('/', '_');
+  }
+
+  static String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  Future<firebase_auth.User?> signInWithApple([String? role]) async {
+    final rawNonce = _generateNonce();
+    final nonce = _sha256ofString(rawNonce);
+
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: nonce,
+    );
+
+    final oauthCredential = firebase_auth.OAuthProvider('apple.com').credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+    );
+
+    final userCredential = await _auth.signInWithCredential(oauthCredential);
+    if (userCredential.user != null) {
+      final name = appleCredential.givenName != null || appleCredential.familyName != null
+          ? '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim()
+          : null;
+      await ensureUserProfile(user: userCredential.user, name: name);
     }
     return userCredential.user;
   }
@@ -123,16 +163,16 @@ class AuthService {
     String role, {
     required Function() onCodeSent,
     required Function(String) onError,
-    required Function(User) onVerificationCompleted,
+    required Function(firebase_auth.User) onVerificationCompleted,
   }) async {
     try {
       await _auth.verifyPhoneNumber(
         phoneNumber: '+91$phone',
         timeout: const Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async {
+        verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
           // Auto-verification (Android)
           try {
-            final UserCredential userCredential = await _auth.signInWithCredential(credential);
+            final userCredential = await _auth.signInWithCredential(credential);
             if (userCredential.user != null) {
               onVerificationCompleted(userCredential.user!);
             }
@@ -140,7 +180,7 @@ class AuthService {
             onError(e.toString());
           }
         },
-        verificationFailed: (FirebaseAuthException e) {
+        verificationFailed: (firebase_auth.FirebaseAuthException e) {
           if (e.code == 'invalid-phone-number') {
              onError('The provided phone number is not valid.');
           } else {
@@ -163,10 +203,10 @@ class AuthService {
   }
 
   // Verify OTP
-  Future<User?> verifyOTP(String otp, String phone, String role) async {
+  Future<firebase_auth.User?> verifyOTP(String otp, String phone, String role) async {
     if (_verificationId == null) throw Exception('Verification ID is missing. Request OTP again.');
-    
-    final credential = PhoneAuthProvider.credential(
+
+    final credential = firebase_auth.PhoneAuthProvider.credential(
       verificationId: _verificationId!,
       smsCode: otp,
     );
@@ -175,7 +215,7 @@ class AuthService {
     return userCredential.user;
   }
 
-  Future<User?> signInAsGuest() async {
+  Future<firebase_auth.User?> signInAsGuest() async {
     await _auth.signInAnonymously();
     return _auth.currentUser;
   }
@@ -218,7 +258,7 @@ class AuthService {
     }
   }
 
-  Future<User?> register(
+  Future<firebase_auth.User?> register(
     String name,
     String email, 
     String phone, 
@@ -227,12 +267,12 @@ class AuthService {
   ) async {
     try {
       // Create user in Firebase Auth
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email, 
-        password: password
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
       );
 
-      final User? user = userCredential.user;
+      final user = userCredential.user;
       
       if (user != null) {
         // Update display name in Firebase
@@ -272,9 +312,9 @@ class AuthService {
     }
   }
 
-  Future<User?> signInWithEmailAndPassword(String email, String password) async {
+  Future<firebase_auth.User?> signInWithEmailAndPassword(String email, String password) async {
     try {
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email, 
         password: password
       );

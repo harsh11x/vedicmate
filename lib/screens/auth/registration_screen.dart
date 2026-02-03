@@ -66,14 +66,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
       User? user = await _authService.signInWithGoogle(AppConstants.roleClient);
       if (mounted && user != null) {
         await _navigateAfterAuth(user);
-      } else {
-        if (mounted) setState(() => _isLoading = false);
       }
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _showSnackBar(e.toString(), isError: true);
+      if (mounted) _showSnackBar(e.toString(), isError: true);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _handleAppleSignUp() async {
+    setState(() => _isLoading = true);
+    try {
+      User? user = await _authService.signInWithApple(AppConstants.roleClient);
+      if (mounted && user != null) {
+        await _navigateAfterAuth(user);
       }
+    } catch (e) {
+      if (mounted) _showSnackBar(e.toString(), isError: true);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -400,6 +411,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
                     ],
                   ),
                   SizedBox(height: _spacingMedium),
+
+                  // Sign up with Apple (required by App Store when offering Google)
+                  if (Platform.isIOS)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: SizedBox(
+                        height: _buttonHeight,
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: _isLoading ? null : _handleAppleSignUp,
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppTheme.neutralDark),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            backgroundColor: AppTheme.white,
+                            foregroundColor: AppTheme.neutralDark,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.apple, size: 24, color: AppTheme.neutralDark),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Sign up with Apple',
+                                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
 
                   // Google Sign Up
                   SizedBox(

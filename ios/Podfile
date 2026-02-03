@@ -30,6 +30,9 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks! :linkage => :static
 
+  # Suppress warnings from third-party pods (Firebase, AppAuth, gRPC, etc.)
+  inhibit_all_warnings!
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   
   target 'RunnerTests' do
@@ -42,6 +45,8 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      # Suppress warnings from third-party pods (C/ObjC)
+      config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
     end
   end
 end
