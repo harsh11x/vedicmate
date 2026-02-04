@@ -92,20 +92,27 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
     fetchReels();
   }
 
+  /// Call to refresh reels (e.g. pull-to-refresh)
+  Future<void> refresh() => fetchReels();
+
   Future<void> fetchReels() async {
     try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/reels'));
+      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/reels')).timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['success']) {
-          final List<dynamic> reelsJson = data['data'];
-          final reels = reelsJson.map((e) => Reel.fromJson(e)).toList();
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        if (data['success'] == true && data['data'] != null) {
+          final List<dynamic> reelsJson = data['data'] as List;
+          final reels = reelsJson.map((e) => Reel.fromJson(e as Map<String, dynamic>)).toList();
           state = AsyncValue.data(reels);
+        } else {
+          state = const AsyncValue.data([]);
         }
+      } else {
+        debugPrint('Reels API returned ${response.statusCode}');
+        state = const AsyncValue.data([]);
       }
     } catch (e, st) {
-      debugPrint('Error fetching reels: $e. Returning empty list to prevent crash.');
-      // Return empty list instead of error to keep UI alive
+      debugPrint('Error fetching reels: $e');
       state = const AsyncValue.data([]);
     }
   }

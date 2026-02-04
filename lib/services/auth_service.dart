@@ -113,6 +113,7 @@ class AuthService {
     final oauthCredential = firebase_auth.OAuthProvider('apple.com').credential(
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
+      accessToken: appleCredential.authorizationCode,
     );
 
     final userCredential = await _auth.signInWithCredential(oauthCredential);
@@ -156,6 +157,76 @@ class AuthService {
 
   String? _verificationId;
   int? _resendToken;
+
+  // Separate verification state for profile phone update (avoid conflict with login OTP)
+  String? _phoneUpdateVerificationId;
+  int? _phoneUpdateResendToken;
+
+  /// Send OTP for phone number update (profile). [fullPhone] must be E.164 e.g. +919876543210
+  Future<void> sendOTPForPhoneUpdate(
+    String fullPhone, {
+    required Function() onCodeSent,
+    required Function(String) onError,
+  }) async {
+    final normalized = fullPhone.startsWith('+') ? fullPhone : '+$fullPhone';
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: normalized,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
+          // Auto-verification (Android) - handled via codeSent flow, user will verify manually
+          debugPrint('Phone verification auto-completed');
+        },
+        verificationFailed: (firebase_auth.FirebaseAuthException e) {
+          onError(e.message ?? 'Verification failed');
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          _phoneUpdateVerificationId = verificationId;
+          _phoneUpdateResendToken = resendToken;
+          onCodeSent();
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _phoneUpdateVerificationId = verificationId;
+        },
+        forceResendingToken: _phoneUpdateResendToken,
+      );
+    } catch (e) {
+      onError(e.toString());
+    }
+  }
+
+  /// Verify OTP and update phone on current user. Returns true on success.
+  Future<bool> verifyOTPAndUpdatePhone(String otp, String fullPhone) async {
+    if (_phoneUpdateVerificationId == null) {
+      throw Exception('Verification ID missing. Please request OTP again.');
+    }
+    final credential = firebase_auth.PhoneAuthProvider.credential(
+      verificationId: _phoneUpdateVerificationId!,
+      smsCode: otp.trim(),
+    );
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Not signed in');
+    await user.updatePhoneNumber(credential);
+    _phoneUpdateVerificationId = null;
+    _phoneUpdateResendToken = null;
+    return true;
+  }
+
+  /// Check if phone is taken by another user (exclude current user id)
+  Future<bool> isPhoneTakenByOtherUser(String fullPhone, String excludeUserId) async {
+    try {
+      final normalized = fullPhone.startsWith('+') ? fullPhone : '+$fullPhone';
+      final raw = fullPhone.replaceAll(RegExp(r'\D'), '');
+      // Check E.164 and raw formats - any user other than current
+      final res1 = await _supabase.from('users').select('id').eq('phone', normalized).neq('id', excludeUserId).maybeSingle();
+      if (res1 != null) return true;
+      final res2 = await _supabase.from('users').select('id').eq('phone', raw).neq('id', excludeUserId).maybeSingle();
+      return res2 != null;
+    } catch (e) {
+      debugPrint('Error checking phone: $e');
+      return true; // Fail safe - assume taken
+    }
+  }
 
   // Send OTP
   Future<void> sendOTP(

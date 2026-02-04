@@ -266,13 +266,26 @@ class AIPanditProfileScreen extends StatelessWidget {
                     side: BorderSide(color: AppTheme.forestBackground, width: 2),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: Text(
-                    'Message',
-                    style: GoogleFonts.outfit(
-                      color: AppTheme.neutralDark,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Message',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.neutralDark,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        '₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.primaryOrange,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -280,7 +293,7 @@ class AIPanditProfileScreen extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                     context.push('/ai-pandit/voice-call?panditId=${pandit.id}');
+                    context.push('/ai-pandit/voice-call?panditId=${pandit.id}');
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 18),
@@ -289,16 +302,29 @@ class AIPanditProfileScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.call, size: 20),
-                      const SizedBox(width: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.call, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Voice Call',
+                            style: GoogleFonts.outfit(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
                       Text(
-                        'Voice Call',
+                        '₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
                         style: GoogleFonts.outfit(
+                          color: Colors.white70,
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: 12,
                         ),
                       ),
                     ],

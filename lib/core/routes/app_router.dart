@@ -227,6 +227,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const WalletScreen(),
       ),
       GoRoute(
+        path: '/payment/wallet',
+        builder: (context, state) => const WalletScreen(),
+      ),
+      GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
       ),

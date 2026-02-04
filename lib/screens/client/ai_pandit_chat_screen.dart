@@ -109,6 +109,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     });
 
     try {
+      // Refresh wallet so chat shows correct balance (sync with home)
+      ref.invalidate(walletBalanceProvider);
+
       // Use the provider's userId to ensure consistency
       final providerUserId = ref.read(currentUserIdProvider);
       String userId;
@@ -160,16 +163,14 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       // Check wallet balance AFTER session is loaded
       await _checkWalletBalance();
       
-      // Also get balance from provider as backup
-      final balanceAsync = ref.read(walletBalanceProvider);
-      balanceAsync.whenData((balance) {
+      // Get balance from provider (await to ensure we have fresh data)
+      try {
+        final balance = await ref.read(walletBalanceProvider.future);
         if (mounted) {
-          setState(() {
-            _walletBalance = balance;
-          });
+          setState(() => _walletBalance = balance);
           print('✅ Wallet balance from provider on init: ₹$_walletBalance');
         }
-      });
+      } catch (_) {}
       
       setState(() => _isLoading = false);
       
@@ -584,7 +585,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                context.push('/payment/wallet');
+                context.push('/client/wallet').then((_) => _checkWalletBalance());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryOrange,
@@ -686,28 +687,12 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
     if (_userId == null) return;
     
     try {
-      // First, try to get balance from provider (most up-to-date)
-      final balanceAsync = ref.read(walletBalanceProvider);
-      balanceAsync.whenData((balance) {
-        if (mounted) {
-          setState(() {
-            _walletBalance = balance;
-          });
-          print('✅ Wallet balance from provider: ₹$_walletBalance');
-        }
-      });
-      
-      // Also use wallet service directly as backup
-      final balance = await _walletService.getBalance(_userId!);
-      
-      // Refresh the provider to ensure it's up-to-date
-      ref.invalidate(walletBalanceProvider);
+      // Get balance from provider (uses same userId as dashboard for consistency)
+      final balance = await ref.read(walletBalanceProvider.future);
       
       if (mounted) {
-        setState(() {
-          _walletBalance = balance;
-        });
-        print('✅ Wallet balance updated from service: ₹$_walletBalance');
+        setState(() => _walletBalance = balance);
+        print('✅ Wallet balance: ₹$_walletBalance');
         
         if (_walletBalance < 25.0 && _messages.isEmpty) {
           Future.delayed(const Duration(seconds: 1), () {
@@ -727,7 +712,7 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        context.push('/wallet/recharge');
+                        context.push('/client/wallet');
                       },
                       child: const Text('Recharge'),
                     ),
@@ -739,20 +724,12 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         }
       }
     } catch (e) {
-      print('⚠️ Background wallet check failed: $e');
-      // Try to get balance from provider as fallback
-      try {
-        final balanceAsync = ref.read(walletBalanceProvider);
-        balanceAsync.whenData((balance) {
-          if (mounted) {
-            setState(() {
-              _walletBalance = balance;
-            });
-            print('✅ Wallet balance from provider fallback: ₹$_walletBalance');
-          }
-        });
-      } catch (e2) {
-        print('⚠️ Provider fallback also failed: $e2');
+      print('⚠️ Wallet check failed: $e');
+      if (_userId != null) {
+        try {
+          final balance = await _walletService.getBalance(_userId!);
+          if (mounted) setState(() => _walletBalance = balance);
+        } catch (_) {}
       }
     }
   }
@@ -1724,13 +1701,24 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         ],
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
-          tooltip: 'Voice Call',
-          onPressed: () {
-            // Navigate to Voice Call Screen
-            context.push('/ai-pandit/voice-call?panditId=$_panditId');
-          },
+        Tooltip(
+          message: pandit != null ? 'Voice Call • ₹${pandit.ratePerMinute.toStringAsFixed(0)}/min' : 'Voice Call',
+          child: IconButton(
+            icon: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.phone, color: AppTheme.primaryOrange),
+                if (pandit != null)
+                  Text(
+                    '₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
+                    style: GoogleFonts.outfit(fontSize: 8, color: AppTheme.primaryOrange, fontWeight: FontWeight.w600),
+                  ),
+              ],
+            ),
+            onPressed: () {
+              context.push('/ai-pandit/voice-call?panditId=$_panditId');
+            },
+          ),
         ),
         IconButton(
           icon: const Icon(Icons.delete_outline, color: AppTheme.errorRed),

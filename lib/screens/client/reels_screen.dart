@@ -25,34 +25,87 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: reelsAsync.when(
-        data: (reels) {
-          if (reels.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   const Icon(Icons.video_library_outlined, size: 64, color: Colors.white54),
-                   const SizedBox(height: 16),
-                   Text("No reels yet", style: GoogleFonts.outfit(color: Colors.white54, fontSize: 18)),
-                ],
-              ),
-            );
-          }
-          return PageView.builder(
-            controller: _pageController,
-            scrollDirection: Axis.vertical,
-            itemCount: reels.length,
-            itemBuilder: (context, index) {
-              return ReelPlayerItem(
-                reel: reels[index],
-                isActive: true, // Simplified active check logic for now
+      body: RefreshIndicator(
+        onRefresh: () => ref.read(reelsProvider.notifier).refresh(),
+        color: AppTheme.divineGold,
+        child: reelsAsync.when(
+          data: (reels) {
+            if (reels.isEmpty) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 100,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.video_library_outlined, size: 64, color: Colors.white54),
+                        const SizedBox(height: 16),
+                        Text("No reels yet", style: GoogleFonts.outfit(color: Colors.white54, fontSize: 18)),
+                        const SizedBox(height: 8),
+                        TextButton.icon(
+                          onPressed: () => ref.read(reelsProvider.notifier).refresh(),
+                          icon: const Icon(Icons.refresh, color: Colors.white54),
+                          label: Text("Pull down to refresh", style: GoogleFonts.outfit(color: Colors.white54)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               );
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.divineGold)),
-        error: (err, st) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.white))),
+            }
+            return PageView.builder(
+              controller: _pageController,
+              scrollDirection: Axis.vertical,
+              itemCount: reels.length,
+              itemBuilder: (context, index) {
+                return ReelPlayerItem(
+                  reel: reels[index],
+                  isActive: true,
+                );
+              },
+            );
+          },
+          loading: () => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - 100,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(color: AppTheme.divineGold),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () => ref.read(reelsProvider.notifier).refresh(),
+                      child: Text("Retry", style: GoogleFonts.outfit(color: Colors.white54)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          error: (err, st) => SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - 100,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: $err', style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+                    const SizedBox(height: 16),
+                    TextButton.icon(
+                      onPressed: () => ref.read(reelsProvider.notifier).refresh(),
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      label: const Text('Retry', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

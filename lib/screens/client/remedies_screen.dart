@@ -31,7 +31,12 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
 
     return Scaffold(
       backgroundColor: AppTheme.neutralSoft,
-      body: SafeArea(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(productsProvider(_selectedCategory));
+          await ref.read(productsProvider(_selectedCategory).future);
+        },
+        child: SafeArea(
         bottom: true,
         child: CustomScrollView(
           controller: _scrollController,
@@ -209,8 +214,8 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 class _RemedyCard extends ConsumerWidget {

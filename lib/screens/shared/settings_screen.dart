@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
 import '../../l10n/generated/app_localizations.dart';
 
-import '../../providers/auth_provider.dart'; // Added import
+import '../../providers/auth_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -22,6 +23,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _pushNotifications = true;
   bool _darkMode = false;
   final AuthService _authService = AuthService();
+  String? _supabasePhone;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSupabasePhone();
+  }
+
+  Future<void> _loadSupabasePhone() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    try {
+      final data = await Supabase.instance.client
+          .from('users')
+          .select('phone')
+          .eq('id', user.uid)
+          .maybeSingle();
+      if (mounted && data != null) {
+        setState(() => _supabasePhone = data['phone'] as String?);
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +217,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ),
                         child: const Icon(Icons.edit, color: AppTheme.white, size: 20),
                       ),
-                      onPressed: () => context.push('/profile/edit'),
+                      onPressed: () async {
+                        await context.push('/profile/edit');
+                        _loadSupabasePhone();
+                      },
                     ),
                   ],
                 ),
@@ -266,11 +292,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   _SettingsCard(
         children: [
                       _SettingsTile(
-              icon: Icons.person_outline,
-              title: 'Edit Profile',
+                        icon: Icons.person_outline,
+                        title: 'Edit Profile',
                         subtitle: 'Update your personal information',
-              onTap: () => context.push('/profile/edit'),
-            ),
+                        onTap: () async {
+                          await context.push('/profile/edit');
+                          _loadSupabasePhone();
+                        },
+                      ),
                       _Divider(),
                       _SettingsTile(
               icon: Icons.lock_outline,
@@ -284,9 +313,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       _SettingsTile(
                         icon: Icons.phone_outlined,
                         title: 'Phone Number',
-                        subtitle: user?.phoneNumber ?? 'Not set',
-                        onTap: () {
-                          _showPhoneUpdateDialog(context);
+                        subtitle: _supabasePhone ?? user?.phoneNumber ?? 'Not set',
+                        onTap: () async {
+                          await context.push('/profile/edit');
+                          _loadSupabasePhone();
                         },
                       ),
                       _Divider(),
@@ -617,23 +647,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text('Change Password'),
         content: const Text('Password change feature will be available soon.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showPhoneUpdateDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Update Phone Number'),
-        content: const Text('Phone number update feature will be available soon.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

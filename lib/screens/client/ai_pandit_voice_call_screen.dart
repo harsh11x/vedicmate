@@ -520,7 +520,7 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                context.push('/payment/wallet');
+                context.push('/client/wallet');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryOrange,
@@ -604,7 +604,7 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              context.push('/payment/wallet');
+              context.push('/client/wallet');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryOrange,
