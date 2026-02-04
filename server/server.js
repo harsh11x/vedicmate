@@ -2434,6 +2434,30 @@ app.post('/api/reels/:id/comment', (req, res) => {
   }
 });
 
+// Video proxy - serves reel videos through API so Flutter app can use same base URL
+app.get('/api/assets/video', (req, res) => {
+  try {
+    const pathParam = req.query.path;
+    if (!pathParam || typeof pathParam !== 'string') {
+      return res.status(400).json({ success: false, error: 'Path required' });
+    }
+    const safePath = pathParam.replace(/\.\./g, '').replace(/^\//, '');
+    if (!safePath.startsWith('assets/videos/')) {
+      return res.status(403).json({ success: false, error: 'Invalid path' });
+    }
+    const filePath = path.join(__dirname, safePath);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ success: false, error: 'Video not found' });
+    }
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.sendFile(filePath, { acceptRanges: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Video Upload Endpoint
 app.post('/api/admin/upload-video', (req, res) => {
   try {

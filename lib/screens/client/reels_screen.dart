@@ -7,7 +7,6 @@ import '../../providers/reels_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../config/api_config.dart';
-import '../../core/config/env.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
@@ -148,14 +147,15 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
       if (mounted) setState(() => _loadFailed = true);
       return;
     }
-    // Construct full URL - assets are served at /assets (not /api/assets)
+    // Use video proxy through API so same base URL works (handles ngrok, different hosts)
     final String url;
     if (widget.reel.videoUrl.startsWith('http')) {
       url = widget.reel.videoUrl;
-    } else if (widget.reel.videoUrl.startsWith('assets/')) {
-      url = '${EnvConfig.apiBaseUrl}/${widget.reel.videoUrl}';
     } else {
-      url = '${ApiConfig.baseUrl}/${widget.reel.videoUrl}';
+      final path = widget.reel.videoUrl.startsWith('assets/')
+          ? widget.reel.videoUrl
+          : 'assets/videos/reels/${widget.reel.videoUrl}';
+      url = '${ApiConfig.baseUrl}/assets/video?path=${Uri.encodeQueryComponent(path)}';
     }
 
     try {
