@@ -870,18 +870,44 @@ Please use these details to generate my complete Kundli analysis.]
       _recognizedText = userMessage;
     });
     
-    // Get AI response from Gemini
+    // Get AI response: Local AI (via backend/ngrok) first, then Custom AI fallback
+    String aiResponse;
     try {
-      final geminiService = ref.read(geminiServiceProvider);
-      final aiResponse = await geminiService.sendMessage(
+      final localAI = ref.read(localAIServiceProvider);
+      aiResponse = await localAI.sendMessage(
         enhancedMessage,
         _conversationHistory,
         panditId: widget.panditId,
+        userId: _userId,
       ).timeout(
         const Duration(seconds: 30),
-        onTimeout: () => 'I apologize, but the response is taking longer than expected. Please try again.',
+        onTimeout: () => throw Exception('Timeout'),
       );
-      
+    } catch (e) {
+      print('Local AI failed ($e), using Custom AI fallback');
+      try {
+        final customAI = ref.read(customAIServiceProvider);
+        aiResponse = await customAI.sendMessage(
+          enhancedMessage,
+          _conversationHistory,
+          panditId: widget.panditId,
+        );
+      } catch (e2) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('AI unavailable. Please try again.'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+        print('AI Error: $e2');
+        _startListening();
+        return;
+      }
+    }
+    
+    try {
       // Add AI response to session
       final aiChatMessage = AIChatMessage(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -900,14 +926,6 @@ Please use these details to generate my complete Kundli analysis.]
       // Speak AI response
       await _speak(aiResponse);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error getting AI response: $e'),
-            backgroundColor: AppTheme.errorRed,
-          ),
-        );
-      }
       print('Error processing speech: $e');
       _startListening();
     }

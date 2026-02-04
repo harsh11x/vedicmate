@@ -2,23 +2,26 @@
 
 ## Current Status
 
-The app now has **two AI service options**:
+The app uses **Local AI** (LM Studio via ngrok) with **Custom AI** fallback:
 
-1. **CustomAIService** (Currently Active) - Works immediately, no setup required
-   - Personality-based responses
-   - No external API needed
+1. **LocalAIService** (Primary) - Your own AI via ngrok
+   - Calls backend → ngrok tunnel → LM Studio / local AI
+   - Configure ngrok URL in `server/.env`
+
+2. **CustomAIService** (Fallback) - Rule-based, no setup
+   - Used when Local AI is unreachable
    - Works offline
-   - Good for basic functionality
 
-2. **GeminiService** (Requires API Key) - More advanced, requires setup
-   - Uses Google's Gemini AI
-   - More natural conversations
-   - Better context understanding
-   - Requires API key
+## Configure Ngrok URL (Recommended)
 
-## How It Works
+Edit `server/.env` and set your ngrok URL. When ngrok restarts, just update this file—no code changes needed.
 
-The app automatically tries Gemini first, and if it fails (no API key or error), it falls back to CustomAIService. Both services support personality-based responses based on the selected AI Pandit.
+```env
+# Change when ngrok restarts
+AI_NGROK_URL=https://your-id.ngrok-free.app/v1
+```
+
+Copy `server/.env.example` to `server/.env` if needed, then set `AI_NGROK_URL` to your current ngrok URL.
 
 ## Option 1: Use CustomAIService (Current - No Setup Needed)
 

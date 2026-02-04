@@ -15,20 +15,27 @@ class LocalAIService {
     }
 
     _loadConfig() {
-        try {
-            const configPath = path.join(__dirname, '../../ai_engine/model_config.json');
-            if (fs.existsSync(configPath)) {
-                return JSON.parse(fs.readFileSync(configPath, 'utf8'));
-            }
-        } catch (e) {
-            console.error('Error loading AI config:', e);
-        }
-        return {
-            api_base_url: "https://eb1d2d0d4fc8.ngrok-free.app/v1", // Using ngrok tunnel for AI
+        const defaults = {
             model_name: "qwen2.5-1.5b-instruct",
             temperature: 0.7,
             max_tokens: 500
         };
+        // 1. Prefer AI_NGROK_URL from .env (change ngrok URL without editing code)
+        const envUrl = process.env.AI_NGROK_URL;
+        if (envUrl && envUrl.trim()) {
+            return { ...defaults, api_base_url: envUrl.trim().replace(/\/$/, '') };
+        }
+        // 2. Fallback to model_config.json
+        try {
+            const configPath = path.join(__dirname, '../../ai_engine/model_config.json');
+            if (fs.existsSync(configPath)) {
+                const cfg = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                return { ...defaults, ...cfg };
+            }
+        } catch (e) {
+            console.error('Error loading AI config:', e);
+        }
+        throw new Error('AI_NGROK_URL not set in .env. Add it: AI_NGROK_URL=https://your-ngrok.ngrok-free.app/v1');
     }
 
     _loadPersonalities() {

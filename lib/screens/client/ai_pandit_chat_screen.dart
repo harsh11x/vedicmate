@@ -736,21 +736,8 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
 
   Future<void> _loadWelcomeMessage() async {
     try {
-      // Try Gemini first
-      final geminiService = ref.read(geminiServiceProvider);
-      String welcomeMessage;
-      
-      try {
-        welcomeMessage = await geminiService.getWelcomeMessage(panditId: _panditId).timeout(
-          const Duration(seconds: 5),
-        );
-      } catch (e) {
-        // Fallback to Custom AI
-        print('⚠️ Gemini welcome failed, using fallback: $e');
-        final customAI = ref.read(customAIServiceProvider);
-        welcomeMessage = await customAI.getWelcomeMessage(panditId: _panditId);
-        _usingFallback = true;
-      }
+      final customAI = ref.read(customAIServiceProvider);
+      final welcomeMessage = await customAI.getWelcomeMessage(panditId: _panditId);
       
       if (mounted && _currentSession != null) {
         final aiMessage = AIChatMessage(
@@ -1042,10 +1029,9 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
         ).timeout(const Duration(seconds: 60));
         
       } catch (e) {
-        // 3. Fallback to Custom AI
-        print('⚠️ Local AI failed ($e), switching to fallback...');
+        // 3. Fallback to Custom AI (rule-based, no external API)
+        print('⚠️ Local AI failed ($e), using Custom AI fallback...');
         _usingFallback = true;
-        
         final customAI = ref.read(customAIServiceProvider);
         aiResponse = await customAI.sendMessage(
           messageText,
@@ -1072,9 +1058,18 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       }
     } catch (e) {
       if (mounted) {
-      setState(() => _isTyping = false);
-        _showError('AI Connection Error. Please try again.');
+        setState(() {
+          _isTyping = false;
+          _messages.add(AIChatMessage(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            message: 'I apologize, I\'m having trouble connecting right now. Please check your internet and try again. 🙏',
+            isUser: false,
+            timestamp: DateTime.now(),
+          ));
+        });
+        _showError('AI connection issue. Please try again.');
         print('Critical AI Error: $e');
+        _scrollToBottom();
       }
     }
   }
