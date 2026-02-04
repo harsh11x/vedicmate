@@ -6,6 +6,48 @@ import '../../providers/cart_provider.dart';
 import '../../providers/api_providers.dart';
 import '../../core/config/env.dart';
 
+Widget _remedyCardImage(String path) {
+  if (path.startsWith('http')) {
+    return Image.network(
+      path,
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _remedyCardPlaceholder(),
+    );
+  } else if (path.startsWith('assets/')) {
+    return Image.network(
+      '${EnvConfig.apiBaseUrl}/$path',
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stack) {
+        return Image.asset(
+          path,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _remedyCardPlaceholder(),
+        );
+      },
+    );
+  }
+  return _remedyCardPlaceholder();
+}
+
+Widget _remedyCardPlaceholder() {
+  return Container(
+    color: AppTheme.divineGold.withOpacity(0.1),
+    child: Center(
+      child: Icon(
+        Icons.spa,
+        size: 40,
+        color: AppTheme.divineGold.withOpacity(0.5),
+      ),
+    ),
+  );
+}
+
 class RemediesScreen extends ConsumerStatefulWidget {
   const RemediesScreen({super.key});
 
@@ -216,6 +258,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
       ),
     ),
   );
+  }
 }
 
 class _RemedyCard extends ConsumerWidget {
@@ -262,7 +305,7 @@ class _RemedyCard extends ConsumerWidget {
               children: [
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: _buildImage(imageUrl),
+                  child: _remedyCardImage(imageUrl),
                 ),
                 // Discount Badge
                 if (discount > 0)
@@ -421,46 +464,4 @@ class _RemedyCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildImage(String path) {
-    if (path.startsWith('http')) {
-      return Image.network(
-        path,
-        width: double.infinity,
-        height: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _buildPlaceholder(),
-      );
-    } else if (path.startsWith('assets/')) {
-        return Image.network(
-          // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
-          '${EnvConfig.apiBaseUrl}/$path', 
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stack) {
-             return Image.asset(
-                path,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _buildPlaceholder(),
-             );
-          }
-        );
-    } 
-    return _buildPlaceholder();
-  }
-
-  Widget _buildPlaceholder() {
-    return Container(
-      color: AppTheme.divineGold.withOpacity(0.1),
-      child: Center(
-        child: Icon(
-          Icons.spa,
-          size: 40,
-          color: AppTheme.divineGold.withOpacity(0.5),
-        ),
-      ),
-    );
-  }
 }
