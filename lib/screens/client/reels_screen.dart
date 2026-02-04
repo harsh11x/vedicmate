@@ -7,6 +7,7 @@ import '../../providers/reels_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../config/api_config.dart';
+import '../../core/config/env.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
@@ -34,21 +35,30 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
               return SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height - 100,
+                  height: MediaQuery.of(context).size.height - 120,
                   child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.video_library_outlined, size: 64, color: Colors.white54),
-                        const SizedBox(height: 16),
-                        Text("No reels yet", style: GoogleFonts.outfit(color: Colors.white54, fontSize: 18)),
-                        const SizedBox(height: 8),
-                        TextButton.icon(
-                          onPressed: () => ref.read(reelsProvider.notifier).refresh(),
-                          icon: const Icon(Icons.refresh, color: Colors.white54),
-                          label: Text("Pull down to refresh", style: GoogleFonts.outfit(color: Colors.white54)),
-                        ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.video_library_outlined, size: 64, color: Colors.white54),
+                          const SizedBox(height: 16),
+                          Text("No reels yet", style: GoogleFonts.outfit(color: Colors.white54, fontSize: 18)),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Upload reels via admin panel, then pull down to refresh",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton.icon(
+                            onPressed: () => ref.read(reelsProvider.notifier).refresh(),
+                            icon: const Icon(Icons.refresh, color: Colors.white54),
+                            label: Text("Refresh", style: GoogleFonts.outfit(color: Colors.white54)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -133,10 +143,15 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
   }
 
   Future<void> _initializeVideo() async {
-    // Construct full URL
-    final url = widget.reel.videoUrl.startsWith('http') 
-        ? widget.reel.videoUrl 
-        : '${ApiConfig.baseUrl}/${widget.reel.videoUrl}';
+    // Construct full URL - assets are served at /assets (not /api/assets)
+    final String url;
+    if (widget.reel.videoUrl.startsWith('http')) {
+      url = widget.reel.videoUrl;
+    } else if (widget.reel.videoUrl.startsWith('assets/')) {
+      url = '${EnvConfig.apiBaseUrl}/${widget.reel.videoUrl}';
+    } else {
+      url = '${ApiConfig.baseUrl}/${widget.reel.videoUrl}';
+    }
 
     _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
     try {
@@ -215,10 +230,10 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
           ),
         ),
 
-        // Right Side Actions
+        // Right Side Actions (above bottom nav bar ~100px)
         Positioned(
           right: 16,
-          bottom: 100,
+          bottom: 120,
           child: Column(
             children: [
               _buildActionBtn(
@@ -245,10 +260,10 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
           ),
         ),
 
-        // Bottom Content
+        // Bottom Content (above bottom nav bar ~100px)
         Positioned(
           left: 16,
-          bottom: 30,
+          bottom: 120,
           right: 80,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

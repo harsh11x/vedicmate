@@ -96,24 +96,34 @@ class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
   Future<void> refresh() => fetchReels();
 
   Future<void> fetchReels() async {
+    final url = '${ApiConfig.baseUrl}/reels';
     try {
-      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/reels')).timeout(const Duration(seconds: 15));
+      debugPrint('Reels: Fetching $url');
+      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
+      debugPrint('Reels: Response ${response.statusCode}');
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         if (data['success'] == true && data['data'] != null) {
           final List<dynamic> reelsJson = data['data'] as List;
-          final reels = reelsJson.map((e) => Reel.fromJson(e as Map<String, dynamic>)).toList();
+          final reels = <Reel>[];
+          for (var i = 0; i < reelsJson.length; i++) {
+            try {
+              final r = reelsJson[i] as Map<String, dynamic>;
+              reels.add(Reel.fromJson(r));
+            } catch (e) {
+              debugPrint('Reels: Skipping malformed reel $i: $e');
+            }
+          }
           state = AsyncValue.data(reels);
         } else {
           state = const AsyncValue.data([]);
         }
       } else {
-        debugPrint('Reels API returned ${response.statusCode}');
         state = const AsyncValue.data([]);
       }
     } catch (e, st) {
-      debugPrint('Error fetching reels: $e');
-      state = const AsyncValue.data([]);
+      debugPrint('Reels fetch error: $e\n$st');
+      state = AsyncValue.data([]);
     }
   }
 
