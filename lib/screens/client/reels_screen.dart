@@ -7,6 +7,7 @@ import '../../providers/reels_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../config/api_config.dart';
+import '../../core/config/env.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
@@ -147,35 +148,45 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
       if (mounted) setState(() => _loadFailed = true);
       return;
     }
-    // Use video proxy through API so same base URL works (handles ngrok, different hosts)
-    final String url;
+    final String filename = widget.reel.videoUrl.contains('/')
+        ? widget.reel.videoUrl.split('/').last
+        : widget.reel.videoUrl;
+    final String pathPart = widget.reel.videoUrl.startsWith('assets/')
+        ? widget.reel.videoUrl
+        : 'assets/videos/reels/$filename';
+
+    // Try URLs in order: API proxy, then direct static
+    final urls = [
+      '${ApiConfig.baseUrl}/reels/video/$filename',
+      '${EnvConfig.apiBaseUrl}/$pathPart',
+    ];
     if (widget.reel.videoUrl.startsWith('http')) {
-      url = widget.reel.videoUrl;
-    } else {
-      final path = widget.reel.videoUrl.startsWith('assets/')
-          ? widget.reel.videoUrl
-          : 'assets/videos/reels/${widget.reel.videoUrl}';
-      url = '${ApiConfig.baseUrl}/assets/video?path=${Uri.encodeQueryComponent(path)}';
+      urls.insert(0, widget.reel.videoUrl);
     }
 
-    try {
-      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
-      await controller.initialize().timeout(
-        const Duration(seconds: 15),
-        onTimeout: () => throw Exception('Video load timeout'),
-      );
-      controller.setLooping(true);
-      if (widget.isActive) controller.play();
-      if (mounted) {
-        _videoController = controller;
-        setState(() => _initialized = true);
-      } else {
-        controller.dispose();
+    for (final url in urls) {
+      VideoPlayerController? controller;
+      try {
+        controller = VideoPlayerController.networkUrl(Uri.parse(url));
+        await controller.initialize().timeout(
+          const Duration(seconds: 12),
+          onTimeout: () => throw Exception('Timeout'),
+        );
+        controller.setLooping(true);
+        if (widget.isActive) controller.play();
+        if (mounted) {
+          _videoController = controller;
+          setState(() => _initialized = true);
+        } else {
+          controller.dispose();
+        }
+        return;
+      } catch (e) {
+        debugPrint('Video load failed ($url): $e');
+        controller?.dispose();
       }
-    } catch (e) {
-      debugPrint('Video init error: $e');
-      if (mounted) setState(() => _loadFailed = true);
     }
+    if (mounted) setState(() => _loadFailed = true);
   }
 
   @override

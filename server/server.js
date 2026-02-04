@@ -2434,7 +2434,7 @@ app.post('/api/reels/:id/comment', (req, res) => {
   }
 });
 
-// Video proxy - serves reel videos through API so Flutter app can use same base URL
+// Video proxy - serves reel videos. Tries: /api/assets/video?path=... AND /api/reels/video/:filename
 app.get('/api/assets/video', (req, res) => {
   try {
     const pathParam = req.query.path;
@@ -2442,10 +2442,37 @@ app.get('/api/assets/video', (req, res) => {
       return res.status(400).json({ success: false, error: 'Path required' });
     }
     const safePath = pathParam.replace(/\.\./g, '').replace(/^\//, '');
-    if (!safePath.startsWith('assets/videos/')) {
-      return res.status(403).json({ success: false, error: 'Invalid path' });
+    const fileName = path.basename(safePath);
+    const filePath = path.join(videoDir, fileName);
+    if (!fs.existsSync(filePath)) {
+      const altPath = path.join(__dirname, safePath.startsWith('assets/') ? safePath : 'assets/videos/reels/' + fileName);
+      if (!fs.existsSync(altPath)) {
+        console.error('[Video] Not found:', filePath, 'or', altPath);
+        return res.status(404).json({ success: false, error: 'Video not found' });
+      }
+      res.setHeader('Content-Type', 'video/mp4');
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.sendFile(altPath, { acceptRanges: true });
+      return;
     }
-    const filePath = path.join(__dirname, safePath);
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.sendFile(filePath, { acceptRanges: true });
+  } catch (error) {
+    console.error('[Video] Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Simpler video URL: /api/reels/video/reel_xxx.mp4
+app.get('/api/reels/video/:filename', (req, res) => {
+  try {
+    const filename = path.basename(req.params.filename).replace(/\.\./g, '');
+    if (!/^reel_.*\.(mp4|mov|webm)$/i.test(filename)) {
+      return res.status(403).json({ success: false, error: 'Invalid filename' });
+    }
+    const filePath = path.join(videoDir, filename);
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
