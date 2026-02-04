@@ -128,6 +128,27 @@ export default function ReelsPage() {
         }
     };
 
+    const handleDeleteComment = async (reelId: string, commentId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!confirm("Remove this comment?")) return;
+        try {
+            const res = await fetch(`${API_BASE}/admin/reels/${reelId}/comments/${commentId}`, { method: "DELETE" });
+            const data = await res.json();
+            if (data.success) {
+                setReels(prev => prev.map(r => 
+                    r.id === reelId 
+                        ? { ...r, comments: r.comments.filter(c => c.id !== commentId) } 
+                        : r
+                ));
+                if (selectedReel?.id === reelId) {
+                    setSelectedReel(prev => prev ? { ...prev, comments: prev.comments.filter(c => c.id !== commentId) } : null);
+                }
+            }
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -370,13 +391,22 @@ export default function ReelsPage() {
                                         ) : (
                                             <div className="space-y-1">
                                                 {selectedReel.comments.map((comment, i) => (
-                                                    <div key={i} className="p-3 hover:bg-white rounded-lg transition-colors">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="font-semibold text-xs text-gray-900">{comment.name || "User"}</span>
-                                                            <span className="text-[10px] text-gray-400">{new Date(comment.timestamp).toLocaleDateString()}</span>
+                                                    <div key={comment.id || i} className="p-3 hover:bg-white rounded-lg transition-colors flex justify-between items-start gap-2">
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <span className="font-semibold text-xs text-gray-900">{comment.name || "User"}</span>
+                                                                <span className="text-[10px] text-gray-400">{new Date(comment.timestamp).toLocaleDateString()}</span>
+                                                            </div>
+                                                            <p className="text-sm text-gray-600 leading-snug">{comment.text}</p>
+                                                            <p className="text-[10px] text-gray-400 mt-1 truncate">{comment.email}</p>
                                                         </div>
-                                                        <p className="text-sm text-gray-600 leading-snug">{comment.text}</p>
-                                                        <p className="text-[10px] text-gray-400 mt-1 truncate">{comment.email}</p>
+                                                        <button
+                                                            onClick={(e) => handleDeleteComment(selectedReel.id, comment.id, e)}
+                                                            className="flex-shrink-0 p-2 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                                                            title="Remove comment"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
                                                     </div>
                                                 ))}
                                             </div>

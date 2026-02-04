@@ -2382,6 +2382,29 @@ app.post('/api/reels/:id/like', (req, res) => {
   }
 });
 
+// Admin: Delete comment on reel
+app.delete('/api/admin/reels/:reelId/comments/:commentId', (req, res) => {
+  try {
+    const { reelId, commentId } = req.params;
+    const reels = readReels();
+    const index = reels.findIndex(r => r.id === reelId);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Reel not found' });
+
+    const comments = reels[index].comments || [];
+    const commentIndex = comments.findIndex(c => c.id === commentId);
+    if (commentIndex === -1) return res.status(404).json({ success: false, error: 'Comment not found' });
+
+    comments.splice(commentIndex, 1);
+    reels[index].comments = comments;
+    writeReels(reels);
+
+    io.emit('reel-interaction', { reelId, type: 'comment-deleted', commentsCount: comments.length });
+    res.json({ success: true, message: 'Comment removed', data: { comments: comments } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // User: Comment on Reel
 app.post('/api/reels/:id/comment', (req, res) => {
   try {

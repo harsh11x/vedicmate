@@ -132,8 +132,9 @@ class ReelPlayerItem extends ConsumerStatefulWidget {
 }
 
 class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
-  late VideoPlayerController _videoController;
+  VideoPlayerController? _videoController;
   bool _initialized = false;
+  bool _loadFailed = false; // Show placeholder when video fails
   bool _showHeart = false; // For double tap animation
 
   @override
@@ -143,6 +144,10 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
   }
 
   Future<void> _initializeVideo() async {
+    if (widget.reel.videoUrl.isEmpty) {
+      if (mounted) setState(() => _loadFailed = true);
+      return;
+    }
     // Construct full URL - assets are served at /assets (not /api/assets)
     final String url;
     if (widget.reel.videoUrl.startsWith('http')) {
@@ -153,24 +158,34 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
       url = '${ApiConfig.baseUrl}/${widget.reel.videoUrl}';
     }
 
-    _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
     try {
-      await _videoController.initialize();
-      _videoController.setLooping(true);
-      if (widget.isActive) _videoController.play();
-      if (mounted) setState(() => _initialized = true);
+      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
+      await controller.initialize().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw Exception('Video load timeout'),
+      );
+      controller.setLooping(true);
+      if (widget.isActive) controller.play();
+      if (mounted) {
+        _videoController = controller;
+        setState(() => _initialized = true);
+      } else {
+        controller.dispose();
+      }
     } catch (e) {
-      print("Video Error: $e");
+      debugPrint('Video init error: $e');
+      if (mounted) setState(() => _loadFailed = true);
     }
   }
 
   @override
   void dispose() {
-    _videoController.dispose();
+    _videoController?.dispose();
     super.dispose();
   }
 
   void _handleDoubleTap() {
+    if (_loadFailed) return;
     setState(() => _showHeart = true);
     ref.read(reelsProvider.notifier).toggleLike(widget.reel.id);
     
@@ -191,19 +206,34 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
         // Video Player
         GestureDetector(
           onTap: () {
-            _videoController.value.isPlaying ? _videoController.pause() : _videoController.play();
+            if (_videoController != null) {
+              _videoController!.value.isPlaying ? _videoController!.pause() : _videoController!.play();
+            }
           },
           onDoubleTap: _handleDoubleTap,
           child: Container(
             color: Colors.black,
-            child: _initialized 
+            child: _loadFailed
                 ? Center(
-                    child: AspectRatio(
-                      aspectRatio: _videoController.value.aspectRatio,
-                      child: VideoPlayer(_videoController),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.videocam_off, size: 64, color: Colors.white38),
+                        const SizedBox(height: 12),
+                        Text('Video unavailable', style: GoogleFonts.outfit(color: Colors.white54, fontSize: 14)),
+                        const SizedBox(height: 8),
+                        Text(widget.reel.description, style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12), maxLines: 3, textAlign: TextAlign.center),
+                      ],
                     ),
                   )
-                : const Center(child: CircularProgressIndicator(color: Colors.white24)),
+                : _initialized
+                    ? Center(
+                        child: AspectRatio(
+                          aspectRatio: _videoController!.value.aspectRatio,
+                          child: VideoPlayer(_videoController!),
+                        ),
+                      )
+                    : const Center(child: CircularProgressIndicator(color: Colors.white24)),
           ),
         ),
 
