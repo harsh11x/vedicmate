@@ -33,15 +33,19 @@ export default function ReelsPage() {
         fetchReels();
     }, []);
 
-    const fetchReels = async () => {
+    const fetchReels = async (showLoading = true) => {
+        if (showLoading) setLoading(true);
         try {
             const res = await fetch(`${API_BASE}/admin/reels`);
             const data = await res.json();
-            if (data.success) {
+            if (data.success && Array.isArray(data.data)) {
                 setReels(data.data);
+            } else {
+                setReels([]);
             }
         } catch (error) {
             console.error("Error fetching reels:", error);
+            setReels([]);
         } finally {
             setLoading(false);
         }
@@ -94,14 +98,14 @@ export default function ReelsPage() {
 
             const createData = await createRes.json();
             if (createData.success) {
-                setReels([createData.data, ...reels]);
+                await fetchReels(false);
                 setShowUpload(false);
                 resetForm();
             } else {
-                alert("Failed to save reel: " + createData.error);
+                alert("Failed to save reel: " + (createData.error || "Unknown error"));
             }
         } catch (error: any) {
-            alert("Error uploading: " + error.message);
+            alert("Error uploading: " + (error?.message || "Unknown error"));
         } finally {
             setUploading(false);
         }
@@ -120,11 +124,14 @@ export default function ReelsPage() {
             const res = await fetch(`${API_BASE}/admin/reels/${id}`, { method: "DELETE" });
             const data = await res.json();
             if (data.success) {
-                setReels(reels.filter(r => r.id !== id));
                 if (selectedReel?.id === id) setSelectedReel(null);
+                await fetchReels(false);
+            } else {
+                alert("Failed to delete: " + (data.error || "Unknown error"));
             }
         } catch (error) {
             console.error("Error deleting:", error);
+            alert("Error deleting reel. Please try again.");
         }
     };
 
