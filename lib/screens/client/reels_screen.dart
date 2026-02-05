@@ -171,7 +171,7 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
         httpHeaders: {'User-Agent': 'VedicMate/1.0', 'Accept': '*/*'},
       );
       await c.initialize().timeout(
-        const Duration(seconds: 15),
+        const Duration(seconds: 12),
         onTimeout: () => throw Exception('Timeout'),
       );
       if (!mounted) {
@@ -190,8 +190,40 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
     }
   }
 
+  Future<bool> _tryPlayPlaceholder() async {
+    VideoPlayerController? c;
+    try {
+      c = VideoPlayerController.asset('assets/videos/reels/placeholder_reel.mp4');
+      await c.initialize().timeout(
+        const Duration(seconds: 8),
+        onTimeout: () => throw Exception('Timeout'),
+      );
+      if (!mounted) {
+        c.dispose();
+        return false;
+      }
+      c.setLooping(true);
+      if (widget.isActive) c.play();
+      _videoController?.dispose();
+      _videoController = c;
+      return true;
+    } catch (e) {
+      debugPrint('Placeholder video failed: $e');
+      c?.dispose();
+      return false;
+    }
+  }
+
   Future<void> _initializeVideo() async {
     if (widget.reel.videoUrl.isEmpty) {
+      if (await _tryPlayPlaceholder()) {
+        if (mounted) setState(() {
+          _initialized = true;
+          _loadFailed = false;
+          _isRetrying = false;
+        });
+        return;
+      }
       if (mounted) setState(() => _loadFailed = true);
       return;
     }
@@ -205,6 +237,14 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
         });
         return;
       }
+    }
+    if (await _tryPlayPlaceholder()) {
+      if (mounted) setState(() {
+        _initialized = true;
+        _loadFailed = false;
+        _isRetrying = false;
+      });
+      return;
     }
     if (mounted) setState(() {
       _loadFailed = true;
