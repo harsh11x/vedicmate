@@ -64,7 +64,6 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
       value: statusBarStyle.copyWith(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isDarkBackground ? Brightness.light : Brightness.dark,
-        statusBarContrastEnforced: false,
       ),
       child: Scaffold(
         extendBody: true,
