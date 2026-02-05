@@ -2456,6 +2456,13 @@ app.post('/api/reels/:id/comment', (req, res) => {
   }
 });
 
+// Map video extension to Content-Type for proper playback
+const VIDEO_MIME = {
+  mp4: 'video/mp4', mov: 'video/quicktime', qt: 'video/quicktime', quicktime: 'video/quicktime',
+  webm: 'video/webm', m4v: 'video/x-m4v', '3gp': 'video/3gpp', avi: 'video/x-msvideo',
+  mkv: 'video/x-matroska', ogv: 'video/ogg', wmv: 'video/x-ms-wmv'
+};
+
 // Video proxy - serves from reels/videos/
 app.get('/api/assets/video', (req, res) => {
   try {
@@ -2469,7 +2476,9 @@ app.get('/api/assets/video', (req, res) => {
       console.error('[Video] Not found:', filePath);
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
-    res.setHeader('Content-Type', 'video/mp4');
+    const ext = path.extname(fileName).slice(1).toLowerCase();
+    const contentType = VIDEO_MIME[ext] || 'video/mp4';
+    res.setHeader('Content-Type', contentType);
     res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -2481,10 +2490,11 @@ app.get('/api/assets/video', (req, res) => {
 });
 
 // Video streaming - serves from reels/videos/ or assets/videos/reels/ (fallback)
+const ALLOWED_VIDEO_EXT = /\.(mp4|mov|webm|m4v|3gp|avi|mkv|ogv|wmv|qt|quicktime)$/i;
 app.get('/api/reels/video/:filename', (req, res) => {
   try {
     const filename = path.basename(req.params.filename).replace(/\.\./g, '').replace(/[^a-zA-Z0-9_.-]/g, '');
-    if (!/\.(mp4|mov|webm|m4v)$/i.test(filename) || filename.length < 5) {
+    if (!ALLOWED_VIDEO_EXT.test(filename) || filename.length < 5) {
       return res.status(403).json({ success: false, error: 'Invalid filename' });
     }
     let filePath = path.join(REELS_VIDEOS_DIR, filename);
@@ -2495,7 +2505,9 @@ app.get('/api/reels/video/:filename', (req, res) => {
       console.error('[Reels Video] Not found:', filename, 'checked:', REELS_VIDEOS_DIR, 'and assets/videos/reels');
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
-    res.setHeader('Content-Type', 'video/mp4');
+    const ext = path.extname(filename).slice(1).toLowerCase();
+    const contentType = VIDEO_MIME[ext] || 'video/mp4';
+    res.setHeader('Content-Type', contentType);
     res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -2518,7 +2530,10 @@ app.post('/api/admin/upload-video', (req, res) => {
 
     const type = matches[1];
     const buffer = Buffer.from(matches[2], 'base64');
-    const extension = type.split('/')[1] || 'mp4';
+    const mimeSub = (type.split('/')[1] || 'mp4').toLowerCase();
+    // Map MIME subtype to standard file extension
+    const extMap = { quicktime: 'mov', 'x-m4v': 'm4v', '3gpp': '3gp', 'x-msvideo': 'avi', 'x-matroska': 'mkv', ogg: 'ogv', 'x-ms-wmv': 'wmv' };
+    const extension = extMap[mimeSub] || mimeSub;
     const fileName = `reel_${Date.now()}.${extension}`;
 
     const filePath = path.join(REELS_VIDEOS_DIR, fileName);

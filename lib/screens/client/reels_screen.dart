@@ -146,16 +146,21 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
 
   List<String> _buildVideoUrls() {
     if (widget.reel.videoUrl.isEmpty) return [];
-    final filename = widget.reel.videoUrl.contains('/')
-        ? widget.reel.videoUrl.split('/').last
-        : widget.reel.videoUrl;
+    final raw = widget.reel.videoUrl;
+    final filename = raw.contains('/') ? raw.split('/').last : raw;
     final base = EnvConfig.apiBaseUrl.replaceAll('/api', '').replaceAll(RegExp(r'/+$'), '');
-    return [
-      if (widget.reel.videoUrl.startsWith('http')) widget.reel.videoUrl,
-      '${ApiConfig.baseUrl}/reels/video/$filename',
-      '$base/reels/videos/$filename',
-      '$base/assets/videos/reels/$filename',
-    ]..removeWhere((u) => u.isEmpty);
+    final urls = <String>[];
+    if (raw.startsWith('http://') || raw.startsWith('https://')) {
+      urls.add(raw);
+    } else {
+      // Server path - try full path first
+      urls.add('$base/${raw.startsWith('/') ? raw.substring(1) : raw}');
+      urls.add('${ApiConfig.baseUrl}/reels/video/$filename');
+      urls.add('$base/reels/videos/$filename');
+      urls.add('$base/assets/videos/reels/$filename');
+      urls.add('$base/api/reels/video/$filename');
+    }
+    return urls..removeWhere((u) => u.isEmpty);
   }
 
   Future<bool> _tryPlayUrl(String url) async {
@@ -166,7 +171,7 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
         httpHeaders: {'User-Agent': 'VedicMate/1.0', 'Accept': '*/*'},
       );
       await c.initialize().timeout(
-        const Duration(seconds: 12),
+        const Duration(seconds: 20),
         onTimeout: () => throw Exception('Timeout'),
       );
       if (!mounted) {
