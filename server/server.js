@@ -2465,15 +2465,19 @@ app.get('/api/assets/video', (req, res) => {
   }
 });
 
-// Simpler video URL: /api/reels/video/reel_xxx.mp4
+// Simpler video URL: /api/reels/video/xxx.mp4
 app.get('/api/reels/video/:filename', (req, res) => {
   try {
-    const filename = path.basename(req.params.filename).replace(/\.\./g, '');
-    if (!/^reel_.*\.(mp4|mov|webm)$/i.test(filename)) {
+    const filename = path.basename(req.params.filename).replace(/\.\./g, '').replace(/[^a-zA-Z0-9_.-]/g, '');
+    if (!/\.(mp4|mov|webm|m4v)$/i.test(filename) || filename.length < 5) {
       return res.status(403).json({ success: false, error: 'Invalid filename' });
     }
-    const filePath = path.join(videoDir, filename);
+    let filePath = path.join(videoDir, filename);
     if (!fs.existsSync(filePath)) {
+      filePath = path.join(__dirname, 'assets', 'videos', 'reels', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+      console.error('[Reels Video] Not found:', filename);
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
     res.setHeader('Content-Type', 'video/mp4');

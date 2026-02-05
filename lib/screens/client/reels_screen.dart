@@ -164,12 +164,17 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
       urls.insert(0, widget.reel.videoUrl);
     }
 
+    final headers = {'User-Agent': 'VedicMate/1.0', 'Accept': '*/*'};
+
     for (final url in urls) {
       VideoPlayerController? controller;
       try {
-        controller = VideoPlayerController.networkUrl(Uri.parse(url));
+        controller = VideoPlayerController.networkUrl(
+          Uri.parse(url),
+          httpHeaders: headers,
+        );
         await controller.initialize().timeout(
-          const Duration(seconds: 12),
+          const Duration(seconds: 15),
           onTimeout: () => throw Exception('Timeout'),
         );
         controller.setLooping(true);
@@ -187,6 +192,11 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
       }
     }
     if (mounted) setState(() => _loadFailed = true);
+  }
+
+  void _retryVideo() {
+    setState(() => _loadFailed = false);
+    _initializeVideo();
   }
 
   @override
@@ -226,15 +236,27 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
             color: Colors.black,
             child: _loadFailed
                 ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.videocam_off, size: 64, color: Colors.white38),
-                        const SizedBox(height: 12),
-                        Text('Video unavailable', style: GoogleFonts.outfit(color: Colors.white54, fontSize: 14)),
-                        const SizedBox(height: 8),
-                        Text(widget.reel.description, style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12), maxLines: 3, textAlign: TextAlign.center),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.videocam_off, size: 64, color: Colors.white38),
+                          const SizedBox(height: 12),
+                          Text('Video unavailable', style: GoogleFonts.outfit(color: Colors.white54, fontSize: 14)),
+                          if (widget.reel.description.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Text(widget.reel.description, style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12), maxLines: 3, textAlign: TextAlign.center),
+                          ],
+                          const SizedBox(height: 16),
+                          FilledButton.icon(
+                            onPressed: _retryVideo,
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text('Retry'),
+                            style: FilledButton.styleFrom(backgroundColor: AppTheme.divineGold, foregroundColor: Colors.black),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 : _initialized
