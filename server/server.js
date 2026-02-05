@@ -2276,6 +2276,10 @@ if (!fs.existsSync(REELS_VIDEOS_DIR)) {
   fs.mkdirSync(REELS_VIDEOS_DIR, { recursive: true });
   console.log('📁 Created reels/videos directory');
 }
+const LEGACY_VIDEOS_DIR = path.join(__dirname, 'assets', 'videos', 'reels');
+if (!fs.existsSync(LEGACY_VIDEOS_DIR)) {
+  fs.mkdirSync(LEGACY_VIDEOS_DIR, { recursive: true });
+}
 if (!fs.existsSync(REELS_FILE)) {
   fs.writeFileSync(REELS_FILE, JSON.stringify([], null, 2));
   console.log('📄 Created reels/reels.json');
@@ -2472,16 +2476,19 @@ app.get('/api/assets/video', (req, res) => {
   }
 });
 
-// Video streaming - serves from reels/videos/
+// Video streaming - serves from reels/videos/ or assets/videos/reels/ (fallback)
 app.get('/api/reels/video/:filename', (req, res) => {
   try {
     const filename = path.basename(req.params.filename).replace(/\.\./g, '').replace(/[^a-zA-Z0-9_.-]/g, '');
     if (!/\.(mp4|mov|webm|m4v)$/i.test(filename) || filename.length < 5) {
       return res.status(403).json({ success: false, error: 'Invalid filename' });
     }
-    const filePath = path.join(REELS_VIDEOS_DIR, filename);
+    let filePath = path.join(REELS_VIDEOS_DIR, filename);
     if (!fs.existsSync(filePath)) {
-      console.error('[Reels Video] Not found:', filename, 'in', REELS_VIDEOS_DIR);
+      filePath = path.join(__dirname, 'assets', 'videos', 'reels', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+      console.error('[Reels Video] Not found:', filename, 'checked:', REELS_VIDEOS_DIR, 'and assets/videos/reels');
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
     res.setHeader('Content-Type', 'video/mp4');

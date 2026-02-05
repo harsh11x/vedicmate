@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
       { source: '/api/:path*', destination: `${base}/api/:path*` },
       { source: '/socket.io/:path*', destination: `${base}/socket.io/:path*` },
       { source: '/assets/:path*', destination: `${base}/assets/:path*` },
+      { source: '/reels/:path*', destination: `${base}/reels/:path*` },
     ];
   },
 };

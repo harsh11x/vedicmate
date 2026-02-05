@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_client.dart';
 import '../services/live_service.dart';
+import '../services/socket_service.dart';
 import '../services/settings_service.dart';
 import '../services/booking_service.dart';
 import '../services/chat_service.dart';
@@ -26,6 +27,10 @@ final productsProvider = FutureProvider.family<List<Map<String, dynamic>>, Strin
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient();
+});
+
+final socketServiceProvider = Provider<SocketService>((ref) {
+  return SocketService();
 });
 
 final horoscopeServiceProvider = Provider<HoroscopeService>((ref) {

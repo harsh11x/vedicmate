@@ -5,6 +5,18 @@ const fs = require('fs');
 const path = require('path');
 const httpProxy = require('http-proxy');
 
+// Load env for AWS backend URL (production)
+try {
+  const envPath = path.join(__dirname, '.env.local');
+  if (fs.existsSync(envPath)) {
+    const env = fs.readFileSync(envPath, 'utf8');
+    env.split('\n').forEach(line => {
+      const m = line.match(/^([^#=]+)=(.*)$/);
+      if (m) process.env[m[1].trim()] = m[2].trim();
+    });
+  }
+} catch (_) {}
+
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -17,7 +29,7 @@ const httpsOptions = {
 };
 
 const PORT = 3000;
-const API_URL = 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3001';
 
 const proxy = httpProxy.createProxyServer({
     target: API_URL,

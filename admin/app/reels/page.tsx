@@ -16,6 +16,13 @@ interface Reel {
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
+const API_ROOT = (process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, "") || "http://localhost:3001").replace(/\/+$/, "");
+
+function getVideoSrc(videoUrl: string): string {
+  if (!videoUrl) return "";
+  if (videoUrl.startsWith("http://") || videoUrl.startsWith("https://")) return videoUrl;
+  return `${API_ROOT}/${videoUrl.replace(/^\//, "")}`;
+}
 
 export default function ReelsPage() {
     const [reels, setReels] = useState<Reel[]>([]);
@@ -200,7 +207,7 @@ export default function ReelsPage() {
                             {/* Video Thumbnail / Preview */}
                             <div className="aspect-[9/16] bg-black relative">
                                 <video
-                                    src={`${API_BASE.replace('/api', '')}/${reel.videoUrl}`}
+                                    src={getVideoSrc(reel.videoUrl)}
                                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                                     muted
                                     loop
@@ -351,7 +358,7 @@ export default function ReelsPage() {
                             {/* Video Preview Small */}
                             <div className="flex gap-4 items-start bg-gray-50 p-4 rounded-xl">
                                 <video
-                                    src={`${API_BASE.replace('/api', '')}/${selectedReel.videoUrl}`}
+                                    src={getVideoSrc(selectedReel.videoUrl)}
                                     className="w-24 h-40 object-cover rounded-lg bg-black"
                                 />
                                 <div>

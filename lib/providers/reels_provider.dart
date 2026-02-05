@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import 'auth_provider.dart';
+import 'api_providers.dart';
 
 // --- Models ---
 
@@ -87,9 +89,29 @@ final reelsProvider = StateNotifierProvider<ReelsNotifier, AsyncValue<List<Reel>
 
 class ReelsNotifier extends StateNotifier<AsyncValue<List<Reel>>> {
   final Ref ref;
+  StreamSubscription<Map<String, dynamic>>? _reelsSub;
 
   ReelsNotifier(this.ref) : super(const AsyncValue.loading()) {
     fetchReels();
+    _setupRealtime();
+  }
+
+  void _setupRealtime() {
+    try {
+      final socket = ref.read(socketServiceProvider);
+      socket.connect();
+      _reelsSub = socket.watchReels().listen((_) {
+        fetchReels();
+      });
+    } catch (e) {
+      debugPrint('Reels real-time setup: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _reelsSub?.cancel();
+    super.dispose();
   }
 
   /// Call to refresh reels (e.g. pull-to-refresh)

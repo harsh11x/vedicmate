@@ -96,6 +96,10 @@ class SocketService {
            body: 'Your Pandit is live now! Join the session.',
          );
       });
+
+      // Reels real-time updates (new/delete/like/comment)
+      _socket!.on('reels-update', (data) => _emit('reels', data));
+      _socket!.on('reel-interaction', (data) => _emit('reels', data));
     } catch (e) {
       print('❌ Socket connection error: $e');
     }
@@ -176,6 +180,14 @@ class SocketService {
       _controllers[key] = StreamController<dynamic>.broadcast();
     }
     return _controllers[key]!.stream;
+  }
+
+  Stream<Map<String, dynamic>> watchReels() {
+    const key = 'reels';
+    if (!_controllers.containsKey(key)) {
+      _controllers[key] = StreamController<Map<String, dynamic>>.broadcast();
+    }
+    return _controllers[key]!.stream.cast<Map<String, dynamic>>();
   }
 
   void _emit(String key, dynamic data) {
