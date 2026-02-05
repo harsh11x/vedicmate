@@ -41,9 +41,9 @@ class CustomRequestBanner extends StatelessWidget {
               // Title
               Text(
                 'Custom Request',
-                style: GoogleFonts.playfairDisplay(
+                style: GoogleFonts.outfit(
                   color: AppTheme.white,
-                  fontSize: 26,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
                 ),

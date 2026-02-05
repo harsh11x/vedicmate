@@ -105,7 +105,7 @@ class _CustomRequestOrdersScreenState extends State<CustomRequestOrdersScreen> {
             const SizedBox(width: 8),
             _buildFilterChip('Accepted', 'accepted'),
             const SizedBox(width: 8),
-            _buildFilterChip('Rejected', 'rejected'),
+            _buildFilterChip('Cancelled', 'cancelled'),
           ],
         ),
       ),
@@ -158,12 +158,12 @@ class _CustomRequestOrdersScreenState extends State<CustomRequestOrdersScreen> {
   }
 
   Widget _buildOrderCard(Map<String, dynamic> order) {
-    final status = order['status'] as String;
-    final paymentStatus = order['paymentStatus'] as String;
+    final status = (order['status'] ?? 'pending') as String;
+    final paymentStatus = (order['paymentStatus'] ?? 'pending') as String;
     final amount = order['amount'];
-    final serviceType = order['serviceType'] as String;
-    final date = order['date'] as String;
-    final timeSlot = order['timeSlot'] as String;
+    final serviceType = (order['serviceType'] ?? order['serviceName'] ?? 'Custom Request') as String;
+    final date = (order['date'] ?? order['preferredDate'] ?? '') as String;
+    final timeSlot = (order['timeSlot'] ?? order['preferredTime'] ?? '') as String;
     final joiningLink = order['joiningLink'] as String?;
     final finalDate = order['finalDate'] as String?;
     final finalTime = order['finalTime'] as String?;
@@ -202,7 +202,7 @@ class _CustomRequestOrdersScreenState extends State<CustomRequestOrdersScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Order ID: ${order['orderId']}',
+                        'Order ID: ${order['orderId'] ?? order['id'] ?? order['requestId'] ?? '-'}',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           color: AppTheme.neutralMedium,
@@ -228,11 +228,14 @@ class _CustomRequestOrdersScreenState extends State<CustomRequestOrdersScreen> {
                   _buildDetailRow(Icons.event_available, 'Confirmed Date', '$finalDate • $finalTime', isHighlighted: true),
                 ],
                 const SizedBox(height: 8),
-                _buildDetailRow(Icons.payment, 'Amount', amount == 'TBD' ? 'Price TBD' : '₹$amount'),
+                _buildDetailRow(Icons.payment, 'Amount', amount == 'TBD' || amount == null ? 'Price TBD' : '₹$amount'),
                 const SizedBox(height: 8),
-                _buildDetailRow(Icons.credit_card, 'Payment', paymentStatus == 'paid' ? 'Paid' : 'Failed', 
+                _buildDetailRow(Icons.credit_card, 'Payment', paymentStatus == 'paid' ? 'Paid' : (paymentStatus == 'pending' ? 'TBD / Pending' : 'Failed'), 
                   isHighlighted: paymentStatus == 'paid'),
-                
+                if (order['adminNotes'] != null && (order['adminNotes'] as String).isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _buildDetailRow(Icons.note, 'Admin Note', order['adminNotes'] as String),
+                ],
                 // Joining Link
                 if (joiningLink != null) ...[
                   const Divider(height: 24),
@@ -308,8 +311,11 @@ class _CustomRequestOrdersScreenState extends State<CustomRequestOrdersScreen> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'accepted':
+      case 'scheduled':
+      case 'completed':
         return Colors.green;
       case 'rejected':
+      case 'cancelled':
         return Colors.red;
       default:
         return Colors.orange;

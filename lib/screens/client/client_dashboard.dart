@@ -1656,7 +1656,7 @@ class _CustomBookingBanner extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     'Personalize Your Spiritual Journey',
-                    style: GoogleFonts.playfairDisplay(
+                    style: GoogleFonts.outfit(
                       color: AppTheme.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

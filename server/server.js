@@ -1585,16 +1585,20 @@ app.get('/api/admin/custom-requests', (req, res) => {
 app.put('/api/admin/custom-requests/:id', (req, res) => {
   try {
     const requests = readCustomRequests();
-    const index = requests.findIndex(r => r.id === req.params.id || r.requestId === req.params.id);
+    const index = requests.findIndex(r =>
+      r.id === req.params.id || r.requestId === req.params.id || r.orderId === req.params.id
+    );
     if (index === -1) return res.status(404).json({ success: false, error: 'Request not found' });
 
     const updates = req.body;
+    const adminNote = updates.notes || updates.adminNotes || requests[index].adminNotes || requests[index].notes;
     requests[index] = {
       ...requests[index],
       status: updates.status || requests[index].status,
       paymentStatus: updates.paymentStatus || requests[index].paymentStatus,
-      price: updates.price || requests[index].price,
-      notes: updates.notes || requests[index].notes,
+      price: updates.price ?? requests[index].price,
+      notes: adminNote,
+      adminNotes: adminNote,
       liveSessionId: updates.liveSessionId || requests[index].liveSessionId,
       updatedAt: new Date().toISOString()
     };
@@ -2531,7 +2535,64 @@ app.post('/api/admin/upload-video', (req, res) => {
 
 // ==================== Custom Request Endpoints ====================
 
-// 1. Create Custom Request Order
+// 1a. Create Custom Request (TBD - no payment, price discussed after contact)
+app.post('/api/custom-requests/create-tbd', (req, res) => {
+  try {
+    const { userId, userName, userEmail, userPhone, serviceType, date, timeSlot, requirements } = req.body;
+
+    if (!userId || !serviceType || !date || !timeSlot) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
+      });
+    }
+
+    const orderId = `CR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const order = {
+      orderId,
+      id: orderId,
+      userId,
+      userName: userName || 'User',
+      userEmail: userEmail || '',
+      userPhone: userPhone || '',
+      serviceType,
+      date,
+      timeSlot,
+      requirements: requirements || '',
+      amount: 'TBD',
+      status: 'pending',
+      paymentStatus: 'pending',
+      razorpayOrderId: null,
+      razorpayPaymentId: null,
+      joiningLink: null,
+      adminNotes: null,
+      finalDate: null,
+      finalTime: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      acceptedAt: null,
+      rejectedAt: null
+    };
+
+    const requests = readCustomRequests();
+    requests.unshift(order);
+    writeCustomRequests(requests);
+
+    io.emit('custom-requests-update', { action: 'new', request: order });
+
+    res.json({
+      success: true,
+      orderId,
+      message: 'Custom request submitted. You will be contacted for pricing.'
+    });
+  } catch (error) {
+    console.error('Create TBD Request Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 1b. Create Custom Request Order (with Razorpay)
 app.post('/api/custom-requests/create', async (req, res) => {
   try {
     const { userId, userName, userEmail, userPhone, serviceType, date, timeSlot, requirements, amount } = req.body;

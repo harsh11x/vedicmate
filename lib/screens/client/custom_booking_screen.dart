@@ -70,9 +70,9 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
 
     final priceValue = _servicePrices[_selectedType];
     
-    // Handle TBD pricing
+    // Handle TBD pricing - submit request without payment
     if (priceValue == 'TBD') {
-      _showContactDialog();
+      await _submitTbdRequest();
       return;
     }
 
@@ -226,20 +226,84 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
     );
   }
 
-  void _showContactDialog() {
+  Future<void> _submitTbdRequest() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please log in to continue')));
+      return;
+    }
+    setState(() => _isProcessing = true);
+    try {
+      final res = await CustomRequestService.createTbdRequest(
+        userId: user.uid,
+        userName: user.displayName ?? 'User',
+        userEmail: user.email ?? '',
+        userPhone: user.phoneNumber ?? '',
+        serviceType: _selectedType,
+        date: DateFormat('yyyy-MM-dd').format(_selectedDate),
+        timeSlot: _selectedTimeSlot!,
+        requirements: _requirementsController.text.trim(),
+      );
+      if (res['success'] == true && mounted) {
+        _showTbdSuccessDialog();
+      } else {
+        throw Exception(res['error'] ?? 'Failed to submit');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString().replaceFirst('Exception: ', '')}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  void _showTbdSuccessDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Contact Us', style: GoogleFonts.outfit(fontSize: 18)),
+        title: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check_circle, color: Colors.green, size: 48),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Request Sent!',
+              style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         content: Text(
-          'For custom requests, please contact our team to discuss pricing and requirements.',
+          'Custom request has been sent. Once confirmed, it will be reflected in your orders in the Settings page.',
+          textAlign: TextAlign.center,
           style: GoogleFonts.outfit(fontSize: 14),
         ),
         actions: [
           TextButton(
-            onPressed: () => context.pop(),
+            onPressed: () {
+              context.pop();
+              context.pop();
+            },
             child: Text('OK', style: GoogleFonts.outfit(color: AppTheme.primaryOrange)),
+          ),
+          FilledButton(
+            onPressed: () {
+              context.pop();
+              context.pop();
+              context.push('/custom-requests/orders');
+            },
+            style: FilledButton.styleFrom(backgroundColor: AppTheme.primaryOrange),
+            child: Text('View Orders', style: GoogleFonts.outfit(color: Colors.white)),
           ),
         ],
       ),

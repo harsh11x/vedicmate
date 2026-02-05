@@ -31,8 +31,11 @@ export default function CustomRequestsPage() {
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState<CustomRequest | null>(null);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [showAcceptModal, setShowAcceptModal] = useState(false);
+    const [showCancelModal, setShowCancelModal] = useState(false);
     const [filter, setFilter] = useState("all");
     const [error, setError] = useState<string | null>(null);
+    const [actionNote, setActionNote] = useState("");
 
     const [scheduleForm, setScheduleForm] = useState({
         panditName: "",
@@ -52,7 +55,7 @@ export default function CustomRequestsPage() {
             const res = await fetch(url);
             if (!res.ok) throw new Error("Failed to fetch");
             const data = await res.json();
-            setRequests(data.data || []);
+            setRequests(data.requests || data.data || []);
         } catch (err) {
             setError("Unable to connect to server");
             console.error("Error:", err);
@@ -65,13 +68,19 @@ export default function CustomRequestsPage() {
         fetchRequests();
     }, [filter]);
 
-    const updateStatus = async (id: string, status: string) => {
+    const getId = (req: CustomRequest & { orderId?: string }) => req.orderId || req.id || req.requestId;
+
+    const updateStatus = async (id: string, status: string, notes?: string) => {
         try {
             await fetch(`${API_BASE}/admin/custom-requests/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status }),
+                body: JSON.stringify({ status, notes: notes || undefined }),
             });
+            setShowAcceptModal(false);
+            setShowCancelModal(false);
+            setSelectedRequest(null);
+            setActionNote("");
             fetchRequests();
         } catch (err) {
             console.error("Error:", err);
@@ -188,7 +197,7 @@ export default function CustomRequestsPage() {
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="text-lg font-bold text-gray-800">{request.serviceName}</h3>
+                                            <h3 className="text-lg font-bold text-gray-800">{request.serviceName || request.serviceType || "Custom Request"}</h3>
                                             <span className={`${request.status === 'pending' ? 'badge-pending' :
                                                 request.status === 'scheduled' ? 'badge-scheduled' :
                                                     request.status === 'completed' ? 'badge-completed' : 'badge-cancelled'
@@ -196,20 +205,24 @@ export default function CustomRequestsPage() {
                                                 {request.status}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-gray-400 font-mono">{request.requestId}</p>
+                                        <p className="text-sm text-gray-400 font-mono">{request.orderId || request.requestId || request.id}</p>
                                         <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
                                             <span className="flex items-center gap-1.5">👤 {request.userName || "Unknown"}</span>
                                             <span className="flex items-center gap-1.5">📞 {request.userPhone || "N/A"}</span>
-                                            <span className="flex items-center gap-1.5">📅 {request.preferredDate || "Flexible"} {request.preferredTime}</span>
+                                            <span className="flex items-center gap-1.5">📅 {request.preferredDate || request.date || "Flexible"} {request.preferredTime || request.timeSlot || ""}</span>
                                         </div>
+                                        {(request as any).adminNotes && (
+                                            <p className="mt-2 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded">Note: {(request as any).adminNotes}</p>
+                                        )}
                                     </div>
                                 </div>
 
                                 {/* Right: Actions */}
                                 <div className="flex items-center gap-3 mt-4 lg:mt-0">
-                                    {request.price > 0 && (
-                                        <span className="text-xl font-bold text-orange-600">₹{request.price}</span>
+                                    {(request.price > 0 || request.amount > 0) && (
+                                        <span className="text-xl font-bold text-orange-600">₹{request.price || request.amount}</span>
                                     )}
+                                    {request.amount === "TBD" && <span className="text-sm text-gray-500">Price TBD</span>}
 
                                     {request.status === "pending" && (
                                         <>
@@ -223,10 +236,16 @@ export default function CustomRequestsPage() {
                                                 Schedule Session
                                             </button>
                                             <button
-                                                onClick={() => updateStatus(request.id, "rejected")}
+                                                onClick={() => { setSelectedRequest(request); setShowAcceptModal(true); }}
+                                                className="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold text-sm"
+                                            >
+                                                Accept
+                                            </button>
+                                            <button
+                                                onClick={() => { setSelectedRequest(request); setShowCancelModal(true); }}
                                                 className="btn-secondary"
                                             >
-                                                Reject
+                                                Cancel
                                             </button>
                                         </>
                                     )}
@@ -329,6 +348,50 @@ export default function CustomRequestsPage() {
                             <button onClick={createLiveSession} className="btn-primary w-full py-4 text-base mt-4">
                                 Create Live Session
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Accept with Note Modal */}
+            {showAcceptModal && selectedRequest && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => { setShowAcceptModal(false); setSelectedRequest(null); setActionNote(""); }}>
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="text-xl font-bold text-gray-800 mb-4">Accept Request</h2>
+                        <p className="text-sm text-gray-500 mb-4">{selectedRequest.serviceName || selectedRequest.serviceType} - {selectedRequest.userName}</p>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Note (optional - will be shown to user)</label>
+                        <textarea
+                            value={actionNote}
+                            onChange={(e) => setActionNote(e.target.value)}
+                            placeholder="e.g. We will contact you within 24 hours to finalize the session."
+                            rows={3}
+                            className="modern-input resize-none w-full mb-4"
+                        />
+                        <div className="flex gap-3">
+                            <button onClick={() => { setShowAcceptModal(false); setSelectedRequest(null); setActionNote(""); }} className="btn-secondary flex-1">Cancel</button>
+                            <button onClick={() => updateStatus(getId(selectedRequest as any), "accepted", actionNote)} className="flex-1 px-4 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Cancel with Note Modal */}
+            {showCancelModal && selectedRequest && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => { setShowCancelModal(false); setSelectedRequest(null); setActionNote(""); }}>
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="text-xl font-bold text-gray-800 mb-4">Cancel Request</h2>
+                        <p className="text-sm text-gray-500 mb-4">{selectedRequest.serviceName || selectedRequest.serviceType} - {selectedRequest.userName}</p>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Reason / Note (will be shown to user)</label>
+                        <textarea
+                            value={actionNote}
+                            onChange={(e) => setActionNote(e.target.value)}
+                            placeholder="e.g. We are unable to accommodate this request at the requested time."
+                            rows={3}
+                            className="modern-input resize-none w-full mb-4"
+                        />
+                        <div className="flex gap-3">
+                            <button onClick={() => { setShowCancelModal(false); setSelectedRequest(null); setActionNote(""); }} className="btn-secondary flex-1">Back</button>
+                            <button onClick={() => updateStatus(getId(selectedRequest as any), "cancelled", actionNote)} className="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold">Confirm Cancel</button>
                         </div>
                     </div>
                 </div>

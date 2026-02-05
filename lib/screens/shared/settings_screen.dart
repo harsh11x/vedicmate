@@ -254,6 +254,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _QuickActionButton(
+                      icon: Icons.handshake_outlined,
+                      label: 'Requests',
+                      color: AppTheme.accentGold,
+                      onTap: () => context.push('/custom-requests/orders'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _QuickActionButton(
                       icon: Icons.history,
                       label: 'History',
                       color: AppTheme.infoBlue,
