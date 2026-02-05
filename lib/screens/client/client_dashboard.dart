@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
@@ -55,9 +56,19 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: Stack(
+    final isDarkBackground = _currentIndex == 2;
+    final statusBarStyle = isDarkBackground
+        ? SystemUiOverlayStyle.light
+        : SystemUiOverlayStyle.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: statusBarStyle.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDarkBackground ? Brightness.light : Brightness.dark,
+        statusBarContrastEnforced: false,
+      ),
+      child: Scaffold(
+        extendBody: true,
+        body: Stack(
         children: [
           // Background Gradient only (No image to prevent overlap with Scaffold/Theme background)
           Positioned.fill(
@@ -92,30 +103,29 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
             bottom: 20,
             left: 20,
             right: 20,
-            child: Container(
-              decoration: AppTheme.glassMorphism,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildNavItem(Icons.home_rounded, 'Home', 0),
-                        _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
-                        _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
-                        _buildNavItem(Icons.shopping_bag_rounded, 'Remedies', 3),
-                        _buildNavItem(Icons.person_rounded, 'Profile', 4),
-                      ],
-                    ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                child: Container(
+                  decoration: AppTheme.navBarGlass,
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildNavItem(Icons.home_rounded, 'Home', 0),
+                      _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
+                      _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
+                      _buildNavItem(Icons.shopping_bag_rounded, 'Remedies', 3),
+                      _buildNavItem(Icons.person_rounded, 'Profile', 4),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
         ],
+      ),
       ),
     );
   }

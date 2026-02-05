@@ -118,10 +118,28 @@ class AppTheme {
   ];
 
   static BoxDecoration get glassMorphism => BoxDecoration(
-    color: divineSurface.withOpacity(0.95), // Less transparent, more solid/premium
+    color: divineSurface.withOpacity(0.95),
     borderRadius: BorderRadius.circular(24),
     border: Border.all(color: Colors.black.withOpacity(0.03)),
     boxShadow: softShadow,
+  );
+
+  static BoxDecoration get navBarGlass => BoxDecoration(
+    color: Colors.white.withOpacity(0.2),
+    borderRadius: BorderRadius.circular(28),
+    border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 30,
+        offset: const Offset(0, 8),
+      ),
+      BoxShadow(
+        color: Colors.white.withOpacity(0.6),
+        blurRadius: 2,
+        offset: const Offset(0, -1),
+      ),
+    ],
   );
 
   // ===========================================================================
