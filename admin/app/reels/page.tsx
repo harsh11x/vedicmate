@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { Trash2, Heart, MessageCircle, Upload, X, Play, Users } from "lucide-react";
+import { Trash2, Heart, MessageCircle, Upload, X, Play } from "lucide-react";
+import { uploadReelToFirebase, isFirebaseConfigured } from "@/lib/firebase";
 
 interface Reel {
     id: string;
@@ -67,30 +67,35 @@ export default function ReelsPage() {
     const handleUpload = async () => {
         if (!videoFile) return alert("Please select a video");
 
-        // Check size (e.g., 50MB limit matching server)
         if (videoFile.size > 50 * 1024 * 1024) {
             return alert("Video is too large. Max 50MB.");
         }
 
         setUploading(true);
         try {
-            // 1. Upload Video
-            const base64Video = await toBase64(videoFile);
-            const uploadRes = await fetch(`${API_BASE}/admin/upload-video`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ video: base64Video, name: "reel_upload" }),
-            });
-            const uploadData = await uploadRes.json();
+            let videoUrl: string;
+            if (isFirebaseConfigured()) {
+                const firebaseUrl = await uploadReelToFirebase(videoFile);
+                if (!firebaseUrl) throw new Error("Firebase upload failed");
+                videoUrl = firebaseUrl;
+            } else {
+                const base64Video = await toBase64(videoFile);
+                const uploadRes = await fetch(`${API_BASE}/admin/upload-video`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ video: base64Video, name: "reel_upload" }),
+                });
+                const uploadData = await uploadRes.json();
+                if (!uploadData.success) throw new Error(uploadData.error || "Upload failed");
+                videoUrl = uploadData.url;
+            }
 
-            if (!uploadData.success) throw new Error(uploadData.error || "Upload failed");
-
-            // 2. Create Reel Entry
+            // Create Reel Entry
             const createRes = await fetch(`${API_BASE}/admin/reels`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    videoUrl: uploadData.url,
+                    videoUrl,
                     description,
                     hashtags: hashtags.split(",").map(tag => tag.trim()).filter(t => t),
                 }),

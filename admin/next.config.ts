@@ -15,15 +15,12 @@ const nextConfig: NextConfig = {
   },
   */
   async rewrites() {
+    const backend = process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3001';
+    const base = backend.replace(/\/+$/, '');
     return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:3001/api/:path*',
-      },
-      {
-        source: '/socket.io/:path*',
-        destination: 'http://localhost:3001/socket.io/:path*',
-      },
+      { source: '/api/:path*', destination: `${base}/api/:path*` },
+      { source: '/socket.io/:path*', destination: `${base}/socket.io/:path*` },
+      { source: '/assets/:path*', destination: `${base}/assets/:path*` },
     ];
   },
 };

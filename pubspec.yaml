@@ -76,7 +76,6 @@ flutter:
     - assets/images/services/
     - assets/icons/
     - assets/animations/
-    - assets/videos/reels/
 
 flutter_launcher_icons:
   android: true
