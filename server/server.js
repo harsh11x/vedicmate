@@ -47,6 +47,11 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Serve static assets (images)
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
+// Reels: dedicated folder - videos + metadata (admin uploads here, app fetches from here)
+const REELS_DIR = path.join(__dirname, 'reels');
+const REELS_VIDEOS_DIR = path.join(REELS_DIR, 'videos');
+app.use('/reels/videos', express.static(REELS_VIDEOS_DIR));
+
 const DATA_DIR = path.join(__dirname, 'data');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
@@ -2259,24 +2264,25 @@ app.get('/api/bookings', (req, res) => {
 // ============================================================================
 // REELS FEATURE API
 // ============================================================================
+// All reels data lives in server/reels/ - videos in reels/videos/, metadata in reels/reels.json
 
-const REELS_FILE = path.join(DATA_DIR, 'reels.json');
+const REELS_FILE = path.join(REELS_DIR, 'reels.json');
 
-// Initialize Reels File
+if (!fs.existsSync(REELS_DIR)) {
+  fs.mkdirSync(REELS_DIR, { recursive: true });
+  console.log('📁 Created reels directory');
+}
+if (!fs.existsSync(REELS_VIDEOS_DIR)) {
+  fs.mkdirSync(REELS_VIDEOS_DIR, { recursive: true });
+  console.log('📁 Created reels/videos directory');
+}
 if (!fs.existsSync(REELS_FILE)) {
   fs.writeFileSync(REELS_FILE, JSON.stringify([], null, 2));
-  console.log('📄 Created reels.json');
+  console.log('📄 Created reels/reels.json');
 }
 
-// Helpers
 const readReels = () => readJsonFile(REELS_FILE, []);
 const writeReels = (data) => writeJsonFile(REELS_FILE, data);
-
-// Ensure video upload directory exists
-const videoDir = path.join(__dirname, 'assets', 'videos', 'reels');
-if (!fs.existsSync(videoDir)) {
-  fs.mkdirSync(videoDir, { recursive: true });
-}
 
 // API: Get Reels Feed (Public/User)
 app.get('/api/reels', (req, res) => {
@@ -2329,16 +2335,24 @@ app.post('/api/admin/reels', (req, res) => {
   }
 });
 
-// Admin: Delete Reel
+// Admin: Delete Reel (removes metadata + video file from reels/videos/)
 app.delete('/api/admin/reels/:id', (req, res) => {
   try {
     let reels = readReels();
     const index = reels.findIndex(r => r.id === req.params.id);
     if (index === -1) return res.status(404).json({ success: false, error: 'Reel not found' });
 
-    // Optional: Delete physical file logic is skipped for safety to avoid deleting wrong files
-
     const deleted = reels[index];
+    const videoUrl = deleted.videoUrl || '';
+    const filename = videoUrl.includes('/') ? videoUrl.split('/').pop() : videoUrl;
+    if (filename && /^reel_.*\.(mp4|mov|webm|m4v)$/i.test(filename)) {
+      const videoPath = path.join(REELS_VIDEOS_DIR, filename);
+      if (fs.existsSync(videoPath)) {
+        fs.unlinkSync(videoPath);
+        console.log('[Reels] Deleted video:', filename);
+      }
+    }
+
     reels = reels.filter(r => r.id !== req.params.id);
     writeReels(reels);
 
@@ -2434,30 +2448,23 @@ app.post('/api/reels/:id/comment', (req, res) => {
   }
 });
 
-// Video proxy - serves reel videos. Tries: /api/assets/video?path=... AND /api/reels/video/:filename
+// Video proxy - serves from reels/videos/
 app.get('/api/assets/video', (req, res) => {
   try {
     const pathParam = req.query.path;
     if (!pathParam || typeof pathParam !== 'string') {
       return res.status(400).json({ success: false, error: 'Path required' });
     }
-    const safePath = pathParam.replace(/\.\./g, '').replace(/^\//, '');
-    const fileName = path.basename(safePath);
-    const filePath = path.join(videoDir, fileName);
+    const fileName = path.basename(pathParam.replace(/\.\./g, '').replace(/^\//, ''));
+    const filePath = path.join(REELS_VIDEOS_DIR, fileName);
     if (!fs.existsSync(filePath)) {
-      const altPath = path.join(__dirname, safePath.startsWith('assets/') ? safePath : 'assets/videos/reels/' + fileName);
-      if (!fs.existsSync(altPath)) {
-        console.error('[Video] Not found:', filePath, 'or', altPath);
-        return res.status(404).json({ success: false, error: 'Video not found' });
-      }
-      res.setHeader('Content-Type', 'video/mp4');
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.sendFile(altPath, { acceptRanges: true });
-      return;
+      console.error('[Video] Not found:', filePath);
+      return res.status(404).json({ success: false, error: 'Video not found' });
     }
     res.setHeader('Content-Type', 'video/mp4');
     res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
     res.sendFile(filePath, { acceptRanges: true });
   } catch (error) {
     console.error('[Video] Error:', error);
@@ -2465,19 +2472,16 @@ app.get('/api/assets/video', (req, res) => {
   }
 });
 
-// Video streaming - supports Range requests for mobile players
+// Video streaming - serves from reels/videos/
 app.get('/api/reels/video/:filename', (req, res) => {
   try {
     const filename = path.basename(req.params.filename).replace(/\.\./g, '').replace(/[^a-zA-Z0-9_.-]/g, '');
     if (!/\.(mp4|mov|webm|m4v)$/i.test(filename) || filename.length < 5) {
       return res.status(403).json({ success: false, error: 'Invalid filename' });
     }
-    let filePath = path.join(videoDir, filename);
+    const filePath = path.join(REELS_VIDEOS_DIR, filename);
     if (!fs.existsSync(filePath)) {
-      filePath = path.join(__dirname, 'assets', 'videos', 'reels', filename);
-    }
-    if (!fs.existsSync(filePath)) {
-      console.error('[Reels Video] Not found:', filename, 'videoDir:', videoDir);
+      console.error('[Reels Video] Not found:', filename, 'in', REELS_VIDEOS_DIR);
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
     res.setHeader('Content-Type', 'video/mp4');
@@ -2506,10 +2510,11 @@ app.post('/api/admin/upload-video', (req, res) => {
     const extension = type.split('/')[1] || 'mp4';
     const fileName = `reel_${Date.now()}.${extension}`;
 
-    const filePath = path.join(videoDir, fileName);
+    const filePath = path.join(REELS_VIDEOS_DIR, fileName);
     fs.writeFileSync(filePath, buffer);
 
-    const publicUrl = `assets/videos/reels/${fileName}`;
+    const publicUrl = `reels/videos/${fileName}`;
+    console.log('[Reels] Saved video:', fileName, 'to reels/videos/');
     res.json({ success: true, url: publicUrl });
   } catch (error) {
     console.error('Video Upload Error:', error);

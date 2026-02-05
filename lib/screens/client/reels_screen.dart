@@ -149,17 +149,12 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
     final filename = widget.reel.videoUrl.contains('/')
         ? widget.reel.videoUrl.split('/').last
         : widget.reel.videoUrl;
-    final pathPart = widget.reel.videoUrl.startsWith('assets/')
-        ? widget.reel.videoUrl
-        : 'assets/videos/reels/$filename';
-    final baseNoApi = EnvConfig.apiBaseUrl.endsWith('/api')
-        ? EnvConfig.apiBaseUrl.replaceAll('/api', '')
-        : EnvConfig.apiBaseUrl;
+    final base = EnvConfig.apiBaseUrl.replaceAll('/api', '').replaceAll(RegExp(r'/+$'), '');
     return [
       if (widget.reel.videoUrl.startsWith('http')) widget.reel.videoUrl,
       '${ApiConfig.baseUrl}/reels/video/$filename',
-      '$baseNoApi/$pathPart',
-      '${EnvConfig.apiBaseUrl}/$pathPart',
+      '$base/reels/videos/$filename',
+      '$base/assets/videos/reels/$filename',
     ]..removeWhere((u) => u.isEmpty);
   }
 
