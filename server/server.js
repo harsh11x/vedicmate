@@ -2465,7 +2465,7 @@ app.get('/api/assets/video', (req, res) => {
   }
 });
 
-// Simpler video URL: /api/reels/video/xxx.mp4
+// Video streaming - supports Range requests for mobile players
 app.get('/api/reels/video/:filename', (req, res) => {
   try {
     const filename = path.basename(req.params.filename).replace(/\.\./g, '').replace(/[^a-zA-Z0-9_.-]/g, '');
@@ -2477,12 +2477,13 @@ app.get('/api/reels/video/:filename', (req, res) => {
       filePath = path.join(__dirname, 'assets', 'videos', 'reels', filename);
     }
     if (!fs.existsSync(filePath)) {
-      console.error('[Reels Video] Not found:', filename);
+      console.error('[Reels Video] Not found:', filename, 'videoDir:', videoDir);
       return res.status(404).json({ success: false, error: 'Video not found' });
     }
     res.setHeader('Content-Type', 'video/mp4');
     res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
     res.sendFile(filePath, { acceptRanges: true });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

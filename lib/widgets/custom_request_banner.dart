@@ -55,7 +55,7 @@ class CustomRequestBanner extends StatelessWidget {
                 style: GoogleFonts.outfit(
                   color: AppTheme.white.withOpacity(0.9),
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),

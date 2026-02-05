@@ -79,10 +79,11 @@ class _AIPanditsSectionState extends State<AIPanditsSection>
                     const SizedBox(width: 12),
                     Text(
                       widget.title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.bold,
                         fontSize: 22,
                         letterSpacing: -0.5,
+                        color: AppTheme.neutralDark,
                       ),
                     ),
                   ],
@@ -325,35 +326,28 @@ class _AIPanditItemState extends State<_AIPanditItem>
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            widget.pandit.name,
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.neutralDark,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 2),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryOrange.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                          Expanded(
                             child: Text(
-                              '₹${widget.pandit.ratePerMinute.toInt()}/min',
-                              style: GoogleFonts.inter(
-                                fontSize: 10,
-                                color: AppTheme.primaryOrange,
+                              widget.pandit.name,
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
+                                color: AppTheme.neutralDark,
                               ),
-                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            '₹${widget.pandit.ratePerMinute.toInt()}/min',
+                            style: GoogleFonts.outfit(
+                              fontSize: 10,
+                              color: AppTheme.primaryOrange,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],

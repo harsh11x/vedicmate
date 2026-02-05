@@ -134,8 +134,9 @@ class ReelPlayerItem extends ConsumerStatefulWidget {
 class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
   VideoPlayerController? _videoController;
   bool _initialized = false;
-  bool _loadFailed = false; // Show placeholder when video fails
-  bool _showHeart = false; // For double tap animation
+  bool _loadFailed = false;
+  bool _showHeart = false;
+  bool _isRetrying = false;
 
   @override
   void initState() {
@@ -143,59 +144,81 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
     _initializeVideo();
   }
 
+  List<String> _buildVideoUrls() {
+    if (widget.reel.videoUrl.isEmpty) return [];
+    final filename = widget.reel.videoUrl.contains('/')
+        ? widget.reel.videoUrl.split('/').last
+        : widget.reel.videoUrl;
+    final pathPart = widget.reel.videoUrl.startsWith('assets/')
+        ? widget.reel.videoUrl
+        : 'assets/videos/reels/$filename';
+    final baseNoApi = EnvConfig.apiBaseUrl.endsWith('/api')
+        ? EnvConfig.apiBaseUrl.replaceAll('/api', '')
+        : EnvConfig.apiBaseUrl;
+    return [
+      if (widget.reel.videoUrl.startsWith('http')) widget.reel.videoUrl,
+      '${ApiConfig.baseUrl}/reels/video/$filename',
+      '$baseNoApi/$pathPart',
+      '${EnvConfig.apiBaseUrl}/$pathPart',
+    ]..removeWhere((u) => u.isEmpty);
+  }
+
+  Future<bool> _tryPlayUrl(String url) async {
+    VideoPlayerController? c;
+    try {
+      c = VideoPlayerController.networkUrl(
+        Uri.parse(url),
+        httpHeaders: {'User-Agent': 'VedicMate/1.0', 'Accept': '*/*'},
+      );
+      await c.initialize().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw Exception('Timeout'),
+      );
+      if (!mounted) {
+        c.dispose();
+        return false;
+      }
+      c.setLooping(true);
+      if (widget.isActive) c.play();
+      _videoController?.dispose();
+      _videoController = c;
+      return true;
+    } catch (e) {
+      debugPrint('Video stream failed ($url): $e');
+      c?.dispose();
+      return false;
+    }
+  }
+
   Future<void> _initializeVideo() async {
     if (widget.reel.videoUrl.isEmpty) {
       if (mounted) setState(() => _loadFailed = true);
       return;
     }
-    final String filename = widget.reel.videoUrl.contains('/')
-        ? widget.reel.videoUrl.split('/').last
-        : widget.reel.videoUrl;
-    final String pathPart = widget.reel.videoUrl.startsWith('assets/')
-        ? widget.reel.videoUrl
-        : 'assets/videos/reels/$filename';
-
-    // Try URLs in order: API proxy, then direct static
-    final urls = [
-      '${ApiConfig.baseUrl}/reels/video/$filename',
-      '${EnvConfig.apiBaseUrl}/$pathPart',
-    ];
-    if (widget.reel.videoUrl.startsWith('http')) {
-      urls.insert(0, widget.reel.videoUrl);
-    }
-
-    final headers = {'User-Agent': 'VedicMate/1.0', 'Accept': '*/*'};
-
+    final urls = _buildVideoUrls();
     for (final url in urls) {
-      VideoPlayerController? controller;
-      try {
-        controller = VideoPlayerController.networkUrl(
-          Uri.parse(url),
-          httpHeaders: headers,
-        );
-        await controller.initialize().timeout(
-          const Duration(seconds: 15),
-          onTimeout: () => throw Exception('Timeout'),
-        );
-        controller.setLooping(true);
-        if (widget.isActive) controller.play();
-        if (mounted) {
-          _videoController = controller;
-          setState(() => _initialized = true);
-        } else {
-          controller.dispose();
-        }
+      if (await _tryPlayUrl(url)) {
+        if (mounted) setState(() {
+          _initialized = true;
+          _loadFailed = false;
+          _isRetrying = false;
+        });
         return;
-      } catch (e) {
-        debugPrint('Video load failed ($url): $e');
-        controller?.dispose();
       }
     }
-    if (mounted) setState(() => _loadFailed = true);
+    if (mounted) setState(() {
+      _loadFailed = true;
+      _isRetrying = false;
+    });
   }
 
   void _retryVideo() {
-    setState(() => _loadFailed = false);
+    if (_isRetrying) return;
+    setState(() {
+      _loadFailed = false;
+      _initialized = false;
+      _isRetrying = true;
+    });
     _initializeVideo();
   }
 
@@ -234,7 +257,7 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
           onDoubleTap: _handleDoubleTap,
           child: Container(
             color: Colors.black,
-            child: _loadFailed
+            child: _loadFailed || _isRetrying
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24),
@@ -243,17 +266,23 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
                         children: [
                           Icon(Icons.videocam_off, size: 64, color: Colors.white38),
                           const SizedBox(height: 12),
-                          Text('Video unavailable', style: GoogleFonts.outfit(color: Colors.white54, fontSize: 14)),
-                          if (widget.reel.description.isNotEmpty) ...[
+                          Text(
+                            _isRetrying ? 'Loading...' : 'Video unavailable',
+                            style: GoogleFonts.outfit(color: Colors.white54, fontSize: 14),
+                          ),
+                          if (widget.reel.description.isNotEmpty && !_isRetrying) ...[
                             const SizedBox(height: 8),
                             Text(widget.reel.description, style: GoogleFonts.outfit(color: Colors.white38, fontSize: 12), maxLines: 3, textAlign: TextAlign.center),
                           ],
                           const SizedBox(height: 16),
-                          FilledButton.icon(
-                            onPressed: _retryVideo,
-                            icon: const Icon(Icons.refresh, size: 18),
-                            label: const Text('Retry'),
-                            style: FilledButton.styleFrom(backgroundColor: AppTheme.divineGold, foregroundColor: Colors.black),
+                          SizedBox(
+                            height: 44,
+                            child: FilledButton.icon(
+                              onPressed: _isRetrying ? null : _retryVideo,
+                              icon: _isRetrying ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : const Icon(Icons.refresh, size: 18),
+                              label: Text(_isRetrying ? 'Retrying...' : 'Retry'),
+                              style: FilledButton.styleFrom(backgroundColor: AppTheme.divineGold, foregroundColor: Colors.black),
+                            ),
                           ),
                         ],
                       ),

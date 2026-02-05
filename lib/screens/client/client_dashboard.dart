@@ -1659,6 +1659,7 @@ class _CustomBookingBanner extends StatelessWidget {
                     style: GoogleFonts.outfit(
                       color: AppTheme.neutralMedium,
                       fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -84,10 +84,10 @@ class _AllAIPanditsScreenState extends State<AllAIPanditsScreen> {
               titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
               title: Text(
                 'Sacred Guides',
-                style: AppTheme.lightTheme.textTheme.displaySmall?.copyWith( // Using display small for sliver title
-                   fontSize: 24,
-                   fontWeight: FontWeight.w700,
-                   color: AppTheme.neutralDark,
+                style: GoogleFonts.outfit(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.neutralDark,
                 ),
               ),
               background: Container(color: AppTheme.forestBackground),
@@ -339,15 +339,31 @@ class _AIPanditGridCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          pandit.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.playfairDisplay(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.neutralDark,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                pandit.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.neutralDark,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '₹${pandit.ratePerMinute.toInt()}/min',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.primaryOrange,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -357,7 +373,7 @@ class _AIPanditGridCard extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             color: AppTheme.forestDark,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
