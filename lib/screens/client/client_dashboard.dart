@@ -47,11 +47,23 @@ class ClientDashboard extends ConsumerStatefulWidget {
 class _ClientDashboardState extends ConsumerState<ClientDashboard> {
   int _currentIndex = 0;
   final TextEditingController _searchController = TextEditingController();
+  final PageController _pageController = PageController();
 
   @override
   void dispose() {
     _searchController.dispose();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  void _navigateToTab(int index) {
+    if (_currentIndex == index) return;
+    setState(() => _currentIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
   @override
@@ -85,15 +97,20 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
             ),
           ),
           
-          IndexedStack(
-            index: _currentIndex,
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (index) => setState(() => _currentIndex = index),
             children: [
               _HomeTab(
                 searchController: _searchController,
-                onNavigateToTab: (index) => setState(() => _currentIndex = index),
+                onNavigateToTab: _navigateToTab,
               ),
               _ChatTab(),
-              ReelsScreen(onBack: () => setState(() => _currentIndex = 0)),
+              ReelsScreen(
+                onBack: () => _navigateToTab(0),
+                isReelsTabActive: _currentIndex == 2,
+              ),
               const RemediesScreen(),
               _ProfileTab(),
             ],
@@ -132,7 +149,7 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _navigateToTab(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 8, vertical: 8),

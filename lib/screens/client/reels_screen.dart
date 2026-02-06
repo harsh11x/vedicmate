@@ -12,8 +12,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
   final VoidCallback? onBack;
+  final bool isReelsTabActive;
 
-  const ReelsScreen({super.key, this.onBack});
+  const ReelsScreen({super.key, this.onBack, this.isReelsTabActive = true});
 
   @override
   ConsumerState<ReelsScreen> createState() => _ReelsScreenState();
@@ -73,7 +74,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
               itemBuilder: (context, index) {
                 return ReelPlayerItem(
                   reel: reels[index],
-                  isActive: true,
+                  isActive: widget.isReelsTabActive,
                   onBack: widget.onBack,
                 );
               },
@@ -146,6 +147,18 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
   void initState() {
     super.initState();
     _initializeVideo();
+  }
+
+  @override
+  void didUpdateWidget(ReelPlayerItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isActive != widget.isActive && _videoController != null) {
+      if (widget.isActive) {
+        _videoController!.play();
+      } else {
+        _videoController!.pause();
+      }
+    }
   }
 
   List<String> _buildVideoUrls() {
@@ -237,9 +250,8 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
     if (_loadFailed) return;
     setState(() => _showHeart = true);
     ref.read(reelsProvider.notifier).toggleLike(widget.reel.id);
-    
-    // Hide heart after animation
-    Future.delayed(const Duration(milliseconds: 800), () {
+    // Hide heart after animation (soft fade-out finishes by ~900ms)
+    Future.delayed(const Duration(milliseconds: 950), () {
       if (mounted) setState(() => _showHeart = false);
     });
   }
@@ -304,13 +316,19 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
           ),
         ),
 
-        // Double Tap Heart Animation
+        // Double-tap heart (Instagram-style): soft white heart, smooth scale + fade
         if (_showHeart)
           Center(
-            child: const Icon(Icons.favorite, size: 100, color: Colors.white)
+            child: Icon(
+              Icons.favorite,
+              size: 88,
+              color: Colors.white.withOpacity(0.95),
+            )
                 .animate()
-                .scale(duration: 400.ms, curve: Curves.easeOutBack)
-                .fadeOut(delay: 500.ms),
+                .scale(begin: 0.25, end: 1.15, duration: 360.ms, curve: Curves.easeOutCubic)
+                .then()
+                .scale(begin: 1.15, end: 1.0, duration: 180.ms, curve: Curves.easeInOutCubic)
+                .fadeOut(delay: 320.ms, duration: 420.ms, curve: Curves.easeOutCubic),
           ),
 
         // Gradient Overlay
