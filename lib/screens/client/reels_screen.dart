@@ -11,7 +11,9 @@ import '../../core/config/env.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
-  const ReelsScreen({super.key});
+  final VoidCallback? onBack;
+
+  const ReelsScreen({super.key, this.onBack});
 
   @override
   ConsumerState<ReelsScreen> createState() => _ReelsScreenState();
@@ -72,6 +74,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                 return ReelPlayerItem(
                   reel: reels[index],
                   isActive: true,
+                  onBack: widget.onBack,
                 );
               },
             );
@@ -124,8 +127,9 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
 class ReelPlayerItem extends ConsumerStatefulWidget {
   final Reel reel;
   final bool isActive;
+  final VoidCallback? onBack;
 
-  const ReelPlayerItem({super.key, required this.reel, required this.isActive});
+  const ReelPlayerItem({super.key, required this.reel, required this.isActive, this.onBack});
 
   @override
   ConsumerState<ReelPlayerItem> createState() => _ReelPlayerItemState();
@@ -407,7 +411,13 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
           left: 16,
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (widget.onBack != null) {
+                widget.onBack!();
+              } else {
+                Navigator.pop(context);
+              }
+            },
           ),
         ),
       ],

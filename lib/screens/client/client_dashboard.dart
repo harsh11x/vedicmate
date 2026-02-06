@@ -93,7 +93,7 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
                 onNavigateToTab: (index) => setState(() => _currentIndex = index),
               ),
               _ChatTab(),
-              const ReelsScreen(),
+              ReelsScreen(onBack: () => setState(() => _currentIndex = 0)),
               const RemediesScreen(),
               _ProfileTab(),
             ],
