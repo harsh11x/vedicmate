@@ -325,9 +325,9 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
               color: Colors.white.withOpacity(0.95),
             )
                 .animate()
-                .scale(begin: 0.25, end: 1.15, duration: 360.ms, curve: Curves.easeOutCubic)
+                .scale(begin: const Offset(0.25, 0.25), end: const Offset(1.15, 1.15), duration: 360.ms, curve: Curves.easeOutCubic)
                 .then()
-                .scale(begin: 1.15, end: 1.0, duration: 180.ms, curve: Curves.easeInOutCubic)
+                .scale(begin: const Offset(1.15, 1.15), end: const Offset(1.0, 1.0), duration: 180.ms, curve: Curves.easeInOutCubic)
                 .fadeOut(delay: 320.ms, duration: 420.ms, curve: Curves.easeOutCubic),
           ),
 
