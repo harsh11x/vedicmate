@@ -59,8 +59,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final authState = ref.watch(authStateProvider);
     final user = authState.valueOrNull ?? FirebaseAuth.instance.currentUser;
 
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
           // Enhanced App Bar with Gradient
@@ -68,16 +69,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             expandedHeight: 140,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.white,
+            backgroundColor: theme.colorScheme.surface,
             elevation: 0,
             leading: IconButton(
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.neutralSoft,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.arrow_back, color: AppTheme.neutralDark, size: 20),
+                child: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface, size: 20),
               ),
               onPressed: () => context.pop(),
             ),
@@ -85,9 +86,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               titlePadding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
               title: Text(
           AppLocalizations.of(context)!.settings,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
+                      color: Colors.white,
                       fontSize: 24,
                     ),
               ),

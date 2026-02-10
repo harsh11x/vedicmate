@@ -68,7 +68,8 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkBackground = _currentIndex == 2;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDarkBackground = _currentIndex == 2 || isDark;
     final statusBarStyle = isDarkBackground
         ? SystemUiOverlayStyle.light
         : SystemUiOverlayStyle.dark;
@@ -81,17 +82,22 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
         extendBody: true,
         body: Stack(
         children: [
-          // Background Gradient only (No image to prevent overlap with Scaffold/Theme background)
+          // Background Gradient - theme-aware
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFFFF8E1), // Light cream/gold top
-                    Colors.white,
-                  ],
+                  colors: isDark
+                      ? [
+                          const Color(0xFF1A1A1A),
+                          const Color(0xFF121212),
+                        ]
+                      : [
+                          const Color(0xFFFFF8E1),
+                          Colors.white,
+                        ],
                 ),
               ),
             ),
@@ -119,16 +125,31 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
             bottom: 20,
             left: 20,
             right: 20,
-            child: _LiquidNavBar(
-              currentIndex: _currentIndex,
-              onTap: _navigateToTab,
-              items: const [
-                _NavItem(Icons.home_rounded, 'Home'),
-                _NavItem(Icons.chat_bubble_rounded, 'Chat'),
-                _NavItem(Icons.video_library_rounded, 'Reels'),
-                _NavItem(Icons.shopping_bag_rounded, 'Remedies'),
-                _NavItem(Icons.person_rounded, 'Profile'),
-              ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                child: Container(
+                  decoration: isDark
+                      ? BoxDecoration(
+                          color: Colors.black.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1),
+                        )
+                      : AppTheme.navBarGlass,
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildNavItem(Icons.home_rounded, 'Home', 0),
+                      _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
+                      _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
+                      _buildNavItem(Icons.shopping_bag_rounded, 'Remedies', 3),
+                      _buildNavItem(Icons.person_rounded, 'Profile', 4),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -137,132 +158,40 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
     );
   }
 
-}
-
-class _NavItem {
-  final IconData icon;
-  final String label;
-  const _NavItem(this.icon, this.label);
-}
-
-/// Liquid, smoothly animated bottom nav bar with sliding pill indicator
-class _LiquidNavBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-  final List<_NavItem> items;
-
-  const _LiquidNavBar({
-    required this.currentIndex,
-    required this.onTap,
-    required this.items,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-            child: Container(
-              decoration: AppTheme.navBarGlass,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Sliding pill indicator - liquid animation
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOutCubic,
-                    left: _pillLeft(constraints.maxWidth) + 4,
-                    top: 4,
-                    bottom: 4,
-                    width: _pillWidth(constraints.maxWidth) - 8,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.primaryOrange.withOpacity(0.25),
-                            AppTheme.primaryOrange.withOpacity(0.12),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryOrange.withOpacity(0.15),
-                            blurRadius: 12,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Nav items
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: List.generate(items.length, (i) {
-                      final item = items[i];
-                      final isSelected = currentIndex == i;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () => onTap(i),
-                          behavior: HitTestBehavior.opaque,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 350),
-                            curve: Curves.easeInOutCubic,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AnimatedScale(
-                                  scale: isSelected ? 1.1 : 1.0,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOutBack,
-                                  child: Icon(
-                                    item.icon,
-                                    color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralMedium,
-                                    size: 24,
-                                  ),
-                                ),
-                                if (isSelected) ...[
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.label,
-                                    style: TextStyle(
-                                      color: AppTheme.primaryOrange,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              ),
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final isSelected = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => _navigateToTab(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryOrange.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralMedium,
+              size: 24,
             ),
-          ),
-        );
-      },
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: AppTheme.primaryOrange,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
-  }
-
-  double _pillWidth(double totalWidth) {
-    final itemCount = items.length;
-    return (totalWidth - 24) / itemCount; // horizontal padding 12*2
-  }
-
-  double _pillLeft(double totalWidth) {
-    final slotWidth = _pillWidth(totalWidth);
-    return 12 + currentIndex * slotWidth; // 12 = horizontal padding
   }
 }
 
