@@ -19,13 +19,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _otpController = TextEditingController();
   final _authService = AuthService();
   bool _isLoading = false;
-  bool _isOTPSent = false;
-  bool _isVerifying = false;
   CountryCode _selectedCountry = countryCodes.first;
-  String? _verifiedPhone; // Phone that passed OTP (to save to Supabase)
+  bool _hasExistingEmail = false; // True if user already has email (Firebase or Supabase)
 
   @override
   void initState() {
@@ -64,17 +61,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (data != null && mounted) {
           _nameController.text = data['name'] ?? user.displayName ?? '';
           _parseAndSetPhone(data['phone'] ?? user.phoneNumber ?? '');
-          _verifiedPhone = data['phone'] as String?;
+          final dbEmail = data['email'] as String?;
+          final firebaseEmail = user.email;
+          _hasExistingEmail = (dbEmail != null && dbEmail.isNotEmpty) || (firebaseEmail != null && firebaseEmail.isNotEmpty);
+          if (dbEmail != null && dbEmail.isNotEmpty) {
+            _emailController.text = dbEmail;
+          } else if (firebaseEmail != null && firebaseEmail.isNotEmpty) {
+            _emailController.text = firebaseEmail;
+          }
           setState(() {});
         } else {
           _parseAndSetPhone(user.phoneNumber);
-          _verifiedPhone = user.phoneNumber;
+          _hasExistingEmail = (user.email != null && user.email!.isNotEmpty);
           if (mounted) setState(() {});
         }
       } catch (e) {
         debugPrint('Error loading user data: $e');
         _parseAndSetPhone(user.phoneNumber);
-        _verifiedPhone = user.phoneNumber;
+        _hasExistingEmail = (user.email != null && user.email!.isNotEmpty);
         if (mounted) setState(() {});
       }
     }
@@ -86,140 +90,208 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return '${_selectedCountry.dialCode}$digits';
   }
 
-  Future<void> _saveNameOnly() async {
-    if (_nameController.text.isEmpty) return;
-    setState(() => _isLoading = true);
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return;
-      await user.updateDisplayName(_nameController.text);
-      await user.reload();
-      await Supabase.instance.client.from('users').update({'name': _nameController.text}).eq('id', user.uid);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Name updated'), backgroundColor: AppTheme.successGreen),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed));
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _sendOTP() async {
+  Future<void> _savePhone() async {
     final phone = _fullPhone;
     if (phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter a valid phone number'), backgroundColor: AppTheme.errorRed));
-      return;
-    }
-    if (_validatePhone(_phoneController.text) != null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter a valid phone number'), backgroundColor: AppTheme.errorRed));
-      return;
-    }
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-    setState(() => _isLoading = true);
-    final isTaken = await _authService.isPhoneTakenByOtherUser(phone, user.uid);
-    if (mounted && isTaken) {
-      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('This number is already registered with another account'), backgroundColor: AppTheme.errorRed),
+        const SnackBar(content: Text('Enter a valid phone number'), backgroundColor: AppTheme.errorRed),
       );
       return;
     }
-    if (!mounted) return;
-    _authService.sendOTPForPhoneUpdate(
-      phone,
-      onCodeSent: () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-            _isOTPSent = true;
-            _otpController.clear();
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('OTP sent to $phone'), backgroundColor: AppTheme.successGreen),
-          );
-        }
-      },
-      onError: (msg) {
-        if (mounted) {
-          setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppTheme.errorRed));
-        }
-      },
-    );
-  }
-
-  Future<void> _verifyAndSavePhone() async {
-    final otp = _otpController.text.trim();
-    if (otp.length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter 6-digit OTP'), backgroundColor: AppTheme.errorRed));
+    final validation = _validatePhone(_phoneController.text);
+    if (validation != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(validation), backgroundColor: AppTheme.errorRed),
+      );
       return;
     }
-    final phone = _fullPhone;
-    setState(() => _isVerifying = true);
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    setState(() => _isLoading = true);
     try {
-      await _authService.verifyOTPAndUpdatePhone(otp, phone);
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await Supabase.instance.client.from('users').update({'phone': phone}).eq('id', user.uid);
-      }
-      if (mounted) {
-        setState(() {
-          _isVerifying = false;
-          _isOTPSent = false;
-          _verifiedPhone = phone;
-          _otpController.clear();
-        });
+      final isTaken = await _authService.isPhoneTakenByOtherUser(phone, user.uid);
+      if (mounted && isTaken) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Phone number verified and saved!'), backgroundColor: AppTheme.successGreen),
+          const SnackBar(
+            content: Text('This number is already in use with another account. Please use another number.'),
+            backgroundColor: AppTheme.errorRed,
+          ),
         );
+        return;
       }
-    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      await Supabase.instance.client.from('users').update({'phone': phone}).eq('id', user.uid);
       if (mounted) {
-        setState(() => _isVerifying = false);
-        String msg = 'Verification failed';
-        if (e.code == 'invalid-verification-code') msg = 'Invalid OTP. Please try again.';
-        else if (e.code == 'credential-already-in-use') msg = 'This number is already linked to another account.';
-        else if (e.code == 'requires-recent-login') msg = 'Please sign out and sign in again, then try verifying.';
-        else if (e.message != null) msg = e.message!;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppTheme.errorRed));
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Phone number saved successfully!'), backgroundColor: AppTheme.successGreen),
+        );
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _isVerifying = false);
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Verification failed: $e'), backgroundColor: AppTheme.errorRed),
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
         );
       }
     }
   }
 
-  void _cancelOTP() {
-    setState(() {
-      _isOTPSent = false;
-      _otpController.clear();
-    });
-  }
+  Future<void> _saveEmail() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a valid email address'), backgroundColor: AppTheme.errorRed),
+      );
+      return;
+    }
+    final validation = _validateEmail(email);
+    if (validation != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(validation), backgroundColor: AppTheme.errorRed),
+      );
+      return;
+    }
 
-  Future<void> _saveProfile() async {
-    if (_nameController.text.isEmpty) return;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
     setState(() => _isLoading = true);
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return;
-      await user.updateDisplayName(_nameController.text);
-      await user.reload();
-      final updateData = <String, dynamic>{'name': _nameController.text};
-      if (_verifiedPhone != null && _verifiedPhone!.isNotEmpty) {
-        updateData['phone'] = _verifiedPhone;
+      final isTaken = await _authService.isEmailTakenByOtherUser(email, user.uid);
+      if (mounted && isTaken) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('This email is already in use with another account. Please use another email.'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+        return;
       }
-      await Supabase.instance.client.from('users').update(updateData).eq('id', user.uid);
+      if (!mounted) return;
+
+      await Supabase.instance.client.from('users').update({'email': email}).eq('id', user.uid);
       if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _hasExistingEmail = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Email saved successfully!'), backgroundColor: AppTheme.successGreen),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
+        );
+      }
+    }
+  }
+
+  Future<void> _saveName() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter your name'), backgroundColor: AppTheme.errorRed),
+      );
+      return;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await user.updateDisplayName(name);
+      await user.reload();
+      await Supabase.instance.client.from('users').update({'name': name}).eq('id', user.uid);
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Name updated successfully!'), backgroundColor: AppTheme.successGreen),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
+        );
+      }
+    }
+  }
+
+  Future<void> _saveAll() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    setState(() => _isLoading = true);
+    try {
+      // Save name
+      final name = _nameController.text.trim();
+      if (name.isNotEmpty) {
+        await user.updateDisplayName(name);
+        await user.reload();
+      }
+
+      final updateData = <String, dynamic>{'name': name.isNotEmpty ? name : user.displayName ?? ''};
+
+      // Phone: validate and check duplicate before saving
+      final phone = _fullPhone;
+      if (phone.isNotEmpty && _validatePhone(_phoneController.text) == null) {
+        final isPhoneTaken = await _authService.isPhoneTakenByOtherUser(phone, user.uid);
+        if (isPhoneTaken) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('This number is already in use with another account. Please use another number.'),
+                backgroundColor: AppTheme.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+        updateData['phone'] = phone;
+      }
+
+      // Email: only if user has no existing email and entered one
+      if (!_hasExistingEmail) {
+        final email = _emailController.text.trim();
+        if (email.isNotEmpty && _validateEmail(email) == null) {
+          final isEmailTaken = await _authService.isEmailTakenByOtherUser(email, user.uid);
+          if (isEmailTaken) {
+            if (mounted) {
+              setState(() => _isLoading = false);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('This email is already in use with another account. Please use another email.'),
+                  backgroundColor: AppTheme.errorRed,
+                ),
+              );
+            }
+            return;
+          }
+          updateData['email'] = email;
+        }
+      }
+
+      await Supabase.instance.client.from('users').update(updateData).eq('id', user.uid);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          if (updateData.containsKey('email')) _hasExistingEmail = true;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: AppTheme.successGreen),
         );
@@ -227,10 +299,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed));
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
+        );
       }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -246,12 +319,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return null;
   }
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter your email';
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) return 'Enter a valid email address';
+    return null;
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _otpController.dispose();
     super.dispose();
   }
 
@@ -267,7 +346,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         elevation: 0,
         actions: [
           TextButton(
-            onPressed: _isLoading ? null : _saveProfile,
+            onPressed: _isLoading ? null : _saveAll,
             child: _isLoading
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                 : const Text('Save', style: TextStyle(color: AppTheme.primaryOrange, fontWeight: FontWeight.bold)),
@@ -302,7 +381,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: AppTheme.primaryOrange, shape: BoxShape.circle, border: Border.all(color: AppTheme.white, width: 2)),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryOrange,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppTheme.white, width: 2),
+                      ),
                       child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
                     ),
                   ),
@@ -310,32 +393,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 32),
 
+              // Name
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Full Name',
                   prefixIcon: const Icon(Icons.person),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.check_circle_outline, color: AppTheme.primaryOrange),
+                    onPressed: _isLoading ? null : _saveName,
+                  ),
                 ),
-                validator: (v) => (v == null || v.isEmpty) ? 'Please enter your name' : null,
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter your name' : null,
               ),
               const SizedBox(height: 16),
 
+              // Email: read-only if existing, editable if not
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   prefixIcon: const Icon(Icons.email),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  filled: true,
-                  fillColor: AppTheme.neutralSoft,
+                  filled: _hasExistingEmail,
+                  fillColor: _hasExistingEmail ? AppTheme.neutralSoft : null,
+                  suffixIcon: _hasExistingEmail
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.check_circle_outline, color: AppTheme.primaryOrange),
+                          onPressed: _isLoading ? null : _saveEmail,
+                        ),
                 ),
-                readOnly: true,
-                enabled: false,
+                readOnly: _hasExistingEmail,
+                enabled: !_hasExistingEmail,
+                validator: (v) {
+                  if (_hasExistingEmail) return null;
+                  return _validateEmail(v);
+                },
               ),
-              const SizedBox(height: 24),
+              if (_hasExistingEmail)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Email cannot be changed once set.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ),
+              const SizedBox(height: 16),
 
-              // Phone section with OTP verification
+              // Phone (no OTP - direct save)
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -350,17 +457,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         const Icon(Icons.phone, color: AppTheme.primaryOrange),
                         const SizedBox(width: 8),
-                        Text('Phone Number', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
-                        if (_verifiedPhone != null && _verifiedPhone!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Chip(
-                              label: const Text('Verified', style: TextStyle(fontSize: 11)),
-                              backgroundColor: AppTheme.successGreen.withOpacity(0.2),
-                              padding: EdgeInsets.zero,
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                          ),
+                        Text(
+                          'Phone Number',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -376,8 +476,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                             ),
                             isExpanded: true,
-                            items: countryCodes.map((cc) => DropdownMenuItem(value: cc, child: Text('${cc.code} ${cc.dialCode}', style: const TextStyle(fontSize: 13), overflow: TextOverflow.ellipsis))).toList(),
-                            onChanged: _isOTPSent ? null : (cc) { if (cc != null) setState(() => _selectedCountry = cc); },
+                            items: countryCodes
+                                .map((cc) => DropdownMenuItem(
+                                      value: cc,
+                                      child: Text(
+                                        '${cc.code} ${cc.dialCode}',
+                                        style: const TextStyle(fontSize: 13),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ))
+                                .toList(),
+                            onChanged: (cc) {
+                              if (cc != null) setState(() => _selectedCountry = cc);
+                            },
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -387,9 +498,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             decoration: InputDecoration(
                               hintText: _selectedCountry.code == 'IN' ? '9876543210' : 'Phone',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.check_circle_outline, color: AppTheme.primaryOrange),
+                                onPressed: _isLoading ? null : _savePhone,
+                              ),
                             ),
                             keyboardType: TextInputType.number,
-                            enabled: !_isOTPSent,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(_selectedCountry.code == 'IN' ? 10 : 15),
@@ -399,55 +513,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ],
                     ),
-                    if (!_isOTPSent) ...[
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: _isLoading ? null : _sendOTP,
-                          icon: _isLoading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.send, size: 18),
-                          label: Text(_isLoading ? 'Sending OTP...' : 'Send OTP to Verify'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.primaryOrange,
-                            side: const BorderSide(color: AppTheme.primaryOrange),
-                          ),
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Enter number and tap ✓ to save. Duplicate numbers will be rejected.',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
-                    ] else ...[
-                      const SizedBox(height: 16),
-                      Text('Enter 6-digit OTP sent to ${_fullPhone}', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _otpController,
-                        decoration: InputDecoration(
-                          hintText: '000000',
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          counterText: '',
-                        ),
-                        keyboardType: TextInputType.number,
-                        maxLength: 6,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: _isVerifying ? null : _cancelOTP,
-                              child: const Text('Change Number'),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _isVerifying ? null : _verifyAndSavePhone,
-                              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryOrange),
-                              child: _isVerifying ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Verify & Save'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ],
                 ),
               ),
@@ -456,9 +528,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _saveProfile,
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryOrange, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                  child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  onPressed: _isLoading ? null : _saveAll,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryOrange,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
             ],

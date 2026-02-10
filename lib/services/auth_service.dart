@@ -212,6 +212,24 @@ class AuthService {
     return true;
   }
 
+  /// Check if email is taken by another user (exclude current user id)
+  Future<bool> isEmailTakenByOtherUser(String email, String excludeUserId) async {
+    if (email.isEmpty) return false;
+    try {
+      final normalized = email.trim().toLowerCase();
+      final res = await _supabase
+          .from('users')
+          .select('id')
+          .ilike('email', normalized)
+          .neq('id', excludeUserId)
+          .maybeSingle();
+      return res != null;
+    } catch (e) {
+      debugPrint('Error checking email: $e');
+      return true;
+    }
+  }
+
   /// Check if phone is taken by another user (exclude current user id)
   Future<bool> isPhoneTakenByOtherUser(String fullPhone, String excludeUserId) async {
     try {

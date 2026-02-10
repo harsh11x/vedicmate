@@ -24,24 +24,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _darkMode = false;
   final AuthService _authService = AuthService();
   String? _supabasePhone;
+  String? _supabaseEmail;
+  String? _supabaseName;
 
   @override
   void initState() {
     super.initState();
-    _loadSupabasePhone();
+    _loadProfileFromSupabase();
   }
 
-  Future<void> _loadSupabasePhone() async {
+  Future<void> _loadProfileFromSupabase() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     try {
       final data = await Supabase.instance.client
           .from('users')
-          .select('phone')
+          .select('phone, email, name')
           .eq('id', user.uid)
           .maybeSingle();
       if (mounted && data != null) {
-        setState(() => _supabasePhone = data['phone'] as String?);
+        setState(() {
+          _supabasePhone = data['phone'] as String?;
+          _supabaseEmail = data['email'] as String?;
+          _supabaseName = data['name'] as String?;
+        });
       }
     } catch (_) {}
   }
@@ -164,7 +170,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user?.displayName ?? 'User',
+                            _supabaseName ?? user?.displayName ?? 'User',
                             style: const TextStyle(
                               color: AppTheme.white,
                               fontSize: 22,
@@ -174,7 +180,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            user?.email ?? 'No email',
+                            _supabaseEmail ?? user?.email ?? 'No email',
                             style: TextStyle(
                               color: AppTheme.white.withOpacity(0.9),
                               fontSize: 14,
@@ -219,7 +225,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       onPressed: () async {
                         await context.push('/profile/edit');
-                        _loadSupabasePhone();
+                        _loadProfileFromSupabase();
                       },
                     ),
                   ],
@@ -306,7 +312,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         subtitle: 'Update your personal information',
                         onTap: () async {
                           await context.push('/profile/edit');
-                          _loadSupabasePhone();
+                          _loadProfileFromSupabase();
                         },
                       ),
                       _Divider(),
@@ -322,21 +328,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       _SettingsTile(
                         icon: Icons.phone_outlined,
                         title: 'Phone Number',
-                        subtitle: _supabasePhone ?? user?.phoneNumber ?? 'Not set',
+                        subtitle: (_supabasePhone != null && _supabasePhone!.isNotEmpty) ? _supabasePhone! : (user?.phoneNumber ?? 'Not set'),
                         onTap: () async {
                           await context.push('/profile/edit');
-                          _loadSupabasePhone();
+                          _loadProfileFromSupabase();
                         },
                       ),
                       _Divider(),
                       _SettingsTile(
                         icon: Icons.email_outlined,
                         title: 'Email Address',
-                        subtitle: user?.email ?? 'Not set',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Email update coming soon')),
-                );
+                        subtitle: (_supabaseEmail != null && _supabaseEmail!.isNotEmpty) ? _supabaseEmail! : (user?.email ?? 'Not set'),
+              onTap: () async {
+                await context.push('/profile/edit');
+                _loadProfileFromSupabase();
               },
             ),
                     ],
