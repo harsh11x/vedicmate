@@ -56,7 +56,107 @@ class AppTheme {
   static const Color cosmicGradient = divinePrimary; // Fallback
   static const Color warmGradient = divineGold; // Fallback
   
-  static ThemeData get darkTheme => lightTheme; // For now fall back to light
+  // Dark theme palette
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkTextPrimary = Color(0xFFF5F5F5);
+  static const Color darkTextSecondary = Color(0xFFB0B0B0);
+  static const Color darkTextTertiary = Color(0xFF808080);
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      primaryColor: divineGoldLight,
+      scaffoldBackgroundColor: darkBackground,
+      colorScheme: ColorScheme.dark(
+        primary: divineGoldLight,
+        secondary: divineGold,
+        surface: darkSurface,
+        onPrimary: divinePrimary,
+        onSecondary: divinePrimary,
+        onSurface: darkTextPrimary,
+        background: darkBackground,
+        error: errorRed,
+        outline: Colors.white.withOpacity(0.1),
+      ),
+      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+      textTheme: TextTheme(
+        displayLarge: titleStyle.copyWith(color: darkTextPrimary, fontSize: 40, height: 1.1),
+        displayMedium: titleStyle.copyWith(color: darkTextPrimary, fontSize: 32, height: 1.2),
+        displaySmall: titleStyle.copyWith(color: darkTextPrimary, fontSize: 28, height: 1.2),
+        headlineLarge: titleStyle.copyWith(color: darkTextPrimary, fontSize: 24, fontWeight: FontWeight.w600),
+        headlineMedium: titleStyle.copyWith(color: darkTextPrimary, fontSize: 20, fontWeight: FontWeight.w600),
+        titleLarge: bodyStyle.copyWith(color: darkTextPrimary, fontSize: 18, fontWeight: FontWeight.w700),
+        titleMedium: bodyStyle.copyWith(color: darkTextPrimary, fontSize: 16, fontWeight: FontWeight.w600),
+        bodyLarge: bodyStyle.copyWith(color: darkTextPrimary, fontSize: 16),
+        bodyMedium: bodyStyle.copyWith(color: darkTextSecondary, fontSize: 14),
+        bodySmall: bodyStyle.copyWith(color: darkTextSecondary, fontSize: 12),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: darkBackground,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: darkTextPrimary),
+        titleTextStyle: titleStyle.copyWith(color: darkTextPrimary, fontSize: 20),
+      ),
+      cardTheme: CardThemeData(
+        color: darkSurface,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide.none,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: divineGold,
+          foregroundColor: divinePrimary,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: bodyStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 16, color: divinePrimary),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: divineGoldLight,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+          side: const BorderSide(color: divineGold, width: 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: bodyStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 16, color: divineGoldLight),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkSurface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        hintStyle: bodyStyle.copyWith(color: darkTextTertiary),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: divineGold, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: errorRed, width: 1),
+        ),
+      ),
+    );
+  }
 
   // More Legacy Mappings
   static const Gradient primaryGradient = LinearGradient(colors: [divinePrimary, divinePrimary]);
