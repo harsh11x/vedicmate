@@ -46,8 +46,8 @@ class AuthService {
       final displayName = name ?? user.displayName ?? 'User';
       // Guest/anonymous users: use default email and phone
       final isGuest = user.isAnonymous;
-      final email = isGuest ? 'guestvedicmate@gmail.com' : (user.email ?? '');
-      final phone = isGuest ? '8787878787' : (user.phoneNumber ?? '');
+      final email = isGuest ? 'demo@vedicmate.com' : (user.email ?? '');
+      final phone = isGuest ? '9999999999' : (user.phoneNumber ?? '');
 
       await _supabase.from('users').insert({
         'id': user.uid,
@@ -76,8 +76,8 @@ class AuthService {
           final needsPhone = dbPhone == null || dbPhone.isEmpty;
           if (needsEmail || needsPhone) {
             final updateData = <String, dynamic>{};
-            if (needsEmail) updateData['email'] = 'guestvedicmate@gmail.com';
-            if (needsPhone) updateData['phone'] = '8787878787';
+            if (needsEmail) updateData['email'] = 'demo@vedicmate.com';
+            if (needsPhone) updateData['phone'] = '9999999999';
             await _supabase.from('users').update(updateData).eq('id', user.uid);
           }
         }
