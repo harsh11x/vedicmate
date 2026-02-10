@@ -44,8 +44,10 @@ class AuthService {
     final isRegistered = await isUserRegistered(user.uid);
     if (!isRegistered) {
       final displayName = name ?? user.displayName ?? 'User';
-      final email = user.email ?? '';
-      final phone = user.phoneNumber ?? '';
+      // Guest/anonymous users: use default email and phone
+      final isGuest = user.isAnonymous;
+      final email = isGuest ? 'guestvedicmate@gmail.com' : (user.email ?? '');
+      final phone = isGuest ? '8787878787' : (user.phoneNumber ?? '');
 
       await _supabase.from('users').insert({
         'id': user.uid,
@@ -57,11 +59,30 @@ class AuthService {
       });
 
       try {
-        if (email.isNotEmpty) {
+        if (email.isNotEmpty && !isGuest) {
            await EmailService.sendOnboardingEmail(name: displayName, email: email);
         }
       } catch (e) {
         debugPrint('Failed email: $e');
+      }
+    } else if (user.isAnonymous) {
+      // Backfill guest defaults for existing profiles with empty email/phone
+      try {
+        final row = await _supabase.from('users').select('email, phone').eq('id', user.uid).maybeSingle();
+        if (row != null) {
+          final dbEmail = row['email'] as String?;
+          final dbPhone = row['phone'] as String?;
+          final needsEmail = dbEmail == null || dbEmail.isEmpty;
+          final needsPhone = dbPhone == null || dbPhone.isEmpty;
+          if (needsEmail || needsPhone) {
+            final updateData = <String, dynamic>{};
+            if (needsEmail) updateData['email'] = 'guestvedicmate@gmail.com';
+            if (needsPhone) updateData['phone'] = '8787878787';
+            await _supabase.from('users').update(updateData).eq('id', user.uid);
+          }
+        }
+      } catch (e) {
+        debugPrint('Failed to backfill guest profile: $e');
       }
     }
   }

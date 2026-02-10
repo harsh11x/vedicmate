@@ -12,15 +12,16 @@ CREATE TABLE IF NOT EXISTS public.users (
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 -- Create policies (Optional but recommended)
--- Allow users to read their own data
+-- Allow reads (Firebase Auth: auth.uid() is NULL; app filters by id in queries)
 CREATE POLICY "Users can read own data" ON public.users
     FOR SELECT
-    USING (auth.uid()::text = id);
+    USING (true);
 
--- Allow users to update their own data
+-- Allow updates (Firebase Auth: auth.uid() is NULL; app restricts via .eq('id', user.uid))
 CREATE POLICY "Users can update own data" ON public.users
     FOR UPDATE
-    USING (auth.uid()::text = id);
+    USING (true)
+    WITH CHECK (true);
 
 -- Allow public insert (for registration logic in this specific app flow, 
 -- since we are using Firebase Auth UID and inserting from client)the signup

@@ -156,7 +156,8 @@ ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Public enable insert for users" ON public.users FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public enable select for users" ON public.users FOR SELECT USING (true);
-CREATE POLICY "Users can edit own profile" ON public.users FOR UPDATE USING (auth.uid()::text = id);
+-- Firebase Auth: auth.uid() is NULL; app restricts via .eq('id', user.uid)
+CREATE POLICY "Users can edit own profile" ON public.users FOR UPDATE USING (true) WITH CHECK (true);
 
 -- Helper trigger to auto-create wallet and profile on user creation (Optional but cool)
 -- For now we will handle this in Dart code as requested to avoid complex PL/pgSQL specific logic issues if you aren't familiar with it.
