@@ -9,6 +9,8 @@ import '../../services/auth_service.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../providers/font_scale_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -21,7 +23,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _emailNotifications = true;
   bool _pushNotifications = true;
-  bool _darkMode = false;
   final AuthService _authService = AuthService();
   String? _supabasePhone;
   String? _supabaseEmail;
@@ -369,12 +370,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.dark_mode_outlined,
                         title: AppLocalizations.of(context)!.darkMode,
                         subtitle: 'Switch to dark theme',
-                        trailing: Switch(
-                          value: _darkMode,
-                          onChanged: (value) {
-                            setState(() => _darkMode = value);
+                        trailing: Consumer(
+                          builder: (context, ref, _) {
+                            final themeMode = ref.watch(themeModeProvider);
+                            final isDark = themeMode == ThemeMode.dark;
+                            return Switch(
+                              value: isDark,
+                              onChanged: (value) {
+                                ref.read(themeModeProvider.notifier).setFromBool(value);
+                              },
+                              activeColor: AppTheme.primaryOrange,
+                            );
                           },
-                          activeColor: AppTheme.primaryOrange,
                         ),
                       ),
                       _Divider(),
@@ -382,21 +389,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.text_fields,
                         title: 'Font Size',
                         subtitle: 'Adjust text size',
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove_circle_outline, size: 20),
-                              onPressed: () {},
-                              color: AppTheme.neutralMedium,
-                            ),
-                            const Text('Medium', style: TextStyle(fontSize: 12)),
-                            IconButton(
-                              icon: const Icon(Icons.add_circle_outline, size: 20),
-                              onPressed: () {},
-                              color: AppTheme.primaryOrange,
-                            ),
-                          ],
+                        trailing: Consumer(
+                          builder: (context, ref, _) {
+                            final fontScale = ref.watch(fontScaleProvider);
+                            final preset = ref.read(fontScaleProvider.notifier).preset;
+                            final notifier = ref.read(fontScaleProvider.notifier);
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove_circle_outline, size: 20),
+                                  onPressed: fontScale > 0.85 ? () => notifier.decrement() : null,
+                                  color: fontScale > 0.85 ? AppTheme.primaryOrange : AppTheme.neutralMedium,
+                                ),
+                                Text(preset.label, style: const TextStyle(fontSize: 12)),
+                                IconButton(
+                                  icon: const Icon(Icons.add_circle_outline, size: 20),
+                                  onPressed: fontScale < 1.3 ? () => notifier.increment() : null,
+                                  color: fontScale < 1.3 ? AppTheme.primaryOrange : AppTheme.neutralMedium,
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ],
