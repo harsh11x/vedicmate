@@ -47,6 +47,33 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       # Suppress warnings from third-party pods (C/ObjC)
       config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+      # Generate dSYM for Release/Profile to fix "Upload Symbols Failed" warnings
+      if config.name == 'Release' || config.name == 'Profile'
+        config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
+        config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
+        config.build_settings['COPY_PHASE_STRIP'] = 'YES'
+      end
+    end
+  end
+
+  # Patch Pods-Runner-frameworks.sh to install dSYMs from xcframeworks (fixes "Upload Symbols Failed")
+  frameworks_script = File.join(installer.sandbox.root, 'Target Support Files', 'Pods-Runner', 'Pods-Runner-frameworks.sh')
+  if File.exist?(frameworks_script)
+    script_content = File.read(frameworks_script)
+    unless script_content.include?('Install dSYMs for XCFrameworks')
+      # Insert dSYM block before the final "if [ COCOAPODS_PARALLEL_CODE_SIGN ]... wait fi" (must be after install_framework calls)
+      dsym_block = "\n# Install dSYMs for XCFrameworks (fixes Upload Symbols Failed warnings)\n"
+      dsym_block += "if [[ \"\$CONFIGURATION\" == \"Release\" ]] || [[ \"\$CONFIGURATION\" == \"Profile\" ]]; then\n"
+      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM\"\n"
+      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
+      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM\"\n"
+      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
+      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-pod/Pod/RazorpayStandard.xcframework/ios-arm64/dSYMs/RazorpayStandard.framework.dSYM\"\n"
+      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
+      dsym_block += "fi\n\n"
+      # Match: before final "if [ COCOAPODS_PARALLEL ]... wait fi" at end
+      script_content.sub!(/fi\n\nif \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\n  wait\nfi\z/m) { |m| "fi\n#{dsym_block}if [ \"\${COCOAPODS_PARALLEL_CODE_SIGN}\" == \"true\" ]; then\n  wait\nfi" }
+      File.write(frameworks_script, script_content)
     end
   end
 end
