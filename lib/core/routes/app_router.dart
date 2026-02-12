@@ -40,6 +40,8 @@ import '../../screens/client/relationship_form_screen.dart';
 import '../../screens/client/relationship_result_screen.dart';
 import '../../screens/client/live_pooja_screen.dart';
 import '../../screens/client/custom_request_orders_screen.dart';
+import '../../screens/subscription/subscription_paywall_screen.dart';
+import '../../screens/subscription/customer_center_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final initialRouteProvider = Provider<String>((ref) => '/splash');
@@ -356,6 +358,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/custom-requests/orders',
         builder: (context, state) => const CustomRequestOrdersScreen(),
+      ),
+      GoRoute(
+        path: '/subscription/paywall',
+        builder: (context, state) => const SubscriptionPaywallScreen(),
+      ),
+      GoRoute(
+        path: '/subscription/customer-center',
+        builder: (context, state) => const CustomerCenterScreen(),
       ),
     ],
   );

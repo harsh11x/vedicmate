@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
@@ -543,6 +544,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   _SettingsCard(
                     children: [
                       _SettingsTile(
+                        icon: Icons.card_membership,
+                        title: 'Manage Subscription',
+                        subtitle: 'View and manage your subscription',
+                        onTap: () {
+                          context.push('/subscription/customer-center');
+                        },
+                      ),
+                      _Divider(),
+                      _SettingsTile(
                         icon: Icons.help_outline,
                         title: 'Help Center',
                         subtitle: 'Get help and support',
@@ -587,6 +597,54 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+          // Delete Account Button
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.errorRed.withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: OutlinedButton(
+                  onPressed: () => _showDeleteAccountConfirmation(context),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.errorRed,
+                    side: const BorderSide(color: AppTheme.errorRed, width: 2),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.delete_forever, size: 22),
+                      SizedBox(width: 12),
+                      Text(
+                        'Delete Account',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
           // Logout Button
           SliverToBoxAdapter(
@@ -789,7 +847,246 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         child: const Icon(Icons.spa, color: AppTheme.white, size: 30),
       ),
-      applicationLegalese: '© 2024 Vedic Mate. All rights reserved.\n\nVedic Mate is your trusted companion for spiritual guidance and astrological consultations. Connect with verified AI Pandits and get personalized insights.',
+      applicationLegalese: '© 2024 Vedic Mate. All rights reserved.\\n\\nVedic Mate is your trusted companion for spiritual guidance and astrological consultations. Connect with verified AI Pandits and get personalized insights.',
+    );
+  }
+
+  void _showDeleteAccountConfirmation(BuildContext context) async {
+    // Step 1: Initial confirmation dialog
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppTheme.errorRed, size: 28),
+            const SizedBox(width: 12),
+            const Text('Delete Account?', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to permanently delete your account? This action cannot be undone.',
+          style: TextStyle(fontSize: 15),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorRed),
+            child: const Text('Yes, Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    // Step 2: Type "DELETE" confirmation dialog
+    if (context.mounted) {
+      _showTypeDeleteDialog(context);
+    }
+  }
+
+  void _showTypeDeleteDialog(BuildContext context) {
+    final TextEditingController deleteController = TextEditingController();
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text(
+            'Final Confirmation',
+            style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.errorRed),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'This will permanently delete:\n\n'
+                '• Your profile and account\n'
+                '• All bookings and history\n'
+                '• Wallet balance\n'
+                '• All uploaded images\n'
+                '• Chat history\n\n'
+                'Type DELETE to confirm:',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: deleteController,
+                enabled: !isLoading,
+                decoration: InputDecoration(
+                  hintText: 'Type DELETE',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppTheme.errorRed, width: 2),
+                  ),
+                ),
+                textCapitalization: TextCapitalization.characters,
+                onChanged: (value) => setState(() {}),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: (deleteController.text.trim() == 'DELETE' && !isLoading)
+                  ? () async {
+                      setState(() => isLoading = true);
+                      await _performAccountDeletion(dialogContext);
+                    }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.errorRed,
+                disabledBackgroundColor: AppTheme.neutralMedium,
+              ),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text('Delete Account'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _performAccountDeletion(BuildContext dialogContext) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final userId = user.uid;
+
+      // 1. Delete profile picture from Firebase Storage
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_pictures')
+            .child('$userId.jpg');
+        await storageRef.delete();
+        debugPrint('✓ Deleted profile picture from Storage');
+      } catch (e) {
+        debugPrint('Note: Could not delete profile picture: $e');
+      }
+
+      // 2. Delete all user data from Supabase database
+      try {
+        final supabase = Supabase.instance.client;
+
+        // Delete in order: child tables first, then parent tables
+        await supabase.from('chat_messages').delete().eq('sender_id', userId);
+        debugPrint('✓ Deleted chat messages');
+
+        await supabase.from('chat_sessions').delete().eq('client_id', userId);
+        await supabase.from('chat_sessions').delete().eq('pandit_id', userId);
+        debugPrint('✓ Deleted chat sessions');
+
+        await supabase.from('bookings').delete().eq('client_id', userId);
+        await supabase.from('bookings').delete().eq('pandit_id', userId);
+        debugPrint('✓ Deleted bookings');
+
+        await supabase.from('transactions').delete().eq('wallet_id', userId);
+        debugPrint('✓ Deleted transactions');
+
+        await supabase.from('wallets').delete().eq('user_id', userId);
+        debugPrint('✓ Deleted wallet');
+
+        await supabase.from('client_profiles').delete().eq('user_id', userId);
+        debugPrint('✓ Deleted client profile');
+
+        await supabase.from('pandit_profiles').delete().eq('user_id', userId);
+        debugPrint('✓ Deleted pandit profile');
+
+        await supabase.from('users').delete().eq('id', userId);
+        debugPrint('✓ Deleted user record');
+      } catch (e) {
+        debugPrint('Error deleting from Supabase: $e');
+      }
+
+      // 3. Delete Firebase Auth account
+      await user.delete();
+      debugPrint('✓ Deleted Firebase Auth account');
+
+      // 4. Close dialog and navigate to login
+      if (dialogContext.mounted) {
+        Navigator.pop(dialogContext);
+        
+        if (this.context.mounted) {
+          ScaffoldMessenger.of(this.context).showSnackBar(
+            const SnackBar(
+              content: Text('Account deleted successfully'),
+              backgroundColor: AppTheme.successGreen,
+              duration: Duration(seconds: 3),
+            ),
+          );
+          this.context.go('/login');
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      if (dialogContext.mounted) {
+        Navigator.pop(dialogContext);
+        
+        if (e.code == 'requires-recent-login') {
+          _showReauthenticationRequired(this.context);
+        } else {
+          ScaffoldMessenger.of(this.context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.message}'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (dialogContext.mounted) {
+        Navigator.pop(dialogContext);
+        
+        ScaffoldMessenger.of(this.context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showReauthenticationRequired(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Re-authentication Required'),
+        content: const Text(
+          'For security reasons, please sign out and sign in again before deleting your account.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -900,6 +1197,8 @@ class _SettingsTile extends StatelessWidget {
   final String subtitle;
   final VoidCallback? onTap;
   final Widget? trailing;
+  final Color? titleColor;
+  final Color? iconColor;
 
   const _SettingsTile({
     required this.icon,
@@ -907,10 +1206,15 @@ class _SettingsTile extends StatelessWidget {
     required this.subtitle,
     this.onTap,
     this.trailing,
+    this.titleColor,
+    this.iconColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveIconColor = iconColor ?? AppTheme.primaryOrange;
+    final effectiveTitleColor = titleColor ?? AppTheme.neutralDark;
+    
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -925,13 +1229,13 @@ class _SettingsTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppTheme.primaryOrange.withOpacity(0.15),
-                      AppTheme.yellowPrimary.withOpacity(0.1),
+                      effectiveIconColor.withOpacity(0.15),
+                      effectiveIconColor.withOpacity(0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: AppTheme.primaryOrange, size: 24),
+                child: Icon(icon, color: effectiveIconColor, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -943,7 +1247,7 @@ class _SettingsTile extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                             fontSize: 16,
-                        color: AppTheme.neutralDark,
+                        color: effectiveTitleColor,
                       ),
                     ),
                     const SizedBox(height: 4),

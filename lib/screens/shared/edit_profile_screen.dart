@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../core/theme/app_theme.dart';
 import '../../core/constants/country_codes.dart';
 import '../../services/auth_service.dart';
@@ -23,6 +26,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isLoading = false;
   CountryCode _selectedCountry = countryCodes.first;
   bool _hasExistingEmail = false; // True if user already has email (Firebase or Supabase)
+  File? _selectedImage; // Selected image for profile picture
+  bool _isUploadingImage = false; // Loading state for image upload
 
   @override
   void initState() {
@@ -46,6 +51,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      // For guest accounts, hardcode email and phone
+      if (user.isAnonymous) {
+        setState(() {
+          _nameController.text = user.displayName ?? 'Guest User';
+          _emailController.text = 'vedicmate@gmail.com';
+          _hasExistingEmail = true; // Make email read-only for guests
+        });
+        _parseAndSetPhone('+919898989898');
+        return;
+      }
+
       setState(() {
         _nameController.text = user.displayName ?? '';
         _emailController.text = user.email ?? '';
@@ -91,6 +107,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _savePhone() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    // Prevent guest users from changing phone
+    if (user.isAnonymous) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Guest accounts cannot modify phone number'),
+          backgroundColor: AppTheme.errorRed,
+        ),
+      );
+      return;
+    }
+
     final phone = _fullPhone;
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -105,9 +135,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
       return;
     }
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
 
     setState(() => _isLoading = true);
     try {
@@ -142,6 +169,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _saveEmail() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    // Prevent guest users from changing email
+    if (user.isAnonymous) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Guest accounts cannot modify email'),
+          backgroundColor: AppTheme.errorRed,
+        ),
+      );
+      return;
+    }
+
     final email = _emailController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -156,9 +197,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
       return;
     }
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
 
     setState(() => _isLoading = true);
     try {
@@ -234,6 +272,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
+    // For guest users, only allow name changes
+    if (user.isAnonymous) {
+      setState(() => _isLoading = true);
+      try {
+        final name = _nameController.text.trim();
+        if (name.isNotEmpty) {
+          await user.updateDisplayName(name);
+          await user.reload();
+          await Supabase.instance.client.from('users').update({'name': name}).eq('id', user.uid);
+        }
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Name updated successfully! Email and phone cannot be changed for guest accounts.'),
+              backgroundColor: AppTheme.successGreen,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
+          );
+        }
+      }
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
       // Save name
@@ -308,6 +376,307 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+        // Automatically upload after selection
+        await _uploadProfilePicture();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error selecting image: $e'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: AppTheme.primaryOrange),
+              title: const Text('Camera'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: AppTheme.primaryOrange),
+              title: const Text('Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _uploadProfilePicture() async {
+    debugPrint('🖼️ _uploadProfilePicture called');
+    if (_selectedImage == null) {
+      debugPrint('❌ No image selected');
+      return;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      debugPrint('❌ No user logged in');
+      return;
+    }
+
+    debugPrint('✓ Starting upload for user: ${user.uid}');
+    setState(() => _isUploadingImage = true);
+
+    try {
+      // Upload to Firebase Storage
+      debugPrint('📤 Uploading to Firebase Storage...');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_pictures')
+          .child('${user.uid}.jpg');
+
+      await storageRef.putFile(_selectedImage!);
+      debugPrint('✓ File uploaded to Storage');
+      
+      final photoURL = await storageRef.getDownloadURL();
+      debugPrint('✓ Got download URL: $photoURL');
+
+      // Update Firebase Auth
+      debugPrint('📝 Updating Firebase Auth...');
+      await user.updatePhotoURL(photoURL);
+      await user.reload();
+      debugPrint('✓ Firebase Auth updated');
+
+      // Update Supabase
+      try {
+        debugPrint('📝 Updating Supabase...');
+        await Supabase.instance.client
+            .from('users')
+            .update({'photo_url': photoURL})
+            .eq('id', user.uid);
+        debugPrint('✓ Supabase updated');
+      } catch (e) {
+        debugPrint('⚠️ Could not update Supabase photo_url: $e');
+        // Continue anyway, Firebase Auth is updated
+      }
+
+      if (mounted) {
+        debugPrint('✓ Upload complete, updating UI');
+        setState(() {
+          _isUploadingImage = false;
+          _selectedImage = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile picture updated successfully!'),
+            backgroundColor: AppTheme.successGreen,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        // Reload user data to show new picture
+        await user.reload();
+        setState(() {}); // Trigger rebuild to show new photo
+        debugPrint('✅ Profile picture upload complete!');
+      }
+    } catch (e) {
+      debugPrint('❌ Error uploading image: $e');
+      if (mounted) {
+        setState(() => _isUploadingImage = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error uploading image: $e'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showDeleteAccountDialog() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Account?'),
+        content: const Text(
+          'This will permanently delete your account and all associated data including:\n\n'
+          '• Profile information\n'
+          '• Booking history\n'
+          '• Wallet balance\n'
+          '• Uploaded images\n\n'
+          'This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _deleteAccount();
+            },
+            style: TextButton.styleFrom(foregroundColor: AppTheme.errorRed),
+            child: const Text('Delete Account'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteAccount() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final userId = user.uid;
+      
+      // 1. Delete profile picture from Firebase Storage (if exists)
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_pictures')
+            .child('$userId.jpg');
+        await storageRef.delete();
+        debugPrint('✓ Deleted profile picture from Storage');
+      } catch (e) {
+        debugPrint('Note: Could not delete profile picture: $e');
+        // Continue anyway
+      }
+
+      // 2. Delete all user data from Supabase database
+      // Order matters: delete child tables first, then parent tables
+      try {
+        final supabase = Supabase.instance.client;
+        
+        // Delete chat messages (references chat_sessions)
+        await supabase.from('chat_messages').delete().eq('sender_id', userId);
+        debugPrint('✓ Deleted chat messages');
+        
+        // Delete chat sessions (as client or pandit)
+        await supabase.from('chat_sessions').delete().eq('client_id', userId);
+        await supabase.from('chat_sessions').delete().eq('pandit_id', userId);
+        debugPrint('✓ Deleted chat sessions');
+        
+        // Delete bookings (as client or pandit)
+        await supabase.from('bookings').delete().eq('client_id', userId);
+        await supabase.from('bookings').delete().eq('pandit_id', userId);
+        debugPrint('✓ Deleted bookings');
+        
+        // Delete transactions (references wallet)
+        await supabase.from('transactions').delete().eq('wallet_id', userId);
+        debugPrint('✓ Deleted transactions');
+        
+        // Delete wallet
+        await supabase.from('wallets').delete().eq('user_id', userId);
+        debugPrint('✓ Deleted wallet');
+        
+        // Delete profile data
+        await supabase.from('client_profiles').delete().eq('user_id', userId);
+        debugPrint('✓ Deleted client profile');
+        
+        await supabase.from('pandit_profiles').delete().eq('user_id', userId);
+        debugPrint('✓ Deleted pandit profile');
+        
+        // Finally, delete user record
+        await supabase.from('users').delete().eq('id', userId);
+        debugPrint('✓ Deleted user record');
+        
+      } catch (e) {
+        debugPrint('Error deleting from Supabase: $e');
+        // Continue to delete Firebase Auth account anyway
+      }
+
+      // 3. Delete Firebase Auth account
+      await user.delete();
+      debugPrint('✓ Deleted Firebase Auth account');
+
+      // 4. Sign out and navigate to login
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account and all data deleted successfully'),
+            backgroundColor: AppTheme.successGreen,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        // Navigate to login screen
+        context.go('/login');
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        
+        // If recent login required, show re-authentication dialog
+        if (e.code == 'requires-recent-login') {
+          _showReauthenticationDialog();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error deleting account: ${e.message}'),
+              backgroundColor: AppTheme.errorRed,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showReauthenticationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Re-authentication Required'),
+        content: const Text(
+          'For security reasons, please sign out and sign in again before deleting your account.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) return 'Please enter your phone number';
     final digits = value.replaceAll(RegExp(r'\D'), '');
@@ -362,34 +731,67 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               Stack(
                 children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryOrange,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppTheme.white, width: 4),
-                    ),
-                    child: user?.photoURL != null
-                        ? ClipOval(
-                            child: Image.network(user!.photoURL!, fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 60, color: Colors.white)),
-                          )
-                        : const Icon(Icons.person, size: 60, color: Colors.white),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryOrange,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppTheme.white, width: 2),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _showImageSourceDialog,
+                      borderRadius: BorderRadius.circular(60),
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryOrange,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppTheme.white, width: 4),
+                        ),
+                        child: _isUploadingImage
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : _selectedImage != null
+                                ? ClipOval(
+                                    child: Image.file(_selectedImage!, fit: BoxFit.cover),
+                                  )
+                                : user?.photoURL != null
+                                    ? ClipOval(
+                                        child: Image.network(
+                                          user!.photoURL!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 60, color: Colors.white),
+                                        ),
+                                      )
+                                    : const Icon(Icons.person, size: 60, color: Colors.white),
                       ),
-                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
                     ),
                   ),
+                  if (!_isUploadingImage)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _showImageSourceDialog,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryOrange,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppTheme.white, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -447,7 +849,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.white,
+                  color: user?.isAnonymous == true ? AppTheme.neutralSoft : AppTheme.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppTheme.forestBackground.withOpacity(0.5)),
                 ),
@@ -475,6 +877,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              filled: user?.isAnonymous == true,
+                              fillColor: user?.isAnonymous == true ? AppTheme.neutralSoft : null,
                             ),
                             isExpanded: true,
                             items: countryCodes
@@ -487,7 +891,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       ),
                                     ))
                                 .toList(),
-                            onChanged: (cc) {
+                            onChanged: user?.isAnonymous == true ? null : (cc) {
                               if (cc != null) setState(() => _selectedCountry = cc);
                             },
                           ),
@@ -499,11 +903,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             decoration: InputDecoration(
                               hintText: _selectedCountry.code == 'IN' ? '9876543210' : 'Phone',
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                              suffixIcon: IconButton(
+                              filled: user?.isAnonymous == true,
+                              fillColor: user?.isAnonymous == true ? AppTheme.neutralSoft : null,
+                              suffixIcon: user?.isAnonymous == true ? null : IconButton(
                                 icon: const Icon(Icons.check_circle_outline, color: AppTheme.primaryOrange),
                                 onPressed: _isLoading ? null : _savePhone,
                               ),
                             ),
+                            readOnly: user?.isAnonymous == true,
+                            enabled: user?.isAnonymous != true,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -517,7 +925,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
-                        'Enter number and tap ✓ to save. Duplicate numbers will be rejected.',
+                        user?.isAnonymous == true 
+                            ? 'Phone number cannot be changed for guest accounts.'
+                            : 'Enter number and tap ✓ to save. Duplicate numbers will be rejected.',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ),
@@ -540,6 +950,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // Delete Account Button
+              if (user?.isAnonymous != true)
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _isLoading ? null : _showDeleteAccountDialog,
+                    icon: const Icon(Icons.delete_forever),
+                    label: const Text('Delete Account'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.errorRed,
+                      side: const BorderSide(color: AppTheme.errorRed),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

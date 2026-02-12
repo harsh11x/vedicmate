@@ -1,149 +1,137 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/wallet_service.dart';
 import '../../services/auth_service.dart';
-import '../../services/razorpay_service.dart';
+import '../../services/revenuecat_service.dart';
 import '../../widgets/abstract_background.dart';
 
-class WalletScreen extends StatefulWidget {
+class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
 
   @override
-  State<WalletScreen> createState() => _WalletScreenState();
+  ConsumerState<WalletScreen> createState() => _WalletScreenState();
 }
 
-class _WalletScreenState extends State<WalletScreen> {
+class _WalletScreenState extends ConsumerState<WalletScreen> {
   final WalletService _walletService = WalletService();
   final AuthService _authService = AuthService();
-  final RazorpayService _razorpayService = RazorpayService();
-  final TextEditingController _amountController = TextEditingController();
+  final RevenueCatService _revenueCatService = RevenueCatService();
 
   double _balance = 0.0;
   bool _isLoading = true;
   List<Map<String, dynamic>> _transactions = [];
+  List<Package> _walletPackages = [];
+
+  // Wallet credit amounts mapped to their values
+  final Map<String, int> _walletAmounts = {
+    'wallet_50': 50,
+    'wallet_100': 100,
+    'wallet_200': 200,
+    'wallet_500': 500,
+    'wallet_1000': 1000,
+    'wallet_2000': 2000,
+    'wallet_5000': 5000,
+  };
 
   @override
   void initState() {
     super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    _razorpayService.initialize(
-      onSuccess: _handlePaymentSuccess,
-      onFailure: _handlePaymentError,
-      onExternalWallet: _handleExternalWallet,
-    );
-    await _fetchData();
+    _fetchData();
   }
 
   Future<void> _fetchData() async {
     final user = _authService.currentUser;
     if (user != null) {
+      setState(() => _isLoading = true);
+      
       final balance = await _walletService.getBalance(user.uid);
       final transactions = await _walletService.getTransactions(user.uid);
-      if (mounted) {
-        setState(() {
-          _balance = balance;
-          _transactions = transactions;
-          _isLoading = false;
-        });
+      
+      // Fetch wallet offerings from RevenueCat
+      try {
+        final offering = await _revenueCatService.getWalletOffering();
+        final packages = offering?.availablePackages ?? [];
+        
+        if (mounted) {
+          setState(() {
+            _balance = balance;
+            _transactions = transactions;
+            _walletPackages = packages;
+            _isLoading = false;
+          });
+        }
+      } catch (e) {
+        debugPrint('Error fetching wallet offerings: $e');
+        if (mounted) {
+          setState(() {
+            _balance = balance;
+            _transactions = transactions;
+            _isLoading = false;
+          });
+        }
       }
     }
   }
 
-  @override
-  void dispose() {
-    _razorpayService.dispose();
-    _amountController.dispose();
-    super.dispose();
-  }
-
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    final user = _authService.currentUser;
-    if (user == null) return;
-    
-    double amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0.0;
-    
-    setState(() => _isLoading = true);
-    
-    final success = await _razorpayService.handlePaymentSuccess(
-      response, 
-      user.uid, 
-      amount
-    );
-
-    if (success) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Payment Successful! Wallet updated.'), backgroundColor: AppTheme.successGreen),
-        );
-        _amountController.clear();
-      }
-      await _fetchData();
-    } else {
-       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Payment Succeeded but Wallet update failed.'), backgroundColor: AppTheme.errorRed),
-        );
-       setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  void _handlePaymentError(PaymentFailureResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment Failed: ${response.message}'), backgroundColor: AppTheme.errorRed),
-    );
-    setState(() => _isLoading = false);
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('External Wallet: ${response.walletName}')),
-    );
-  }
-
-  Future<void> _initiateRecharge() async {
-    final amountText = _amountController.text.replaceAll(',', '');
-    final amount = double.tryParse(amountText);
-    
-    if (amount == null || amount < 50) { // Fix: Min ₹50
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Minimum recharge amount is ₹50'),
-          backgroundColor: AppTheme.errorRed,
-        ),
-      );
-      return;
-    }
-
+  Future<void> _purchaseWalletCredit(Package package) async {
     final user = _authService.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-         const SnackBar(content: Text('Please login to recharge wallet')),
-      );
+      _showError('Please login to purchase wallet credits');
       return;
     }
 
-    setState(() => _isLoading = true); // accurate loading state
-    
+    setState(() => _isLoading = true);
+
     try {
-      await _razorpayService.openCheckout(
-        amount: amount,
-        userId: user.uid,
-        userName: user.displayName ?? 'User', // Use actual data
-        userEmail: user.email ?? 'user@vedicmate.com',
-        userPhone: '+919999999999', // Placeholder until phone is stored in auth profile
-      );
-      // Loading remains true until payment success/error callback
+      // Purchase via RevenueCat
+      final customerInfo = await _revenueCatService.purchaseWalletCredit(package);
+      
+      // Get the amount from package identifier
+      final amount = _walletAmounts[package.identifier] ?? 0;
+      
+      if (amount > 0) {
+        // Add credits to Supabase wallet
+        final success = await _walletService.addMoney(
+          user.uid,
+          amount.toDouble(),
+          customerInfo.originalAppUserId, // Use RevenueCat user ID as reference
+        );
+
+        if (success) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('₹$amount added to wallet successfully!'),
+                backgroundColor: AppTheme.successGreen,
+              ),
+            );
+          }
+          await _fetchData();
+        } else {
+          _showError('Failed to update wallet balance');
+        }
+      }
     } catch (e) {
+      debugPrint('Purchase error: $e');
+      if (e.toString().contains('cancelled')) {
+        // User cancelled, don't show error
+      } else {
+        _showError('Purchase failed: ${e.toString()}');
+      }
       setState(() => _isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('Error initiating payment: $e')),
+        SnackBar(
+          content: Text(message),
+          backgroundColor: AppTheme.errorRed,
+        ),
       );
     }
   }
@@ -159,58 +147,58 @@ class _WalletScreenState extends State<WalletScreen> {
       ),
       body: AbstractBackground(
         child: SafeArea(
-          child: _isLoading 
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _fetchData,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Balance Card
-                      _buildBalanceCard(),
-                      const SizedBox(height: 24),
-                      
-                      // Recharge Section
-                      _buildRechargeSection(),
-                      const SizedBox(height: 24),
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  onRefresh: _fetchData,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Balance Card
+                        _buildBalanceCard(),
+                        const SizedBox(height: 24),
 
-                      // Transactions
-                      Text(
-                        'Transaction History',
-                        style: GoogleFonts.outfit(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.neutralDark,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _transactions.isEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(32.0),
-                              child: Text(
-                                'No transactions yet.',
-                                style: GoogleFonts.outfit(color: AppTheme.neutralMedium),
-                              ),
-                            ),
-                          )
-                        : ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: _transactions.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final txn = _transactions[index];
-                              return _buildTransactionTile(txn);
-                            },
+                        // Wallet Credit Packages
+                        _buildWalletPackagesSection(),
+                        const SizedBox(height: 24),
+
+                        // Transactions
+                        Text(
+                          'Transaction History',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.neutralDark,
                           ),
-                    ],
+                        ),
+                        const SizedBox(height: 16),
+                        _transactions.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(32.0),
+                                  child: Text(
+                                    'No transactions yet.',
+                                    style: GoogleFonts.outfit(color: AppTheme.neutralMedium),
+                                  ),
+                                ),
+                              )
+                            : ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: _transactions.length,
+                                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                                itemBuilder: (context, index) {
+                                  final txn = _transactions[index];
+                                  return _buildTransactionTile(txn);
+                                },
+                              ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
         ),
       ),
     );
@@ -254,7 +242,37 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
-  Widget _buildRechargeSection() {
+  Widget _buildWalletPackagesSection() {
+    if (_walletPackages.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: AppTheme.glassMorphism,
+        child: Column(
+          children: [
+            const Icon(Icons.info_outline, color: AppTheme.neutralMedium, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              'Wallet credits not available',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.neutralDark,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Please configure wallet credit products in RevenueCat dashboard',
+              style: GoogleFonts.outfit(
+                fontSize: 14,
+                color: AppTheme.neutralMedium,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: AppTheme.glassMorphism,
@@ -270,63 +288,66 @@ class _WalletScreenState extends State<WalletScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          TextField(
-            controller: _amountController,
-            keyboardType: TextInputType.number,
-            style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold),
-            decoration: InputDecoration(
-              prefixText: '₹ ',
-              hintText: 'Enter Amount',
-              filled: true,
-              fillColor: AppTheme.neutralSoft,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.5,
             ),
+            itemCount: _walletPackages.length,
+            itemBuilder: (context, index) {
+              final package = _walletPackages[index];
+              final amount = _walletAmounts[package.identifier] ?? 0;
+              
+              return _buildPackageCard(package, amount);
+            },
           ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: PaymentPresets.amounts.map((amount) {
-              return ActionChip(
-                label: Text('₹$amount'),
-                backgroundColor: AppTheme.white,
-                onPressed: () {
-                  _amountController.text = amount.toString();
-                },
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _initiateRecharge,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryOrange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 2,
-                ),
-                child: _isLoading 
-                  ? const SizedBox(
-                      height: 20, 
-                      width: 20, 
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
-                    )
-                  : Text(
-                      'Proceed to Pay',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16, 
-                        fontWeight: FontWeight.bold, 
-                      ),
-                    ),
-              ),
-            ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPackageCard(Package package, int amount) {
+    return InkWell(
+      onTap: () => _purchaseWalletCredit(package),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '₹$amount',
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryOrange,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              package.storeProduct.priceString,
+              style: GoogleFonts.outfit(
+                fontSize: 12,
+                color: AppTheme.neutralMedium,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -335,7 +356,7 @@ class _WalletScreenState extends State<WalletScreen> {
     final isCredit = txn['type'] == 'credit';
     final amount = (txn['amount'] as num).toDouble();
     final date = DateTime.parse(txn['created_at']);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -355,7 +376,9 @@ class _WalletScreenState extends State<WalletScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isCredit ? AppTheme.successGreen.withOpacity(0.1) : AppTheme.errorRed.withOpacity(0.1),
+              color: isCredit
+                  ? AppTheme.successGreen.withOpacity(0.1)
+                  : AppTheme.errorRed.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(

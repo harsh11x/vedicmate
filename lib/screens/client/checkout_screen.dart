@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Added
 import '../../providers/cart_provider.dart'; // Added
+import '../../services/razorpay_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/user_preferences_service.dart';
 import '../../core/config/env.dart';
@@ -136,7 +137,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       }
 
       var options = {
-        'key': 'rzp_test_YourTestKey', // REPLACE WITH REAL KEY
+        'key': RazorpayService.razorpayKeyId,
         'amount': (amount * 100).toInt(), // in paise
         'name': 'AstroApp Remedies',
         'description': description,
