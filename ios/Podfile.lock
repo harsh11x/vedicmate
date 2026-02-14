@@ -1311,8 +1311,6 @@ PODS:
   - flutter_webrtc (1.2.0):
     - Flutter
     - WebRTC-SDK (= 137.7151.04)
-  - fluttertoast (0.0.2):
-    - Flutter
   - google_sign_in_ios (0.0.1):
     - AppAuth (>= 1.7.4)
     - Flutter
@@ -1467,13 +1465,21 @@ PODS:
   - printing (1.0.0):
     - Flutter
   - PromisesObjC (2.4.0)
-  - razorpay-core-pod (1.0.3)
-  - razorpay-pod (1.5.2):
-    - razorpay-core-pod (= 1.0.3)
-  - razorpay_flutter (1.1.10):
+  - purchases_flutter (9.11.1):
     - Flutter
-    - razorpay-pod
+    - PurchasesHybridCommon (= 17.33.0)
+  - purchases_ui_flutter (9.11.1):
+    - Flutter
+    - PurchasesHybridCommonUI (= 17.33.0)
+  - PurchasesHybridCommon (17.33.0):
+    - RevenueCat (= 5.57.1)
+  - PurchasesHybridCommonUI (17.33.0):
+    - PurchasesHybridCommon (= 17.33.0)
+    - RevenueCatUI (= 5.57.1)
   - RecaptchaInterop (101.0.0)
+  - RevenueCat (5.57.1)
+  - RevenueCatUI (5.57.1):
+    - RevenueCat (= 5.57.1)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -1503,13 +1509,13 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
   - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
-  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - printing (from `.symlinks/plugins/printing/ios`)
-  - razorpay_flutter (from `.symlinks/plugins/razorpay_flutter/ios`)
+  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
+  - purchases_ui_flutter (from `.symlinks/plugins/purchases_ui_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -1548,9 +1554,11 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PromisesObjC
-    - razorpay-core-pod
-    - razorpay-pod
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
     - RecaptchaInterop
+    - RevenueCat
+    - RevenueCatUI
     - WebRTC-SDK
 
 EXTERNAL SOURCES:
@@ -1574,8 +1582,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_tts/ios"
   flutter_webrtc:
     :path: ".symlinks/plugins/flutter_webrtc/ios"
-  fluttertoast:
-    :path: ".symlinks/plugins/fluttertoast/ios"
   google_sign_in_ios:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   image_picker_ios:
@@ -1586,8 +1592,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   printing:
     :path: ".symlinks/plugins/printing/ios"
-  razorpay_flutter:
-    :path: ".symlinks/plugins/razorpay_flutter/ios"
+  purchases_flutter:
+    :path: ".symlinks/plugins/purchases_flutter/ios"
+  purchases_ui_flutter:
+    :path: ".symlinks/plugins/purchases_ui_flutter/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -1631,7 +1639,6 @@ SPEC CHECKSUMS:
   flutter_local_notifications: ad39620c743ea4c15127860f4b5641649a988100
   flutter_tts: b88dbc8655d3dc961bc4a796e4e16a4cc1795833
   flutter_webrtc: c3e21fc0dcd9d8eb246ae4d5256fcbeb2f5ecd22
-  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
   google_sign_in_ios: b48bb9af78576358a168361173155596c845f0b9
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleSignIn: ce8c89bb9b37fb624b92e7514cc67335d1e277e4
@@ -1647,10 +1654,13 @@ SPEC CHECKSUMS:
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   printing: 54ff03f28fe9ba3aa93358afb80a8595a071dd07
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  razorpay-core-pod: ef0309dbf8e3e5a1330f6cad89dcf9226d8ef758
-  razorpay-pod: a9cb6e158aee8754053b147008eff6b4897789c8
-  razorpay_flutter: 0e98e4fcaae27ad50e011d85f66d85e0a008754a
+  purchases_flutter: 3b18d1eabc908f9852a36f1e15db0112aa7fbcb3
+  purchases_ui_flutter: 859974e9a5d6c45dabee18d8b49c06a6dc48af6c
+  PurchasesHybridCommon: a7454fdf1d3ab71e09149a51c8ab1352be03b22a
+  PurchasesHybridCommonUI: 80b3237a2a43386343dcc61eea5c3cfc906d9a31
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RevenueCat: 1da8d1116fcc89f5084fe1caf91b11e5e61b0f96
+  RevenueCatUI: 0fd047a9ff1f978b7352510af272db772734b0f7
   share_plus: de6030e33b4e106470e09322d87cf2a4258d2d1d
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sign_in_with_apple: c5dcc141574c8c54d5ac99dd2163c0c72ad22418
