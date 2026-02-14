@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import '../../services/revenuecat_service.dart';
 import '../../providers/subscription_provider.dart';
 
@@ -37,28 +38,23 @@ class _SubscriptionPaywallScreenState extends ConsumerState<SubscriptionPaywallS
       
       if (mounted) {
         // Handle paywall result
-        switch (result) {
-          case PaywallResult.purchased:
-            // User made a purchase
-            _handlePurchaseSuccess();
-            break;
-          case PaywallResult.restored:
-            // User restored purchases
-            _handleRestoreSuccess();
-            break;
-          case PaywallResult.cancelled:
-            // User dismissed paywall
-            Navigator.of(context).pop(false);
-            break;
-          case PaywallResult.error:
-            // Error occurred
-            setState(() {
-              _errorMessage = 'An error occurred. Please try again.';
-              _isLoading = false;
-            });
-            break;
-          default:
-            Navigator.of(context).pop(false);
+        if (result == PaywallResult.purchased) {
+          // User made a purchase
+          _handlePurchaseSuccess();
+        } else if (result == PaywallResult.restored) {
+          // User restored purchases
+          _handleRestoreSuccess();
+        } else if (result == PaywallResult.cancelled) {
+          // User dismissed paywall
+          Navigator.of(context).pop(false);
+        } else if (result == PaywallResult.error) {
+          // Error occurred
+          setState(() {
+            _errorMessage = 'An error occurred. Please try again.';
+            _isLoading = false;
+          });
+        } else {
+          Navigator.of(context).pop(false);
         }
       }
     } catch (e) {

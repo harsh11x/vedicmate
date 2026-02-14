@@ -288,6 +288,44 @@ class RevenueCatService {
     }
   }
 
+  /// Find a package by its identifier across all offerings
+  /// 
+  /// [packageIdentifier] - The identifier of the package to search for (e.g. 'gem_stone_ruby')
+  Future<Package?> findPackage(String packageIdentifier) async {
+    _ensureInitialized();
+    
+    try {
+      debugPrint('🛒 RevenueCat: Searching for package: $packageIdentifier');
+      final offerings = await Purchases.getOfferings();
+      
+      // search in current offering first
+      if (offerings.current != null) {
+        final package = offerings.current!.availablePackages
+            .firstWhere((p) => p.identifier == packageIdentifier, orElse: () => null as Package); // null check workaround
+            
+        // ignore: unnecessary_null_comparison
+        if (package != null) return package;
+      }
+      
+      // search in all other offerings
+      for (final offering in offerings.all.values) {
+        try {
+          final package = offering.availablePackages
+              .firstWhere((p) => p.identifier == packageIdentifier);
+          return package;
+        } catch (_) {
+          // continue searching
+        }
+      }
+      
+      debugPrint('⚠️ RevenueCat: Package not found: $packageIdentifier');
+      return null;
+    } catch (e) {
+      debugPrint('❌ RevenueCat: Error searching for package - $e');
+      return null;
+    }
+  }
+
   /// Present RevenueCat paywall
   /// 
   /// Shows the native paywall UI configured in RevenueCat dashboard.

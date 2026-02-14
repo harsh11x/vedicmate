@@ -12,10 +12,10 @@ class WalletService {
 
   // Get current wallet balance from Supabase
   Future<double> getBalance(String userId) async {
-    // 1. Check if guest
-    if (userId.startsWith('guest_') || userId.contains('anonymous')) {
-      return 5000.0; // Guest bonus
-    }
+    // 1. Check if guest - NO, guests now have real wallets in DB (initialized to 5000)
+    // if (userId.startsWith('guest_') || userId.contains('anonymous')) {
+    //   return 5000.0; 
+    // }
 
     try {
       final response = await _supabase
@@ -27,10 +27,42 @@ class WalletService {
       if (response == null) {
         // Create wallet if it doesn't exist
         await _createWallet(userId);
-        return 0.0;
+        // If guest, we just gave them 5000, so return that
+        final isGuest = _authService.currentUser?.isAnonymous ?? false;
+        return isGuest ? 5000.0 : 0.0;
       }
       
-      return (response['balance'] as num).toDouble();
+      var balance = (response['balance'] as num).toDouble();
+
+      // Check for broken guest wallet (0 balance, no history) and fix it
+      final isGuest = _authService.currentUser?.isAnonymous ?? false;
+      if (balance == 0 && isGuest) {
+         try {
+           final txns = await _supabase.from('transactions').select('id').eq('wallet_id', userId).limit(1);
+           if (txns.isEmpty) {
+             debugPrint('Fixing guest wallet: adding 5000 bonus');
+             // Add bonus transaction
+             await _supabase.from('transactions').insert({
+                'wallet_id': userId,
+                'amount': 5000.0,
+                'type': 'credit',
+                'category': 'recharge',
+                'description': 'Guest Welcome Bonus',
+                'reference_id': 'GUEST_BONUS_${DateTime.now().millisecondsSinceEpoch}',
+                'status': 'completed',
+                'created_at': DateTime.now().toIso8601String(),
+             });
+             
+             // Update wallet
+             await _supabase.from('wallets').update({'balance': 5000.0}).eq('user_id', userId);
+             return 5000.0;
+           }
+         } catch (e) {
+           debugPrint('Error fixing guest wallet: $e');
+         }
+      }
+      
+      return balance;
     } catch (e) {
       debugPrint('WalletService: Error fetching balance -> $e');
       return 0.0;
@@ -40,16 +72,8 @@ class WalletService {
   // Adapter for WalletProvider: Get full UserWallet object
   // Synced from Supabase
   Future<UserWallet> getWallet(String userId) async {
-     // 1. Guest Handling
-    if (userId.startsWith('guest_') || userId.contains('anonymous')) {
-      return UserWallet(
-        userId: userId,
-        balance: 5000.0,
-        transactions: [],
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-    }
+     // 1. Guest Handling - removed, fetch from DB like everyone else
+    // if (userId.startsWith('guest_') || userId.contains('anonymous')) { ... }
 
     final balance = await getBalance(userId);
     final txns = await getRecentTransactions(userId);
@@ -65,9 +89,12 @@ class WalletService {
 
   Future<void> _createWallet(String uid) async {
     try {
+      // Check if guest for initial bonus
+      final isGuest = _authService.currentUser?.isAnonymous ?? false;
+      
       await _supabase.from('wallets').insert({
         'user_id': uid,
-        'balance': 0.00,
+        'balance': isGuest ? 5000.0 : 0.00, // Give 5000 to guests
         'currency': 'INR',
       });
     } catch (e) {
@@ -93,7 +120,7 @@ class WalletService {
 
   // Public method matching WalletProvider expectation
   Future<List<WalletTransaction>> getRecentTransactions(String userId, {int limit = 50}) async {
-    if (userId.startsWith('guest_')) return [];
+    // if (userId.startsWith('guest_')) return []; // Allow guests to see history
 
     try {
       final response = await _supabase
@@ -150,37 +177,59 @@ class WalletService {
   }
 
   // Deduct funds (for Chats/Calls)
-  Future<bool> deductMoney(String userId, double amount, String description, {String? referenceId}) async {
-    if (userId.startsWith('guest_')) return true; // Free for guests
+  // Deduct funds (for Chats/Calls/Orders)
+  Future<bool> deductMoney(String userId, double amount, String description, {String? referenceId, String category = 'consultation'}) async {
+    debugPrint('WalletService: Attempting to deduct ₹$amount for user $userId. Reason: $description');
+    
+    // 0. Validation
+    if (amount <= 0) {
+      throw Exception('Invalid amount: $amount');
+    }
 
     try {
       final currentBalance = await getBalance(userId);
+      debugPrint('WalletService: Current balance is ₹$currentBalance');
+      
       if (currentBalance < amount) {
-        return false;
+        throw Exception('Insufficient balance. Need ₹$amount, have ₹$currentBalance');
       }
 
       // 1. Transaction
-      await _supabase.from('transactions').insert({
-        'wallet_id': userId,
-        'amount': amount,
-        'type': 'debit',
-        'category': 'consultation',
-        'description': description,
-        'reference_id': referenceId,
-        'status': 'completed',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      try {
+        await _supabase.from('transactions').insert({
+          'wallet_id': userId,
+          'amount': amount,
+          'type': 'debit',
+          'category': category,
+          'description': description,
+          'reference_id': referenceId,
+          'status': 'completed',
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        debugPrint('WalletService: Transaction log created successfully');
+      } catch (e) {
+        debugPrint('WalletService: Failed to insert transaction log: $e');
+        throw Exception('Transaction Log Failed: $e');
+      }
 
       // 2. Update Balance
-      await _supabase.from('wallets').update({
-        'balance': currentBalance - amount,
-        'updated_at': DateTime.now().toIso8601String(),
-      }).eq('user_id', userId);
-
-      return true;
+      try {
+        final newBalance = currentBalance - amount;
+        await _supabase.from('wallets').update({
+          'balance': newBalance,
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('user_id', userId);
+        debugPrint('WalletService: Wallet balance updated to ₹$newBalance');
+        return true;
+      } catch (e) {
+        debugPrint('WalletService: Failed to update wallet balance: $e');
+        // Critical error: Transaction logged but balance not updated.
+        // In a real app, we'd need a compensation transaction or atomic updates (RPC).
+         throw Exception('Balance Update Failed: $e');
+      }
     } catch (e) {
-      debugPrint('Error deducting money: $e');
-      return false;
+      debugPrint('WalletService: Error deducting money: $e');
+      rethrow;
     }
   }
 

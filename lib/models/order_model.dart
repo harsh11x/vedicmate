@@ -285,33 +285,33 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
       id: json['id'] ?? '',
-      orderId: json['orderId'] ?? '',
-      orderDate: DateTime.parse(json['orderDate']),
+      orderId: (json['orderId'] ?? json['order_id']) ?? '',
+      orderDate: DateTime.parse(json['orderDate'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
       items: (json['items'] as List)
           .map((e) => OrderItem.fromJson(e))
           .toList(),
       subtotal: (json['subtotal'] ?? 0).toDouble(),
       tax: (json['tax'] ?? 0).toDouble(),
-      deliveryCharge: (json['deliveryCharge'] ?? 0).toDouble(),
-      totalAmount: (json['totalAmount'] ?? 0).toDouble(),
+      deliveryCharge: (json['deliveryCharge'] ?? json['delivery_charge'] ?? 0).toDouble(),
+      totalAmount: (json['totalAmount'] ?? json['total_amount'] ?? 0).toDouble(),
       paymentStatus: PaymentStatus.values.firstWhere(
-        (e) => e.name == json['paymentStatus'],
+        (e) => e.name == (json['paymentStatus'] ?? json['payment_status']),
         orElse: () => PaymentStatus.pending,
       ),
-      paymentId: json['paymentId'],
+      paymentId: json['paymentId'] ?? json['payment_id'],
       deliveryStatus: DeliveryStatus.values.firstWhere(
-        (e) => e.name == json['deliveryStatus'],
+        (e) => e.name == (json['deliveryStatus'] ?? json['delivery_status']),
         orElse: () => DeliveryStatus.processing,
       ),
-      shippingAddress: ShippingAddress.fromJson(json['shippingAddress'] ?? {}),
-      expectedDeliveryDate: json['expectedDeliveryDate'] != null
-          ? DateTime.parse(json['expectedDeliveryDate'])
+      shippingAddress: ShippingAddress.fromJson(json['shippingAddress'] ?? json['shipping_address'] ?? {}),
+      expectedDeliveryDate: (json['expectedDeliveryDate'] ?? json['expected_delivery_date']) != null
+          ? DateTime.parse(json['expectedDeliveryDate'] ?? json['expected_delivery_date'])
           : null,
-      actualDeliveryDate: json['actualDeliveryDate'] != null
-          ? DateTime.parse(json['actualDeliveryDate'])
+      actualDeliveryDate: (json['actualDeliveryDate'] ?? json['actual_delivery_date']) != null
+          ? DateTime.parse(json['actualDeliveryDate'] ?? json['actual_delivery_date'])
           : null,
-      trackingNumber: json['trackingNumber'],
-      cancellationReason: json['cancellationReason'],
+      trackingNumber: json['trackingNumber'] ?? json['tracking_number'],
+      cancellationReason: json['cancellationReason'] ?? json['cancellation_reason'],
       timeline: json['timeline'] != null
           ? (json['timeline'] as List)
               .map((e) => OrderTimeline.fromJson(e))

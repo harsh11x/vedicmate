@@ -44,9 +44,10 @@ class OrderService {
 
       debugPrint('✅ Order created in Supabase: $orderId');
       return Order.fromJson(response);
-    } catch (e) {
-      debugPrint('❌ Error creating order: $e');
-      return null;
+    } catch (e, stack) {
+      debugPrint('❌ Error creating order in Supabase: $e');
+      debugPrint('Stack trace: $stack');
+      throw Exception('Failed to create order: $e');
     }
   }
 

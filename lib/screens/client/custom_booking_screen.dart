@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// NOTE: Razorpay has been deprecated in favor of RevenueCat
+// This screen needs to be updated to use RevenueCat for payments
 import '../../core/theme/app_theme.dart';
 import '../shared/payment_wallet_screen.dart';
-import '../../services/razorpay_service.dart';
 import '../../services/custom_request_service.dart';
 
 class CustomBookingScreen extends StatefulWidget {
@@ -36,29 +36,21 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
   final String _method = 'Video Call';
   
   // Payment
-  late RazorpayService _razorpayService;
   bool _isProcessing = false;
   String? _currentOrderId;
 
   @override
   void initState() {
     super.initState();
-    _razorpayService = RazorpayService();
-    _razorpayService.initialize(
-      onSuccess: _handlePaymentSuccess,
-      onFailure: _handlePaymentFailure,
-      onExternalWallet: _handleExternalWallet,
-    );
   }
 
   @override
   void dispose() {
-    _razorpayService.dispose();
     _requirementsController.dispose();
     super.dispose();
   }
 
-  // Payment Processing
+  // DEPRECATED: Payment processing removed - needs RevenueCat integration
   Future<void> _processPayment() async {
     // Validate
     if (_selectedTimeSlot == null) {
@@ -76,78 +68,15 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
       return;
     }
 
-    setState(() => _isProcessing = true);
-
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) throw Exception('User not logged in');
-
-      // Create order
-      final orderResponse = await CustomRequestService.createOrder(
-        userId: user.uid,
-        userName: user.displayName ?? 'User',
-        userEmail: user.email ?? '',
-        userPhone: user.phoneNumber ?? '',
-        serviceType: _selectedType,
-        date: DateFormat('yyyy-MM-dd').format(_selectedDate),
-        timeSlot: _selectedTimeSlot!,
-        requirements: _requirementsController.text,
-        amount: priceValue as int,
-      );
-
-      if (orderResponse['success'] == true) {
-        _currentOrderId = orderResponse['orderId'];
-        
-        // Open Razorpay
-        await _razorpayService.openCustomRequestCheckout(
-          razorpayKeyId: orderResponse['razorpayKeyId'],
-          razorpayOrderId: orderResponse['razorpayOrderId'],
-          amount: priceValue,
-          userName: user.displayName ?? 'User',
-          userEmail: user.email ?? '',
-          userPhone: user.phoneNumber ?? '',
-          serviceType: _selectedType,
-        );
-      }
-    } catch (e) {
-      debugPrint('Payment Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      setState(() => _isProcessing = false);
-    }
+    // TODO: Implement RevenueCat payment flow
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment functionality needs to be updated to use RevenueCat'),
+      ),
+    );
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    try {
-      // Verify payment
-      final verifyResponse = await CustomRequestService.verifyPayment(
-        orderId: _currentOrderId!,
-        razorpayPaymentId: response.paymentId!,
-        razorpayOrderId: response.orderId!,
-        razorpaySignature: response.signature!,
-      );
-
-      if (verifyResponse['success'] == true) {
-        _showSuccessDialog();
-      }
-    } catch (e) {
-      debugPrint('Verification Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Payment verification failed')),
-      );
-    }
-  }
-
-  void _handlePaymentFailure(PaymentFailureResponse response) {
-    debugPrint('Payment Failed: ${response.message}');
-    _showRetryDialog(response.message ?? 'Payment failed');
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint('External Wallet: ${response.walletName}');
-  }
+  // DEPRECATED: Payment handlers removed - needs RevenueCat integration
 
   void _showSuccessDialog() {
     showDialog(

@@ -6,21 +6,56 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/order_model.dart';
 import '../../providers/order_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class OrderHistoryScreen extends ConsumerWidget {
   const OrderHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filteredOrders = ref.watch(filteredOrdersProvider);
-    final currentFilter = ref.watch(orderFilterProvider);
-    final stats = ref.watch(orderStatsProvider);
+    final authState = ref.watch(authStateProvider);
+    
+    return authState.when(
+      data: (user) {
+        if (user == null) {
+          return Scaffold(
+            body: Center(
+              child: Text('Please log in to view orders', style: GoogleFonts.outfit()),
+            ),
+          );
+        }
+        
+        final userId = user.uid;
+        final filteredOrders = ref.watch(filteredOrdersProvider(userId));
+        final currentFilter = ref.watch(orderFilterProvider);
+        final stats = ref.watch(orderStatsProvider(userId));
 
+        return _buildOrderHistoryScaffold(context, ref, filteredOrders, currentFilter, stats, userId);
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => Scaffold(
+        body: Center(
+          child: Text('Error loading user', style: GoogleFonts.outfit()),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrderHistoryScaffold(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<List<Order>> filteredOrders,
+    OrderFilter currentFilter,
+    AsyncValue<OrderStats> stats,
+    String userId,
+  ) {
     return Scaffold(
       backgroundColor: AppTheme.neutralSoft,
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(ordersProvider);
+          ref.invalidate(ordersProvider(userId));
         },
         color: AppTheme.primaryOrange,
         child: CustomScrollView(
@@ -190,7 +225,7 @@ class OrderHistoryScreen extends ConsumerWidget {
                       Text('Error loading orders', style: GoogleFonts.outfit(fontSize: 16)),
                       const SizedBox(height: 8),
                       ElevatedButton(
-                        onPressed: () => ref.invalidate(ordersProvider),
+                        onPressed: () => ref.invalidate(ordersProvider(userId)),
                         child: const Text('Retry'),
                       ),
                     ],

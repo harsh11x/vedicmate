@@ -14,10 +14,10 @@ final backendOrderServiceProvider = Provider<BackendOrderService>((ref) {
 });
 
 
-// Orders List Provider
-final ordersProvider = FutureProvider<List<Order>>((ref) async {
+// Orders List Provider - requires userId
+final ordersProvider = FutureProvider.family<List<Order>, String>((ref, userId) async {
   final orderService = ref.read(orderServiceProvider);
-  return await orderService.getOrders();
+  return await orderService.getOrders(userId);
 });
 
 // Single Order Provider
@@ -31,8 +31,8 @@ enum OrderFilter { all, processing, shipped, delivered, cancelled }
 
 final orderFilterProvider = StateProvider<OrderFilter>((ref) => OrderFilter.all);
 
-final filteredOrdersProvider = Provider<AsyncValue<List<Order>>>((ref) {
-  final ordersAsync = ref.watch(ordersProvider);
+final filteredOrdersProvider = Provider.family<AsyncValue<List<Order>>, String>((ref, userId) {
+  final ordersAsync = ref.watch(ordersProvider(userId));
   final filter = ref.watch(orderFilterProvider);
   
   return ordersAsync.when(
@@ -83,8 +83,8 @@ class OrderStats {
   });
 }
 
-final orderStatsProvider = Provider<AsyncValue<OrderStats>>((ref) {
-  final ordersAsync = ref.watch(ordersProvider);
+final orderStatsProvider = Provider.family<AsyncValue<OrderStats>, String>((ref, userId) {
+  final ordersAsync = ref.watch(ordersProvider(userId));
   
   return ordersAsync.when(
     data: (orders) {

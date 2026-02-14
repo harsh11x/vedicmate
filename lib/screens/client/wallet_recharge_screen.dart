@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../core/theme/app_theme.dart';
+import '../../providers/wallet_provider.dart';
 import '../../services/wallet_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/revenuecat_service.dart';
@@ -20,7 +21,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   final AuthService _authService = AuthService();
   final RevenueCatService _revenueCatService = RevenueCatService();
 
-  double _balance = 0.0;
+  // double _balance = 0.0; // Removed local state
   bool _isLoading = true;
   List<Map<String, dynamic>> _transactions = [];
   List<Package> _walletPackages = [];
@@ -39,7 +40,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    // _fetchData(); // We will fetch transactions and packages, but balance comes from Provider
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchData());
   }
 
   Future<void> _fetchData() async {
@@ -47,7 +49,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     if (user != null) {
       setState(() => _isLoading = true);
       
-      final balance = await _walletService.getBalance(user.uid);
+      // final balance = await _walletService.getBalance(user.uid); // Handled by Provider
       final transactions = await _walletService.getTransactions(user.uid);
       
       // Fetch wallet offerings from RevenueCat
@@ -57,7 +59,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         
         if (mounted) {
           setState(() {
-            _balance = balance;
+            // _balance = balance;
             _transactions = transactions;
             _walletPackages = packages;
             _isLoading = false;
@@ -67,7 +69,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         debugPrint('Error fetching wallet offerings: $e');
         if (mounted) {
           setState(() {
-            _balance = balance;
+            // _balance = balance;
             _transactions = transactions;
             _isLoading = false;
           });
@@ -109,6 +111,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               ),
             );
           }
+          // Refresh provider
+          ref.invalidate(walletBalanceProvider);
           await _fetchData();
         } else {
           _showError('Failed to update wallet balance');
@@ -230,7 +234,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            '₹${_balance.toStringAsFixed(2)}',
+            '₹${ref.watch(walletBalanceProvider).valueOrNull?.toStringAsFixed(2) ?? "0.00"}',
             style: GoogleFonts.outfit(
               color: Colors.white,
               fontSize: 36,

@@ -12,14 +12,7 @@ final walletServiceProvider = Provider<WalletService>((ref) {
 final currentUserIdProvider = Provider<String?>((ref) {
   try {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return null;
-    
-    // For guest users, use a consistent ID format
-    if (user.isAnonymous) {
-      return 'guest_${user.uid}';
-    }
-    
-    return user.uid;
+    return user?.uid;
   } catch (e) {
     return null;
   }
