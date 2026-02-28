@@ -186,62 +186,52 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
               ),
             ),
 
-            // Remedies Grid
-            productsAsync.when(
-              data: (remedies) {
-                if (remedies.isEmpty) {
-                  return SliverToBoxAdapter(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(40.0),
-                        child: Column(
-                          children: [
-                            const Icon(Icons.inventory_2_outlined, size: 64, color: AppTheme.textGrey),
-                            const SizedBox(height: 16),
-                            const Text('No products found', style: TextStyle(color: AppTheme.textGrey)),
-                          ],
+            // Coming Soon Message
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(32),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryOrange.withOpacity(0.1),
+                              AppTheme.yellowPrimary.withOpacity(0.1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: const Icon(
+                          Icons.auto_awesome,
+                          size: 80,
+                          color: AppTheme.divineGold,
                         ),
                       ),
-                    ),
-                  );
-                }
-                return SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // 2 boxes side by side
-                      childAspectRatio: 0.65, // Adjust for height
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final remedy = remedies[index];
-                        return GestureDetector(
-                          onTap: () {
-                            context.push('/remedy/product', extra: remedy);
-                          },
-                          child: _RemedyCard(remedy: remedy),
-                        );
-                      },
-                      childCount: remedies.length,
-                    ),
-                  ),
-                );
-              },
-              loading: () => SliverToBoxAdapter(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: const CircularProgressIndicator(color: AppTheme.divineGold),
-                  ),
-                ),
-              ),
-              error: (error, stack) => SliverToBoxAdapter(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: Text('Error: $error', style: const TextStyle(color: Colors.red)),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Coming Soon',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.neutralDark,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'We are preparing amazing spiritual remedies\nand products for you!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppTheme.textGrey,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

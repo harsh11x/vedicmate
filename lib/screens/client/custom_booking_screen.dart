@@ -699,33 +699,31 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
             ),
             const SizedBox(width: 24),
             Expanded(
-              child: ElevatedButton(
-                onPressed: _isProcessing ? null : _processPayment,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryOrange,
-                  foregroundColor: AppTheme.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                  elevation: 4,
-                  shadowColor: AppTheme.primaryOrange.withOpacity(0.4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primaryOrange.withOpacity(0.2),
+                      AppTheme.yellowPrimary.withOpacity(0.2),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: AppTheme.divineGold.withOpacity(0.3),
+                    width: 2,
+                  ),
                 ),
-                child: _isProcessing
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: AppTheme.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        priceValue == 'TBD' ? 'Contact Us' : 'Proceed to Payment',
-                        style: GoogleFonts.outfit(
-                          color: AppTheme.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                child: Center(
+                  child: Text(
+                    'Coming Soon',
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.divineGold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
