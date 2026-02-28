@@ -31,6 +31,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
   
   final FlutterTts _flutterTts = FlutterTts();
   bool _isPlaying = false;
+  String _selectedSpeechLanguage = 'hi-IN'; // Default to Hindi
+  String _selectedTextLanguage = 'en'; // Default to English
+  List<String> _availableLanguages = [];
 
   @override
   void initState() {
@@ -42,7 +45,15 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
   Future<void> _initTts() async {
     try {
-      await _flutterTts.setLanguage("hi-IN"); // Default to Hindi for Sanskrit/Hindi texts
+      // Get available languages
+      final languages = await _flutterTts.getLanguages;
+      if (languages != null) {
+        setState(() {
+          _availableLanguages = List<String>.from(languages);
+        });
+      }
+      
+      await _flutterTts.setLanguage(_selectedSpeechLanguage);
       await _flutterTts.setSpeechRate(0.4);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
@@ -110,9 +121,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
       appBar: AppBar(
         title: Text('${widget.title} - Ch ${widget.chapterNumber}'),
         backgroundColor: AppTheme.primaryOrange,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
-        ],
       ),
       body: FutureBuilder<ScriptureChapter>(
         future: _chapterFuture,
@@ -129,56 +137,60 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
           return Column(
             children: [
-              // Chapter Header Image & Summary
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppTheme.yellowPrimary.withValues(alpha: 0.1),
-                ),
-                child: Column(
-                  children: [
-                    // Dynamic Image based on scripture and chapter
-                    _buildChapterImage(),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Text(
-                             chapter.translation,
-                             style: GoogleFonts.architectsDaughter(
-                               fontWeight: FontWeight.bold, 
-                               fontSize: 18,
-                               color: AppTheme.textBlack,
-                             ),
-                             textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            chapter.summary,
-                            style: GoogleFonts.patrickHand(
-                              fontSize: 16, 
-                              fontStyle: FontStyle.italic,
-                              color: AppTheme.neutralDark,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              
               Expanded(
                 child: ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: chapter.verses.length + 1, // +1 for Completion Button
-                  separatorBuilder: (_, __) => const Divider(height: 32),
+                  padding: EdgeInsets.zero,
+                  itemCount: chapter.verses.length + 2, // +1 for header, +1 for completion button
+                  separatorBuilder: (_, index) {
+                    if (index == 0) return const SizedBox.shrink(); // No separator after header
+                    return const Divider(height: 32, indent: 16, endIndent: 16);
+                  },
                   itemBuilder: (context, index) {
-                    if (index == chapter.verses.length) {
+                    // First item is the header
+                    if (index == 0) {
+                      return Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppTheme.yellowPrimary.withValues(alpha: 0.1),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildChapterImage(),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    chapter.translation,
+                                    style: GoogleFonts.architectsDaughter(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: AppTheme.textBlack,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    chapter.summary,
+                                    style: GoogleFonts.patrickHand(
+                                      fontSize: 16,
+                                      fontStyle: FontStyle.italic,
+                                      color: AppTheme.neutralDark,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    
+                    // Last item is the completion button
+                    if (index == chapter.verses.length + 1) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: ElevatedButton.icon(
                           onPressed: _isCompleted ? null : _markAsComplete,
                           icon: Icon(_isCompleted ? Icons.check_circle : Icons.check_circle_outline),
@@ -191,13 +203,18 @@ class _ReaderScreenState extends State<ReaderScreen> {
                         ),
                       );
                     }
-                    final verse = chapter.verses[index];
-                    return _buildVerseCard(verse);
+                    
+                    // Verses
+                    final verse = chapter.verses[index - 1];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: _buildVerseCard(verse),
+                    );
                   },
                 ),
               ),
               
-              // Audio Player Controls (Placeholder for now)
+              // Audio Player Controls
               _buildAudioControls(chapter),
             ],
           );
@@ -367,20 +384,14 @@ class _ReaderScreenState extends State<ReaderScreen> {
               // Center Controls
               Row(
                 children: [
+                  // Speech Language Selector
                   IconButton(
-                    onPressed: () async {
-                      await _flutterTts.setLanguage("sa-IN");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Switched to Sanskrit voice', style: GoogleFonts.patrickHand()),
-                          backgroundColor: AppTheme.primaryOrange,
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    }, 
-                    icon: const Icon(Icons.language, color: Colors.grey)
+                    onPressed: () => _showSpeechLanguageSelector(), 
+                    icon: const Icon(Icons.record_voice_over, color: Colors.grey, size: 24),
+                    tooltip: 'Speech Language',
                   ),
                   const SizedBox(width: 8),
+                  // Play/Pause Button
                   CircleAvatar(
                     radius: 28,
                     backgroundColor: AppTheme.primaryOrange,
@@ -391,18 +402,11 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
+                  // Text Language Selector
                   IconButton(
-                    onPressed: () async {
-                      await _flutterTts.setLanguage("hi-IN");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Switched to Hindi voice', style: GoogleFonts.patrickHand()),
-                          backgroundColor: AppTheme.primaryOrange,
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    }, 
-                    icon: const Icon(Icons.translate, color: Colors.grey)
+                    onPressed: () => _showTextLanguageSelector(), 
+                    icon: const Icon(Icons.translate, color: Colors.grey, size: 24),
+                    tooltip: 'Text Language',
                   ),
                 ],
               ),
@@ -425,6 +429,151 @@ class _ReaderScreenState extends State<ReaderScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showSpeechLanguageSelector() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select Speech Language',
+                style: GoogleFonts.architectsDaughter(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  children: _getSpeechLanguageOptions(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _getSpeechLanguageOptions() {
+    final commonLanguages = {
+      'hi-IN': 'Hindi (India)',
+      'sa-IN': 'Sanskrit (India)',
+      'en-US': 'English (US)',
+      'en-GB': 'English (UK)',
+      'en-IN': 'English (India)',
+      'ta-IN': 'Tamil (India)',
+      'te-IN': 'Telugu (India)',
+      'mr-IN': 'Marathi (India)',
+      'bn-IN': 'Bengali (India)',
+      'gu-IN': 'Gujarati (India)',
+      'kn-IN': 'Kannada (India)',
+      'ml-IN': 'Malayalam (India)',
+      'pa-IN': 'Punjabi (India)',
+      'es-ES': 'Spanish (Spain)',
+      'fr-FR': 'French (France)',
+      'de-DE': 'German (Germany)',
+      'it-IT': 'Italian (Italy)',
+      'pt-BR': 'Portuguese (Brazil)',
+      'ru-RU': 'Russian (Russia)',
+      'ja-JP': 'Japanese (Japan)',
+      'zh-CN': 'Chinese (Simplified)',
+      'ar-SA': 'Arabic (Saudi Arabia)',
+    };
+
+    return commonLanguages.entries.map((entry) {
+      final isSelected = _selectedSpeechLanguage == entry.key;
+      final isAvailable = _availableLanguages.contains(entry.key);
+      
+      return ListTile(
+        leading: Icon(
+          Icons.record_voice_over,
+          color: isSelected ? AppTheme.primaryOrange : Colors.grey,
+        ),
+        title: Text(
+          entry.value,
+          style: TextStyle(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isAvailable ? Colors.black : Colors.grey,
+          ),
+        ),
+        trailing: isSelected ? const Icon(Icons.check, color: AppTheme.primaryOrange) : null,
+        enabled: isAvailable,
+        onTap: isAvailable ? () async {
+          setState(() {
+            _selectedSpeechLanguage = entry.key;
+          });
+          await _flutterTts.setLanguage(entry.key);
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Speech language: ${entry.value}'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        } : null,
+      );
+    }).toList();
+  }
+
+  void _showTextLanguageSelector() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Select Text Language',
+                style: GoogleFonts.architectsDaughter(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Note: Text translations are currently in English. More languages coming soon!',
+                style: GoogleFonts.patrickHand(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.translate, color: AppTheme.primaryOrange),
+                title: const Text('English', style: TextStyle(fontWeight: FontWeight.bold)),
+                trailing: const Icon(Icons.check, color: AppTheme.primaryOrange),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.translate, color: Colors.grey),
+                title: const Text('Hindi', style: TextStyle(color: Colors.grey)),
+                subtitle: const Text('Coming soon', style: TextStyle(fontSize: 12)),
+                enabled: false,
+              ),
+              ListTile(
+                leading: const Icon(Icons.translate, color: Colors.grey),
+                title: const Text('Tamil', style: TextStyle(color: Colors.grey)),
+                subtitle: const Text('Coming soon', style: TextStyle(fontSize: 12)),
+                enabled: false,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

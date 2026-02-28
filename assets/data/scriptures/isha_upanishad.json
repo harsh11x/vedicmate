@@ -2,15 +2,151 @@
     "chapter_number": 0,
     "title": "Isha Upanishad",
     "translation": "The Inner Ruler",
-    "summary": "The Isha Upanishad is one of the shortest Upanishads, focusing on the omnipresence of the Divine and the need for balance between spiritual and worldly knowledge.",
+    "summary": "The Isha Upanishad is one of the shortest Upanishads, focusing on the omnipresence of the Divine and the need for balance between spiritual and worldly knowledge. It contains 18 mantras.",
     "verses": [
         {
             "id": "isha_1",
             "number": 1,
             "sanskrit": "ईशावास्यमिदं सर्वं यत्किञ्च जगत्यां जगत् |\nतेन त्यक्तेन भुञ्जीथा मा गृधः कस्यस्विद्धनम् ||",
-            "translation": "All this, whatever moves in this moving world, is enveloped by God. Therefore, find your enjoyment in renunciation; do not covet what belongs to others.",
+            "translation": "All this, whatever moves in this moving world, is enveloped by the Lord. Therefore, find your enjoyment in renunciation; do not covet what belongs to others.",
             "transliteration": "īśāvāsyam idaṃ sarvaṃ yat kiñca jagatyāṃ jagat\ntena tyaktena bhuñjīthā mā gṛdhaḥ kasya svid dhanam",
-            "meaning": "īśā—by the Lord; vāsyam—to be enveloped; idam—this; sarvam—all..."
+            "meaning": "īśā - by the Lord; vāsyam - to be enveloped; idam - this; sarvam - all; yat - whatever; kiñca - also; jagatyām - in the world; jagat - moving; tena - by that; tyaktena - by renunciation; bhuñjīthāḥ - you should enjoy; mā - do not; gṛdhaḥ - covet; kasya svit - of anyone; dhanam - the wealth"
+        },
+        {
+            "id": "isha_2",
+            "number": 2,
+            "sanskrit": "कुर्वन्नेवेह कर्माणि जिजीविषेच्छतं समाः |\nएवं त्वयि नान्यथेतोऽस्ति न कर्म लिप्यते नरे ||",
+            "translation": "One may desire to live for a hundred years, performing prescribed duties. Thus working, one will not be bound by the reactions of karma. There is no other way.",
+            "transliteration": "kurvan neveha karmāṇi jijīviṣec chataṃ samāḥ\nevaṃ tvayi nānyatheto 'sti na karma lipyate nare",
+            "meaning": "kurvan - performing; eva - certainly; iha - in this world; karmāṇi - prescribed duties; jijīviṣet - one should desire to live; śatam - hundred; samāḥ - years; evam - thus; tvayi - for you; na anyathā - no other way; itaḥ - than this; asti - there is; na - not; karma - work; lipyate - is bound; nare - to a man"
+        },
+        {
+            "id": "isha_3",
+            "number": 3,
+            "sanskrit": "असुर्या नाम ते लोका अन्धेन तमसावृताः |\nतांस्ते प्रेत्याभिगच्छन्ति ये के चात्महनो जनाः ||",
+            "translation": "Those who kill the Self are born into the worlds of the demons, covered with blinding darkness. After death, they go to those worlds.",
+            "transliteration": "asuryā nāma te lokā andhena tamasāvṛtāḥ\ntāṁs te pretyābhigacchanti ye ke cātma-hano janāḥ",
+            "meaning": "asuryāḥ - meant for the demons; nāma - famous by the name; te - those; lokāḥ - planets; andhena - by ignorance; tamasā - by darkness; āvṛtāḥ - covered; tān - those planets; te - they; pretya - after death; abhigacchanti - enter into; ye - anyone; ke - everyone; ca - and; ātma-hanaḥ - the killers of the soul; janāḥ - persons"
+        },
+        {
+            "id": "isha_4",
+            "number": 4,
+            "sanskrit": "अनेजदेकं मनसो जवीयो नैनद्देवा आप्नुवन्पूर्वमर्षत् |\nतद्धावतोऽन्यानत्येति तिष्ठत्तस्मिन्नपो मातरिश्वा दधाति ||",
+            "translation": "The Self is unmoving, one, swifter than the mind. The senses cannot reach It, for It moves ever ahead. Though standing still, It overtakes those who run. In It, the cosmic air sustains all activities.",
+            "transliteration": "anejad ekaṃ manaso javīyo nainad devā āpnuvan pūrvam arṣat\ntad dhāvato 'nyān atyeti tiṣṭhat tasmin apo mātariśvā dadhāti",
+            "meaning": "anejat - not moving; ekam - one; manasaḥ - than the mind; javīyaḥ - swifter; na - not; enat - this Self; devāḥ - the senses; āpnuvan - can reach; pūrvam - before; arṣat - moving; tat - That; dhāvataḥ - those who run; anyān - others; atyeti - overtakes; tiṣṭhat - standing; tasmin - in That; āpaḥ - activities; mātariśvā - the cosmic air; dadhāti - sustains"
+        },
+        {
+            "id": "isha_5",
+            "number": 5,
+            "sanskrit": "तदेजति तन्नैजति तद्दूरे तद्वन्तिके |\nतदन्तरस्य सर्वस्य तदु सर्वस्यास्य बाह्यतः ||",
+            "translation": "It moves and It moves not. It is far and It is near. It is within all this and It is also outside all this.",
+            "transliteration": "tad ejati tan naijati tad dūre tad v antike\ntad antarasya sarvasya tad u sarvasyāsya bāhyataḥ",
+            "meaning": "tat - That; ejati - moves; tat - That; na - not; ejati - moves; tat - That; dūre - far away; tat - That; u - also; antike - very near; tat - That; antarasya - within; sarvasya - of all; tat - That; u - also; sarvasya - of all; asya - this; bāhyataḥ - outside"
+        },
+        {
+            "id": "isha_6",
+            "number": 6,
+            "sanskrit": "यस्तु सर्वाणि भूतान्यात्मन्येवानुपश्यति |\nसर्वभूतेषु चात्मानं ततो न विजुगुप्सते ||",
+            "translation": "One who sees all beings in the Self alone, and the Self in all beings, feels no hatred by virtue of that understanding.",
+            "transliteration": "yas tu sarvāṇi bhūtāny ātmany evānupaśyati\nsarva-bhūteṣu cātmānaṃ tato na vijugupsate",
+            "meaning": "yaḥ - one who; tu - but; sarvāṇi - all; bhūtāni - living entities; ātmani - in the Self; eva - only; anupaśyati - sees; sarva-bhūteṣu - in all living entities; ca - and; ātmānam - the Self; tataḥ - thereafter; na - not; vijugupsate - feels hatred"
+        },
+        {
+            "id": "isha_7",
+            "number": 7,
+            "sanskrit": "यस्मिन्सर्वाणि भूतान्यात्मैवाभूद्विजानतः |\nतत्र को मोहः कः शोक एकत्वमनुपश्यतः ||",
+            "translation": "When a person realizes that all beings are but the Self, what delusion or sorrow can there be for that seer of oneness?",
+            "transliteration": "yasmin sarvāṇi bhūtāny ātmaivābhūd vijānataḥ\ntatra ko mohaḥ kaḥ śoka ekatvam anupaśyataḥ",
+            "meaning": "yasmin - in which; sarvāṇi - all; bhūtāni - living entities; ātmā - the Self; eva - only; abhūt - become; vijānataḥ - of one who knows; tatra - there; kaḥ - what; mohaḥ - delusion; kaḥ - what; śokaḥ - sorrow; ekatvam - oneness; anupaśyataḥ - for one who sees"
+        },
+        {
+            "id": "isha_8",
+            "number": 8,
+            "sanskrit": "स पर्यगाच्छुक्रमकायमव्रणमस्नाविरं शुद्धमपापविद्धम् |\nकविर्मनीषी परिभूः स्वयम्भूर्याथातथ्यतोऽर्थान्व्यदधाच्छाश्वतीभ्यः समाभ्यः ||",
+            "translation": "The Self is all-pervading, pure, bodiless, without wounds, without sinews, holy, untouched by sin. The Self is the omniscient, all-knowing seer, self-existent, who has duly allotted to the eternal creators their respective duties.",
+            "transliteration": "sa paryagāc chukram akāyam avraṇam asnāviraṃ śuddham apāpa-viddham\nkavir manīṣī paribhūḥ svayambhūr yāthātathyato 'rthān vyadadhāc chāśvatībhyaḥ samābhyaḥ",
+            "meaning": "saḥ - He; paryagāt - all-pervading; śukram - pure; akāyam - bodiless; avraṇam - without wounds; asnāviram - without sinews; śuddham - holy; apāpa-viddham - untouched by sin; kaviḥ - omniscient; manīṣī - all-knowing; paribhūḥ - the greatest; svayambhūḥ - self-existent; yāthātathyataḥ - duly; arthān - duties; vyadadhāt - has allotted; śāśvatībhyaḥ - to the eternal; samābhyaḥ - creators"
+        },
+        {
+            "id": "isha_9",
+            "number": 9,
+            "sanskrit": "अन्धं तमः प्रविशन्ति येऽविद्यामुपासते |\nततो भूय इव ते तमो य उ विद्यायां रताः ||",
+            "translation": "Those who worship ignorance enter into blinding darkness. Those who delight in knowledge enter into still greater darkness.",
+            "transliteration": "andhaṃ tamaḥ praviśanti ye 'vidyām upāsate\ntato bhūya iva te tamo ya u vidyāyāṃ ratāḥ",
+            "meaning": "andham - blinding; tamaḥ - darkness; praviśanti - enter into; ye - those who; avidyām - ignorance; upāsate - worship; tataḥ - than that; bhūyaḥ - more; iva - as it were; te - they; tamaḥ - darkness; ye - who; u - also; vidyāyām - in knowledge; ratāḥ - engaged"
+        },
+        {
+            "id": "isha_10",
+            "number": 10,
+            "sanskrit": "अन्यदेवाहुर्विद्यया अन्यदाहुरविद्यया |\nइति शुश्रुम धीराणां ये नस्तद्विचचक्षिरे ||",
+            "translation": "One result is obtained by knowledge, and another by ignorance. Thus we have heard from the wise who have explained it to us.",
+            "transliteration": "anyad evāhur vidyayā anyad āhur avidyayā\niti śuśruma dhīrāṇāṃ ye nas tad vicacakṣire",
+            "meaning": "anyat - different; eva - certainly; āhuḥ - is said; vidyayā - by knowledge; anyat - different; āhuḥ - is said; avidyayā - by ignorance; iti - thus; śuśruma - we have heard; dhīrāṇām - from the wise; ye - who; naḥ - to us; tat - that; vicacakṣire - explained"
+        },
+        {
+            "id": "isha_11",
+            "number": 11,
+            "sanskrit": "विद्यां चाविद्यां च यस्तद्वेदोभयं सह |\nअविद्यया मृत्युं तीर्त्वा विद्ययामृतमश्नुते ||",
+            "translation": "One who knows both knowledge and ignorance together, crosses death through ignorance and attains immortality through knowledge.",
+            "transliteration": "vidyāṃ cāvidyāṃ ca yas tad vedobhayaṃ saha\navidyayā mṛtyuṃ tīrtvā vidyayāmṛtam aśnute",
+            "meaning": "vidyām - knowledge; ca - and; avidyām - ignorance; ca - and; yaḥ - one who; tat - that; veda - knows; ubhayam - both; saha - together; avidyayā - by ignorance; mṛtyum - death; tīrtvā - crossing; vidyayā - by knowledge; amṛtam - immortality; aśnute - attains"
+        },
+        {
+            "id": "isha_12",
+            "number": 12,
+            "sanskrit": "अन्धं तमः प्रविशन्ति येऽसम्भूतिमुपासते |\nततो भूय इव ते तमो य उ सम्भूत्यां रताः ||",
+            "translation": "Those who worship the unmanifest enter into blinding darkness. Those who delight in the manifest enter into still greater darkness.",
+            "transliteration": "andhaṃ tamaḥ praviśanti ye 'sambhūtim upāsate\ntato bhūya iva te tamo ya u sambhūtyāṃ ratāḥ",
+            "meaning": "andham - blinding; tamaḥ - darkness; praviśanti - enter into; ye - those who; asambhūtim - the unmanifest; upāsate - worship; tataḥ - than that; bhūyaḥ - more; iva - as it were; te - they; tamaḥ - darkness; ye - who; u - also; sambhūtyām - in the manifest; ratāḥ - engaged"
+        },
+        {
+            "id": "isha_13",
+            "number": 13,
+            "sanskrit": "अन्यदेवाहुः सम्भवादन्यदाहुरसम्भवात् |\nइति शुश्रुम धीराणां ये नस्तद्विचचक्षिरे ||",
+            "translation": "One result is obtained from the manifest, and another from the unmanifest. Thus we have heard from the wise who have explained it to us.",
+            "transliteration": "anyad evāhuḥ sambhavād anyad āhur asambhavāt\niti śuśruma dhīrāṇāṃ ye nas tad vicacakṣire",
+            "meaning": "anyat - different; eva - certainly; āhuḥ - is said; sambhavāt - from the manifest; anyat - different; āhuḥ - is said; asambhavāt - from the unmanifest; iti - thus; śuśruma - we have heard; dhīrāṇām - from the wise; ye - who; naḥ - to us; tat - that; vicacakṣire - explained"
+        },
+        {
+            "id": "isha_14",
+            "number": 14,
+            "sanskrit": "सम्भूतिं च विनाशं च यस्तद्वेदोभयं सह |\nविनाशेन मृत्युं तीर्त्वा सम्भूत्यामृतमश्नुते ||",
+            "translation": "One who knows both the manifest and the unmanifest together, crosses death through the unmanifest and attains immortality through the manifest.",
+            "transliteration": "sambhūtiṃ ca vināśaṃ ca yas tad vedobhayaṃ saha\nvināśena mṛtyuṃ tīrtvā sambhūtyāmṛtam aśnute",
+            "meaning": "sambhūtim - the manifest; ca - and; vināśam - destruction; ca - and; yaḥ - one who; tat - that; veda - knows; ubhayam - both; saha - together; vināśena - by destruction; mṛtyum - death; tīrtvā - crossing; sambhūtyā - by the manifest; amṛtam - immortality; aśnute - attains"
+        },
+        {
+            "id": "isha_15",
+            "number": 15,
+            "sanskrit": "हिरण्मयेन पात्रेण सत्यस्यापिहितं मुखम् |\nतत्त्वं पूषन्नपावृणु सत्यधर्माय दृष्टये ||",
+            "translation": "The face of truth is covered with a golden disc. O Pushan (Sun), remove it so that I who am devoted to truth may see the truth.",
+            "transliteration": "hiraṇmayena pātreṇa satyasyāpihitaṃ mukham\ntat tvaṃ pūṣann apāvṛṇu satya-dharmāya dṛṣṭaye",
+            "meaning": "hiraṇmayena - by golden; pātreṇa - disc; satyasya - of truth; apihitam - covered; mukham - face; tat - that; tvam - you; pūṣan - O Pushan (Sun); apāvṛṇu - remove; satya-dharmāya - for one devoted to truth; dṛṣṭaye - for seeing"
+        },
+        {
+            "id": "isha_16",
+            "number": 16,
+            "sanskrit": "पूषन्नेकर्षे यम सूर्य प्राजापत्य व्यूह रश्मीन्समूह |\nतेजो यत्ते रूपं कल्याणतमं तत्ते पश्यामि योऽसावसौ पुरुषः सोऽहमस्मि ||",
+            "translation": "O Pushan, the sole seer, O controller, O Sun, offspring of Prajapati, spread forth your rays and gather up your radiant light so that I may behold your most blessed form. That Purusha, that Being, I am He.",
+            "transliteration": "pūṣann ekarṣe yama sūrya prājāpatya vyūha raśmīn samūha\ntejo yat te rūpaṃ kalyāṇatamaṃ tat te paśyāmi yo 'sāv asau puruṣaḥ so 'ham asmi",
+            "meaning": "pūṣan - O Pushan; ekarṣe - the sole seer; yama - controller; sūrya - O Sun; prājāpatya - offspring of Prajapati; vyūha - spread forth; raśmīn - rays; samūha - gather up; tejaḥ - radiance; yat - which; te - your; rūpam - form; kalyāṇatamam - most blessed; tat - that; te - your; paśyāmi - I behold; yaḥ - who; asau - that; asau - that; puruṣaḥ - Being; saḥ - He; aham - I; asmi - am"
+        },
+        {
+            "id": "isha_17",
+            "number": 17,
+            "sanskrit": "वायुरनिलममृतमथेदं भस्मान्तं शरीरम् |\nओं क्रतो स्मर कृतं स्मर क्रतो स्मर कृतं स्मर ||",
+            "translation": "Let this temporary body be burnt to ashes, and let the life breath merge with the immortal Breath. O mind, remember the deeds, remember! O mind, remember the deeds, remember!",
+            "transliteration": "vāyur anilam amṛtam athedaṃ bhasmāntaṃ śarīram\noṁ krato smara kṛtaṃ smara krato smara kṛtaṃ smara",
+            "meaning": "vāyuḥ - the life breath; anilam - air; amṛtam - immortal; atha - now; idam - this; bhasmāntam - reduced to ashes; śarīram - body; om - the sacred syllable; krato - O mind; smara - remember; kṛtam - the deeds; smara - remember; krato - O mind; smara - remember; kṛtam - the deeds; smara - remember"
+        },
+        {
+            "id": "isha_18",
+            "number": 18,
+            "sanskrit": "अग्ने नय सुपथा राये अस्मान्विश्वानि देव वयुनानि विद्वान् |\nयुयोध्यस्मज्जुहुराणमेनो भूयिष्ठां ते नम उक्तिं विधेम ||",
+            "translation": "O Agni, lead us along the right path to prosperity, O God, you who know all our deeds. Remove from us deceitful sin. We offer you our prayers and salutations.",
+            "transliteration": "agne naya supathā rāye asmān viśvāni deva vayunāni vidvān\nyuyodhy asmaj juhurāṇam eno bhūyiṣṭhāṃ te nama uktiṃ vidhema",
+            "meaning": "agne - O Agni; naya - lead; supathā - by the right path; rāye - to prosperity; asmān - us; viśvāni - all; deva - O God; vayunāni - acts; vidvān - knowing; yuyodhi - remove; asmat - from us; juhurāṇam - deceitful; enaḥ - sin; bhūyiṣṭhām - most abundant; te - to you; namaḥ - salutations; uktim - prayers; vidhema - we offer"
         }
     ]
 }

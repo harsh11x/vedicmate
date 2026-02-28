@@ -1,24 +1,384 @@
 {
     "chapter_number": 1,
     "title": "Arjuna Vishada Yoga",
-    "translation": "Observing the Armies on the Battlefield of Kurukshetra",
+    "translation": "The Yoga of Arjuna's Dejection",
     "summary": "The first chapter describes the distress of Arjuna upon seeing his relatives, teachers, and friends on the opposing side of the battlefield. Overwhelmed by compassion and confusion about his duty, he refuses to fight.",
     "verses": [
         {
             "id": "bg_1_1",
             "number": 1,
             "sanskrit": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः |\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय ||",
-            "translation": "Dhritarashtra said: O Sanjay, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?",
+            "translation": "Dhritarashtra said: O Sanjaya, after gathering on the holy field of Kurukshetra, and desiring to fight, what did my sons and the sons of Pandu do?",
             "transliteration": "dharma-kṣetre kuru-kṣetre samavetā yuyutsavaḥ\nmāmakāḥ pāṇḍavāś caiva kim akurvata sañjaya",
-            "meaning": "Dharmakshetre - in the field of dharma; Kurukshetre - in the field of the Kurus; samavetāḥ - assembled; yuyutsavaḥ - desiring to fight..."
+            "meaning": "dharma-kṣetre - in the field of dharma; kuru-kṣetre - in Kurukshetra; samavetāḥ - assembled; yuyutsavaḥ - desiring to fight; māmakāḥ - my sons; pāṇḍavāḥ - the sons of Pandu; ca - and; eva - certainly; kim - what; akurvata - did they do; sañjaya - O Sanjaya"
         },
         {
             "id": "bg_1_2",
             "number": 2,
-            "sanskrit": "सञ्जय उवाच ।\nदृष्ट्वा तु पाण्डवानीकं व्यूढं दुर्योधनस्तदा ।\nआचार्यमुपसङ्गम्य राजा वचनमब्रवीत् ।।",
-            "translation": "Sanjay said: On observing the Pandava army standing in military formation, King Duryodhana approached his teacher Dronacharya and spoke the following words.",
+            "sanskrit": "सञ्जय उवाच |\nदृष्ट्वा तु पाण्डवानीकं व्यूढं दुर्योधनस्तदा |\nआचार्यमुपसङ्गम्य राजा वचनमब्रवीत् ||",
+            "translation": "Sanjaya said: On observing the Pandava army standing in military formation, King Duryodhana approached his teacher Dronacharya and spoke the following words.",
             "transliteration": "sañjaya uvāca\ndṛṣṭvā tu pāṇḍavānīkaṃ vyūḍhaṃ duryodhanas tadā\nācāryam upasaṅgamya rājā vacanam abravīt",
-            "meaning": "Sanjaya said - Sanjay said; dṛṣṭvā - having seen; tu - but; pāṇḍava-anīkam - the soldiers of the Pandavas; vyūḍham - arranged in a military phalanx..."
+            "meaning": "sañjayaḥ uvāca - Sanjaya said; dṛṣṭvā - having seen; tu - but; pāṇḍava-anīkam - the soldiers of the Pandavas; vyūḍham - arranged in military formation; duryodhanaḥ - King Duryodhana; tadā - at that time; ācāryam - the teacher; upasaṅgamya - approaching; rājā - the king; vacanam - words; abravīt - spoke"
+        },
+        {
+            "id": "bg_1_3",
+            "number": 3,
+            "sanskrit": "पश्यैतां पाण्डुपुत्राणामाचार्य महतीं चमूम् |\nव्यूढां द्रुपदपुत्रेण तव शिष्येण धीमता ||",
+            "translation": "O Teacher, behold the mighty army of the sons of Pandu, arrayed by the son of Drupada, your intelligent disciple.",
+            "transliteration": "paśyaitāṃ pāṇḍu-putrāṇām ācārya mahatīṃ camūm\nvyūḍhāṃ drupada-putreṇa tava śiṣyeṇa dhīmatā",
+            "meaning": "paśya - behold; etām - this; pāṇḍu-putrāṇām - of the sons of Pandu; ācārya - O teacher; mahatīm - great; camūm - army; vyūḍhām - arranged; drupada-putreṇa - by the son of Drupada; tava - your; śiṣyeṇa - disciple; dhī-matā - intelligent"
+        },
+        {
+            "id": "bg_1_4",
+            "number": 4,
+            "sanskrit": "अत्र शूरा महेष्वासा भीमार्जुनसमा युधि |\nयुयुधानो विराटश्च द्रुपदश्च महारथः ||",
+            "translation": "Here in this army are many heroic bowmen equal in fighting to Bhima and Arjuna: great fighters like Yuyudhana, Virata, and Drupada.",
+            "transliteration": "atra śūrā maheṣv-āsā bhīmārjuna-samā yudhi\nyuyudhāno virāṭaś ca drupadaś ca mahā-rathaḥ",
+            "meaning": "atra - here; śūrāḥ - heroes; mahā-iṣu-āsāḥ - mighty bowmen; bhīma-arjuna-samāḥ - equal to Bhima and Arjuna; yudhi - in battle; yuyudhānaḥ - Yuyudhana; virāṭaḥ - Virata; ca - and; drupadaḥ - Drupada; ca - also; mahā-rathaḥ - great chariot warrior"
+        },
+        {
+            "id": "bg_1_5",
+            "number": 5,
+            "sanskrit": "धृष्टकेतुश्चेकितानः काशिराजश्च वीर्यवान् |\nपुरुजित्कुन्तिभोजश्च शैब्यश्च नरपुङ्गवः ||",
+            "translation": "There are also great, heroic, powerful fighters like Dhrishtaketu, Chekitana, the valiant King of Kashi, Purujit, Kuntibhoja, and Shaibya.",
+            "transliteration": "dhṛṣṭaketuś cekitānaḥ kāśirājaś ca vīryavān\npurujit kuntibhojaś ca śaibyaś ca nara-puṅgavaḥ",
+            "meaning": "dhṛṣṭaketuḥ - Dhrishtaketu; cekitānaḥ - Chekitana; kāśirājaḥ - King of Kashi; ca - and; vīrya-vān - powerful; purujit - Purujit; kuntibhojaḥ - Kuntibhoja; ca - and; śaibyaḥ - Shaibya; ca - and; nara-puṅgavaḥ - best among men"
+        },
+        {
+            "id": "bg_1_6",
+            "number": 6,
+            "sanskrit": "युधामन्युश्च विक्रान्त उत्तमौजाश्च वीर्यवान् |\nसौभद्रो द्रौपदेयाश्च सर्व एव महारथाः ||",
+            "translation": "There are the mighty Yudhamanyu, the valiant Uttamauja, the son of Subhadra, and the sons of Draupadi, all of them great chariot warriors.",
+            "transliteration": "yudhāmanyuś ca vikrānta uttamaujāś ca vīryavān\nsaubhadro draupadeyāś ca sarva eva mahā-rathāḥ",
+            "meaning": "yudhāmanyuḥ - Yudhamanyu; ca - and; vikrāntaḥ - mighty; uttamaujāḥ - Uttamauja; ca - and; vīrya-vān - powerful; saubhadraḥ - the son of Subhadra; draupadeyāḥ - the sons of Draupadi; ca - and; sarve - all; eva - indeed; mahā-rathāḥ - great chariot warriors"
+        },
+        {
+            "id": "bg_1_7",
+            "number": 7,
+            "sanskrit": "अस्माकं तु विशिष्टा ये तान्निबोध द्विजोत्तम |\nनायका मम सैन्यस्य संज्ञार्थं तान्ब्रवीमि ते ||",
+            "translation": "O best of Brahmins, for your information, let me tell you about the captains who are especially qualified to lead my military force.",
+            "transliteration": "asmākaṃ tu viśiṣṭā ye tān nibodha dvijottama\nnāyakā mama sainyasya saṁjñārthaṃ tān bravīmi te",
+            "meaning": "asmākam - our; tu - but; viśiṣṭāḥ - special; ye - who; tān - them; nibodha - be informed; dvija-uttama - O best of Brahmins; nāyakāḥ - captains; mama - my; sainyasya - of the army; saṁjñā-artham - for information; tān - them; bravīmi - I speak; te - to you"
+        },
+        {
+            "id": "bg_1_8",
+            "number": 8,
+            "sanskrit": "भवान्भीष्मश्च कर्णश्च कृपश्च समितिञ्जयः |\nअश्वत्थामा विकर्णश्च सौमदत्तिस्तथैव च ||",
+            "translation": "There are personalities like yourself, Bhishma, Karna, Kripa, Ashvatthama, Vikarna, and the son of Somadatta, who are always victorious in battle.",
+            "transliteration": "bhavān bhīṣmaś ca karṇaś ca kṛpaś ca samitiñ-jayaḥ\naśvatthāmā vikarṇaś ca saumadattis tathaiva ca",
+            "meaning": "bhavān - yourself; bhīṣmaḥ - Bhishma; ca - and; karṇaḥ - Karna; ca - and; kṛpaḥ - Kripa; ca - and; samitiñ-jayaḥ - victorious in battle; aśvatthāmā - Ashvatthama; vikarṇaḥ - Vikarna; ca - and; saumadattiḥ - the son of Somadatta; tathā - as well; eva - certainly; ca - also"
+        },
+        {
+            "id": "bg_1_9",
+            "number": 9,
+            "sanskrit": "अन्ये च बहवः शूरा मदर्थे त्यक्तजीविताः |\nनानाशस्त्रप्रहरणाः सर्वे युद्धविशारदाः ||",
+            "translation": "And there are many other heroes who are prepared to lay down their lives for my sake. They are all skilled in the art of warfare, and equipped with various weapons.",
+            "transliteration": "anye ca bahavaḥ śūrā mad-arthe tyakta-jīvitāḥ\nnānā-śastra-praharaṇāḥ sarve yuddha-viśāradāḥ",
+            "meaning": "anye - others; ca - also; bahavaḥ - many; śūrāḥ - heroes; mat-arthe - for my sake; tyakta-jīvitāḥ - prepared to lay down lives; nānā - various; śastra - weapons; praharaṇāḥ - equipped with; sarve - all; yuddha - in military art; viśāradāḥ - experienced"
+        },
+        {
+            "id": "bg_1_10",
+            "number": 10,
+            "sanskrit": "अपर्याप्तं तदस्माकं बलं भीष्माभिरक्षितम् |\nपर्याप्तं त्विदमेतेषां बलं भीमाभिरक्षितम् ||",
+            "translation": "Our strength is unlimited and we are perfectly protected by Bhishma, whereas the strength of the Pandavas, carefully protected by Bhima, is limited.",
+            "transliteration": "aparyāptaṃ tad asmākaṃ balaṃ bhīṣmābhirakṣitam\nparyāptaṃ tv idam eteṣāṃ balaṃ bhīmābhirakṣitam",
+            "meaning": "aparyāptam - unlimited; tat - that; asmākam - of ours; balam - strength; bhīṣma - by Bhishma; abhirakṣitam - perfectly protected; paryāptam - limited; tu - but; idam - this; eteṣām - of the Pandavas; balam - strength; bhīma - by Bhima; abhirakṣitam - carefully protected"
+        },
+        {
+            "id": "bg_1_11",
+            "number": 11,
+            "sanskrit": "अयनेषु च सर्वेषु यथाभागमवस्थिताः |\nभीष्ममेवाभिरक्षन्तु भवन्तः सर्व एव हि ||",
+            "translation": "Therefore, stationed in your respective positions in the military phalanx, all of you must give full support to Bhishma.",
+            "transliteration": "ayaneṣu ca sarveṣu yathā-bhāgam avasthitāḥ\nbhīṣmam evābhirakṣantu bhavantaḥ sarva eva hi",
+            "meaning": "ayaneṣu - in the strategic points; ca - also; sarveṣu - all; yathā-bhāgam - in respective positions; avasthitāḥ - stationed; bhīṣmam - to Bhishma; eva - certainly; abhirakṣantu - give support; bhavantaḥ - you; sarve - all; eva - indeed; hi - certainly"
+        },
+        {
+            "id": "bg_1_12",
+            "number": 12,
+            "sanskrit": "तस्य सञ्जनयन्हर्षं कुरुवृद्धः पितामहः |\nसिंहनादं विनद्योच्चैः शङ्खं दध्मौ प्रतापवान् ||",
+            "translation": "Then, the valiant Bhishma, the grandsire of the Kuru dynasty, roared like a lion and blew his conch loudly, giving joy to Duryodhana.",
+            "transliteration": "tasya sañjanayan harṣaṃ kuru-vṛddhaḥ pitāmahaḥ\nsiṁha-nādaṃ vinadyoccaiḥ śaṅkhaṃ dadhmau pratāpavān",
+            "meaning": "tasya - his; sañjanayan - creating; harṣam - joy; kuru-vṛddhaḥ - the grandsire of the Kurus; pitāmahaḥ - the grandfather; siṁha-nādam - lion's roar; vinadya - sounding; uccaiḥ - very loudly; śaṅkham - conch; dadhmau - blew; pratāpa-vān - the valiant"
+        },
+        {
+            "id": "bg_1_13",
+            "number": 13,
+            "sanskrit": "ततः शङ्खाश्च भेर्यश्च पणवानकगोमुखाः |\nसहसैवाभ्यहन्यन्त स शब्दस्तुमुलोऽभवत् ||",
+            "translation": "After that, conches, kettledrums, cymbals, drums, and trumpets were sounded all at once. The noise was tremendous.",
+            "transliteration": "tataḥ śaṅkhāś ca bheryaś ca paṇavānaka-gomukhāḥ\nsahasaivābhyahanyanta sa śabdas tumulo 'bhavat",
+            "meaning": "tataḥ - thereafter; śaṅkhāḥ - conches; ca - also; bheryaḥ - large drums; ca - and; paṇava-ānaka - small drums and kettledrums; go-mukhāḥ - trumpets; sahasā - all of a sudden; eva - certainly; abhyahanyanta - were sounded; saḥ - that; śabdaḥ - sound; tumulaḥ - tumultuous; abhavat - became"
+        },
+        {
+            "id": "bg_1_14",
+            "number": 14,
+            "sanskrit": "ततः श्वेतैर्हयैर्युक्ते महति स्यन्दने स्थितौ |\nमाधवः पाण्डवश्चैव दिव्यौ शङ्खौ प्रदध्मतुः ||",
+            "translation": "Then, Lord Krishna and Arjuna, seated in a magnificent chariot yoked with white horses, blew their divine conches.",
+            "transliteration": "tataḥ śvetair hayair yukte mahati syandane sthitau\nmādhavaḥ pāṇḍavaś caiva divyau śaṅkhau pradadhmatuḥ",
+            "meaning": "tataḥ - then; śvetaiḥ - with white; hayaiḥ - horses; yukte - yoked; mahati - in a great; syandane - chariot; sthitau - situated; mādhavaḥ - Krishna; pāṇḍavaḥ - Arjuna; ca - and; eva - certainly; divyau - divine; śaṅkhau - conches; pradadhmatuḥ - blew"
+        },
+        {
+            "id": "bg_1_15",
+            "number": 15,
+            "sanskrit": "पाञ्चजन्यं हृषीकेशो देवदत्तं धनञ्जयः |\nपौण्ड्रं दध्मौ महाशङ्खं भीमकर्मा वृकोदरः ||",
+            "translation": "Krishna blew His conch, called Panchajanya; Arjuna blew his, called Devadatta; and Bhima, the voracious eater and performer of Herculean tasks, blew his mighty conch, called Paundra.",
+            "transliteration": "pāñcajanyaṃ hṛṣīkeśo devadattaṃ dhanañjayaḥ\npauṇḍraṃ dadhmau mahā-śaṅkhaṃ bhīma-karmā vṛkodaraḥ",
+            "meaning": "pāñcajanyam - the conch named Panchajanya; hṛṣīkeśaḥ - Krishna; devadattam - the conch named Devadatta; dhanañjayaḥ - Arjuna; pauṇḍram - the conch named Paundra; dadhmau - blew; mahā-śaṅkham - mighty conch; bhīma-karmā - one who performs Herculean tasks; vṛkodaraḥ - Bhima"
+        },
+        {
+            "id": "bg_1_16",
+            "number": 16,
+            "sanskrit": "अनन्तविजयं राजा कुन्तीपुत्रो युधिष्ठिरः |\nनकुलः सहदेवश्च सुघोषमणिपुष्पकौ ||",
+            "translation": "King Yudhishthira, the son of Kunti, blew his conch, called Anantavijaya, and Nakula and Sahadeva blew theirs, called Sughosa and Manipushpaka.",
+            "transliteration": "ananta-vijayaṃ rājā kuntī-putro yudhiṣṭhiraḥ\nnakulaḥ sahadevaś ca sughoṣa-maṇipuṣpakau",
+            "meaning": "ananta-vijayam - the conch named Anantavijaya; rājā - the king; kuntī-putraḥ - the son of Kunti; yudhiṣṭhiraḥ - Yudhishthira; nakulaḥ - Nakula; sahadevaḥ - Sahadeva; ca - and; sughoṣa-maṇipuṣpakau - the conches named Sughosa and Manipushpaka"
+        },
+        {
+            "id": "bg_1_17",
+            "number": 17,
+            "sanskrit": "काश्यश्च परमेष्वासः शिखण्डी च महारथः |\nधृष्टद्युम्नो विराटश्च सात्यकिश्चापराजितः ||",
+            "translation": "The King of Kashi, the great archer; Shikhandi, the mighty chariot warrior; Dhrishtadyumna; Virata; and the invincible Satyaki all blew their respective conches.",
+            "transliteration": "kāśyaś ca parameṣv-āsaḥ śikhaṇḍī ca mahā-rathaḥ\ndhṛṣṭadyumno virāṭaś ca sātyakiś cāparājitaḥ",
+            "meaning": "kāśyaḥ - the King of Kashi; ca - and; parama-iṣu-āsaḥ - the great archer; śikhaṇḍī - Shikhandi; ca - also; mahā-rathaḥ - mighty chariot warrior; dhṛṣṭadyumnaḥ - Dhrishtadyumna; virāṭaḥ - Virata; ca - and; sātyakiḥ - Satyaki; ca - and; aparājitaḥ - invincible"
+        },
+        {
+            "id": "bg_1_18",
+            "number": 18,
+            "sanskrit": "द्रुपदो द्रौपदेयाश्च सर्वशः पृथिवीपते |\nसौभद्रश्च महाबाहुः शङ्खान्दध्मुः पृथक्पृथक् ||",
+            "translation": "O King, Drupada, the sons of Draupadi, and the mighty-armed son of Subhadra, all blew their respective conches.",
+            "transliteration": "drupado draupadeyāś ca sarvaśaḥ pṛthivī-pate\nsaubhadraś ca mahā-bāhuḥ śaṅkhān dadhmuḥ pṛthak pṛthak",
+            "meaning": "drupadaḥ - Drupada; draupadeyāḥ - the sons of Draupadi; ca - and; sarvaśaḥ - all; pṛthivī-pate - O King; saubhadraḥ - Abhimanyu; ca - also; mahā-bāhuḥ - mighty-armed; śaṅkhān - conches; dadhmuḥ - blew; pṛthak pṛthak - each separately"
+        },
+        {
+            "id": "bg_1_19",
+            "number": 19,
+            "sanskrit": "स घोषो धार्तराष्ट्राणां हृदयानि व्यदारयत् |\nनभश्च पृथिवीं चैव तुमुलो व्यनुनादयन् ||",
+            "translation": "The tremendous sound reverberated through the sky and the earth, shattering the hearts of your sons.",
+            "transliteration": "sa ghoṣo dhārtarāṣṭrāṇāṃ hṛdayāni vyadārayat\nnabhaś ca pṛthivīṃ caiva tumulo vyanunādayan",
+            "meaning": "saḥ - that; ghoṣaḥ - sound; dhārtarāṣṭrāṇām - of the sons of Dhritarashtra; hṛdayāni - hearts; vyadārayat - shattered; nabhaḥ - the sky; ca - and; pṛthivīm - the earth; ca - also; eva - certainly; tumulaḥ - tumultuous; abhyanunādayan - resounding"
+        },
+        {
+            "id": "bg_1_20",
+            "number": 20,
+            "sanskrit": "अथ व्यवस्थितान्दृष्ट्वा धार्तराष्ट्रान्कपिध्वजः |\nप्रवृत्ते शस्त्रसम्पाते धनुरुद्यम्य पाण्डवः ||",
+            "translation": "At that time, Arjuna, the son of Pandu, who was seated in his chariot, his flag marked with Hanuman, took up his bow and prepared to shoot his arrows, looking at the sons of Dhritarashtra.",
+            "transliteration": "atha vyavasthitān dṛṣṭvā dhārtarāṣṭrān kapi-dhvajaḥ\npravṛtte śastra-sampāte dhanur udyamya pāṇḍavaḥ",
+            "meaning": "atha - then; vyavasthitān - arrayed; dṛṣṭvā - seeing; dhārtarāṣṭrān - the sons of Dhritarashtra; kapi-dhvajaḥ - one whose flag is marked with Hanuman; pravṛtte - about to commence; śastra-sampāte - the hurling of weapons; dhanuḥ - bow; udyamya - taking up; pāṇḍavaḥ - Arjuna"
+        },
+        {
+            "id": "bg_1_21",
+            "number": 21,
+            "sanskrit": "हृषीकेशं तदा वाक्यमिदमाह महीपते |\nअर्जुन उवाच |\nसेनयोरुभयोर्मध्ये रथं स्थापय मेऽच्युत ||",
+            "translation": "O King, Arjuna then spoke the following words to Krishna: O Infallible One, please take my chariot between the two armies.",
+            "transliteration": "hṛṣīkeśaṃ tadā vākyam idam āha mahī-pate\narjuna uvāca\nsenayor ubhayor madhye rathaṃ sthāpaya me 'cyuta",
+            "meaning": "hṛṣīkeśam - to Krishna; tadā - at that time; vākyam - words; idam - these; āha - said; mahī-pate - O King; arjunaḥ uvāca - Arjuna said; senayoḥ - of the armies; ubhayoḥ - both; madhye - between; ratham - the chariot; sthāpaya - place; me - my; acyuta - O Infallible One"
+        },
+        {
+            "id": "bg_1_22",
+            "number": 22,
+            "sanskrit": "यावदेतान्निरीक्षेऽहं योद्धुकामानवस्थितान् |\nकैर्मया सह योद्धव्यमस्मिन्रणसमुद्यमे ||",
+            "translation": "So that I may see those who stand here, eager for battle, with whom I must contend in this great trial of war.",
+            "transliteration": "yāvad etān nirīkṣe 'haṃ yoddhu-kāmān avasthitān\nkair mayā saha yoddhavyam asmin raṇa-samudyame",
+            "meaning": "yāvat - as long as; etān - these; nirīkṣe - may look; aham - I; yoddhu-kāmān - desiring to fight; avasthitān - arrayed; kaiḥ - with whom; mayā - by me; saha - together; yoddhavyam - must fight; asmin - in this; raṇa - battle; samudyame - in the attempt"
+        },
+        {
+            "id": "bg_1_23",
+            "number": 23,
+            "sanskrit": "योत्स्यमानानवेक्षेऽहं य एतेऽत्र समागताः |\nधार्तराष्ट्रस्य दुर्बुद्धेर्युद्धे प्रियचिकीर्षवः ||",
+            "translation": "I wish to see those who have come here to fight, wishing to please the evil-minded son of Dhritarashtra.",
+            "transliteration": "yotsyamānān avekṣe 'haṃ ya ete 'tra samāgatāḥ\ndhārtarāṣṭrasya durbuddher yuddhe priya-cikīrṣavaḥ",
+            "meaning": "yotsyamānān - those who will be fighting; avekṣe - let me see; aham - I; ye - who; ete - those; atra - here; samāgatāḥ - assembled; dhārtarāṣṭrasya - of the son of Dhritarashtra; durbuddheḥ - evil-minded; yuddhe - in the fight; priya - well; cikīrṣavaḥ - wishing"
+        },
+        {
+            "id": "bg_1_24",
+            "number": 24,
+            "sanskrit": "सञ्जय उवाच |\nएवमुक्तो हृषीकेशो गुडाकेशेन भारत |\nसेनयोरुभयोर्मध्ये स्थापयित्वा रथोत्तमम् ||",
+            "translation": "Sanjaya said: O Dhritarashtra, having thus been addressed by Arjuna, Krishna drew up the magnificent chariot in the midst of the armies of both sides.",
+            "transliteration": "sañjaya uvāca\nevam ukto hṛṣīkeśo guḍākeśena bhārata\nsenayor ubhayor madhye sthāpayitvā rathottamam",
+            "meaning": "sañjayaḥ uvāca - Sanjaya said; evam - thus; uktaḥ - addressed; hṛṣīkeśaḥ - Krishna; guḍākeśena - by Arjuna; bhārata - O descendant of Bharata; senayoḥ - of the armies; ubhayoḥ - both; madhye - in the midst; sthāpayitvā - placing; ratha-uttamam - the magnificent chariot"
+        },
+        {
+            "id": "bg_1_25",
+            "number": 25,
+            "sanskrit": "भीष्मद्रोणप्रमुखतः सर्वेषां च महीक्षिताम् |\nउवाच पार्थ पश्यैतान्समवेतान्कुरूनिति ||",
+            "translation": "In the presence of Bhishma, Drona, and all the other kings, Krishna said: O Partha, behold these Kurus assembled here.",
+            "transliteration": "bhīṣma-droṇa-pramukhataḥ sarveṣāṃ ca mahī-kṣitām\nuvāca pārtha paśyaitān samavetān kurūn iti",
+            "meaning": "bhīṣma - Bhishma; droṇa - Drona; pramukhataḥ - in the presence; sarveṣām - all; ca - and; mahī-kṣitām - the kings; uvāca - said; pārtha - O Arjuna; paśya - behold; etān - these; samavetān - assembled; kurūn - the members of the Kuru dynasty; iti - thus"
+        },
+        {
+            "id": "bg_1_26",
+            "number": 26,
+            "sanskrit": "तत्रापश्यत्स्थितान्पार्थः पितॄनथ पितामहान् |\nआचार्यान्मातुलान्भ्रातॄन्पुत्रान्पौत्रान्सखींस्तथा ||",
+            "translation": "There Arjuna could see, within the midst of the armies of both parties, his fathers, grandfathers, teachers, maternal uncles, brothers, sons, grandsons, friends, and also his fathers-in-law and well-wishers.",
+            "transliteration": "tatrāpaśyat sthitān pārthaḥ pitṝn atha pitāmahān\nācāryān mātulān bhrātṝn putrān pautrān sakhīṁs tathā",
+            "meaning": "tatra - there; apaśyat - saw; sthitān - standing; pārthaḥ - Arjuna; pitṝn - fathers; atha - also; pitāmahān - grandfathers; ācāryān - teachers; mātulān - maternal uncles; bhrātṝn - brothers; putrān - sons; pautrān - grandsons; sakhīn - friends; tathā - also"
+        },
+        {
+            "id": "bg_1_27",
+            "number": 27,
+            "sanskrit": "श्वशुरान्सुहृदश्चैव सेनयोरुभयोरपि |\nतान्समीक्ष्य स कौन्तेयः सर्वान्बन्धूनवस्थितान् ||",
+            "translation": "When the son of Kunti, Arjuna, saw all these different grades of friends and relatives, he became overwhelmed with compassion.",
+            "transliteration": "śvaśurān suhṛdaś caiva senayor ubhayor api\ntān samīkṣya sa kaunteyaḥ sarvān bandhūn avasthitān",
+            "meaning": "śvaśurān - fathers-in-law; suhṛdaḥ - well-wishers; ca - and; eva - indeed; senayoḥ - of the armies; ubhayoḥ - both; api - also; tān - them; samīkṣya - seeing; saḥ - he; kaunteyaḥ - Arjuna; sarvān - all; bandhūn - relatives; avasthitān - situated"
+        },
+        {
+            "id": "bg_1_28",
+            "number": 28,
+            "sanskrit": "कृपया परयाविष्टो विषीदन्निदमब्रवीत् |\nअर्जुन उवाच |\nदृष्ट्वेमं स्वजनं कृष्ण युयुत्सुं समुपस्थितम् ||",
+            "translation": "Arjuna said: O Krishna, seeing my own kinsmen arrayed and eager for battle, my limbs fail and my mouth is parched.",
+            "transliteration": "kṛpayā parayāviṣṭo viṣīdann idam abravīt\narjuna uvāca\ndṛṣṭvemaṃ sva-janaṃ kṛṣṇa yuyutsuṃ samupasthitam",
+            "meaning": "kṛpayā - by compassion; parayā - great; āviṣṭaḥ - overwhelmed; viṣīdan - while lamenting; idam - these; abravīt - spoke; arjunaḥ uvāca - Arjuna said; dṛṣṭvā - seeing; imam - these; sva-janam - kinsmen; kṛṣṇa - O Krishna; yuyutsum - eager to fight; samupasthitam - present"
+        },
+        {
+            "id": "bg_1_29",
+            "number": 29,
+            "sanskrit": "सीदन्ति मम गात्राणि मुखं च परिशुष्यति |\nवेपथुश्च शरीरे मे रोमहर्षश्च जायते ||",
+            "translation": "My limbs fail and my mouth is parched. My body trembles and my hair stands on end.",
+            "transliteration": "sīdanti mama gātrāṇi mukhaṃ ca pariśuṣyati\nvepathuś ca śarīre me roma-harṣaś ca jāyate",
+            "meaning": "sīdanti - quivering; mama - my; gātrāṇi - limbs; mukham - mouth; ca - also; pariśuṣyati - drying up; vepathuḥ - trembling; ca - and; śarīre - in the body; me - my; roma-harṣaḥ - standing of hair on end; ca - also; jāyate - taking place"
+        },
+        {
+            "id": "bg_1_30",
+            "number": 30,
+            "sanskrit": "गाण्डीवं स्रंसते हस्तात्त्वक्चैव परिदह्यते |\nन च शक्नोम्यवस्थातुं भ्रमतीव च मे मनः ||",
+            "translation": "The Gandiva bow is slipping from my hand, and my skin is burning all over. I am unable to stand steady, and my mind is reeling.",
+            "transliteration": "gāṇḍīvaṃ sraṁsate hastāt tvak caiva paridahyate\nna ca śaknomy avasthātuṃ bhramatīva ca me manaḥ",
+            "meaning": "gāṇḍīvam - the bow named Gandiva; sraṁsate - slipping; hastāt - from the hand; tvak - skin; ca - also; eva - certainly; paridahyate - burning; na - not; ca - and; śaknomi - am able; avasthātum - to stand; bhramati - reeling; iva - as if; ca - and; me - my; manaḥ - mind"
+        },
+        {
+            "id": "bg_1_31",
+            "number": 31,
+            "sanskrit": "निमित्तानि च पश्यामि विपरीतानि केशव |\nन च श्रेयोऽनुपश्यामि हत्वा स्वजनमाहवे ||",
+            "translation": "I see only adverse omens, O Krishna, and I do not foresee any good in killing my own kinsmen in battle.",
+            "transliteration": "nimittāni ca paśyāmi viparītāni keśava\nna ca śreyo 'nupaśyāmi hatvā sva-janam āhave",
+            "meaning": "nimittāni - omens; ca - and; paśyāmi - I see; viparītāni - adverse; keśava - O Krishna; na - not; ca - also; śreyaḥ - good; anupaśyāmi - do I foresee; hatvā - by killing; sva-janam - kinsmen; āhave - in battle"
+        },
+        {
+            "id": "bg_1_32",
+            "number": 32,
+            "sanskrit": "न काङ्क्षे विजयं कृष्ण न च राज्यं सुखानि च |\nकिं नो राज्येन गोविन्द किं भोगैर्जीवितेन वा ||",
+            "translation": "O Krishna, I do not desire victory, nor kingdom, nor pleasures. Of what use is kingdom, or enjoyment, or even life?",
+            "transliteration": "na kāṅkṣe vijayaṃ kṛṣṇa na ca rājyaṃ sukhāni ca\nkiṃ no rājyena govinda kiṃ bhogair jīvitena vā",
+            "meaning": "na - not; kāṅkṣe - do I desire; vijayam - victory; kṛṣṇa - O Krishna; na - nor; ca - also; rājyam - kingdom; sukhāni - happiness; ca - also; kim - what; naḥ - to us; rājyena - by kingdom; govinda - O Krishna; kim - what; bhogaiḥ - by enjoyments; jīvitena - by life; vā - or"
+        },
+        {
+            "id": "bg_1_33",
+            "number": 33,
+            "sanskrit": "येषामर्थे काङ्क्षितं नो राज्यं भोगाः सुखानि च |\nत इमेऽवस्थिता युद्धे प्राणांस्त्यक्त्वा धनानि च ||",
+            "translation": "Those for whose sake we desire kingdom, enjoyments, and pleasures, are standing here in battle, having renounced their lives and wealth.",
+            "transliteration": "yeṣām arthe kāṅkṣitaṃ no rājyaṃ bhogāḥ sukhāni ca\nta ime 'vasthitā yuddhe prāṇāṁs tyaktvā dhanāni ca",
+            "meaning": "yeṣām - for whom; arthe - for the sake; kāṅkṣitam - desired; naḥ - by us; rājyam - kingdom; bhogāḥ - enjoyments; sukhāni - pleasures; ca - also; te - they; ime - these; avasthitāḥ - situated; yuddhe - in battle; prāṇān - lives; tyaktvā - giving up; dhanāni - wealth; ca - also"
+        },
+        {
+            "id": "bg_1_34",
+            "number": 34,
+            "sanskrit": "आचार्याः पितरः पुत्रास्तथैव च पितामहाः |\nमातुलाः श्वशुराः पौत्राः श्यालाः सम्बन्धिनस्तथा ||",
+            "translation": "Teachers, fathers, sons, grandfathers, maternal uncles, fathers-in-law, grandsons, brothers-in-law, and other relatives are present here.",
+            "transliteration": "ācāryāḥ pitaraḥ putrās tathaiva ca pitāmahāḥ\nmātulāḥ śvaśurāḥ pautrāḥ śyālāḥ sambandhinas tathā",
+            "meaning": "ācāryāḥ - teachers; pitaraḥ - fathers; putrāḥ - sons; tathā - as well; eva - certainly; ca - also; pitāmahāḥ - grandfathers; mātulāḥ - maternal uncles; śvaśurāḥ - fathers-in-law; pautrāḥ - grandsons; śyālāḥ - brothers-in-law; sambandhinaḥ - relatives; tathā - as well"
+        },
+        {
+            "id": "bg_1_35",
+            "number": 35,
+            "sanskrit": "एतान्न हन्तुमिच्छामि घ्नतोऽपि मधुसूदन |\nअपि त्रैलोक्यराज्यस्य हेतोः किं नु महीकृते ||",
+            "translation": "O Krishna, I do not wish to kill them, even if they attack me, not even for sovereignty over the three worlds, what to speak of this earth.",
+            "transliteration": "etān na hantum icchāmi ghnato 'pi madhusūdana\napi trailokya-rājyasya hetoḥ kiṃ nu mahī-kṛte",
+            "meaning": "etān - these; na - not; hantum - to kill; icchāmi - I wish; ghnataḥ - being killed; api - even; madhusūdana - O Krishna; api - even; trai-lokya - of the three worlds; rājyasya - for the kingdom; hetoḥ - for the sake; kim nu - what to speak of; mahī-kṛte - for the earth"
+        },
+        {
+            "id": "bg_1_36",
+            "number": 36,
+            "sanskrit": "निहत्य धार्तराष्ट्रान्नः का प्रीतिः स्याज्जनार्दन |\nपापमेवाश्रयेदस्मान्हत्वैतानाततायिनः ||",
+            "translation": "O Krishna, what pleasure will we derive from killing the sons of Dhritarashtra? Sin alone will accrue to us if we slay these felons.",
+            "transliteration": "nihatya dhārtarāṣṭrān naḥ kā prītiḥ syāj janārdana\npāpam evāśrayed asmān hatvaitān ātatāyinaḥ",
+            "meaning": "nihatya - by killing; dhārtarāṣṭrān - the sons of Dhritarashtra; naḥ - our; kā - what; prītiḥ - pleasure; syāt - will there be; janārdana - O Krishna; pāpam - sin; eva - certainly; āśrayet - will come upon; asmān - us; hatvā - by killing; etān - these; ātatāyinaḥ - aggressors"
+        },
+        {
+            "id": "bg_1_37",
+            "number": 37,
+            "sanskrit": "तस्मान्नार्हा वयं हन्तुं धार्तराष्ट्रान्स्वबान्धवान् |\nस्वजनं हि कथं हत्वा सुखिनः स्याम माधव ||",
+            "translation": "Therefore, it is not proper for us to kill our own kinsmen, the sons of Dhritarashtra. O Krishna, how can we be happy after killing our own people?",
+            "transliteration": "tasmān nārhā vayaṃ hantuṃ dhārtarāṣṭrān sva-bāndhavān\nsva-janaṃ hi kathaṃ hatvā sukhinaḥ syāma mādhava",
+            "meaning": "tasmāt - therefore; na - not; arhāḥ - deserving; vayam - we; hantum - to kill; dhārtarāṣṭrān - the sons of Dhritarashtra; sva-bāndhavān - along with friends; sva-janam - kinsmen; hi - certainly; katham - how; hatvā - by killing; sukhinaḥ - happy; syāma - will we become; mādhava - O Krishna"
+        },
+        {
+            "id": "bg_1_38",
+            "number": 38,
+            "sanskrit": "यद्यप्येते न पश्यन्ति लोभोपहतचेतसः |\nकुलक्षयकृतं दोषं मित्रद्रोहे च पातकम् ||",
+            "translation": "Although those whose minds are overpowered by greed do not see evil in the destruction of the family, nor sin in treachery to friends.",
+            "transliteration": "yady apy ete na paśyanti lobhopahata-cetasaḥ\nkula-kṣaya-kṛtaṃ doṣaṃ mitra-drohe ca pātakam",
+            "meaning": "yadi - if; api - even; ete - they; na - not; paśyanti - see; lobha - by greed; upahata - overpowered; cetasaḥ - whose minds; kula-kṣaya - in the destruction of the family; kṛtam - done; doṣam - fault; mitra-drohe - in treachery to friends; ca - and; pātakam - sin"
+        },
+        {
+            "id": "bg_1_39",
+            "number": 39,
+            "sanskrit": "कथं न ज्ञेयमस्माभिः पापादस्मान्निवर्तितुम् |\nकुलक्षयकृतं दोषं प्रपश्यद्भिर्जनार्दन ||",
+            "translation": "Why should we, who clearly see the evil in the destruction of the family, not turn away from this sin, O Krishna?",
+            "transliteration": "kathaṃ na jñeyam asmābhiḥ pāpād asmān nivartitum\nkula-kṣaya-kṛtaṃ doṣaṃ prapaśyadbhir janārdana",
+            "meaning": "katham - why; na - not; jñeyam - should be known; asmābhiḥ - by us; pāpāt - from sin; asmāt - these; nivartitum - to turn away; kula-kṣaya - in the destruction of the family; kṛtam - done; doṣam - crime; prapaśyadbhiḥ - by those who see; janārdana - O Krishna"
+        },
+        {
+            "id": "bg_1_40",
+            "number": 40,
+            "sanskrit": "कुलक्षये प्रणश्यन्ति कुलधर्माः सनातनाः |\nधर्मे नष्टे कुलं कृत्स्नमधर्मोऽभिभवत्युत ||",
+            "translation": "With the destruction of the family, the eternal family traditions are vanquished, and with the destruction of dharma, unrighteousness prevails over the entire family.",
+            "transliteration": "kula-kṣaye praṇaśyanti kula-dharmāḥ sanātanāḥ\ndharme naṣṭe kulaṃ kṛtsnam adharmo 'bhibhavaty uta",
+            "meaning": "kula-kṣaye - in the destruction of the family; praṇaśyanti - are vanquished; kula-dharmāḥ - family traditions; sanātanāḥ - eternal; dharme - dharma; naṣṭe - being destroyed; kulam - family; kṛtsnam - entire; adharmaḥ - unrighteousness; abhibhavati - prevails; uta - indeed"
+        },
+        {
+            "id": "bg_1_41",
+            "number": 41,
+            "sanskrit": "अधर्माभिभवात्कृष्ण प्रदुष्यन्ति कुलस्त्रियः |\nस्त्रीषु दुष्टासु वार्ष्णेय जायते वर्णसङ्करः ||",
+            "translation": "When unrighteousness prevails, O Krishna, the women of the family become corrupted, and with the corruption of women, O descendant of Vrishni, there arises an unwanted progeny.",
+            "transliteration": "adharmābhibhavāt kṛṣṇa praduṣyanti kula-striyaḥ\nstrīṣu duṣṭāsu vārṣṇeya jāyate varṇa-saṅkaraḥ",
+            "meaning": "adharma - unrighteousness; abhibhavāt - from the prevalence; kṛṣṇa - O Krishna; praduṣyanti - become corrupted; kula-striyaḥ - women of the family; strīṣu - of women; duṣṭāsu - become corrupted; vārṣṇeya - O descendant of Vrishni; jāyate - is born; varṇa-saṅkaraḥ - unwanted progeny"
+        },
+        {
+            "id": "bg_1_42",
+            "number": 42,
+            "sanskrit": "सङ्करो नरकायैव कुलघ्नानां कुलस्य च |\nपतन्ति पितरो ह्येषां लुप्तपिण्डोदकक्रियाः ||",
+            "translation": "An increase in unwanted children results in hellish life both for the family and for those who destroy the family. Deprived of the sacrificial offerings, the ancestors of such corrupt families also fall.",
+            "transliteration": "saṅkaro narakāyaiva kula-ghnānāṃ kulasya ca\npatanti pitaro hy eṣāṃ lupta-piṇḍodaka-kriyāḥ",
+            "meaning": "saṅkaraḥ - unwanted progeny; narakāya - for hellish life; eva - certainly; kula-ghnānām - of those who destroy the family; kulasya - of the family; ca - also; patanti - fall down; pitaraḥ - ancestors; hi - certainly; eṣām - of them; lupta - stopped; piṇḍa - offerings of food; udaka - and water; kriyāḥ - performances"
+        },
+        {
+            "id": "bg_1_43",
+            "number": 43,
+            "sanskrit": "दोषैरेतैः कुलघ्नानां वर्णसङ्करकारकैः |\nउत्साद्यन्ते जातिधर्माः कुलधर्माश्च शाश्वताः ||",
+            "translation": "Through the evil deeds of those who destroy the family and thus give rise to unwanted progeny, a variety of social and family welfare activities are ruined.",
+            "transliteration": "doṣair etaiḥ kula-ghnānāṃ varṇa-saṅkara-kārakaiḥ\nutsādyante jāti-dharmāḥ kula-dharmāś ca śāśvatāḥ",
+            "meaning": "doṣaiḥ - by such faults; etaiḥ - these; kula-ghnānām - of the destroyers of the family; varṇa-saṅkara - unwanted progeny; kārakaiḥ - by the doers; utsādyante - are ruined; jāti-dharmāḥ - social welfare activities; kula-dharmāḥ - family welfare activities; ca - and; śāśvatāḥ - eternal"
+        },
+        {
+            "id": "bg_1_44",
+            "number": 44,
+            "sanskrit": "उत्सन्नकुलधर्माणां मनुष्याणां जनार्दन |\nनरकेऽनियतं वासो भवतीत्यनुशुश्रुम ||",
+            "translation": "O Krishna, I have heard from the learned that those who destroy family traditions dwell in hell for an indefinite period of time.",
+            "transliteration": "utsanna-kula-dharmāṇāṃ manuṣyāṇāṃ janārdana\nnarake 'niyataṃ vāso bhavatīty anuśuśruma",
+            "meaning": "utsanna - destroyed; kula-dharmāṇām - whose family traditions; manuṣyāṇām - of such men; janārdana - O Krishna; narake - in hell; aniyatam - indefinite; vāsaḥ - dwelling; bhavati - is; iti - thus; anuśuśruma - I have heard"
+        },
+        {
+            "id": "bg_1_45",
+            "number": 45,
+            "sanskrit": "अहो बत महत्पापं कर्तुं व्यवसिता वयम् |\nयद्राज्यसुखलोभेन हन्तुं स्वजनमुद्यताः ||",
+            "translation": "Alas! How strange it is that we are preparing to commit greatly sinful acts, driven by the desire to enjoy royal happiness, we are intent on killing our own kinsmen.",
+            "transliteration": "aho bata mahat pāpaṃ kartuṃ vyavasitā vayam\nyad rājya-sukha-lobhena hantuṃ sva-janam udyatāḥ",
+            "meaning": "aho - alas; bata - how; mahat - great; pāpam - sins; kartum - to perform; vyavasitāḥ - have decided; vayam - we; yat - because; rājya-sukha-lobhena - driven by greed for royal happiness; hantum - to kill; sva-janam - kinsmen; udyatāḥ - trying"
+        },
+        {
+            "id": "bg_1_46",
+            "number": 46,
+            "sanskrit": "यदि मामप्रतीकारमशस्त्रं शस्त्रपाणयः |\nधार्तराष्ट्रा रणे हन्युस्तन्मे क्षेमतरं भवेत् ||",
+            "translation": "It would be better for me if the sons of Dhritarashtra, with weapons in hand, were to kill me unarmed and unresisting on the battlefield.",
+            "transliteration": "yadi mām apratīkāram aśastraṃ śastra-pāṇayaḥ\ndhārtarāṣṭrā raṇe hanyus tan me kṣema-taraṃ bhavet",
+            "meaning": "yadi - if; mām - me; apratīkāram - without retaliation; aśastram - without weapons; śastra-pāṇayaḥ - those with weapons in hand; dhārtarāṣṭrāḥ - the sons of Dhritarashtra; raṇe - in the battlefield; hanyuḥ - may kill; tat - that; me - for me; kṣema-taram - better; bhavet - would be"
+        },
+        {
+            "id": "bg_1_47",
+            "number": 47,
+            "sanskrit": "सञ्जय उवाच |\nएवमुक्त्वार्जुनः सङ्ख्ये रथोपस्थ उपाविशत् |\nविसृज्य सशरं चापं शोकसंविग्नमानसः ||",
+            "translation": "Sanjaya said: Having spoken thus on the battlefield, Arjuna cast aside his bow and arrows, and sat down on the chariot, his mind overwhelmed with grief.",
+            "transliteration": "sañjaya uvāca\nevam uktvārjunaḥ saṅkhye rathopastha upāviśat\nvisṛjya sa-śaraṃ cāpaṃ śoka-saṁvigna-mānasaḥ",
+            "meaning": "sañjayaḥ uvāca - Sanjaya said; evam - thus; uktvā - speaking; arjunaḥ - Arjuna; saṅkhye - in the battlefield; ratha - of the chariot; upasthe - on the seat; upāviśat - sat down; visṛjya - casting aside; sa-śaram - with arrows; cāpam - the bow; śoka - by grief; saṁvigna - distressed; mānasaḥ - mind"
         }
     ]
 }

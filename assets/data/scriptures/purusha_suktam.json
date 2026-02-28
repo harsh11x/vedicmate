@@ -2,7 +2,7 @@
     "chapter_number": 0,
     "title": "Purusha Suktam",
     "translation": "Hymn of the Cosmic Being",
-    "summary": "The Purusha Suktam is a foundational hymn of the Rig Veda, describing the spiritual unity of the universe and the manifestation of the Divine in cosmic form.",
+    "summary": "The Purusha Suktam is a foundational hymn of the Rig Veda (10.90), describing the spiritual unity of the universe and the manifestation of the Divine in cosmic form. It contains 16 verses.",
     "verses": [
         {
             "id": "purusha_1",
@@ -10,7 +10,127 @@
             "sanskrit": "सहस्रशीर्षा पुरुषः सहस्राक्षः सहस्रपात् |\nस भूमिं विश्वतो वृत्वात्यतिष्ठद्दशाङ्गुलम् ||",
             "translation": "The Purusha (Universal Being) has a thousand heads, a thousand eyes, and a thousand feet. He pervades the earth everywhere and extends beyond it by ten finger-breadths.",
             "transliteration": "sahasra-śīrṣā puruṣaḥ sahasrākṣaḥ sahasra-pāt\nsa bhūmiṃ viśvato vṛtvāty atiṣṭhad daśāṅgulam",
-            "meaning": "sahasra—thousand; śīrṣā—heads; puruṣaḥ—the Being; sahasra-akṣaḥ—thousand eyes..."
+            "meaning": "sahasra - thousand; śīrṣā - heads; puruṣaḥ - the Cosmic Being; sahasra-akṣaḥ - thousand eyes; sahasra-pāt - thousand feet; saḥ - He; bhūmim - the earth; viśvataḥ - everywhere; vṛtvā - having pervaded; ati - beyond; atiṣṭhat - stood; daśa-aṅgulam - ten fingers"
+        },
+        {
+            "id": "purusha_2",
+            "number": 2,
+            "sanskrit": "पुरुष एवेदं सर्वं यद्भूतं यच्च भव्यम् |\nउतामृतत्वस्येशानो यदन्नेनातिरोहति ||",
+            "translation": "The Purusha is all this universe, whatever has been and whatever will be. He is the Lord of immortality, which He transcends through food.",
+            "transliteration": "puruṣa evedaṃ sarvaṃ yad bhūtaṃ yac ca bhavyam\nutāmṛtatvasyeśāno yad annenātirohati",
+            "meaning": "puruṣaḥ - the Cosmic Being; eva - indeed; idam - this; sarvam - all; yat - what; bhūtam - has been; yat - what; ca - and; bhavyam - will be; uta - also; amṛtatvasya - of immortality; īśānaḥ - the Lord; yat - which; annena - through food; atirohati - transcends"
+        },
+        {
+            "id": "purusha_3",
+            "number": 3,
+            "sanskrit": "एतावानस्य महिमातो ज्यायांश्च पूरुषः |\nपादोऽस्य विश्वा भूतानि त्रिपादस्यामृतं दिवि ||",
+            "translation": "Such is His greatness, and the Purusha is even greater than this. All beings are a quarter of Him; three quarters are the immortal in heaven.",
+            "transliteration": "etāvān asya mahimāto jyāyāṃś ca pūruṣaḥ\npādo 'sya viśvā bhūtāni tripād asyāmṛtaṃ divi",
+            "meaning": "etāvān - such; asya - His; mahimā - greatness; ataḥ - than this; jyāyān - greater; ca - and; pūruṣaḥ - the Purusha; pādaḥ - quarter; asya - His; viśvā - all; bhūtāni - beings; tri-pāt - three quarters; asya - His; amṛtam - immortal; divi - in heaven"
+        },
+        {
+            "id": "purusha_4",
+            "number": 4,
+            "sanskrit": "त्रिपादूर्ध्व उदैत्पुरुषः पादोऽस्येहाभवत्पुनः |\nततो विष्वङ्व्यक्रामत्साशनानशने अभि ||",
+            "translation": "With three quarters, the Purusha rose upward, and one quarter of Him remained here. From that He spread in all directions, into that which eats and that which does not eat.",
+            "transliteration": "tripād ūrdhva udait puruṣaḥ pādo 'syehābhavat punaḥ\ntato viṣvaṅ vyakrāmat sāśanānaśane abhi",
+            "meaning": "tri-pāt - three quarters; ūrdhvaḥ - upward; udait - rose; puruṣaḥ - the Purusha; pādaḥ - quarter; asya - His; iha - here; abhavat - remained; punaḥ - again; tataḥ - from that; viṣvak - in all directions; vyakrāmat - spread; sa-aśana - that which eats; anaśane - that which does not eat; abhi - into"
+        },
+        {
+            "id": "purusha_5",
+            "number": 5,
+            "sanskrit": "तस्माद्विराळजायत विराजो अधि पूरुषः |\nस जातो अत्यरिच्यत पश्चाद्भूमिमथो पुरः ||",
+            "translation": "From Him was born Viraj, and from Viraj came the Purusha. Being born, He extended beyond the earth, both behind and before.",
+            "transliteration": "tasmād virāḷ ajāyata virājo adhi pūruṣaḥ\nsa jāto atyaricyata paścād bhūmim ath puraḥ",
+            "meaning": "tasmāt - from Him; virāṭ - Viraj; ajāyata - was born; virājaḥ - from Viraj; adhi - from; pūruṣaḥ - the Purusha; saḥ - He; jātaḥ - being born; atyaricyata - extended beyond; paścāt - behind; bhūmim - the earth; atho - and; puraḥ - before"
+        },
+        {
+            "id": "purusha_6",
+            "number": 6,
+            "sanskrit": "यत्पुरुषेण हविषा देवा यज्ञमतन्वत |\nवसन्तो अस्यासीदाज्यं ग्रीष्म इध्मः शरद्धविः ||",
+            "translation": "When the gods performed the sacrifice with the Purusha as the offering, spring was the clarified butter, summer the fuel, and autumn the oblation.",
+            "transliteration": "yat puruṣeṇa haviṣā devā yajñam atanvata\nvasanto asyāsīd ājyaṃ grīṣma idhmaḥ śarad dhaviḥ",
+            "meaning": "yat - when; puruṣeṇa - with the Purusha; haviṣā - as the offering; devāḥ - the gods; yajñam - sacrifice; atanvata - performed; vasantaḥ - spring; asya - His; āsīt - was; ājyam - clarified butter; grīṣmaḥ - summer; idhmaḥ - fuel; śarat - autumn; haviḥ - oblation"
+        },
+        {
+            "id": "purusha_7",
+            "number": 7,
+            "sanskrit": "सप्तास्यासन्परिधयस्त्रिः सप्त समिधः कृताः |\nदेवा यद्यज्ञं तन्वाना अबध्नन्पुरुषं पशुम् ||",
+            "translation": "Seven were His enclosing sticks, and thrice seven were the fuel sticks prepared, when the gods, performing the sacrifice, bound the Purusha as the victim.",
+            "transliteration": "saptāsyāsan paridhyas triḥ sapta samidhaḥ kṛtāḥ\ndevā yad yajñaṃ tanvānā abadhnan puruṣaṃ paśum",
+            "meaning": "sapta - seven; asya - His; āsan - were; paridhayaḥ - enclosing sticks; triḥ - thrice; sapta - seven; samidhaḥ - fuel sticks; kṛtāḥ - prepared; devāḥ - the gods; yat - when; yajñam - sacrifice; tanvānāḥ - performing; abadhnan - bound; puruṣam - the Purusha; paśum - as victim"
+        },
+        {
+            "id": "purusha_8",
+            "number": 8,
+            "sanskrit": "तं यज्ञं बर्हिषि प्रौक्षन्पुरुषं जातमग्रतः |\nतेन देवा अयजन्त साध्या ऋषयश्च ये ||",
+            "translation": "They sprinkled the Purusha, born in the beginning, on the sacred grass. With Him as the offering, the gods, the Sadhyas, and the sages performed the sacrifice.",
+            "transliteration": "taṃ yajñaṃ barhiṣi praukṣan puruṣaṃ jātam agrataḥ\ntena devā ayajanta sādhyā ṛṣayaś ca ye",
+            "meaning": "tam - Him; yajñam - sacrifice; barhiṣi - on the sacred grass; praukṣan - sprinkled; puruṣam - the Purusha; jātam - born; agrataḥ - in the beginning; tena - with Him; devāḥ - the gods; ayajanta - performed sacrifice; sādhyāḥ - the Sadhyas; ṛṣayaḥ - the sages; ca - and; ye - who"
+        },
+        {
+            "id": "purusha_9",
+            "number": 9,
+            "sanskrit": "तस्माद्यज्ञात्सर्वहुतः सम्भृतं पृषदाज्यम् |\nपशूंस्तांश्चक्रे वायव्यानारण्यान्ग्राम्याश्च ये ||",
+            "translation": "From that sacrifice in which everything was offered, the clarified butter was gathered. It formed the creatures of the air, the forest, and the village.",
+            "transliteration": "tasmād yajñāt sarva-hutaḥ sambhṛtaṃ pṛṣad ājyam\npaśūṃs tāṃś cakre vāyavyān āraṇyān grāmyāś ca ye",
+            "meaning": "tasmāt - from that; yajñāt - sacrifice; sarva-hutaḥ - in which all was offered; sambhṛtam - gathered; pṛṣat - curd mixed; ājyam - clarified butter; paśūn - creatures; tān - those; cakre - formed; vāyavyān - of the air; āraṇyān - of the forest; grāmyāḥ - of the village; ca - and; ye - which"
+        },
+        {
+            "id": "purusha_10",
+            "number": 10,
+            "sanskrit": "तस्माद्यज्ञात्सर्वहुतऋचः सामानि जज्ञिरे |\nछन्दांसि जज्ञिरे तस्माद्यजुस्तस्मादजायत ||",
+            "translation": "From that sacrifice in which everything was offered, the Rig and Sama Vedas were born. The meters were born from it, and the Yajur Veda was born from it.",
+            "transliteration": "tasmād yajñāt sarva-huta ṛcaḥ sāmāni jajñire\nchandāṃsi jajñire tasmād yajus tasmād ajāyata",
+            "meaning": "tasmāt - from that; yajñāt - sacrifice; sarva-hutaḥ - all-offering; ṛcaḥ - the Rig Veda; sāmāni - the Sama Veda; jajñire - were born; chandāṃsi - the meters; jajñire - were born; tasmāt - from that; yajuḥ - the Yajur Veda; tasmāt - from that; ajāyata - was born"
+        },
+        {
+            "id": "purusha_11",
+            "number": 11,
+            "sanskrit": "तस्मादश्वा अजायन्त ये के चोभयादतः |\nगावो ह जज्ञिरे तस्मात्तस्माज्जाता अजावयः ||",
+            "translation": "From that were born horses, and all animals with two rows of teeth. Cows were born from that, and from that were born goats and sheep.",
+            "transliteration": "tasmād aśvā ajāyanta ye ke cobhayādataḥ\ngāvo ha jajñire tasmāt tasmāj jātā ajāvayaḥ",
+            "meaning": "tasmāt - from that; aśvāḥ - horses; ajāyanta - were born; ye - which; ke - whatever; ca - and; ubhaya-ādataḥ - with two rows of teeth; gāvaḥ - cows; ha - indeed; jajñire - were born; tasmāt - from that; tasmāt - from that; jātāḥ - born; aja-avayaḥ - goats and sheep"
+        },
+        {
+            "id": "purusha_12",
+            "number": 12,
+            "sanskrit": "यत्पुरुषं व्यदधुः कतिधा व्यकल्पयन् |\nमुखं किमस्य कौ बाहू का ऊरू पादा उच्येते ||",
+            "translation": "When they divided the Purusha, into how many parts did they arrange Him? What was His mouth? What were His arms? What were His thighs and feet called?",
+            "transliteration": "yat puruṣaṃ vyadaduḥ katidhā vyakalpayan\nmukhaṃ kim asya kau bāhū kā ūrū pādā ucyete",
+            "meaning": "yat - when; puruṣam - the Purusha; vyadaduḥ - they divided; katidhā - into how many parts; vyakalpayan - did they arrange; mukham - mouth; kim - what; asya - His; kau - what; bāhū - arms; kā - what; ūrū - thighs; pādau - feet; ucyete - are called"
+        },
+        {
+            "id": "purusha_13",
+            "number": 13,
+            "sanskrit": "ब्राह्मणोऽस्य मुखमासीद्बाहू राजन्यः कृतः |\nऊरू तदस्य यद्वैश्यः पद्भ्यां शूद्रो अजायत ||",
+            "translation": "The Brahmana was His mouth, the Rajanya (Kshatriya) was made His arms, the Vaishya was His thighs, and the Shudra was born from His feet.",
+            "transliteration": "brāhmaṇo 'sya mukham āsīd bāhū rājanyaḥ kṛtaḥ\nūrū tad asya yad vaiśyaḥ padbhyāṃ śūdro ajāyata",
+            "meaning": "brāhmaṇaḥ - the Brahmana; asya - His; mukham - mouth; āsīt - was; bāhū - arms; rājanyaḥ - the Kshatriya; kṛtaḥ - made; ūrū - thighs; tat - that; asya - His; yat - which; vaiśyaḥ - the Vaishya; padbhyām - from feet; śūdraḥ - the Shudra; ajāyata - was born"
+        },
+        {
+            "id": "purusha_14",
+            "number": 14,
+            "sanskrit": "चन्द्रमा मनसो जातश्चक्षोः सूर्यो अजायत |\nमुखादिन्द्रश्चाग्निश्च प्राणाद्वायुरजायत ||",
+            "translation": "The moon was born from His mind, the sun from His eyes, Indra and Agni from His mouth, and Vayu (wind) was born from His breath.",
+            "transliteration": "candramā manaso jātaś cakṣoḥ sūryo ajāyata\nmukhād indraś cāgniś ca prāṇād vāyur ajāyata",
+            "meaning": "candramāḥ - the moon; manasaḥ - from mind; jātaḥ - was born; cakṣoḥ - from eyes; sūryaḥ - the sun; ajāyata - was born; mukhāt - from mouth; indraḥ - Indra; ca - and; agniḥ - Agni; ca - and; prāṇāt - from breath; vāyuḥ - wind; ajāyata - was born"
+        },
+        {
+            "id": "purusha_15",
+            "number": 15,
+            "sanskrit": "नाभ्या आसीदन्तरिक्षं शीर्ष्णो द्यौः समवर्तत |\nपद्भ्यां भूमिर्दिशः श्रोत्रात्तथा लोकाँ अकल्पयन् ||",
+            "translation": "From His navel came the atmosphere, from His head the sky evolved, from His feet the earth, and from His ears the directions. Thus they formed the worlds.",
+            "transliteration": "nābhyā āsīd antarikṣaṃ śīrṣṇo dyauḥ samavartata\npadbhyāṃ bhūmir diśaḥ śrotrāt tathā lokāṁ akalpayan",
+            "meaning": "nābhyāḥ - from navel; āsīt - came; antarikṣam - the atmosphere; śīrṣṇaḥ - from head; dyauḥ - the sky; samavartata - evolved; padbhyām - from feet; bhūmiḥ - the earth; diśaḥ - directions; śrotrāt - from ears; tathā - thus; lokān - the worlds; akalpayan - they formed"
+        },
+        {
+            "id": "purusha_16",
+            "number": 16,
+            "sanskrit": "यज्ञेन यज्ञमयजन्त देवास्तानि धर्माणि प्रथमान्यासन् |\nते ह नाकं महिमानः सचन्त यत्र पूर्वे साध्याः सन्ति देवाः ||",
+            "translation": "With sacrifice, the gods sacrificed to the sacrifice. These were the first rites. These mighty ones attained the heaven where the ancient Sadhyas and gods reside.",
+            "transliteration": "yajñena yajñam ayajanta devās tāni dharmāṇi prathamāny āsan\nte ha nākaṃ mahimānaḥ sacanta yatra pūrve sādhyāḥ santi devāḥ",
+            "meaning": "yajñena - with sacrifice; yajñam - to sacrifice; ayajanta - sacrificed; devāḥ - the gods; tāni - these; dharmāṇi - rites; prathamāni - first; āsan - were; te - they; ha - indeed; nākam - heaven; mahimānaḥ - the mighty ones; sacanta - attained; yatra - where; pūrve - ancient; sādhyāḥ - Sadhyas; santi - are; devāḥ - gods"
         }
     ]
 }

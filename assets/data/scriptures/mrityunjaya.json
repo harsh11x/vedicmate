@@ -2,15 +2,31 @@
     "chapter_number": 0,
     "title": "Maha Mrityunjaya Mantra",
     "translation": "The Great Death-Conquering Mantra",
-    "summary": "Also known as the Rudra Mantra or Tryambakam Mantra, this verse from the Rig Veda is dedicated to Shiva and is believed to promote mental, emotional, and physical health.",
+    "summary": "Also known as the Rudra Mantra or Tryambakam Mantra, this powerful verse from the Rig Veda (7.59.12) is dedicated to Lord Shiva. It is believed to promote healing, longevity, and liberation from the cycle of death and rebirth.",
     "verses": [
         {
             "id": "mrityunjaya_1",
             "number": 1,
             "sanskrit": "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् |\nउर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय माऽमृतात् ||",
-            "translation": "We worship the three-eyed Lord (Shiva), who is fragrant and who nourishes and nurtures all beings. As is the ripe cucumber (with the intervention of the gardener) freed from its bondage (to the creeper), may He liberate us from death for the sake of immortality.",
-            "transliteration": "oṃ tryambakaṃ yajāmahe sugandhiṃ puṣṭi-vardhanam\nurvārukam iva bandhanān mṛtyor mukṣīya māmṛtāt",
-            "meaning": "Tryambakam - the three-eyed one; Yajamahe - we worship; Sugandhim - fragrant; Pushti - nourishment..."
+            "translation": "We worship the three-eyed Lord Shiva, who is fragrant and who nourishes and nurtures all beings. As the ripe cucumber is freed from its bondage to the vine, may He liberate us from death for the sake of immortality.",
+            "transliteration": "oṃ tryambakaṃ yajāmahe sugandhiṃ puṣṭi-vardhanam\nurvārukam iva bandhanān mṛtyor mukṣīya mā 'mṛtāt",
+            "meaning": "Om - the primordial sound; Tryambakam - the three-eyed one (Shiva); Yajāmahe - we worship; Sugandhim - fragrant, sweet-smelling; Puṣṭi-vardhanam - one who nourishes and increases prosperity; Urvārukam - cucumber/melon; Iva - like; Bandhanāt - from bondage/attachment; Mṛtyoḥ - from death; Mukṣīya - may I be liberated; Mā - not; Amṛtāt - from immortality/liberation"
+        },
+        {
+            "id": "mrityunjaya_2",
+            "number": 2,
+            "sanskrit": "ॐ हौं जूं सः |\nॐ भूर्भुवः स्वः |\nॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् |\nउर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय माऽमृतात् |\nॐ स्वः भुवः भूः ॐ |\nसः जूं हौं ॐ ||",
+            "translation": "Extended version with bija mantras: Om Haum Jum Sah. Om Bhur Bhuvah Svah. We worship the three-eyed one who is fragrant and who nourishes all. Like a ripe cucumber freed from its stem, may we be liberated from death, not from immortality. Om Svah Bhuvah Bhuh Om. Sah Jum Haum Om.",
+            "transliteration": "oṃ hauṃ jūṃ saḥ\noṃ bhūr bhuvaḥ svaḥ\noṃ tryambakaṃ yajāmahe sugandhiṃ puṣṭi-vardhanam\nurvārukam iva bandhanān mṛtyor mukṣīya mā 'mṛtāt\noṃ svaḥ bhuvaḥ bhūḥ oṃ\nsaḥ jūṃ hauṃ oṃ",
+            "meaning": "This extended version includes the bija (seed) mantras and the Vyahriti (Bhur Bhuvah Svah - the three planes of existence). The bija mantras Haum, Jum, and Sah are powerful sound vibrations that enhance the mantra's potency. The reverse order at the end (Svah Bhuvah Bhuh) represents the return journey from higher consciousness back to earthly awareness."
+        },
+        {
+            "id": "mrityunjaya_3",
+            "number": 3,
+            "sanskrit": "ॐ नमः शिवाय ||",
+            "translation": "Om, salutations to Shiva. This is often chanted after the Maha Mrityunjaya Mantra as a closing invocation.",
+            "transliteration": "oṃ namaḥ śivāya",
+            "meaning": "Om - the primordial sound; Namaḥ - salutations, bow to; Śivāya - to Shiva (the auspicious one). This five-syllable mantra (Panchakshari) is one of the most important mantras in Shaivism, representing the five elements and the five actions of Shiva."
         }
     ]
 }
