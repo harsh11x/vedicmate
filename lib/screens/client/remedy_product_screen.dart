@@ -344,11 +344,13 @@ class RemedyProductScreen extends ConsumerWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to checkout
-                    context.push('/checkout', extra: {
-                      'item': remedy,
-                      'isDirectBuy': true,
-                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Buy feature coming soon!'),
+                        backgroundColor: AppTheme.primaryOrange,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),

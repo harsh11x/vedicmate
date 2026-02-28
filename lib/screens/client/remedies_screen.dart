@@ -422,10 +422,13 @@ class _RemedyCard extends ConsumerWidget {
                         flex: 2,
                         child: InkWell(
                           onTap: () {
-                             context.push('/checkout', extra: {
-                              'item': remedy,
-                              'isDirectBuy': true,
-                            });
+                             ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Buy feature coming soon!'),
+                                backgroundColor: AppTheme.primaryOrange,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
                           },
                           child: Container(
                             height: 32,

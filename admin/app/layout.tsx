@@ -62,8 +62,8 @@ export default function RootLayout({
     // Check server status (Only if authenticated or on dashboard)
     const checkServer = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
-        const res = await fetch(`${apiUrl}/health`, {
+        const backendUrl = process.env.NEXT_PUBLIC_API_BACKEND || "http://15.207.36.26:3001";
+        const res = await fetch(`${backendUrl}/api/health`, {
           signal: AbortSignal.timeout(3000)
         });
         setServerStatus(res.ok ? "connected" : "disconnected");
