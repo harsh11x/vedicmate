@@ -137,7 +137,69 @@ class WalletService {
       debugPrint('WalletService: Error fetching detailed txns -> $e');
       return [];
     }
+  
+  /// Grant signup bonus to all existing users who haven't received it
+  Future<Map<String, dynamic>> grantSignupBonusToExistingUsers() async {
+    try {
+      int updatedCount = 0;
+      int errorCount = 0;
+
+      // 1. Get all wallets
+      final wallets = await _supabase.from('wallets').select('user_id, balance');
+
+      for (final wallet in wallets) {
+        final uid = wallet['user_id'] as String;
+        
+        // 2. Check if user already has a signup bonus
+        final existingBonus = await _supabase
+            .from('transactions')
+            .select('id')
+            .eq('wallet_id', uid)
+            .or('description.eq.Signup Bonus,description.eq.Signup Bonus (Late),description.eq.Guest Welcome Bonus')
+            .maybeSingle();
+
+        if (existingBonus == null) {
+          try {
+            // 3. Add ₹50 to balance
+            final currentBalance = (wallet['balance'] as num).toDouble();
+            final newBalance = currentBalance + 50.0;
+
+            await _supabase.from('wallets').update({
+              'balance': newBalance,
+            }).eq('user_id', uid);
+
+            // 4. Record transaction
+            await _supabase.from('transactions').insert({
+              'wallet_id': uid,
+              'amount': 50.0,
+              'type': 'credit',
+              'category': 'recharge',
+              'description': 'Signup Bonus (Late)',
+              'reference_id': 'MIGRATION_BONUS_${uid}_${DateTime.now().millisecondsSinceEpoch}',
+              'status': 'completed',
+              'created_at': DateTime.now().toIso8601String(),
+            });
+
+            updatedCount++;
+          } catch (e) {
+            debugPrint('Error migrating wallet for $uid: $e');
+            errorCount++;
+          }
+        }
+      }
+
+      return {
+        'success': true,
+        'updatedCount': updatedCount,
+        'errorCount': errorCount,
+        'totalWallets': wallets.length,
+      };
+    } catch (e) {
+      debugPrint('General migration error: $e');
+      return {'success': false, 'error': e.toString()};
+    }
   }
+}
 
   // Public method matching WalletProvider expectation
   Future<List<WalletTransaction>> getRecentTransactions(String userId,

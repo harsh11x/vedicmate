@@ -28,6 +28,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String? _supabasePhone;
   String? _supabaseEmail;
   String? _supabaseName;
+  bool _isAdmin = false;
+  bool _isMigrating = false;
+  final WalletService _walletService = WalletService();
 
   @override
   void initState() {
@@ -41,7 +44,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final data = await Supabase.instance.client
           .from('users')
-          .select('phone, email, name')
+          .select('phone, email, name, role')
           .eq('id', user.uid)
           .maybeSingle();
       if (mounted && data != null) {
@@ -49,6 +52,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _supabasePhone = data['phone'] as String?;
           _supabaseEmail = data['email'] as String?;
           _supabaseName = data['name'] as String?;
+          _isAdmin = (data['role'] as String?) == 'admin';
         });
       }
     } catch (_) {}
@@ -598,6 +602,40 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
+          // Admin Maintenance (Only for Admins)
+          if (_isAdmin)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SectionHeader(title: 'Maintenance (Admin Only)'),
+                    const SizedBox(height: 12),
+                    _SettingsCard(
+                      children: [
+                        _SettingsTile(
+                          icon: Icons.auto_fix_high,
+                          title: 'Grant Signup Bonus',
+                          subtitle: 'Give ₹50 to all older accounts',
+                          trailing: _isMigrating 
+                              ? const SizedBox(
+                                  width: 20, 
+                                  height: 20, 
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.arrow_forward_ios, size: 14),
+                          onTap: _isMigrating ? null : _handleBonusMigration,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
           // Delete Account Button
           SliverToBoxAdapter(
             child: Padding(
@@ -696,6 +734,55 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  }
+
+  Future<void> _handleBonusMigration() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Grant Signup Bonus'),
+        content: const Text('This will give ₹50 to all existing accounts that haven\'t received it. This process may take a while.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Proceed'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() => _isMigrating = true);
+      try {
+        final result = await _walletService.grantSignupBonusToExistingUsers();
+        if (mounted) {
+          if (result['success'] == true) {
+            final count = result['updatedCount'];
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Successfully granted bonus to $count users.')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Migration failed: ${result['error']}')),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isMigrating = false);
+      }
+    }
   }
 
   void _showLogoutDialog(BuildContext context) async {
