@@ -88,10 +88,12 @@ flutter:
     - assets/images/remedies/
     - assets/images/ai_pandits/
     - assets/images/services/
+    - assets/images/yoga/
     - assets/icons/
     - assets/animations/
     - assets/data/history/
     - assets/data/scriptures/
+    - assets/data/yoga/
 
 flutter_launcher_icons:
   android: true

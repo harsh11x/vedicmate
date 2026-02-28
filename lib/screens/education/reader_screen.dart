@@ -117,6 +117,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isYogaSutras = widget.scriptureId == 'yoga_sutras';
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.title} - Ch ${widget.chapterNumber}'),
@@ -220,6 +222,16 @@ class _ReaderScreenState extends State<ReaderScreen> {
           );
         },
       ),
+      floatingActionButton: isYogaSutras
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                context.push('/education/yoga-poses');
+              },
+              backgroundColor: AppTheme.primaryOrange,
+              icon: const Icon(Icons.self_improvement),
+              label: const Text('View Yoga Poses'),
+            )
+          : null,
     );
   }
 

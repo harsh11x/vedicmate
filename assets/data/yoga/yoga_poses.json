@@ -1,0 +1,1477 @@
+{
+  "poses": [
+    {
+      "id": "tadasana",
+      "name_english": "Mountain Pose",
+      "name_sanskrit": "Tāḍāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/tadasana.png",
+      "benefits": [
+        "Improves posture and body awareness",
+        "Strengthens thighs, knees, and ankles",
+        "Firms abdomen and buttocks",
+        "Relieves sciatica",
+        "Reduces flat feet"
+      ],
+      "instructions": [
+        "Stand with feet together, heels slightly apart",
+        "Distribute weight evenly across both feet",
+        "Engage thigh muscles and lift kneecaps",
+        "Draw belly in and lengthen tailbone toward floor",
+        "Roll shoulders back and down",
+        "Arms hang naturally at sides with palms facing forward",
+        "Gaze forward, chin parallel to floor",
+        "Breathe deeply and hold the pose"
+      ],
+      "precautions": [
+        "Avoid if you have headache or low blood pressure",
+        "If you have balance issues, stand with feet hip-width apart"
+      ]
+    },
+    {
+      "id": "vrikshasana",
+      "name_english": "Tree Pose",
+      "name_sanskrit": "Vṛkṣāsana",
+      "category": "Balancing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/vrikshasana.png",
+      "benefits": [
+        "Improves balance and stability",
+        "Strengthens legs, ankles, and spine",
+        "Opens hips and groin",
+        "Improves concentration and focus",
+        "Relieves sciatica"
+      ],
+      "instructions": [
+        "Begin in Mountain Pose (Tadasana)",
+        "Shift weight onto left foot",
+        "Bend right knee and place right foot on inner left thigh or calf (avoid knee)",
+        "Press foot and leg together",
+        "Bring hands to prayer position at chest",
+        "Focus gaze on a fixed point for balance",
+        "Optionally raise arms overhead",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have recent knee or hip injury",
+        "Use wall support if balance is challenging",
+        "Never place foot directly on knee joint"
+      ]
+    },
+    {
+      "id": "adho_mukha_svanasana",
+      "name_english": "Downward-Facing Dog",
+      "name_sanskrit": "Adho Mukha Śvānāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "1-3 minutes",
+      "image_path": "assets/images/yoga/adho_mukha_svanasana.png",
+      "benefits": [
+        "Stretches shoulders, hamstrings, calves, and hands",
+        "Strengthens arms and legs",
+        "Energizes the body",
+        "Relieves headache, insomnia, and fatigue",
+        "Therapeutic for high blood pressure and sinusitis"
+      ],
+      "instructions": [
+        "Start on hands and knees (tabletop position)",
+        "Place hands shoulder-width apart, fingers spread wide",
+        "Tuck toes and lift hips up and back",
+        "Straighten legs as much as comfortable",
+        "Press chest toward thighs",
+        "Keep head between arms, ears aligned with upper arms",
+        "Press firmly through palms and fingers",
+        "Breathe deeply and hold"
+      ],
+      "precautions": [
+        "Avoid if you have carpal tunnel syndrome",
+        "Not recommended in late pregnancy",
+        "Modify with bent knees if hamstrings are tight",
+        "Avoid if you have high blood pressure or headache"
+      ]
+    },
+    {
+      "id": "bhujangasana",
+      "name_english": "Cobra Pose",
+      "name_sanskrit": "Bhujaṅgāsana",
+      "category": "Lying",
+      "difficulty": "Beginner",
+      "duration": "15-30 seconds",
+      "image_path": "assets/images/yoga/bhujangasana.png",
+      "benefits": [
+        "Strengthens spine and back muscles",
+        "Opens chest and lungs",
+        "Stimulates abdominal organs",
+        "Relieves stress and fatigue",
+        "Therapeutic for asthma"
+      ],
+      "instructions": [
+        "Lie face down with legs extended, tops of feet on floor",
+        "Place hands under shoulders, elbows close to body",
+        "Press pelvis and tops of feet firmly into floor",
+        "Inhale and straighten arms to lift chest",
+        "Keep elbows slightly bent",
+        "Draw shoulders back and down",
+        "Lift through top of sternum",
+        "Hold, then slowly lower on exhale"
+      ],
+      "precautions": [
+        "Avoid if you have back injury or headache",
+        "Not recommended during pregnancy",
+        "Don't overarch the back",
+        "Keep elbows bent if you have lower back issues"
+      ]
+    },
+    {
+      "id": "balasana",
+      "name_english": "Child's Pose",
+      "name_sanskrit": "Bālāsana",
+      "category": "Sitting",
+      "difficulty": "Beginner",
+      "duration": "1-3 minutes",
+      "image_path": "assets/images/yoga/balasana.png",
+      "benefits": [
+        "Gently stretches hips, thighs, and ankles",
+        "Calms the brain and relieves stress",
+        "Relieves back and neck pain",
+        "Massages internal organs",
+        "Promotes relaxation and recovery"
+      ],
+      "instructions": [
+        "Kneel on floor with big toes touching",
+        "Sit back on heels",
+        "Separate knees about hip-width apart",
+        "Exhale and fold forward, lowering torso between thighs",
+        "Extend arms forward or rest them alongside body",
+        "Rest forehead on mat",
+        "Breathe deeply and relax",
+        "Hold as long as comfortable"
+      ],
+      "precautions": [
+        "Avoid if you have knee injury",
+        "Not recommended if you have diarrhea",
+        "Use blanket under knees if sensitive",
+        "Modify with wider knees if pregnant"
+      ]
+    },
+    {
+      "id": "trikonasana",
+      "name_english": "Triangle Pose",
+      "name_sanskrit": "Trikoṇāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/trikonasana.png",
+      "benefits": [
+        "Stretches legs, hips, and spine",
+        "Opens chest and shoulders",
+        "Strengthens legs and core",
+        "Stimulates abdominal organs",
+        "Relieves stress and anxiety"
+      ],
+      "instructions": [
+        "Stand with feet 3-4 feet apart",
+        "Turn right foot out 90 degrees, left foot slightly in",
+        "Extend arms parallel to floor, palms down",
+        "Reach right arm forward, then lower to shin, ankle, or floor",
+        "Extend left arm toward ceiling",
+        "Turn gaze up toward left hand",
+        "Keep both legs straight and engaged",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have low blood pressure or diarrhea",
+        "Use block under hand if you can't reach floor",
+        "Look down if you have neck problems",
+        "Don't overextend if you have back issues"
+      ]
+    },
+    {
+      "id": "virabhadrasana_1",
+      "name_english": "Warrior I Pose",
+      "name_sanskrit": "Vīrabhadrāsana I",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/virabhadrasana_1.png",
+      "benefits": [
+        "Strengthens legs, arms, and back",
+        "Opens chest, lungs, and shoulders",
+        "Stretches hip flexors and thighs",
+        "Improves focus and balance",
+        "Builds stamina and confidence"
+      ],
+      "instructions": [
+        "Stand with feet 3-4 feet apart",
+        "Turn right foot out 90 degrees, left foot in 45 degrees",
+        "Square hips toward front of mat",
+        "Bend right knee over right ankle",
+        "Raise arms overhead, palms facing each other",
+        "Lift chest and gaze up",
+        "Press back heel firmly into floor",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have high blood pressure",
+        "Not recommended with heart problems",
+        "Keep front knee over ankle, not beyond",
+        "Modify arm position if you have shoulder issues"
+      ]
+    },
+    {
+      "id": "virabhadrasana_2",
+      "name_english": "Warrior II Pose",
+      "name_sanskrit": "Vīrabhadrāsana II",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/virabhadrasana_2.png",
+      "benefits": [
+        "Strengthens legs and ankles",
+        "Stretches groin, chest, and shoulders",
+        "Increases stamina and concentration",
+        "Stimulates abdominal organs",
+        "Relieves backache"
+      ],
+      "instructions": [
+        "Stand with feet 3-4 feet apart",
+        "Turn right foot out 90 degrees, left foot slightly in",
+        "Extend arms parallel to floor",
+        "Bend right knee over right ankle",
+        "Keep torso centered between legs",
+        "Turn head to gaze over right fingertips",
+        "Press outer left heel firmly into floor",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have diarrhea or high blood pressure",
+        "Don't bend knee beyond ankle",
+        "Use wall support if balance is challenging",
+        "Modify if you have neck problems"
+      ]
+    },
+    {
+      "id": "virabhadrasana_3",
+      "name_english": "Warrior III Pose",
+      "name_sanskrit": "Vīrabhadrāsana III",
+      "category": "Balancing",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/virabhadrasana_3.png",
+      "benefits": [
+        "Strengthens ankles, legs, and core",
+        "Improves balance and posture",
+        "Tones abdomen",
+        "Strengthens shoulders and back",
+        "Improves concentration and focus"
+      ],
+      "instructions": [
+        "Begin in Warrior I with right foot forward",
+        "Shift weight onto right foot",
+        "Lean torso forward as you lift left leg back",
+        "Straighten right leg and extend left leg parallel to floor",
+        "Extend arms forward or alongside body",
+        "Keep hips level and squared",
+        "Gaze down at floor",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have high blood pressure",
+        "Use wall or chair for support initially",
+        "Not recommended with recent back injury",
+        "Keep standing leg slightly bent if needed"
+      ]
+    },
+    {
+      "id": "setu_bandhasana",
+      "name_english": "Bridge Pose",
+      "name_sanskrit": "Setu Bandhāsana",
+      "category": "Lying",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/setu_bandhasana.png",
+      "benefits": [
+        "Strengthens back, glutes, and hamstrings",
+        "Opens chest and shoulders",
+        "Stretches spine and neck",
+        "Calms the brain and reduces anxiety",
+        "Therapeutic for asthma and high blood pressure"
+      ],
+      "instructions": [
+        "Lie on back with knees bent, feet hip-width apart",
+        "Place feet flat on floor, close to sitting bones",
+        "Arms rest alongside body, palms down",
+        "Press feet and arms into floor",
+        "Lift hips toward ceiling",
+        "Clasp hands under back and extend arms",
+        "Press shoulders into floor",
+        "Hold, then slowly lower hips"
+      ],
+      "precautions": [
+        "Avoid if you have neck injury",
+        "Don't turn head while in pose",
+        "Use block under sacrum for support if needed",
+        "Not recommended with recent back surgery"
+      ]
+    },
+    {
+      "id": "halasana",
+      "name_english": "Plow Pose",
+      "name_sanskrit": "Halāsana",
+      "category": "Inversion",
+      "difficulty": "Intermediate",
+      "duration": "1-5 minutes",
+      "image_path": "assets/images/yoga/halasana.png",
+      "benefits": [
+        "Stretches shoulders and spine",
+        "Stimulates thyroid and abdominal organs",
+        "Calms the brain and reduces stress",
+        "Therapeutic for backache and insomnia",
+        "Helps relieve symptoms of menopause"
+      ],
+      "instructions": [
+        "Lie on back with arms alongside body",
+        "Lift legs up to 90 degrees",
+        "Press palms into floor and lift hips",
+        "Bring legs over head until toes touch floor behind you",
+        "Keep legs straight and together",
+        "Clasp hands behind back or support back with hands",
+        "Breathe deeply and hold",
+        "Slowly roll down to exit"
+      ],
+      "precautions": [
+        "Avoid if you have neck injury or high blood pressure",
+        "Not recommended during menstruation or pregnancy",
+        "Use blankets under shoulders for support",
+        "Don't turn head while in pose"
+      ]
+    },
+    {
+      "id": "shavasana",
+      "name_english": "Corpse Pose",
+      "name_sanskrit": "Śavāsana",
+      "category": "Lying",
+      "difficulty": "Beginner",
+      "duration": "5-15 minutes",
+      "image_path": "assets/images/yoga/shavasana.png",
+      "benefits": [
+        "Deeply relaxes body and mind",
+        "Reduces stress and anxiety",
+        "Lowers blood pressure",
+        "Relieves headache and fatigue",
+        "Promotes better sleep"
+      ],
+      "instructions": [
+        "Lie flat on back with legs extended",
+        "Allow feet to fall open naturally",
+        "Place arms alongside body, palms facing up",
+        "Close eyes and relax entire body",
+        "Breathe naturally and deeply",
+        "Release all tension from muscles",
+        "Stay present and aware",
+        "Rest for 5-15 minutes"
+      ],
+      "precautions": [
+        "Use blanket for warmth if needed",
+        "Place pillow under knees for lower back support",
+        "If pregnant, lie on left side instead",
+        "Set timer to avoid falling asleep if needed"
+      ]
+    },
+    {
+      "id": "padmasana",
+      "name_english": "Lotus Pose",
+      "name_sanskrit": "Padmāsana",
+      "category": "Sitting",
+      "difficulty": "Advanced",
+      "duration": "1-5 minutes",
+      "image_path": "assets/images/yoga/padmasana.png",
+      "benefits": [
+        "Opens hips and stretches knees and ankles",
+        "Calms the brain and promotes meditation",
+        "Stimulates pelvis and spine",
+        "Improves posture and concentration",
+        "Traditional pose for pranayama"
+      ],
+      "instructions": [
+        "Sit on floor with legs extended",
+        "Bend right knee and place right foot on left thigh",
+        "Bend left knee and place left foot on right thigh",
+        "Both feet should rest on opposite thighs",
+        "Keep spine straight and shoulders relaxed",
+        "Rest hands on knees in mudra position",
+        "Breathe deeply and hold",
+        "Switch leg position regularly"
+      ],
+      "precautions": [
+        "Avoid if you have knee or ankle injury",
+        "Work up to this pose gradually",
+        "Use Half Lotus as modification",
+        "Never force legs into position"
+      ]
+    },
+    {
+      "id": "sukhasana",
+      "name_english": "Easy Pose",
+      "name_sanskrit": "Sukhāsana",
+      "category": "Sitting",
+      "difficulty": "Beginner",
+      "duration": "1-10 minutes",
+      "image_path": "assets/images/yoga/sukhasana.png",
+      "benefits": [
+        "Opens hips and stretches knees",
+        "Strengthens back and improves posture",
+        "Calms the mind and reduces stress",
+        "Ideal for meditation and breathing exercises",
+        "Promotes inner peace"
+      ],
+      "instructions": [
+        "Sit on floor with legs extended",
+        "Cross legs at shins, not ankles",
+        "Place each foot beneath opposite knee",
+        "Keep spine straight and lengthened",
+        "Rest hands on knees or in lap",
+        "Relax shoulders and soften face",
+        "Breathe deeply and naturally",
+        "Switch which leg is in front periodically"
+      ],
+      "precautions": [
+        "Use cushion or blanket under hips if needed",
+        "Avoid if you have severe knee injury",
+        "Sit against wall for back support if needed",
+        "Don't force hips open"
+      ]
+    },
+    {
+      "id": "paschimottanasana",
+      "name_english": "Seated Forward Bend",
+      "name_sanskrit": "Paścimottānāsana",
+      "category": "Sitting",
+      "difficulty": "Beginner",
+      "duration": "1-3 minutes",
+      "image_path": "assets/images/yoga/paschimottanasana.png",
+      "benefits": [
+        "Stretches spine, shoulders, and hamstrings",
+        "Stimulates liver, kidneys, and digestive organs",
+        "Calms the brain and relieves stress",
+        "Therapeutic for high blood pressure and insomnia",
+        "Reduces fatigue and anxiety"
+      ],
+      "instructions": [
+        "Sit with legs extended straight in front",
+        "Flex feet and engage thigh muscles",
+        "Inhale and lengthen spine",
+        "Exhale and fold forward from hips",
+        "Reach for feet, ankles, or shins",
+        "Keep spine long, don't round back",
+        "Relax shoulders and neck",
+        "Hold and breathe deeply"
+      ],
+      "precautions": [
+        "Avoid if you have back injury or asthma",
+        "Use strap around feet if hamstrings are tight",
+        "Bend knees slightly if needed",
+        "Don't force the forward bend"
+      ]
+    },
+    {
+      "id": "ustrasana",
+      "name_english": "Camel Pose",
+      "name_sanskrit": "Uṣṭrāsana",
+      "category": "Sitting",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/ustrasana.png",
+      "benefits": [
+        "Opens chest and front body",
+        "Stretches hip flexors and thighs",
+        "Strengthens back muscles",
+        "Improves posture and flexibility",
+        "Stimulates nervous system"
+      ],
+      "instructions": [
+        "Kneel on floor with knees hip-width apart",
+        "Place hands on lower back, fingers pointing down",
+        "Inhale and lift chest",
+        "Slowly arch back, keeping hips over knees",
+        "Reach for heels with hands if comfortable",
+        "Let head drop back gently",
+        "Press hips forward",
+        "Hold, then slowly come up"
+      ],
+      "precautions": [
+        "Avoid if you have back or neck injury",
+        "Not recommended with high or low blood pressure",
+        "Keep hands on lower back if reaching heels is difficult",
+        "Come out slowly to avoid dizziness"
+      ]
+    },
+    {
+      "id": "matsyasana",
+      "name_english": "Fish Pose",
+      "name_sanskrit": "Matsyāsana",
+      "category": "Lying",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/matsyasana.png",
+      "benefits": [
+        "Opens chest and throat",
+        "Stretches hip flexors and intercostals",
+        "Strengthens upper back and neck",
+        "Stimulates thyroid gland",
+        "Relieves tension in neck and shoulders"
+      ],
+      "instructions": [
+        "Lie on back with legs extended",
+        "Place hands under hips, palms down",
+        "Press forearms and elbows into floor",
+        "Lift chest and arch back",
+        "Gently lower crown of head to floor",
+        "Keep most weight on forearms, not head",
+        "Breathe deeply into chest",
+        "To exit, lift head and lower chest"
+      ],
+      "precautions": [
+        "Avoid if you have neck or back injury",
+        "Not recommended with high or low blood pressure",
+        "Don't put too much weight on head",
+        "Use blanket under head if needed"
+      ]
+    },
+    {
+      "id": "dhanurasana",
+      "name_english": "Bow Pose",
+      "name_sanskrit": "Dhanurāsana",
+      "category": "Lying",
+      "difficulty": "Intermediate",
+      "duration": "20-30 seconds",
+      "image_path": "assets/images/yoga/dhanurasana.png",
+      "benefits": [
+        "Strengthens back muscles",
+        "Opens chest, shoulders, and thighs",
+        "Stimulates abdominal organs",
+        "Improves posture and flexibility",
+        "Relieves menstrual discomfort"
+      ],
+      "instructions": [
+        "Lie face down with arms alongside body",
+        "Bend knees and reach back to grasp ankles",
+        "Inhale and lift chest and thighs off floor",
+        "Pull legs up and back",
+        "Keep knees hip-width apart",
+        "Gaze forward",
+        "Hold and breathe",
+        "Exhale and slowly release"
+      ],
+      "precautions": [
+        "Avoid if you have back injury or hernia",
+        "Not recommended with high or low blood pressure",
+        "Skip if you have migraine or insomnia",
+        "Don't practice on full stomach"
+      ]
+    },
+    {
+      "id": "salabhasana",
+      "name_english": "Locust Pose",
+      "name_sanskrit": "Śalabhāsana",
+      "category": "Lying",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/salabhasana.png",
+      "benefits": [
+        "Strengthens back, buttocks, and legs",
+        "Opens chest and shoulders",
+        "Stimulates abdominal organs",
+        "Improves posture",
+        "Relieves stress"
+      ],
+      "instructions": [
+        "Lie face down with arms alongside body",
+        "Rest forehead on floor",
+        "Turn big toes toward each other",
+        "Firm buttocks and engage legs",
+        "Inhale and lift head, chest, arms, and legs",
+        "Reach strongly through legs and fingertips",
+        "Gaze forward or slightly up",
+        "Hold, then slowly lower"
+      ],
+      "precautions": [
+        "Avoid if you have back injury or headache",
+        "Not recommended during pregnancy",
+        "Use blanket under pelvis if needed",
+        "Don't overarch lower back"
+      ]
+    },
+    {
+      "id": "ardha_matsyendrasana",
+      "name_english": "Half Lord of the Fishes Pose",
+      "name_sanskrit": "Ardha Matsyendrāsana",
+      "category": "Twisting",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/ardha_matsyendrasana.png",
+      "benefits": [
+        "Stretches shoulders, hips, and neck",
+        "Stimulates digestive organs",
+        "Energizes the spine",
+        "Relieves menstrual discomfort and fatigue",
+        "Therapeutic for asthma and backache"
+      ],
+      "instructions": [
+        "Sit with legs extended",
+        "Bend right knee and place right foot outside left thigh",
+        "Bend left knee and tuck left foot near right hip",
+        "Inhale and lengthen spine",
+        "Exhale and twist to the right",
+        "Place left elbow outside right knee",
+        "Right hand behind you for support",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have back or spine injury",
+        "Not recommended during pregnancy",
+        "Sit on blanket if hips are tight",
+        "Don't force the twist"
+      ]
+    },
+    {
+      "id": "garudasana",
+      "name_english": "Eagle Pose",
+      "name_sanskrit": "Garuḍāsana",
+      "category": "Balancing",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/garudasana.png",
+      "benefits": [
+        "Improves balance and concentration",
+        "Strengthens ankles and calves",
+        "Stretches shoulders, upper back, and thighs",
+        "Opens hips",
+        "Relieves tension in shoulders"
+      ],
+      "instructions": [
+        "Stand in Mountain Pose",
+        "Bend knees slightly and lift right foot",
+        "Cross right thigh over left",
+        "Hook right foot behind left calf if possible",
+        "Extend arms forward, cross left arm over right",
+        "Bend elbows and bring palms together",
+        "Lift elbows and stretch fingers toward ceiling",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have knee injury",
+        "Use wall for support if needed",
+        "Don't wrap foot if it causes knee pain",
+        "Modify arm position if you have shoulder issues"
+      ]
+    },
+    {
+      "id": "bakasana",
+      "name_english": "Crow Pose",
+      "name_sanskrit": "Bakāsana",
+      "category": "Balancing",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/bakasana.png",
+      "benefits": [
+        "Strengthens arms and wrists",
+        "Tones abdominal muscles",
+        "Improves balance and coordination",
+        "Builds confidence and focus",
+        "Opens groin"
+      ],
+      "instructions": [
+        "Squat with feet together",
+        "Place hands on floor shoulder-width apart",
+        "Spread fingers wide",
+        "Bend elbows slightly and lean forward",
+        "Place knees on backs of upper arms",
+        "Shift weight forward onto hands",
+        "Lift feet off floor one at a time",
+        "Hold and breathe steadily"
+      ],
+      "precautions": [
+        "Avoid if you have wrist or shoulder injury",
+        "Not recommended during pregnancy",
+        "Use blocks under feet to practice lifting",
+        "Place cushion in front for safety"
+      ]
+    },
+    {
+      "id": "navasana",
+      "name_english": "Boat Pose",
+      "name_sanskrit": "Nāvāsana",
+      "category": "Sitting",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/navasana.png",
+      "benefits": [
+        "Strengthens abdomen, hip flexors, and spine",
+        "Stimulates kidneys and intestines",
+        "Improves digestion",
+        "Relieves stress",
+        "Builds core strength"
+      ],
+      "instructions": [
+        "Sit with knees bent, feet on floor",
+        "Lean back slightly and lift feet off floor",
+        "Extend legs to 45-degree angle",
+        "Keep spine straight and chest lifted",
+        "Extend arms parallel to floor",
+        "Balance on sitting bones",
+        "Gaze toward toes",
+        "Hold and breathe"
+      ],
+      "precautions": [
+        "Avoid if you have back or neck injury",
+        "Not recommended during pregnancy or menstruation",
+        "Keep knees bent if needed",
+        "Don't round the back"
+      ]
+    },
+    {
+      "id": "anjaneyasana",
+      "name_english": "Low Lunge",
+      "name_sanskrit": "Añjaneyāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/anjaneyasana.png",
+      "benefits": [
+        "Stretches hip flexors and quadriceps",
+        "Opens chest and shoulders",
+        "Strengthens legs and arms",
+        "Improves balance",
+        "Energizes the body"
+      ],
+      "instructions": [
+        "Start in Downward Dog",
+        "Step right foot forward between hands",
+        "Lower left knee to floor",
+        "Untuck back toes",
+        "Inhale and lift torso upright",
+        "Raise arms overhead",
+        "Press hips forward gently",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have knee injury",
+        "Use blanket under back knee if needed",
+        "Don't overextend front knee beyond ankle",
+        "Modify arm position if you have shoulder issues"
+      ]
+    },
+    {
+      "id": "uttanasana",
+      "name_english": "Standing Forward Bend",
+      "name_sanskrit": "Uttānāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/uttanasana.png",
+      "benefits": [
+        "Stretches hamstrings, calves, and hips",
+        "Strengthens thighs and knees",
+        "Calms the brain and relieves stress",
+        "Stimulates liver and kidneys",
+        "Therapeutic for asthma and insomnia"
+      ],
+      "instructions": [
+        "Stand in Mountain Pose",
+        "Exhale and fold forward from hips",
+        "Bend knees if needed",
+        "Let head hang heavy",
+        "Place hands on floor beside feet",
+        "Press heels into floor",
+        "Lift sitting bones toward ceiling",
+        "Hold and breathe deeply"
+      ],
+      "precautions": [
+        "Avoid if you have back injury",
+        "Bend knees if hamstrings are tight",
+        "Don't force the forward bend",
+        "Use blocks under hands if needed"
+      ]
+    },
+    {
+      "id": "marjaryasana",
+      "name_english": "Cat Pose",
+      "name_sanskrit": "Mārjaryāsana",
+      "category": "Sitting",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/marjaryasana.png",
+      "benefits": [
+        "Stretches back and neck",
+        "Massages spine and abdominal organs",
+        "Improves posture and balance",
+        "Calms the mind",
+        "Relieves stress"
+      ],
+      "instructions": [
+        "Start on hands and knees (tabletop)",
+        "Align wrists under shoulders, knees under hips",
+        "Exhale and round spine toward ceiling",
+        "Drop head toward floor",
+        "Draw belly in",
+        "Press firmly through hands",
+        "Hold for a few breaths",
+        "Return to neutral"
+      ],
+      "precautions": [
+        "Avoid if you have neck injury",
+        "Use blanket under knees if sensitive",
+        "Don't overround the spine",
+        "Keep movements gentle and controlled"
+      ]
+    },
+    {
+      "id": "bitilasana",
+      "name_english": "Cow Pose",
+      "name_sanskrit": "Bitilāsana",
+      "category": "Sitting",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/bitilasana.png",
+      "benefits": [
+        "Stretches front torso and neck",
+        "Massages spine and abdominal organs",
+        "Improves posture",
+        "Relieves stress and calms the mind",
+        "Warms up the spine"
+      ],
+      "instructions": [
+        "Start on hands and knees (tabletop)",
+        "Align wrists under shoulders, knees under hips",
+        "Inhale and drop belly toward floor",
+        "Lift chest and chin",
+        "Lift sitting bones toward ceiling",
+        "Draw shoulders away from ears",
+        "Hold for a few breaths",
+        "Return to neutral"
+      ],
+      "precautions": [
+        "Avoid if you have neck injury",
+        "Use blanket under knees if sensitive",
+        "Don't overarch the lower back",
+        "Keep movements gentle and controlled"
+      ]
+    },
+    {
+      "id": "malasana",
+      "name_english": "Garland Pose",
+      "name_sanskrit": "Mālāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/malasana.png",
+      "benefits": [
+        "Opens hips and groin",
+        "Stretches ankles and back",
+        "Tones abdominal muscles",
+        "Aids digestion",
+        "Improves balance"
+      ],
+      "instructions": [
+        "Stand with feet slightly wider than hip-width",
+        "Turn toes out slightly",
+        "Squat down, keeping heels on floor if possible",
+        "Bring palms together at chest",
+        "Press elbows against inner knees",
+        "Lengthen spine and lift chest",
+        "Hold and breathe",
+        "To exit, place hands on floor and straighten legs"
+      ],
+      "precautions": [
+        "Avoid if you have knee injury",
+        "Use block or blanket under heels if they don't reach floor",
+        "Don't force knees open",
+        "Modify by sitting on block"
+      ]
+    },
+    {
+      "id": "prasarita_padottanasana",
+      "name_english": "Wide-Legged Forward Bend",
+      "name_sanskrit": "Prasārita Pādottānāsana",
+      "category": "Standing",
+      "difficulty": "Beginner",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/prasarita_padottanasana.png",
+      "benefits": [
+        "Stretches hamstrings, calves, and spine",
+        "Strengthens legs",
+        "Calms the brain",
+        "Relieves mild backache",
+        "Stimulates abdominal organs"
+      ],
+      "instructions": [
+        "Stand with feet 3-4 feet apart",
+        "Place hands on hips",
+        "Inhale and lengthen spine",
+        "Exhale and fold forward from hips",
+        "Place hands on floor between feet",
+        "Keep legs straight and engaged",
+        "Let head hang or rest crown on floor",
+        "Hold and breathe deeply"
+      ],
+      "precautions": [
+        "Avoid if you have back injury",
+        "Use blocks under hands if you can't reach floor",
+        "Bend knees slightly if hamstrings are tight",
+        "Don't force the forward bend"
+      ]
+    },
+    {
+      "id": "supta_baddha_konasana",
+      "name_english": "Reclining Bound Angle Pose",
+      "name_sanskrit": "Supta Baddha Koṇāsana",
+      "category": "Lying",
+      "difficulty": "Beginner",
+      "duration": "1-5 minutes",
+      "image_path": "assets/images/yoga/supta_baddha_konasana.png",
+      "benefits": [
+        "Opens hips and groin",
+        "Stretches inner thighs",
+        "Relieves stress and anxiety",
+        "Stimulates abdominal organs",
+        "Therapeutic for menstrual discomfort"
+      ],
+      "instructions": [
+        "Lie on back with knees bent",
+        "Bring soles of feet together",
+        "Let knees fall open to sides",
+        "Place hands on belly or extend to sides",
+        "Close eyes and relax",
+        "Breathe deeply into belly",
+        "Hold for several minutes",
+        "To exit, bring knees together gently"
+      ],
+      "precautions": [
+        "Avoid if you have groin or knee injury",
+        "Use blocks or blankets under knees for support",
+        "Don't force knees toward floor",
+        "Use bolster under back if needed"
+      ]
+    },
+    {
+      "id": "viparita_karani",
+      "name_english": "Legs-Up-the-Wall Pose",
+      "name_sanskrit": "Viparīta Karaṇī",
+      "category": "Inversion",
+      "difficulty": "Beginner",
+      "duration": "5-15 minutes",
+      "image_path": "assets/images/yoga/viparita_karani.png",
+      "benefits": [
+        "Relieves tired legs and feet",
+        "Stretches hamstrings and lower back",
+        "Calms the mind and reduces anxiety",
+        "Improves circulation",
+        "Therapeutic for insomnia and headaches"
+      ],
+      "instructions": [
+        "Sit sideways against wall",
+        "Swing legs up wall as you lower back to floor",
+        "Scoot hips close to wall",
+        "Let arms rest at sides, palms up",
+        "Close eyes and relax",
+        "Breathe naturally",
+        "Hold for 5-15 minutes",
+        "To exit, bend knees and roll to side"
+      ],
+      "precautions": [
+        "Avoid if you have serious eye conditions",
+        "Not recommended during menstruation",
+        "Use blanket under hips if needed",
+        "Come out slowly to avoid dizziness"
+      ]
+    },
+    {
+      "id": "parivrtta_trikonasana",
+      "name_english": "Revolved Triangle Pose",
+      "name_sanskrit": "Parivṛtta Trikoṇāsana",
+      "category": "Twisting",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/parivrtta_trikonasana.png",
+      "benefits": [
+        "Stretches and strengthens legs",
+        "Opens chest and shoulders",
+        "Stimulates abdominal organs",
+        "Improves balance and concentration",
+        "Relieves mild backache"
+      ],
+      "instructions": [
+        "Stand with feet 3-4 feet apart",
+        "Turn right foot out 90 degrees",
+        "Square hips toward front",
+        "Extend left arm up",
+        "Fold forward and twist to the right",
+        "Place left hand outside right foot",
+        "Extend right arm toward ceiling",
+        "Hold, then repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have back injury or migraine",
+        "Use block under hand if needed",
+        "Don't force the twist",
+        "Look down if you have neck problems"
+      ]
+    },
+    {
+      "id": "gomukhasana",
+      "name_english": "Cow Face Pose",
+      "name_sanskrit": "Gomukhāsana",
+      "category": "Sitting",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/gomukhasana.png",
+      "benefits": [
+        "Stretches hips, thighs, and ankles",
+        "Opens chest and shoulders",
+        "Improves posture",
+        "Relieves tension in shoulders",
+        "Therapeutic for sciatica"
+      ],
+      "instructions": [
+        "Sit with legs extended",
+        "Bend right knee and place right foot outside left hip",
+        "Stack left knee on top of right",
+        "Reach right arm up and bend elbow behind head",
+        "Reach left arm behind back and clasp hands",
+        "Keep spine straight",
+        "Hold, then repeat on other side",
+        "Switch both arm and leg positions"
+      ],
+      "precautions": [
+        "Avoid if you have serious knee or shoulder injury",
+        "Use strap if hands don't meet",
+        "Sit on blanket if hips are tight",
+        "Don't force the shoulder stretch"
+      ]
+    },
+    {
+      "id": "eka_pada_rajakapotasana",
+      "name_english": "Pigeon Pose",
+      "name_sanskrit": "Eka Pāda Rājakapotāsana",
+      "category": "Sitting",
+      "difficulty": "Intermediate",
+      "duration": "1-3 minutes per side",
+      "image_path": "assets/images/yoga/eka_pada_rajakapotasana.png",
+      "benefits": [
+        "Opens hips and groin",
+        "Stretches hip flexors and thighs",
+        "Relieves sciatic pain",
+        "Stimulates abdominal organs",
+        "Releases stored tension"
+      ],
+      "instructions": [
+        "Start in Downward Dog",
+        "Bring right knee forward behind right wrist",
+        "Extend left leg straight back",
+        "Square hips toward front of mat",
+        "Walk hands forward and fold over front leg",
+        "Rest forehead on hands or floor",
+        "Breathe deeply and hold",
+        "Repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have knee injury",
+        "Use blanket under front hip if needed",
+        "Don't force hip to floor",
+        "Keep back leg straight and engaged"
+      ]
+    },
+    {
+      "id": "urdhva_dhanurasana",
+      "name_english": "Wheel Pose",
+      "name_sanskrit": "Ūrdhva Dhanurāsana",
+      "category": "Inversion",
+      "difficulty": "Advanced",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/urdhva_dhanurasana.png",
+      "benefits": [
+        "Strengthens arms, legs, and spine",
+        "Opens chest and shoulders",
+        "Stretches hip flexors",
+        "Energizes the body",
+        "Stimulates thyroid and pituitary glands"
+      ],
+      "instructions": [
+        "Lie on back with knees bent, feet hip-width apart",
+        "Place hands beside head, fingers pointing toward shoulders",
+        "Press into hands and feet",
+        "Lift hips and chest off floor",
+        "Straighten arms as much as possible",
+        "Press chest toward wall behind you",
+        "Hold and breathe",
+        "Lower slowly to exit"
+      ],
+      "precautions": [
+        "Avoid if you have back, wrist, or shoulder injury",
+        "Not recommended with high blood pressure or heart problems",
+        "Warm up thoroughly before attempting",
+        "Use wall or partner for support initially"
+      ]
+    },
+    {
+      "id": "sirsasana",
+      "name_english": "Headstand",
+      "name_sanskrit": "Śīrṣāsana",
+      "category": "Inversion",
+      "difficulty": "Advanced",
+      "duration": "1-5 minutes",
+      "image_path": "assets/images/yoga/sirsasana.png",
+      "benefits": [
+        "Strengthens arms, legs, and spine",
+        "Improves balance and focus",
+        "Calms the brain",
+        "Stimulates pituitary and pineal glands",
+        "Therapeutic for asthma and insomnia"
+      ],
+      "instructions": [
+        "Kneel on floor and interlace fingers",
+        "Place forearms on floor, elbows shoulder-width apart",
+        "Place crown of head on floor, cradled by hands",
+        "Straighten legs and walk feet toward head",
+        "Lift legs up, keeping them straight or bent",
+        "Balance on forearms and head",
+        "Hold and breathe steadily",
+        "Lower slowly to exit"
+      ],
+      "precautions": [
+        "Avoid if you have neck or back injury",
+        "Not recommended with high blood pressure or heart problems",
+        "Practice against wall initially",
+        "Learn under qualified teacher supervision"
+      ]
+    },
+    {
+      "id": "sarvangasana",
+      "name_english": "Shoulder Stand",
+      "name_sanskrit": "Sarvāṅgāsana",
+      "category": "Inversion",
+      "difficulty": "Intermediate",
+      "duration": "1-5 minutes",
+      "image_path": "assets/images/yoga/sarvangasana.png",
+      "benefits": [
+        "Calms the brain and reduces stress",
+        "Stimulates thyroid and abdominal organs",
+        "Stretches shoulders and neck",
+        "Improves digestion",
+        "Therapeutic for asthma and insomnia"
+      ],
+      "instructions": [
+        "Lie on back with arms alongside body",
+        "Lift legs up to 90 degrees",
+        "Press palms into floor and lift hips",
+        "Support back with hands",
+        "Straighten legs toward ceiling",
+        "Keep weight on shoulders, not neck",
+        "Hold and breathe",
+        "Lower slowly to exit"
+      ],
+      "precautions": [
+        "Avoid if you have neck injury or high blood pressure",
+        "Not recommended during menstruation or pregnancy",
+        "Use blankets under shoulders for support",
+        "Don't turn head while in pose"
+      ]
+    },
+    {
+      "id": "chaturanga_dandasana",
+      "name_english": "Four-Limbed Staff Pose",
+      "name_sanskrit": "Chaturāṅga Daṇḍāsana",
+      "category": "Standing",
+      "difficulty": "Intermediate",
+      "duration": "10-30 seconds",
+      "image_path": "assets/images/yoga/chaturanga_dandasana.png",
+      "benefits": [
+        "Strengthens arms, wrists, and core",
+        "Tones abdomen",
+        "Improves posture",
+        "Builds upper body strength",
+        "Prepares for arm balances"
+      ],
+      "instructions": [
+        "Start in Plank Pose",
+        "Shift weight forward onto toes",
+        "Bend elbows to 90 degrees",
+        "Keep elbows close to ribs",
+        "Lower body in one straight line",
+        "Keep shoulders above elbows",
+        "Engage core and legs",
+        "Hold briefly, then lower or push up"
+      ],
+      "precautions": [
+        "Avoid if you have wrist or shoulder injury",
+        "Not recommended during pregnancy",
+        "Lower knees to floor for modification",
+        "Don't let hips sag or lift too high"
+      ]
+    },
+    {
+      "id": "vasisthasana",
+      "name_english": "Side Plank Pose",
+      "name_sanskrit": "Vasiṣṭhāsana",
+      "category": "Balancing",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/vasisthasana.png",
+      "benefits": [
+        "Strengthens arms, wrists, and core",
+        "Improves balance and concentration",
+        "Tones abdomen and legs",
+        "Opens chest and shoulders",
+        "Builds confidence"
+      ],
+      "instructions": [
+        "Start in Plank Pose",
+        "Shift weight onto right hand and outer edge of right foot",
+        "Stack left foot on top of right",
+        "Lift hips and extend left arm toward ceiling",
+        "Keep body in one straight line",
+        "Gaze up at left hand",
+        "Hold and breathe",
+        "Repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have wrist or shoulder injury",
+        "Lower bottom knee for modification",
+        "Don't let hips sag",
+        "Use wall for support if needed"
+      ]
+    },
+    {
+      "id": "kapotasana",
+      "name_english": "King Pigeon Pose",
+      "name_sanskrit": "Kapotāsana",
+      "category": "Sitting",
+      "difficulty": "Advanced",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/kapotasana.png",
+      "benefits": [
+        "Opens entire front body",
+        "Stretches hip flexors and thighs",
+        "Opens chest and shoulders",
+        "Stimulates abdominal organs",
+        "Improves posture and flexibility"
+      ],
+      "instructions": [
+        "Kneel on floor with knees hip-width apart",
+        "Place hands on lower back",
+        "Inhale and lift chest",
+        "Arch back deeply",
+        "Reach for feet with hands",
+        "Let head drop back",
+        "Hold and breathe",
+        "Come up slowly"
+      ],
+      "precautions": [
+        "Avoid if you have back or neck injury",
+        "Not recommended with high or low blood pressure",
+        "Warm up thoroughly before attempting",
+        "Practice under qualified teacher supervision"
+      ]
+    },
+    {
+      "id": "hanumanasana",
+      "name_english": "Monkey Pose (Splits)",
+      "name_sanskrit": "Hanumānāsana",
+      "category": "Sitting",
+      "difficulty": "Advanced",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/hanumanasana.png",
+      "benefits": [
+        "Stretches hamstrings and hip flexors",
+        "Opens hips and groin",
+        "Stimulates abdominal organs",
+        "Improves flexibility",
+        "Therapeutic for sciatica"
+      ],
+      "instructions": [
+        "Start in Low Lunge with right foot forward",
+        "Slowly straighten right leg forward",
+        "Extend left leg back",
+        "Square hips toward front",
+        "Lower hips toward floor",
+        "Bring hands to prayer at chest or raise overhead",
+        "Hold and breathe",
+        "Repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have hamstring or groin injury",
+        "Use blocks under hands for support",
+        "Don't force the split",
+        "Warm up thoroughly before attempting"
+      ]
+    },
+    {
+      "id": "natarajasana",
+      "name_english": "Dancer Pose",
+      "name_sanskrit": "Naṭarājāsana",
+      "category": "Balancing",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/natarajasana.png",
+      "benefits": [
+        "Improves balance and concentration",
+        "Strengthens legs and ankles",
+        "Opens chest and shoulders",
+        "Stretches hip flexors and thighs",
+        "Improves posture"
+      ],
+      "instructions": [
+        "Stand in Mountain Pose",
+        "Shift weight onto right foot",
+        "Bend left knee and reach back with left hand",
+        "Grasp left foot or ankle",
+        "Extend right arm forward",
+        "Kick left foot into hand and lean forward",
+        "Lift left leg higher",
+        "Hold and breathe",
+        "Repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have low blood pressure",
+        "Use wall for support if needed",
+        "Don't overarch lower back",
+        "Keep standing leg slightly bent if needed"
+      ]
+    },
+    {
+      "id": "pincha_mayurasana",
+      "name_english": "Forearm Stand",
+      "name_sanskrit": "Piñcha Mayūrāsana",
+      "category": "Inversion",
+      "difficulty": "Advanced",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/pincha_mayurasana.png",
+      "benefits": [
+        "Strengthens shoulders, arms, and back",
+        "Improves balance and concentration",
+        "Calms the brain",
+        "Stretches shoulders and chest",
+        "Builds confidence"
+      ],
+      "instructions": [
+        "Start on hands and knees",
+        "Lower forearms to floor, shoulder-width apart",
+        "Interlace fingers or keep palms parallel",
+        "Lift hips and walk feet toward elbows",
+        "Kick legs up one at a time",
+        "Balance on forearms",
+        "Hold and breathe steadily",
+        "Lower slowly to exit"
+      ],
+      "precautions": [
+        "Avoid if you have shoulder, neck, or back injury",
+        "Not recommended with high blood pressure or heart problems",
+        "Practice against wall initially",
+        "Learn under qualified teacher supervision"
+      ]
+    },
+    {
+      "id": "eka_pada_koundinyasana",
+      "name_english": "Flying Lizard Pose",
+      "name_sanskrit": "Eka Pāda Kauṇḍinyāsana",
+      "category": "Balancing",
+      "difficulty": "Advanced",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/eka_pada_koundinyasana.png",
+      "benefits": [
+        "Strengthens arms, wrists, and core",
+        "Improves balance and coordination",
+        "Tones abdomen",
+        "Opens hips",
+        "Builds confidence and focus"
+      ],
+      "instructions": [
+        "Start in Low Lunge with right foot forward",
+        "Twist torso to the right",
+        "Hook right shoulder outside right thigh",
+        "Place hands on floor shoulder-width apart",
+        "Shift weight forward onto hands",
+        "Lift both feet off floor",
+        "Extend left leg back, keep right leg bent",
+        "Hold and breathe",
+        "Repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have wrist or shoulder injury",
+        "Use blocks under feet to practice",
+        "Place cushion in front for safety",
+        "Build up strength gradually"
+      ]
+    },
+    {
+      "id": "tolasana",
+      "name_english": "Scale Pose",
+      "name_sanskrit": "Tolāsana",
+      "category": "Balancing",
+      "difficulty": "Intermediate",
+      "duration": "30-60 seconds",
+      "image_path": "assets/images/yoga/tolasana.png",
+      "benefits": [
+        "Strengthens arms, wrists, and core",
+        "Tones abdomen",
+        "Improves balance",
+        "Opens hips",
+        "Builds upper body strength"
+      ],
+      "instructions": [
+        "Sit in Lotus Pose (or cross-legged)",
+        "Place hands on floor beside hips",
+        "Press firmly into hands",
+        "Engage core and lift hips off floor",
+        "Keep legs crossed and lifted",
+        "Hold and breathe",
+        "Lower slowly",
+        "Rest and repeat"
+      ],
+      "precautions": [
+        "Avoid if you have wrist or shoulder injury",
+        "Use blocks under hands for extra height",
+        "Don't attempt if you can't sit comfortably in Lotus",
+        "Build strength gradually"
+      ]
+    },
+    {
+      "id": "astavakrasana",
+      "name_english": "Eight-Angle Pose",
+      "name_sanskrit": "Aṣṭāvakrāsana",
+      "category": "Balancing",
+      "difficulty": "Advanced",
+      "duration": "30-60 seconds per side",
+      "image_path": "assets/images/yoga/astavakrasana.png",
+      "benefits": [
+        "Strengthens arms, wrists, and core",
+        "Improves balance and coordination",
+        "Tones abdomen",
+        "Builds confidence",
+        "Enhances focus"
+      ],
+      "instructions": [
+        "Sit with legs extended",
+        "Bend right knee and place right foot outside right hip",
+        "Hook right arm under right thigh",
+        "Place hands on floor beside hips",
+        "Cross right ankle over left",
+        "Shift weight forward and lift hips",
+        "Bend elbows and lean forward",
+        "Extend legs to the right side",
+        "Hold and breathe",
+        "Repeat on other side"
+      ],
+      "precautions": [
+        "Avoid if you have wrist or shoulder injury",
+        "Build arm strength before attempting",
+        "Use blocks for support initially",
+        "Learn under qualified teacher supervision"
+      ]
+    }
+  ]
+}

@@ -44,6 +44,8 @@ import '../../screens/subscription/subscription_paywall_screen.dart';
 import '../../screens/subscription/customer_center_screen.dart';
 import '../../screens/education/library_screen.dart';
 import '../../screens/education/reader_screen.dart';
+import '../../screens/education/yoga_poses_screen.dart';
+import '../../screens/education/yoga_pose_detail_screen.dart';
 import '../../screens/lifestyle/habit_tracker/habit_tracker_screen.dart';
 import '../../screens/lifestyle/journal/journal_list_screen.dart';
 import '../../screens/lifestyle/journal/journal_entry_screen.dart';
@@ -389,6 +391,17 @@ final routerProvider = Provider<GoRouter>((ref) {
             chapterNumber: chapterNum,
             scriptureId: scriptureId,
           );
+        },
+      ),
+      GoRoute(
+        path: '/education/yoga-poses',
+        builder: (context, state) => const YogaPosesScreen(),
+      ),
+      GoRoute(
+        path: '/education/yoga-pose/:id',
+        builder: (context, state) {
+          final poseId = state.pathParameters['id']!;
+          return YogaPoseDetailScreen(poseId: poseId);
         },
       ),
       GoRoute(
