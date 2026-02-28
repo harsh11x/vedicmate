@@ -73,7 +73,7 @@ class HabitNotifier extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>
 // Provider for fetching logs for a specific date range
 final habitLogsProvider = FutureProvider.family<List<Map<String, dynamic>>, Map<String, dynamic>>((ref, params) async {
   final repository = ref.watch(habitRepositoryProvider);
-  final authState = ref.watch(authProvider);
+  final authState = ref.watch(authStateProvider);
   final user = authState.value;
   
   if (user == null) return [];

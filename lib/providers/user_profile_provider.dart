@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import 'auth_provider.dart';
@@ -10,7 +11,7 @@ final userProfileProvider = StateNotifierProvider<UserProfileNotifier, AsyncValu
 
 class UserProfileNotifier extends StateNotifier<AsyncValue<UserModel?>> {
   final Ref _ref;
-  final AsyncValue<User?> _authState;
+  final AsyncValue<firebase_auth.User?> _authState;
   final _supabase = Supabase.instance.client;
 
   UserProfileNotifier(this._ref, this._authState) : super(const AsyncValue.loading()) {
@@ -35,7 +36,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserModel?>> {
       final response = await _supabase
           .from('users') // or 'profiles'
           .select()
-          .eq('id', user.id)
+          .eq('id', user.uid)
           .single();
 
       state = AsyncValue.data(UserModel.fromJson(response));

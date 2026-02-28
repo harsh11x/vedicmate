@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
+import '../../services/wallet_service.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 import '../../providers/auth_provider.dart';
@@ -29,8 +30,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String? _supabaseEmail;
   String? _supabaseName;
   bool _isAdmin = false;
-  bool _isMigrating = false;
-  final WalletService _walletService = WalletService();
+  // bool _isMigrating = false;
+  // final WalletService _walletService = WalletService();
 
   @override
   void initState() {
@@ -611,24 +612,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _SectionHeader(title: 'Maintenance (Admin Only)'),
-                    const SizedBox(height: 12),
-                    _SettingsCard(
-                      children: [
-                        _SettingsTile(
-                          icon: Icons.auto_fix_high,
-                          title: 'Grant Signup Bonus',
-                          subtitle: 'Give ₹50 to all older accounts',
-                          trailing: _isMigrating 
-                              ? const SizedBox(
-                                  width: 20, 
-                                  height: 20, 
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.arrow_forward_ios, size: 14),
-                          onTap: _isMigrating ? null : _handleBonusMigration,
-                        ),
-                      ],
-                    ),
+                    // Bonus migration feature temporarily disabled
+                    // const SizedBox(height: 12),
+                    // _SettingsCard(
+                    //   children: [
+                    //     _SettingsTile(
+                    //       icon: Icons.auto_fix_high,
+                    //       title: 'Grant Signup Bonus',
+                    //       subtitle: 'Give ₹50 to all older accounts',
+                    //       trailing: _isMigrating 
+                    //           ? const SizedBox(
+                    //               width: 20, 
+                    //               height: 20, 
+                    //               child: CircularProgressIndicator(strokeWidth: 2),
+                    //             )
+                    //           : const Icon(Icons.arrow_forward_ios, size: 14),
+                    //       onTap: _isMigrating ? null : _handleBonusMigration,
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
@@ -736,54 +738,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  }
+  // Temporarily disabled bonus migration feature
+  // Future<void> _handleBonusMigration() async {
+  //   final confirm = await showDialog<bool>(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('Grant Signup Bonus'),
+  //       content: const Text('This will give ₹50 to all existing accounts that haven\'t received it. This process may take a while.'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context, false),
+  //           child: const Text('Cancel'),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () => Navigator.pop(context, true),
+  //           child: const Text('Proceed'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
 
-  Future<void> _handleBonusMigration() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Grant Signup Bonus'),
-        content: const Text('This will give ₹50 to all existing accounts that haven\'t received it. This process may take a while.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Proceed'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true) {
-      setState(() => _isMigrating = true);
-      try {
-        final result = await _walletService.grantSignupBonusToExistingUsers();
-        if (mounted) {
-          if (result['success'] == true) {
-            final count = result['updatedCount'];
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Successfully granted bonus to $count users.')),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Migration failed: ${result['error']}')),
-            );
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
-          );
-        }
-      } finally {
-        if (mounted) setState(() => _isMigrating = false);
-      }
-    }
-  }
+  //   if (confirm == true) {
+  //     setState(() => _isMigrating = true);
+  //     try {
+  //       final result = await _walletService.grantSignupBonusToExistingUsers();
+  //       if (mounted) {
+  //         if (result['success'] == true) {
+  //           final count = result['updatedCount'];
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text('Successfully granted bonus to $count users.')),
+  //           );
+  //         } else {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text('Migration failed: ${result['error']}')),
+  //           );
+  //         }
+  //       }
+  //     } catch (e) {
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text('Error: $e')),
+  //         );
+  //       }
+  //     } finally {
+  //       if (mounted) setState(() => _isMigrating = false);
+  //     }
+  //   }
+  // }
 
   void _showLogoutDialog(BuildContext context) async {
     final confirm = await showDialog<bool>(
@@ -1118,15 +1119,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (dialogContext.mounted) {
         Navigator.pop(dialogContext);
         
-        if (this.context.mounted) {
-          ScaffoldMessenger.of(this.context).showSnackBar(
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Account deleted successfully'),
               backgroundColor: AppTheme.successGreen,
               duration: Duration(seconds: 3),
             ),
           );
-          this.context.go('/login');
+          context.go('/login');
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -1134,9 +1135,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         Navigator.pop(dialogContext);
         
         if (e.code == 'requires-recent-login') {
-          _showReauthenticationRequired(this.context);
+          _showReauthenticationRequired(context);
         } else {
-          ScaffoldMessenger.of(this.context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error: ${e.message}'),
               backgroundColor: AppTheme.errorRed,
@@ -1148,7 +1149,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (dialogContext.mounted) {
         Navigator.pop(dialogContext);
         
-        ScaffoldMessenger.of(this.context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
             backgroundColor: AppTheme.errorRed,

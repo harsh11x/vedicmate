@@ -67,7 +67,7 @@ class HabitRepository {
     final response = await _supabase
         .from('habit_logs')
         .select()
-        .in_('habit_id', habitIds)
+        .inFilter('habit_id', habitIds)
         .gte('completed_at', startDate.toIso8601String().split('T')[0])
         .lte('completed_at', endDate.toIso8601String().split('T')[0]);
         
