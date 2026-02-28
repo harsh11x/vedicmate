@@ -62,12 +62,18 @@ export default function RootLayout({
     // Check server status (Only if authenticated or on dashboard)
     const checkServer = async () => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_API_BACKEND || "http://15.207.36.26:3001";
+        // Use hardcoded backend URL since env vars might not be available in browser
+        const backendUrl = "http://15.207.36.26:3001";
+        console.log('Checking server health at:', `${backendUrl}/api/health`);
         const res = await fetch(`${backendUrl}/api/health`, {
-          signal: AbortSignal.timeout(3000)
+          signal: AbortSignal.timeout(5000),
+          cache: 'no-store',
+          mode: 'cors',
         });
+        console.log('Health check response:', res.status, res.ok);
         setServerStatus(res.ok ? "connected" : "disconnected");
-      } catch {
+      } catch (error) {
+        console.error('Health check failed:', error);
         setServerStatus("disconnected");
       }
     };
