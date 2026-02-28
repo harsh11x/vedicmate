@@ -1,66 +1,665 @@
 [
     {
-        "id": "vastu_origins",
-        "title": "Vastu & Sacred Space Origins",
+        "id": "proto_vedic_origins",
+        "title": "Proto-Vedic Origins",
         "period": "Proto-Vedic Period",
-        "yearRange": "6000 - 3000 BCE",
-        "description": "The earliest concepts of aligning human settlements with cosmic laws (Vastu Shastra).",
-        "detailedDescription": "Emergence of architectural principles based on cardinal directions and solar alignments. Early stone and timber structures show geometric planning linked to spiritual harmony.",
-        "relatedScriptures": [
-            "Vastu Vidya",
-            "Stapatya Veda"
-        ],
-        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_vastu_origins_png_1771863076312.png"
+        "yearRange": "6000 - 4000 BCE",
+        "description": "The earliest roots of Vedic civilization emerge with proto-Indo-Aryan culture and early spiritual practices.",
+        "detailedDescription": "This period marks the dawn of Vedic consciousness with early agricultural settlements along the Saraswati River. Proto-Vedic people developed fire rituals, nature worship, and the foundations of what would become the Vedic tradition. Archaeological evidence suggests sophisticated urban planning and astronomical knowledge.",
+        "relatedScriptures": ["Oral Traditions", "Proto-Vedic Hymns"],
+        "imageUrl": "assets/images/timeline/proto_vedic_origins.png",
+        "metadata": {
+            "category": "Vedas"
+        }
     },
     {
-        "id": "rig_veda_oral",
-        "title": "Rig Vedic Oral Traditions",
-        "period": "Early Vedic Era",
-        "yearRange": "1500 - 1000 BCE",
-        "description": "Composition of the core Rig Vedic hymns by ancient Rishis through oral transmission.",
-        "detailedDescription": "The foundational period where the primary Veda was cognized and chanted. It focuses on the primary forces of nature (Devas) and the relationship between humanity and the divine through Yagya (sacrifice).",
-        "relatedScriptures": [
-            "Rig Veda Samhita"
-        ],
-        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_rig_veda_png_1771863527601.png"
+        "id": "vastu_origins",
+        "title": "Vastu Shastra Origins",
+        "period": "Proto-Vedic Period",
+        "yearRange": "5000 - 3000 BCE",
+        "description": "The earliest concepts of aligning human settlements with cosmic laws emerge.",
+        "detailedDescription": "Emergence of architectural principles based on cardinal directions, solar alignments, and cosmic harmony. Early stone and timber structures show geometric planning linked to spiritual principles. These concepts would later be codified in Vastu Shastra and Sthapatya Veda.",
+        "relatedScriptures": ["Vastu Vidya", "Sthapatya Veda"],
+        "imageUrl": "assets/images/timeline/vastu_origins.png",
+        "metadata": {
+            "category": "Science"
+        }
     },
     {
-        "id": "upanishads_shift",
-        "title": "Upanishadic Philosophical Shift",
-        "period": "Later Vedic Era",
+        "id": "rig_veda_composition",
+        "title": "Rig Veda Composition",
+        "period": "Early Vedic Period",
+        "yearRange": "3000 - 1500 BCE",
+        "description": "The oldest and most sacred Veda is composed through divine revelation to ancient Rishis.",
+        "detailedDescription": "The Rig Veda contains 10,552 verses organized into 10 mandalas (books). Composed by various Rishis through direct spiritual perception, it focuses on cosmic forces (Devas), creation hymns, and the relationship between humanity and the divine. The Gayatri Mantra and Nasadiya Sukta (Creation Hymn) originate here.",
+        "relatedScriptures": ["Rig Veda Samhita", "Gayatri Mantra"],
+        "imageUrl": "assets/images/timeline/rig_veda.png",
+        "metadata": {
+            "category": "Vedas"
+        }
+    },
+    {
+        "id": "sama_veda_composition",
+        "title": "Sama Veda Composition",
+        "period": "Early Vedic Period",
+        "yearRange": "2500 - 1200 BCE",
+        "description": "The Veda of melodies and chants is composed for musical recitation during rituals.",
+        "detailedDescription": "The Sama Veda consists of 1,875 verses, mostly drawn from Rig Veda but set to musical notation. It represents the origin of Indian classical music and emphasizes the power of sound vibrations (Nada Brahma). The seven musical notes (swaras) are derived from Sama Vedic chanting.",
+        "relatedScriptures": ["Sama Veda Samhita", "Chandogya Brahmana"],
+        "imageUrl": "assets/images/timeline/sama_veda.png",
+        "metadata": {
+            "category": "Vedas"
+        }
+    },
+    {
+        "id": "yajur_veda_composition",
+        "title": "Yajur Veda Composition",
+        "period": "Middle Vedic Period",
+        "yearRange": "2000 - 1000 BCE",
+        "description": "The Veda of sacrificial formulas and rituals is compiled in prose and verse.",
+        "detailedDescription": "The Yajur Veda contains mantras and instructions for performing Vedic rituals and yajnas. It exists in two recensions: Shukla (White) and Krishna (Black) Yajur Veda. This Veda emphasizes karma kanda (ritualistic action) and the precise methodology of Vedic ceremonies.",
+        "relatedScriptures": ["Yajur Veda Samhita", "Shukla Yajur Veda", "Krishna Yajur Veda"],
+        "imageUrl": "assets/images/timeline/yajur_veda.png",
+        "metadata": {
+            "category": "Vedas"
+        }
+    },
+    {
+        "id": "atharva_veda_composition",
+        "title": "Atharva Veda Composition",
+        "period": "Middle Vedic Period",
+        "yearRange": "2000 - 1000 BCE",
+        "description": "The fourth Veda focusing on healing, daily life, and practical wisdom is compiled.",
+        "detailedDescription": "The Atharva Veda contains 730 hymns with about 6,000 mantras covering healing practices, domestic rituals, philosophy, and cosmology. It includes the origins of Ayurveda, protective mantras, and philosophical hymns. The Prithvi Sukta (Earth Hymn) is one of its most celebrated passages.",
+        "relatedScriptures": ["Atharva Veda Samhita", "Prithvi Sukta"],
+        "imageUrl": "assets/images/timeline/atharva_veda.png",
+        "metadata": {
+            "category": "Vedas"
+        }
+    },
+    {
+        "id": "brahmanas_period",
+        "title": "Brahmanas Composition",
+        "period": "Brahmana Period",
+        "yearRange": "1200 - 800 BCE",
+        "description": "Prose texts explaining Vedic rituals and their symbolic meanings are composed.",
+        "detailedDescription": "The Brahmanas are detailed commentaries on Vedic rituals, explaining the procedures, symbolism, and philosophy behind sacrificial ceremonies. Major texts include Aitareya Brahmana, Shatapatha Brahmana, and Taittiriya Brahmana. They bridge the gap between ritualistic and philosophical Vedic literature.",
+        "relatedScriptures": ["Aitareya Brahmana", "Shatapatha Brahmana", "Taittiriya Brahmana"],
+        "imageUrl": "assets/images/timeline/brahmanas.png",
+        "metadata": {
+            "category": "Vedas"
+        }
+    },
+    {
+        "id": "aranyakas_period",
+        "title": "Aranyakas - Forest Treatises",
+        "period": "Aranyaka Period",
+        "yearRange": "1000 - 700 BCE",
+        "description": "Transitional texts composed in forest hermitages bridge ritual and philosophy.",
+        "detailedDescription": "The Aranyakas (forest books) mark the transition from external ritual to internal meditation. Composed by sages who retreated to forests, they contain mystical interpretations of rituals and early philosophical inquiries. They prepare the ground for the Upanishadic revolution.",
+        "relatedScriptures": ["Aitareya Aranyaka", "Taittiriya Aranyaka", "Brihadaranyaka"],
+        "imageUrl": "assets/images/timeline/aranyakas.png",
+        "metadata": {
+            "category": "Vedas"
+        }
+    },
+    {
+        "id": "early_upanishads",
+        "title": "Early Upanishads",
+        "period": "Upanishadic Period",
         "yearRange": "800 - 500 BCE",
-        "description": "Transition from external ritual to internal philosophical inquiry (Vedanta).",
-        "detailedDescription": "A transformative era where seekers explored the nature of the self (Atman) and the ultimate reality (Brahman). This period gave birth to core Vedic philosophy and psychological insights.",
-        "relatedScriptures": [
-            "Isha Upanishad",
-            "Brihadaranyaka Upanishad",
-            "Chandogya Upanishad"
-        ],
-        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_upanishads_png_1771863707387.png"
+        "description": "The principal Upanishads emerge, marking the philosophical culmination of Vedic thought.",
+        "detailedDescription": "The early Upanishads including Isha, Kena, Katha, Prashna, Mundaka, Mandukya, Taittiriya, Aitareya, Chandogya, and Brihadaranyaka explore the nature of Brahman (ultimate reality), Atman (self), and the path to liberation. They introduce concepts like 'Tat Tvam Asi' (You are That) and 'Aham Brahmasmi' (I am Brahman).",
+        "relatedScriptures": ["Isha Upanishad", "Kena Upanishad", "Katha Upanishad", "Chandogya Upanishad", "Brihadaranyaka Upanishad"],
+        "imageUrl": "assets/images/timeline/early_upanishads.png",
+        "metadata": {
+            "category": "Upanishads"
+        }
     },
     {
-        "id": "epic_gita",
-        "title": "The Epic Era & Bhagavad Gita",
-        "period": "Itihasa Period",
+        "id": "mandukya_upanishad",
+        "title": "Mandukya Upanishad & AUM",
+        "period": "Upanishadic Period",
+        "yearRange": "800 - 600 BCE",
+        "description": "The shortest yet most profound Upanishad explores the sacred syllable OM and states of consciousness.",
+        "detailedDescription": "The Mandukya Upanishad contains only 12 verses but is considered sufficient for liberation. It analyzes the four states of consciousness (waking, dreaming, deep sleep, and Turiya) and their correspondence to the syllable AUM. Gaudapada's Karika provides extensive commentary.",
+        "relatedScriptures": ["Mandukya Upanishad", "Mandukya Karika"],
+        "imageUrl": "assets/images/timeline/mandukya_upanishad.png",
+        "metadata": {
+            "category": "Upanishads"
+        }
+    },
+    {
+        "id": "svetasvatara_upanishad",
+        "title": "Svetasvatara Upanishad",
+        "period": "Late Upanishadic Period",
+        "yearRange": "600 - 400 BCE",
+        "description": "A major Upanishad integrating Samkhya, Yoga, and Vedanta philosophies.",
+        "detailedDescription": "The Svetasvatara Upanishad presents a theistic approach to Vedanta, emphasizing devotion to Rudra-Shiva. It discusses the relationship between individual soul and Supreme Being, introduces early Yoga concepts, and bridges philosophical schools. It contains the famous verse on the three colors of the unborn (Prakriti).",
+        "relatedScriptures": ["Svetasvatara Upanishad", "Krishna Yajur Veda"],
+        "imageUrl": "assets/images/timeline/svetasvatara_upanishad.png",
+        "metadata": {
+            "category": "Upanishads"
+        }
+    },
+    {
+        "id": "ramayana_composition",
+        "title": "Ramayana Composition",
+        "period": "Epic Period",
+        "yearRange": "500 - 300 BCE",
+        "description": "Sage Valmiki composes the first Sanskrit epic, the Ramayana, containing 24,000 verses.",
+        "detailedDescription": "The Ramayana narrates the life of Lord Rama, an incarnation of Vishnu, emphasizing dharma (righteousness), duty, and ideal relationships. Composed in Sanskrit poetry, it establishes the Adikavya (first poetry) tradition and profoundly influences Indian culture, ethics, and literature across Asia.",
+        "relatedScriptures": ["Valmiki Ramayana", "Sundara Kanda", "Yuddha Kanda"],
+        "imageUrl": "assets/images/timeline/ramayana.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "mahabharata_composition",
+        "title": "Mahabharata Composition",
+        "period": "Epic Period",
         "yearRange": "400 - 200 BCE",
-        "description": "Codification of the Mahabharata and the emergence of the Bhagavad Gita.",
-        "detailedDescription": "The Gita provides a practical path to spiritual liberation amidst the complexities of worldly life, synthesizing various paths of Yoga (Karma, Bhakti, Jnana).",
-        "relatedScriptures": [
-            "Mahabharata",
-            "Bhagavad Gita"
-        ],
-        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_gita_png_1771863945433.png"
+        "description": "Sage Vyasa composes the world's longest epic poem with 100,000 verses.",
+        "detailedDescription": "The Mahabharata encompasses the great Kurukshetra war and contains profound philosophical, ethical, and spiritual teachings. It includes the Bhagavad Gita, explores dharma in complex situations, and presents diverse philosophical viewpoints. The epic states: 'What is found here may be found elsewhere, what is not found here is nowhere.'",
+        "relatedScriptures": ["Mahabharata", "Bhagavad Gita", "Anushasana Parva"],
+        "imageUrl": "assets/images/timeline/mahabharata.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "bhagavad_gita",
+        "title": "Bhagavad Gita",
+        "period": "Epic Period",
+        "yearRange": "400 - 200 BCE",
+        "description": "The divine discourse between Krishna and Arjuna forms the philosophical heart of the Mahabharata.",
+        "detailedDescription": "The Bhagavad Gita contains 700 verses in 18 chapters, presenting a synthesis of Karma Yoga, Bhakti Yoga, and Jnana Yoga. Krishna's teachings to Arjuna on the battlefield address the nature of reality, duty, devotion, and the paths to liberation. It remains one of the most influential spiritual texts globally.",
+        "relatedScriptures": ["Bhagavad Gita", "Mahabharata"],
+        "imageUrl": "assets/images/timeline/bhagavad_gita.png",
+        "metadata": {
+            "category": "Epics"
+        }
     },
     {
         "id": "yoga_sutras",
-        "title": "Classical Yoga System",
+        "title": "Yoga Sutras of Patanjali",
         "period": "Classical Period",
-        "yearRange": "200 BCE - 400 CE",
-        "description": "Patanjali's systematic codification of the Yoga philosophy.",
-        "detailedDescription": "The Yoga Sutras organize the various practices into the Eight Limbs (Ashtanga Yoga), providing a scientific method for mastering the mind and attaining Samadhi.",
-        "relatedScriptures": [
-            "Yoga Sutras of Patanjali"
-        ],
-        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_yoga_sutras_png_1771864161746.png"
+        "yearRange": "200 BCE - 200 CE",
+        "description": "Patanjali systematizes the philosophy and practice of Raja Yoga in 196 aphorisms.",
+        "detailedDescription": "The Yoga Sutras organize yoga into eight limbs (Ashtanga): Yama, Niyama, Asana, Pranayama, Pratyahara, Dharana, Dhyana, and Samadhi. This foundational text provides a scientific methodology for mastering the mind, achieving mental clarity, and attaining spiritual liberation. It defines yoga as 'Chitta Vritti Nirodha' (cessation of mental fluctuations).",
+        "relatedScriptures": ["Yoga Sutras", "Yoga Bhashya"],
+        "imageUrl": "assets/images/timeline/yoga_sutras.png",
+        "metadata": {
+            "category": "Yoga"
+        }
+    },
+    {
+        "id": "nyaya_sutras",
+        "title": "Nyaya Sutras - Logic System",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 100 CE",
+        "description": "Sage Gautama (Akshapada) composes the foundational text of Indian logic and epistemology.",
+        "detailedDescription": "The Nyaya Sutras establish a systematic method of logical reasoning and debate. It presents the theory of knowledge (pramana), including perception, inference, comparison, and testimony. The text develops formal logic, syllogistic reasoning, and methods for establishing valid knowledge, influencing all Indian philosophical schools.",
+        "relatedScriptures": ["Nyaya Sutras", "Nyaya Bhashya"],
+        "imageUrl": "assets/images/timeline/nyaya_sutras.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "vaisheshika_sutras",
+        "title": "Vaisheshika Sutras - Atomism",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 100 CE",
+        "description": "Sage Kanada develops the atomic theory and categories of reality.",
+        "detailedDescription": "The Vaisheshika Sutras present an early atomic theory (Paramanu) and classify reality into six categories: substance, quality, action, generality, particularity, and inherence. This naturalistic philosophy analyzes the physical world systematically, proposing that atoms combine to form all matter, anticipating modern atomic theory by millennia.",
+        "relatedScriptures": ["Vaisheshika Sutras", "Padarthadharma Sangraha"],
+        "imageUrl": "assets/images/timeline/vaisheshika_sutras.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "samkhya_philosophy",
+        "title": "Samkhya Philosophy",
+        "period": "Classical Period",
+        "yearRange": "300 BCE - 100 CE",
+        "description": "Sage Kapila establishes the dualistic philosophy of Purusha and Prakriti.",
+        "detailedDescription": "Samkhya presents a systematic analysis of reality based on two eternal principles: Purusha (consciousness) and Prakriti (matter/nature). It enumerates 25 tattvas (principles of existence) and explains the evolution of the universe. This atheistic philosophy forms the theoretical foundation for Yoga and influences all Indian thought.",
+        "relatedScriptures": ["Samkhya Karika", "Samkhya Sutras"],
+        "imageUrl": "assets/images/timeline/samkhya_philosophy.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "mimamsa_sutras",
+        "title": "Mimamsa Sutras - Ritual Hermeneutics",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 100 CE",
+        "description": "Sage Jaimini systematizes Vedic ritual interpretation and dharma philosophy.",
+        "detailedDescription": "The Mimamsa Sutras establish principles for interpreting Vedic texts, emphasizing dharma (duty) and karma (action). This school defends the authority and eternality of the Vedas, develops sophisticated hermeneutical principles, and analyzes the nature of dharma. It focuses on the karma kanda (ritual portion) of the Vedas.",
+        "relatedScriptures": ["Mimamsa Sutras", "Shabara Bhashya"],
+        "imageUrl": "assets/images/timeline/mimamsa_sutras.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "brahma_sutras",
+        "title": "Brahma Sutras - Vedanta Foundation",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 200 CE",
+        "description": "Sage Badarayana (Vyasa) systematizes Upanishadic philosophy in 555 aphorisms.",
+        "detailedDescription": "The Brahma Sutras (also called Vedanta Sutras) synthesize the teachings of the Upanishads into a coherent philosophical system. These cryptic aphorisms address the nature of Brahman, the relationship between individual and universal consciousness, and the path to liberation. All major Vedanta schools provide commentaries on this foundational text.",
+        "relatedScriptures": ["Brahma Sutras", "Upanishads", "Bhagavad Gita"],
+        "imageUrl": "assets/images/timeline/brahma_sutras.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "charaka_samhita",
+        "title": "Charaka Samhita - Ayurveda",
+        "period": "Classical Period",
+        "yearRange": "100 BCE - 200 CE",
+        "description": "Sage Charaka compiles the foundational text of Ayurvedic medicine and internal medicine.",
+        "detailedDescription": "The Charaka Samhita is one of the oldest and most authoritative texts on Ayurveda, covering anatomy, physiology, pathology, diagnosis, and treatment. It presents the theory of tridosha (Vata, Pitta, Kapha), emphasizes preventive medicine, and includes detailed pharmacology. The text integrates physical health with mental and spiritual well-being.",
+        "relatedScriptures": ["Charaka Samhita", "Atharva Veda"],
+        "imageUrl": "assets/images/timeline/charaka_samhita.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "sushruta_samhita",
+        "title": "Sushruta Samhita - Surgery",
+        "period": "Classical Period",
+        "yearRange": "100 BCE - 200 CE",
+        "description": "Sage Sushruta compiles the foundational text of surgery and surgical techniques.",
+        "detailedDescription": "The Sushruta Samhita is the world's earliest surgical text, describing over 300 surgical procedures and 120 surgical instruments. It covers plastic surgery, cataract surgery, cesarean section, and fracture management. Sushruta is considered the father of surgery, and his techniques for rhinoplasty are still studied today.",
+        "relatedScriptures": ["Sushruta Samhita", "Atharva Veda"],
+        "imageUrl": "assets/images/timeline/sushruta_samhita.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "manusmriti",
+        "title": "Manusmriti - Dharma Shastra",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 200 CE",
+        "description": "The Laws of Manu codify dharma, social duties, and ethical conduct.",
+        "detailedDescription": "The Manusmriti is one of the most important Dharma Shastras, outlining codes of conduct, social organization, governance, and personal ethics. It covers topics from cosmology to daily rituals, legal procedures to spiritual practices. While controversial for some social prescriptions, it profoundly influenced Hindu law and social structure.",
+        "relatedScriptures": ["Manusmriti", "Dharma Shastras"],
+        "imageUrl": "assets/images/timeline/manusmriti.png",
+        "metadata": {
+            "category": "Shastras"
+        }
+    },
+    {
+        "id": "natya_shastra",
+        "title": "Natya Shastra - Performing Arts",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 200 CE",
+        "description": "Sage Bharata compiles the comprehensive treatise on dramaturgy, dance, and music.",
+        "detailedDescription": "The Natya Shastra is the foundational text for Indian classical dance, drama, and music. It covers theater architecture, makeup, costumes, music theory, dance movements (karanas), emotional expression (rasa theory), and aesthetic principles. The text describes eight rasas (emotional flavors) and establishes the framework for all Indian performing arts.",
+        "relatedScriptures": ["Natya Shastra", "Sama Veda"],
+        "imageUrl": "assets/images/timeline/natya_shastra.png",
+        "metadata": {
+            "category": "Shastras"
+        }
+    },
+    {
+        "id": "arthashastra",
+        "title": "Arthashastra - Statecraft",
+        "period": "Mauryan Period",
+        "yearRange": "300 BCE - 100 CE",
+        "description": "Chanakya (Kautilya) composes the ancient treatise on politics, economics, and governance.",
+        "detailedDescription": "The Arthashastra is a comprehensive manual on statecraft, economic policy, military strategy, and diplomacy. It covers topics from taxation to espionage, urban planning to international relations. This pragmatic text demonstrates sophisticated understanding of governance, making it one of the earliest political science treatises in world history.",
+        "relatedScriptures": ["Arthashastra"],
+        "imageUrl": "assets/images/timeline/arthashastra.png",
+        "metadata": {
+            "category": "Shastras"
+        }
+    },
+    {
+        "id": "puranas_begin",
+        "title": "Puranas - Mythological Texts Begin",
+        "period": "Post-Epic Period",
+        "yearRange": "300 - 500 CE",
+        "description": "The 18 major Puranas begin to be compiled, making Vedic wisdom accessible through stories.",
+        "detailedDescription": "The Puranas present Vedic philosophy, cosmology, genealogies, and devotional practices through engaging narratives. The 18 Mahapuranas include Vishnu, Shiva, Bhagavata, Devi Bhagavata, Markandeya, and others. They democratize spiritual knowledge, making complex concepts accessible through stories of gods, sages, and kings.",
+        "relatedScriptures": ["Vishnu Purana", "Shiva Purana", "Markandeya Purana"],
+        "imageUrl": "assets/images/timeline/puranas_begin.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "vishnu_purana",
+        "title": "Vishnu Purana",
+        "period": "Puranic Period",
+        "yearRange": "300 - 500 CE",
+        "description": "One of the most important Puranas focusing on Lord Vishnu and his avatars.",
+        "detailedDescription": "The Vishnu Purana contains 23,000 verses describing cosmology, mythology, and the ten avatars of Vishnu. It presents detailed accounts of creation, the solar and lunar dynasties, and the future Kalki avatar. The text emphasizes bhakti (devotion) to Vishnu as the supreme path to liberation.",
+        "relatedScriptures": ["Vishnu Purana", "Bhagavata Purana"],
+        "imageUrl": "assets/images/timeline/vishnu_purana.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "bhagavata_purana",
+        "title": "Bhagavata Purana",
+        "period": "Puranic Period",
+        "yearRange": "500 - 900 CE",
+        "description": "The most celebrated Purana, focusing on Krishna's life and bhakti philosophy.",
+        "detailedDescription": "The Bhagavata Purana (Srimad Bhagavatam) contains 18,000 verses in 12 books, with the 10th book devoted to Krishna's life. It presents the philosophy of bhakti yoga, emphasizing pure devotion to Krishna. The text includes profound philosophical discussions, beautiful poetry, and stories that have inspired countless devotional movements.",
+        "relatedScriptures": ["Bhagavata Purana", "Bhagavad Gita"],
+        "imageUrl": "assets/images/timeline/bhagavata_purana.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "shiva_purana",
+        "title": "Shiva Purana",
+        "period": "Puranic Period",
+        "yearRange": "400 - 800 CE",
+        "description": "A major Purana dedicated to Lord Shiva, his forms, and Shaivite philosophy.",
+        "detailedDescription": "The Shiva Purana contains 24,000 verses describing Shiva's various forms, the significance of Shiva lingam, sacred sites, and the path of Shaivism. It includes stories of Shiva's marriage to Parvati, the birth of Ganesha and Kartikeya, and teachings on yoga and meditation. The text emphasizes both devotion and knowledge.",
+        "relatedScriptures": ["Shiva Purana", "Linga Purana"],
+        "imageUrl": "assets/images/timeline/shiva_purana.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "devi_bhagavata_purana",
+        "title": "Devi Bhagavata Purana",
+        "period": "Puranic Period",
+        "yearRange": "500 - 1000 CE",
+        "description": "A major Purana celebrating the Divine Mother and Shakti philosophy.",
+        "detailedDescription": "The Devi Bhagavata Purana presents the Goddess as the supreme reality and source of all creation. It contains 18,000 verses covering cosmology, the Devi Mahatmya, and various forms of the Divine Mother. The text establishes Shaktism as a major tradition and emphasizes the power of the feminine divine principle.",
+        "relatedScriptures": ["Devi Bhagavata Purana", "Devi Mahatmya"],
+        "imageUrl": "assets/images/timeline/devi_bhagavata_purana.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "markandeya_purana",
+        "title": "Markandeya Purana & Devi Mahatmya",
+        "period": "Puranic Period",
+        "yearRange": "400 - 600 CE",
+        "description": "Contains the famous Devi Mahatmya (Durga Saptashati), celebrating the Divine Mother.",
+        "detailedDescription": "The Markandeya Purana is one of the oldest Puranas, containing 9,000 verses. Its most famous section is the Devi Mahatmya (700 verses), which narrates the victories of Goddess Durga over demons, symbolizing the triumph of good over evil. This text is central to Shakta worship and is recited during Navaratri.",
+        "relatedScriptures": ["Markandeya Purana", "Devi Mahatmya", "Durga Saptashati"],
+        "imageUrl": "assets/images/timeline/markandeya_purana.png",
+        "metadata": {
+            "category": "Epics"
+        }
+    },
+    {
+        "id": "kamasutra",
+        "title": "Kamasutra - Art of Love",
+        "period": "Gupta Period",
+        "yearRange": "200 - 400 CE",
+        "description": "Vatsyayana composes the ancient treatise on love, relationships, and sexuality.",
+        "detailedDescription": "The Kamasutra is a comprehensive guide to the art of living, covering courtship, marriage, sexual practices, and social conduct. It presents kama (desire/pleasure) as one of the four purusharthas (life goals) along with dharma, artha, and moksha. The text reflects sophisticated understanding of psychology, relationships, and human nature.",
+        "relatedScriptures": ["Kamasutra"],
+        "imageUrl": "assets/images/timeline/kamasutra.png",
+        "metadata": {
+            "category": "Shastras"
+        }
+    },
+    {
+        "id": "aryabhata",
+        "title": "Aryabhata - Mathematics & Astronomy",
+        "period": "Gupta Period",
+        "yearRange": "476 - 550 CE",
+        "description": "Aryabhata composes the Aryabhatiya, revolutionizing mathematics and astronomy.",
+        "detailedDescription": "Aryabhata's work includes the place-value system, zero, trigonometry, algebra, and accurate astronomical calculations. He calculated pi to four decimal places, explained eclipses scientifically, and proposed that the Earth rotates on its axis. His work influenced Islamic and European mathematics and astronomy.",
+        "relatedScriptures": ["Aryabhatiya", "Aryabhata Siddhanta"],
+        "imageUrl": "assets/images/timeline/aryabhata.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "varahamihira",
+        "title": "Varahamihira - Jyotisha",
+        "period": "Gupta Period",
+        "yearRange": "505 - 587 CE",
+        "description": "Varahamihira compiles major texts on Vedic astrology and astronomy.",
+        "detailedDescription": "Varahamihira's Brihat Samhita is a comprehensive encyclopedia covering astrology, astronomy, architecture, weather prediction, and gemology. His Pancha Siddhantika summarizes five earlier astronomical treatises. He made significant contributions to trigonometry and understood that the Moon and planets reflect sunlight.",
+        "relatedScriptures": ["Brihat Samhita", "Brihat Jataka", "Pancha Siddhantika"],
+        "imageUrl": "assets/images/timeline/varahamihira.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "brahmagupta",
+        "title": "Brahmagupta - Zero & Algebra",
+        "period": "Early Medieval Period",
+        "yearRange": "598 - 668 CE",
+        "description": "Brahmagupta establishes rules for zero and negative numbers, advancing algebra.",
+        "detailedDescription": "Brahmagupta's Brahmasphutasiddhanta provides the first systematic treatment of zero as a number and rules for arithmetic with negative numbers. He solved quadratic equations, developed the Brahmagupta formula for cyclic quadrilaterals, and made astronomical calculations. His work was transmitted to the Islamic world and then to Europe.",
+        "relatedScriptures": ["Brahmasphutasiddhanta", "Khandakhadyaka"],
+        "imageUrl": "assets/images/timeline/brahmagupta.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "tantras_emergence",
+        "title": "Tantric Traditions Emerge",
+        "period": "Tantric Period",
+        "yearRange": "500 - 1000 CE",
+        "description": "Tantric texts and practices develop, emphasizing direct experience and energy work.",
+        "detailedDescription": "Tantra emerges as a distinct tradition emphasizing ritual, mantra, yantra, and the awakening of Kundalini energy. Major texts include the Agamas, Tantras, and Samhitas. Tantra integrates body, mind, and spirit, viewing the physical world as a manifestation of divine consciousness. It influences both Hindu and Buddhist traditions.",
+        "relatedScriptures": ["Shiva Agamas", "Shakta Tantras", "Vijnana Bhairava Tantra"],
+        "imageUrl": "assets/images/timeline/tantras.png",
+        "metadata": {
+            "category": "Yoga"
+        }
+    },
+    {
+        "id": "adi_shankaracharya",
+        "title": "Adi Shankaracharya - Advaita Vedanta",
+        "period": "Medieval Period",
+        "yearRange": "788 - 820 CE",
+        "description": "Adi Shankara revitalizes Hinduism and establishes Advaita (non-dual) Vedanta philosophy.",
+        "detailedDescription": "Shankaracharya wrote commentaries on the Upanishads, Brahma Sutras, and Bhagavad Gita, establishing Advaita Vedanta as the preeminent philosophical school. He taught that Brahman alone is real and the world is Maya (illusion). He established four mathas (monasteries) across India and composed devotional hymns. His work unified Hindu thought and practice.",
+        "relatedScriptures": ["Vivekachudamani", "Brahma Sutra Bhashya", "Upanishad Bhashyas"],
+        "imageUrl": "assets/images/timeline/adi_shankaracharya.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "bhakti_movement",
+        "title": "Bhakti Movement Begins",
+        "period": "Medieval Period",
+        "yearRange": "600 - 1000 CE",
+        "description": "The devotional movement emphasizing personal relationship with the divine spreads across India.",
+        "detailedDescription": "The Bhakti movement democratizes spirituality, making it accessible to all regardless of caste or education. Alvars and Nayanars in South India compose devotional hymns in Tamil. The movement emphasizes love, surrender, and direct experience of the divine over ritual and scripture. It profoundly influences Indian culture, music, and literature.",
+        "relatedScriptures": ["Divya Prabandham", "Tevaram", "Nalayira Divya Prabandham"],
+        "imageUrl": "assets/images/timeline/bhakti_movement.png",
+        "metadata": {
+            "category": "Devotional"
+        }
+    },
+    {
+        "id": "alvars_nayanars",
+        "title": "Alvars & Nayanars - Tamil Saints",
+        "period": "Medieval Period",
+        "yearRange": "600 - 900 CE",
+        "description": "Tamil poet-saints compose devotional hymns to Vishnu and Shiva.",
+        "detailedDescription": "The 12 Alvars (Vaishnavite saints) and 63 Nayanars (Shaivite saints) revolutionize devotional expression through passionate Tamil poetry. Their compositions, including the Divya Prabandham and Tevaram, are considered equivalent to the Vedas in Tamil tradition. They establish temple worship and pilgrimage traditions that continue today.",
+        "relatedScriptures": ["Divya Prabandham", "Tevaram", "Tiruvachakam"],
+        "imageUrl": "assets/images/timeline/alvars_nayanars.png",
+        "metadata": {
+            "category": "Devotional"
+        }
+    },
+    {
+        "id": "ramanuja",
+        "title": "Ramanuja - Vishishtadvaita",
+        "period": "Medieval Period",
+        "yearRange": "1017 - 1137 CE",
+        "description": "Ramanuja establishes Vishishtadvaita (qualified non-dualism) and systematic bhakti philosophy.",
+        "detailedDescription": "Ramanuja wrote commentaries on the Brahma Sutras and Bhagavad Gita, establishing Vishishtadvaita Vedanta. He taught that individual souls and the world are real but dependent on Brahman, like body to soul. He emphasized bhakti (devotion) as the primary path to liberation and organized Vaishnavite temple worship. His philosophy balances unity and diversity.",
+        "relatedScriptures": ["Sri Bhashya", "Vedanta Sangraha", "Gita Bhashya"],
+        "imageUrl": "assets/images/timeline/ramanuja.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "jayadeva_gita_govinda",
+        "title": "Gita Govinda - Krishna's Divine Love",
+        "period": "Medieval Period",
+        "yearRange": "1170 - 1200 CE",
+        "description": "Jayadeva composes the lyrical masterpiece celebrating Radha and Krishna's divine love.",
+        "detailedDescription": "The Gita Govinda is a Sanskrit poem describing the love between Radha and Krishna, symbolizing the soul's relationship with the divine. Written in exquisite poetry with musical notation, it profoundly influences Indian classical music, dance, and devotional literature. The text presents divine love as the highest spiritual experience.",
+        "relatedScriptures": ["Gita Govinda", "Bhagavata Purana"],
+        "imageUrl": "assets/images/timeline/gita_govinda.png",
+        "metadata": {
+            "category": "Devotional"
+        }
+    },
+    {
+        "id": "madhvacharya",
+        "title": "Madhvacharya - Dvaita Vedanta",
+        "period": "Medieval Period",
+        "yearRange": "1238 - 1317 CE",
+        "description": "Madhvacharya establishes Dvaita (dualistic) Vedanta philosophy.",
+        "detailedDescription": "Madhvacharya taught that God, souls, and matter are eternally distinct (Dvaita). He wrote 37 works including commentaries on the Brahma Sutras, Upanishads, and Bhagavad Gita. He emphasized the supremacy of Vishnu, the reality of the world, and devotion as the path to liberation. His philosophy provides a theistic alternative to Advaita.",
+        "relatedScriptures": ["Brahma Sutra Bhashya", "Anuvyakhyana", "Mahabharata Tatparya Nirnaya"],
+        "imageUrl": "assets/images/timeline/madhvacharya.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "hatha_yoga_pradipika",
+        "title": "Hatha Yoga Pradipika",
+        "period": "Medieval Period",
+        "yearRange": "1400 - 1500 CE",
+        "description": "Swami Svatmarama compiles the classical manual of Hatha Yoga.",
+        "detailedDescription": "The Hatha Yoga Pradipika systematizes physical yoga practices including asanas, pranayama, mudras, and bandhas. It presents Hatha Yoga as preparation for Raja Yoga, emphasizing the awakening of Kundalini energy. The text describes 15 asanas, 8 pranayamas, and 10 mudras, becoming the foundational text for modern physical yoga practice.",
+        "relatedScriptures": ["Hatha Yoga Pradipika", "Gheranda Samhita", "Shiva Samhita"],
+        "imageUrl": "assets/images/timeline/hatha_yoga_pradipika.png",
+        "metadata": {
+            "category": "Yoga"
+        }
+    },
+    {
+        "id": "bhaskara_mathematics",
+        "title": "Bhaskara II - Advanced Mathematics",
+        "period": "Medieval Period",
+        "yearRange": "1114 - 1185 CE",
+        "description": "Bhaskara II advances algebra, arithmetic, geometry, and astronomy.",
+        "detailedDescription": "Bhaskara II's Siddhanta Shiromani and Lilavati represent the pinnacle of medieval Indian mathematics. He solved equations, worked with negative numbers and zero, calculated derivatives, and understood concepts approaching calculus. His astronomical calculations were remarkably accurate. His daughter Lilavati inspired one of his famous mathematical texts.",
+        "relatedScriptures": ["Siddhanta Shiromani", "Lilavati", "Bijaganita"],
+        "imageUrl": "assets/images/timeline/bhaskara.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "parashara_hora_shastra",
+        "title": "Brihat Parashara Hora Shastra",
+        "period": "Classical to Medieval",
+        "yearRange": "300 - 800 CE",
+        "description": "Sage Parashara compiles the foundational text of Vedic astrology (Jyotisha).",
+        "detailedDescription": "The Brihat Parashara Hora Shastra is the most authoritative text on Vedic astrology, covering horoscope interpretation, planetary periods (dashas), yogas, and predictive techniques. It establishes the framework for natal astrology, including the 12 houses, 9 planets, 27 nakshatras, and various divisional charts. This text remains the foundation of Jyotisha practice.",
+        "relatedScriptures": ["Brihat Parashara Hora Shastra", "Jaimini Sutras"],
+        "imageUrl": "assets/images/timeline/parashara_hora.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "soundarya_lahari",
+        "title": "Soundarya Lahari - Hymn to Divine Mother",
+        "period": "Medieval Period",
+        "yearRange": "800 - 820 CE",
+        "description": "Adi Shankaracharya composes the sublime hymn to Goddess Shakti.",
+        "detailedDescription": "The Soundarya Lahari (Wave of Beauty) contains 100 verses describing the beauty and power of the Divine Mother. The first 41 verses (Ananda Lahari) cover Tantric philosophy and Sri Chakra worship, while the remaining verses describe the Goddess's physical beauty. Each verse is associated with specific yantras and is believed to grant particular blessings.",
+        "relatedScriptures": ["Soundarya Lahari", "Sri Vidya"],
+        "imageUrl": "assets/images/timeline/soundarya_lahari.png",
+        "metadata": {
+            "category": "Devotional"
+        }
+    },
+    {
+        "id": "yoga_vasistha",
+        "title": "Yoga Vasistha - Philosophical Discourse",
+        "period": "Medieval Period",
+        "yearRange": "600 - 1000 CE",
+        "description": "A profound philosophical text presenting Advaita Vedanta through stories.",
+        "detailedDescription": "The Yoga Vasistha is a dialogue between Sage Vasistha and Prince Rama, containing 29,000 verses. It presents Advaita philosophy through engaging stories and parables, addressing the nature of reality, consciousness, free will, and liberation. The text emphasizes self-inquiry and the power of the mind in creating experience.",
+        "relatedScriptures": ["Yoga Vasistha", "Ramayana"],
+        "imageUrl": "assets/images/timeline/yoga_vasistha.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "ashtavakra_gita",
+        "title": "Ashtavakra Gita - Pure Advaita",
+        "period": "Post-Classical Period",
+        "yearRange": "500 - 800 CE",
+        "description": "A radical non-dual text presenting direct path to self-realization.",
+        "detailedDescription": "The Ashtavakra Gita is a dialogue between Sage Ashtavakra and King Janaka, containing 298 verses of pure Advaita philosophy. It presents the most direct and uncompromising teaching of non-duality, declaring that the Self is already free and perfect. The text dismisses all practices and emphasizes immediate recognition of one's true nature.",
+        "relatedScriptures": ["Ashtavakra Gita", "Avadhuta Gita"],
+        "imageUrl": "assets/images/timeline/ashtavakra_gita.png",
+        "metadata": {
+            "category": "Philosophy"
+        }
+    },
+    {
+        "id": "temple_architecture",
+        "title": "Temple Architecture Evolution",
+        "period": "Classical to Medieval",
+        "yearRange": "300 - 1500 CE",
+        "description": "Development of sophisticated temple architecture based on Vastu and Agamic principles.",
+        "detailedDescription": "Indian temple architecture evolves into distinct styles: Nagara (North), Dravida (South), and Vesara (hybrid). Temples become cosmic diagrams (mandalas) in stone, designed according to Vastu Shastra and Agamic texts. Major examples include Khajuraho, Konark, Brihadeshwara, and Meenakshi temples. Architecture integrates sculpture, astronomy, and sacred geometry.",
+        "relatedScriptures": ["Shilpa Shastras", "Agamas", "Vastu Shastra"],
+        "imageUrl": "assets/images/timeline/temple_architecture.png",
+        "metadata": {
+            "category": "Science"
+        }
+    },
+    {
+        "id": "pancharatra_agamas",
+        "title": "Pancharatra Agamas",
+        "period": "Classical to Medieval",
+        "yearRange": "300 - 900 CE",
+        "description": "Vaishnavite Agamic texts detailing temple worship, rituals, and philosophy.",
+        "detailedDescription": "The Pancharatra Agamas are a collection of Vaishnavite texts covering temple construction, deity installation, daily worship rituals, festivals, and philosophical teachings. They establish the framework for Vishnu temple worship and present the philosophy of the five-fold manifestation (Para, Vyuha, Vibhava, Antaryami, Archa). These texts guide Vaishnavite ritual practice.",
+        "relatedScriptures": ["Pancharatra Agamas", "Vaikhanasa Agamas"],
+        "imageUrl": "assets/images/timeline/pancharatra_agamas.png",
+        "metadata": {
+            "category": "Devotional"
+        }
+    },
+    {
+        "id": "shaiva_agamas",
+        "title": "Shaiva Agamas & Siddhanta",
+        "period": "Classical to Medieval",
+        "yearRange": "400 - 1000 CE",
+        "description": "Shaivite Agamic texts establishing temple worship and Shaiva Siddhanta philosophy.",
+        "detailedDescription": "The 28 Shaiva Agamas detail Shiva temple worship, yoga practices, and philosophical teachings. Shaiva Siddhanta emerges as a major philosophical school, presenting a theistic, pluralistic metaphysics. The Agamas cover mantra, tantra, yantra, temple architecture, and spiritual practices. They establish the framework for Shaivite tradition across South and Southeast Asia.",
+        "relatedScriptures": ["Shaiva Agamas", "Kamika Agama", "Karana Agama"],
+        "imageUrl": "assets/images/timeline/shaiva_agamas.png",
+        "metadata": {
+            "category": "Devotional"
+        }
     }
 ]

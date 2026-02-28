@@ -89,6 +89,7 @@ flutter:
     - assets/images/ai_pandits/
     - assets/images/services/
     - assets/images/yoga/
+    - assets/images/timeline/
     - assets/icons/
     - assets/animations/
     - assets/data/history/
