@@ -15,7 +15,7 @@ interface Reel {
     createdAt: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
+const API_BASE = "/api";
 const API_ROOT = (process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, "") || "http://localhost:3001").replace(/\/+$/, "");
 
 function getVideoSrc(videoUrl: string): string {

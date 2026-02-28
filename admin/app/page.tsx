@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { io } from "socket.io-client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
+const API_BASE = "/api";
 
 interface Stats {
   orders: { total: number; pending: number; delivered: number; revenue: number };
