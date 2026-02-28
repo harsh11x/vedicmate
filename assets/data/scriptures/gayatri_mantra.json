@@ -1,0 +1,16 @@
+{
+    "chapter_number": 0,
+    "title": "Gayatri Mantra",
+    "translation": "The Savitir Mantra",
+    "summary": "The Gayatri Mantra is a highly revered mantra from the Rig Veda, dedicated to Savitr, a solar deity. It is considered the mother of the Vedas.",
+    "verses": [
+        {
+            "id": "gayatri_1",
+            "number": 1,
+            "sanskrit": "ॐ भूर्भुवः स्वः |\nतत्सवितुर्वरेण्यं |\nभर्गो देवस्य धीमही |\nधियो यो नः प्रचोदयात् ||",
+            "translation": "O God, Giver of life, Remover of all pain and sorrows, Bestower of happiness, Creator of the Universe, Thou art most luminous, adorable and dispeller of ignorance. May Thou guide our intellect in the right direction.",
+            "transliteration": "oṃ bhūr bhuvaḥ svaḥ\ntat savitur vareṇyaṃ\nbhargo devasya dhīmahi\ndhiyo yo naḥ pracodayāt",
+            "meaning": "Om - Sacred Sound; Bhur - Physical Plane; Bhuvah - Astral Plane; Svah - Celestial Plane..."
+        }
+    ]
+}

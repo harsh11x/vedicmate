@@ -32,26 +32,19 @@ class _AbstractBackgroundState extends State<AbstractBackground> with SingleTick
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Base Background: Clean Warm Off-White
+        // Base Background: Warm Parchment
         Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFF5F9F6), // Forest Background (very light green/white)
-                Color(0xFFFAFAFA), // Clean neutral off-white
-              ],
-            ),
+            color: Color(0xFFFFF9E6), // AppTheme.divineBackground
           ),
         ),
         
-        // Subtle Animated Forest Gradient Overlay
+        // Subtle Animated "Paper Texture" or Warm Glow Overlay
         AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
             return CustomPaint(
-              painter: _LightAuroraPainter(
+              painter: _PaperTexturePainter(
                 animationValue: _controller.value,
               ),
               size: Size.infinite,
@@ -66,35 +59,35 @@ class _AbstractBackgroundState extends State<AbstractBackground> with SingleTick
   }
 }
 
-class _LightAuroraPainter extends CustomPainter {
+class _PaperTexturePainter extends CustomPainter {
   final double animationValue;
 
-  _LightAuroraPainter({required this.animationValue});
+  _PaperTexturePainter({required this.animationValue});
 
   @override
   void paint(Canvas canvas, Size size) {
     final Rect rect = Offset.zero & size;
 
-    // Subtle Forest Green glow at top-right
+    // Subtle Warm Orange glow at top-right
     final Paint glowPaint = Paint()
       ..shader = RadialGradient(
         center: Alignment(0.8 - (animationValue * 0.1), -0.6 + (animationValue * 0.15)),
-        radius: 1.0,
+        radius: 1.2,
         colors: [
-           const Color(0xFF2E6F40).withOpacity(0.06), // Forest Primary faint glow
+           const Color(0xFFE67E22).withOpacity(0.04), // Saffron/Gold faint glow
            Colors.transparent,
         ],
       ).createShader(rect);
       
     canvas.drawRect(rect, glowPaint);
     
-    // Subtle Deep Green/Mint accent glow at bottom left
+    // Subtle Darker Parchment accent at bottom left
      final Paint accentPaint = Paint()
       ..shader = RadialGradient(
          center: Alignment(-0.7 + (animationValue * 0.05), 0.6 - (animationValue * 0.1)),
-        radius: 0.8,
+        radius: 1.0,
         colors: [
-           const Color(0xFF253D2C).withOpacity(0.04), // Forest Dark faint glow
+           const Color(0xFFD4C4A8).withOpacity(0.05), // Paper shadow faint glow
            Colors.transparent,
         ],
       ).createShader(rect);
@@ -103,7 +96,7 @@ class _LightAuroraPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _LightAuroraPainter oldDelegate) {
+  bool shouldRepaint(covariant _PaperTexturePainter oldDelegate) {
      return oldDelegate.animationValue != animationValue;
   }
 }

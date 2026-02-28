@@ -1,0 +1,16 @@
+{
+    "chapter_number": 0,
+    "title": "Purusha Suktam",
+    "translation": "Hymn of the Cosmic Being",
+    "summary": "The Purusha Suktam is a foundational hymn of the Rig Veda, describing the spiritual unity of the universe and the manifestation of the Divine in cosmic form.",
+    "verses": [
+        {
+            "id": "purusha_1",
+            "number": 1,
+            "sanskrit": "सहस्रशीर्षा पुरुषः सहस्राक्षः सहस्रपात् |\nस भूमिं विश्वतो वृत्वात्यतिष्ठद्दशाङ्गुलम् ||",
+            "translation": "The Purusha (Universal Being) has a thousand heads, a thousand eyes, and a thousand feet. He pervades the earth everywhere and extends beyond it by ten finger-breadths.",
+            "transliteration": "sahasra-śīrṣā puruṣaḥ sahasrākṣaḥ sahasra-pāt\nsa bhūmiṃ viśvato vṛtvāty atiṣṭhad daśāṅgulam",
+            "meaning": "sahasra—thousand; śīrṣā—heads; puruṣaḥ—the Being; sahasra-akṣaḥ—thousand eyes..."
+        }
+    ]
+}

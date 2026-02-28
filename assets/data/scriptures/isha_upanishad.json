@@ -1,0 +1,16 @@
+{
+    "chapter_number": 0,
+    "title": "Isha Upanishad",
+    "translation": "The Inner Ruler",
+    "summary": "The Isha Upanishad is one of the shortest Upanishads, focusing on the omnipresence of the Divine and the need for balance between spiritual and worldly knowledge.",
+    "verses": [
+        {
+            "id": "isha_1",
+            "number": 1,
+            "sanskrit": "ईशावास्यमिदं सर्वं यत्किञ्च जगत्यां जगत् |\nतेन त्यक्तेन भुञ्जीथा मा गृधः कस्यस्विद्धनम् ||",
+            "translation": "All this, whatever moves in this moving world, is enveloped by God. Therefore, find your enjoyment in renunciation; do not covet what belongs to others.",
+            "transliteration": "īśāvāsyam idaṃ sarvaṃ yat kiñca jagatyāṃ jagat\ntena tyaktena bhuñjīthā mā gṛdhaḥ kasya svid dhanam",
+            "meaning": "īśā—by the Lord; vāsyam—to be enveloped; idam—this; sarvam—all..."
+        }
+    ]
+}

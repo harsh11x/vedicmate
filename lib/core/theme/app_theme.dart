@@ -8,22 +8,24 @@ class AppTheme {
   
   // Primary: Void Black / Deepest Charcoal
   // Represents the cosmos, infinite potential, authority.
-  static const Color divinePrimary = Color(0xFF121212); 
+  // Primary: Ink Black / Deep Charcoal
+  // Represents hand-drawn pen ink.
+  static const Color divinePrimary = Color(0xFF2D2D2D); 
   
-  // Secondary: Muted Gold
-  // Represents wisdom, divinity, enlightenment. Used for CTAs and highlights.
-  static const Color divineGold = Color(0xFFC39130); 
-  static const Color divineGoldLight = Color(0xFFE5B965);
+  // Secondary: Warm Ochre / Saffron
+  // Represents traditional spiritual colors.
+  static const Color divineGold = Color(0xFFE67E22); 
+  static const Color divineGoldLight = Color(0xFFF39C12);
 
-  // Backgrounds: Zen White & Soft Mist
-  // Clean, distraction-free canvas.
-  static const Color divineBackground = Color(0xFFFAFAFA); // Soft off-white
-  static const Color divineSurface = Color(0xFFFFFFFF);    // Pure white for cards
+  // Backgrounds: Warm Parchment & Light Ivory
+  // Organic, paper-like feel.
+  static const Color divineBackground = Color(0xFFFFF9E6); // Warm parchment
+  static const Color divineSurface = Color(0xFFFFFDF0);    // Light ivory for cards
   
   // Text Colors
-  static const Color textBlack = Color(0xFF1A1A1A);       // High contrast content
-  static const Color textGrey = Color(0xFF666666);        // Subtitles
-  static const Color textLight = Color(0xFFAAAAAA);       // Placeholders
+  static const Color textBlack = Color(0xFF2D2D2D);       // Ink black
+  static const Color textGrey = Color(0xFF5D5D5D);        // Muted ink
+  static const Color textLight = Color(0xFF9E9E9E);       // Faded ink
 
   // Status
   static const Color successGreen = Color(0xFF2E6F40);    // Kept from Forest theme
@@ -184,15 +186,16 @@ class AppTheme {
   // TYPOGRAPHY
   // ===========================================================================
   // Headings: Playfair Display (Serif) - Elegant, Traditional, Editorial.
-  static TextStyle get titleStyle => GoogleFonts.playfairDisplay(
+  // Headings: Architects Daughter - Sketchy, Creative.
+  static TextStyle get titleStyle => GoogleFonts.architectsDaughter(
     color: textBlack,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.bold,
   );
 
-  // Body: Plus Jakarta Sans (Sans-Serif) - Modern, Geometric, Readable.
-  static TextStyle get bodyStyle => GoogleFonts.plusJakartaSans(
+  // Body: Patrick Hand - Friendly, Hand-drawn.
+  static TextStyle get bodyStyle => GoogleFonts.patrickHand(
     color: textBlack,
-    fontWeight: FontWeight.normal,
+    fontSize: 16,
   );
 
   // ===========================================================================
@@ -285,22 +288,23 @@ class AppTheme {
       ),
 
       // Component Themes
+      // Component Themes
       appBarTheme: AppBarTheme(
         backgroundColor: divineBackground,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: textBlack),
-        titleTextStyle: titleStyle.copyWith(fontSize: 20),
+        titleTextStyle: titleStyle.copyWith(fontSize: 22),
       ),
       
       cardTheme: CardThemeData(
         color: divineSurface,
-        elevation: 0, // Flat is cleaner
+        elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide.none, // No borders, just soft shadow or pure flat
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: textBlack, width: 1.5),
         ),
       ),
       
@@ -311,9 +315,10 @@ class AppTheme {
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: textBlack, width: 2),
           ),
-          textStyle: bodyStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 16),
+          textStyle: bodyStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
       
@@ -321,11 +326,11 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: divinePrimary,
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
-          side: const BorderSide(color: divinePrimary, width: 1),
+          side: const BorderSide(color: divinePrimary, width: 2),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: bodyStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 16),
+          textStyle: bodyStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
 
@@ -335,20 +340,20 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         hintStyle: bodyStyle.copyWith(color: textLight),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.1)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: textBlack, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.1)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: textBlack, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: divinePrimary, width: 1.5),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: divineGold, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: errorRed, width: 1),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: errorRed, width: 1.5),
         ),
       ),
     );

@@ -21,7 +21,7 @@ export default function LoginPage() {
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         // Hardcoded credentials
-        if (username.trim() === "admin" && password === "2025@Vedicmate") {
+        if (username.trim() === "admin" && password === "admin@123") {
             setCookie("admin_authenticated", "true", { maxAge: 60 * 60 * 24 }); // 1 Day
             router.push("/");
         } else {

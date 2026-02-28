@@ -1,11 +1,11 @@
 {
-    "name": "vedic_mate",
-    "short_name": "vedic_mate",
+    "name": "VedicMate",
+    "short_name": "VedicMate",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "VedicMate: The AI-Powered Spiritual Companion for Astrology and Consultations.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

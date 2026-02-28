@@ -1,0 +1,24 @@
+{
+    "chapter_number": 7,
+    "title": "Jnana Vijnana Yoga",
+    "translation": "The Yoga of Knowledge and Wisdom",
+    "summary": "Krishna describes His material and spiritual energies, and how one can know Him through devotion and understanding the underlying reality of existence.",
+    "verses": [
+        {
+            "id": "gita_7_4",
+            "number": 4,
+            "sanskrit": "भूमिरापोऽनलो वायुः खं मनो बुद्धिरेव च |\nअहङ्कार इतीयं मे भिन्ना प्रकृतिरष्टधा || ४ ||",
+            "translation": "Earth, water, fire, air, ether, mind, intelligence and false ego—all together these eight constitute My separated material energies.",
+            "transliteration": "bhūmir āpo ’nalo vāyuḥ khaṁ mano buddhir eva ca\nahaṅkāra itīyaṁ me bhinnā prakṛtir aṣṭadhā",
+            "meaning": "Bhumih - earth; Apah - water; Analah - fire; Vayuh - air..."
+        },
+        {
+            "id": "gita_7_19",
+            "number": 19,
+            "sanskrit": "बहूनां जन्मनामन्ते ज्ञानवान्मां प्रपद्यते |\nवासुदेवः सर्वमिति स महात्मा सुदुर्लभः || १९ ||",
+            "translation": "After many births and deaths, he who is actually in knowledge surrenders unto Me, knowing Me to be the cause of all causes and all that is. Such a great soul is very rare.",
+            "transliteration": "bahūnāṁ janmanām ante jñānavān māṁ prapadyate\nvāsudevaḥ sarvam iti sa mahātmā sudurlabhaḥ",
+            "meaning": "Bahunam - many; Janmanam - of births; Ante - after..."
+        }
+    ]
+}

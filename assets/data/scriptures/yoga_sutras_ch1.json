@@ -1,0 +1,24 @@
+{
+    "chapter_number": 1,
+    "title": "Samadhi Pada",
+    "translation": "On Contemplation",
+    "summary": "The first chapter of Patanjali's Yoga Sutras defines yoga and describes the nature of Samadhi, the state of meditative absorption.",
+    "verses": [
+        {
+            "id": "yoga_1_1",
+            "number": 1,
+            "sanskrit": "अथ योगानुशासनम् ||",
+            "translation": "Now, the instruction of Yoga begins.",
+            "transliteration": "atha yoga-anuśāsanam",
+            "meaning": "atha - now; yoga - union; anushasanam - instruction/discipline"
+        },
+        {
+            "id": "yoga_1_2",
+            "number": 2,
+            "sanskrit": "योगश्चित्तवृत्तिनिरोधः ||",
+            "translation": "Yoga is the inhibition of the modifications of the mind.",
+            "transliteration": "yogaś citta-vṛtti-nirodhaḥ",
+            "meaning": "yoga - yoga; chitta - mind; vritti - modifications; nirodhah - restraint"
+        }
+    ]
+}

@@ -1,0 +1,66 @@
+[
+    {
+        "id": "vastu_origins",
+        "title": "Vastu & Sacred Space Origins",
+        "period": "Proto-Vedic Period",
+        "yearRange": "6000 - 3000 BCE",
+        "description": "The earliest concepts of aligning human settlements with cosmic laws (Vastu Shastra).",
+        "detailedDescription": "Emergence of architectural principles based on cardinal directions and solar alignments. Early stone and timber structures show geometric planning linked to spiritual harmony.",
+        "relatedScriptures": [
+            "Vastu Vidya",
+            "Stapatya Veda"
+        ],
+        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_vastu_origins_png_1771863076312.png"
+    },
+    {
+        "id": "rig_veda_oral",
+        "title": "Rig Vedic Oral Traditions",
+        "period": "Early Vedic Era",
+        "yearRange": "1500 - 1000 BCE",
+        "description": "Composition of the core Rig Vedic hymns by ancient Rishis through oral transmission.",
+        "detailedDescription": "The foundational period where the primary Veda was cognized and chanted. It focuses on the primary forces of nature (Devas) and the relationship between humanity and the divine through Yagya (sacrifice).",
+        "relatedScriptures": [
+            "Rig Veda Samhita"
+        ],
+        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_rig_veda_png_1771863527601.png"
+    },
+    {
+        "id": "upanishads_shift",
+        "title": "Upanishadic Philosophical Shift",
+        "period": "Later Vedic Era",
+        "yearRange": "800 - 500 BCE",
+        "description": "Transition from external ritual to internal philosophical inquiry (Vedanta).",
+        "detailedDescription": "A transformative era where seekers explored the nature of the self (Atman) and the ultimate reality (Brahman). This period gave birth to core Vedic philosophy and psychological insights.",
+        "relatedScriptures": [
+            "Isha Upanishad",
+            "Brihadaranyaka Upanishad",
+            "Chandogya Upanishad"
+        ],
+        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_upanishads_png_1771863707387.png"
+    },
+    {
+        "id": "epic_gita",
+        "title": "The Epic Era & Bhagavad Gita",
+        "period": "Itihasa Period",
+        "yearRange": "400 - 200 BCE",
+        "description": "Codification of the Mahabharata and the emergence of the Bhagavad Gita.",
+        "detailedDescription": "The Gita provides a practical path to spiritual liberation amidst the complexities of worldly life, synthesizing various paths of Yoga (Karma, Bhakti, Jnana).",
+        "relatedScriptures": [
+            "Mahabharata",
+            "Bhagavad Gita"
+        ],
+        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_gita_png_1771863945433.png"
+    },
+    {
+        "id": "yoga_sutras",
+        "title": "Classical Yoga System",
+        "period": "Classical Period",
+        "yearRange": "200 BCE - 400 CE",
+        "description": "Patanjali's systematic codification of the Yoga philosophy.",
+        "detailedDescription": "The Yoga Sutras organize the various practices into the Eight Limbs (Ashtanga Yoga), providing a scientific method for mastering the mind and attaining Samadhi.",
+        "relatedScriptures": [
+            "Yoga Sutras of Patanjali"
+        ],
+        "imageUrl": "/Users/harshdev/.gemini/antigravity/brain/c79219d8-76b6-4913-bfa5-194e94777507/timeline_yoga_sutras_png_1771864161746.png"
+    }
+]

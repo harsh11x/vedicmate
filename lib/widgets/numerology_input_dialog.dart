@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme/app_theme.dart';
+import 'elegant_dropdown.dart';
 
 /// Dialog to collect numerology preferences from user
 class NumerologyInputDialog extends StatefulWidget {
@@ -73,16 +74,10 @@ class _NumerologyInputDialogState extends State<NumerologyInputDialog> {
               child: _selectedOption == 'day_only'
                   ? Padding(
                       padding: const EdgeInsets.only(top: 16),
-                      child: DropdownButtonFormField<int>(
-                        decoration: InputDecoration(
-                          labelText: 'Select Day',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: AppTheme.divineSurface,
-                        ),
+                      child: ElegantDropdown<int>(
+                        hint: 'Select Day',
                         value: _dayOfBirth,
+                        prefixIcon: Icons.calendar_today_rounded,
                         items: List.generate(31, (index) => index + 1)
                             .map((day) => DropdownMenuItem(
                                   value: day,

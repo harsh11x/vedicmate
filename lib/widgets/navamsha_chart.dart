@@ -131,26 +131,58 @@ class _NavamshaPainter extends CustomPainter {
       );
     }
 
-    // Center text
-    _drawText(
-      canvas,
-      'NAVAMSHA',
-      size.width / 2, size.height / 2 - 10,
-      TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: AppTheme.mysticalPurple.withOpacity(0.7),
-      ),
-    );
-    _drawText(
-      canvas,
-      'D-9',
-      size.width / 2, size.height / 2 + 8,
-      TextStyle(
-        fontSize: 10,
-        color: AppTheme.neutralGrey,
-      ),
-    );
+    // Draw Planets and Lagna
+    _drawContent(canvas, size, cellWidth, cellHeight);
+  }
+
+  void _drawContent(Canvas canvas, Size size, double cellWidth, double cellHeight) {
+    // 1. Draw Lagna / Ascendant
+    final lagnaIndex = signs.indexOf(lagnaSign) + 1;
+    if (lagnaIndex > 0) {
+      final pos = signPositions[lagnaIndex]!;
+      final x = pos[1] * cellWidth + cellWidth / 2;
+      final y = pos[0] * cellHeight + cellHeight / 2;
+      
+      _drawText(
+        canvas,
+        'Lagna',
+        x, y - 20, // Top of cell
+        TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold),
+      );
+    }
+
+    // 2. Draw Planets
+    // We need to group planets by sign to avoid overlap
+    Map<String, List<String>> planetsInSign = {};
+    
+    planets.forEach((planet, sign) {
+      if (!planetsInSign.containsKey(sign)) {
+        planetsInSign[sign] = [];
+      }
+      planetsInSign[sign]!.add(planet);
+    });
+
+    planetsInSign.forEach((sign, planetList) {
+      final signIndex = signs.indexOf(sign) + 1;
+      if (signIndex > 0) {
+        final pos = signPositions[signIndex]!;
+        final x = pos[1] * cellWidth + cellWidth / 2;
+        final y = pos[0] * cellHeight + cellHeight / 2;
+        
+        // Start listing planets below the center or mixed
+        double offsetY = 5; 
+        
+        for (var p in planetList) {
+           _drawText(
+            canvas,
+            p,
+            x, y + offsetY,
+            TextStyle(fontSize: 9, color: AppTheme.forestDark, fontWeight: FontWeight.bold),
+          );
+          offsetY += 10;
+        }
+      }
+    });
   }
 
   void _drawText(Canvas canvas, String text, double x, double y, TextStyle style) {

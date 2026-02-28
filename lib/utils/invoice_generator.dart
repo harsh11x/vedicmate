@@ -434,7 +434,7 @@ class InvoiceGenerator {
                 ),
                 pw.SizedBox(height: 4),
                 pw.Text(
-                  'Payment Method: Razorpay',
+                  'Payment Method: PayU',
                   style: const pw.TextStyle(fontSize: 9),
                 ),
               ],

@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'services/notification_service.dart';
-import 'services/revenuecat_service.dart';
+
 
 import 'dart:io';
 
@@ -93,26 +93,8 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
     });
     print('✅ AppInit: Supabase initialized');
 
-    // 3. RevenueCat
-    print('🛒 AppInit: Initializing RevenueCat...');
-    try {
-      final revenueCatService = RevenueCatService();
-      await revenueCatService.initialize()
-          .timeout(const Duration(seconds: 15), onTimeout: () {
-        throw Exception('RevenueCat initialization timed out');
-      });
-      
-      // Identify user if already authenticated
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        print('🛒 AppInit: Identifying user with RevenueCat: ${currentUser.uid}');
-        await revenueCatService.identifyUser(currentUser.uid);
-      }
-      
-      print('✅ AppInit: RevenueCat initialized');
-    } catch (e) {
-      print('⚠️ AppInit: RevenueCat initialization error (non-fatal): $e');
-    }
+    // 3. RevenueCat - Removed
+    // PayU is initialized on demand.
 
     // 4. Notifications (often slow/hanging in simulator; skip if takes too long)
     print('🔔 AppInit: Initializing NotificationService...');

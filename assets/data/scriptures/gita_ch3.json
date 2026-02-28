@@ -1,0 +1,32 @@
+{
+    "chapter_number": 3,
+    "title": "Karma Yoga",
+    "translation": "The Yoga of Action",
+    "summary": "Lord Krishna explains the necessity of action and the path of selfless service, emphasizing performing one's duty without attachment to results.",
+    "verses": [
+        {
+            "id": "gita_3_3",
+            "number": 3,
+            "sanskrit": "श्रीभगवानुवाच |\nलोकेऽस्मिन् द्विविधा निष्ठा पुरा प्रोक्ता मयानघ |\nज्ञानयोगेन साङ्ख्यानां कर्मयोगेन योगिनाम् || ३ ||",
+            "translation": "The Supreme Personality of Godhead said: O sinless Arjuna, I have already explained that there are two classes of men who try to realize the self. Some are inclined to understand it by empirical, philosophical speculation, and others by devotional service.",
+            "transliteration": "śrī-bhagavān uvāca\nloke ’smin dvi-vidhā niṣṭhā purā proktā mayānagha\njñāna-yogena sāṅkhyānāṁ karma-yogena yoginām",
+            "meaning": "Loke - in this world; Asmin - this; Dvi-vidha - two kinds; Nishtha - faith/paths..."
+        },
+        {
+            "id": "gita_3_5",
+            "number": 5,
+            "sanskrit": "न हि कश्चित्क्षणमपि जातु तिष्ठत्यकर्मकृत् |\nकार्यते ह्यवशः कर्म सर्वः प्रकृतिजैर्गुणैः || ५ ||",
+            "translation": "Verily, no one can remain for even a moment without performing action; for everyone is made to act helplessly, indeed, by the qualities born of nature.",
+            "transliteration": "na hi kaścit kṣaṇam api jātu tiṣṭhaty akarma-kṛt\nkāryate hy avaśaḥ karma sarvaḥ prakṛti-jair guṇaiḥ",
+            "meaning": "Na - not; Hi - certainly; Kaschit - anyone; Kshanam api - even for a moment..."
+        },
+        {
+            "id": "gita_3_8",
+            "number": 8,
+            "sanskrit": "नियतं कुरु कर्म त्वं कर्म ज्यायो ह्यकर्मणः |\nशरीरयात्रापि च ते न प्रसिद्ध्येदकर्मणः || ८ ||",
+            "translation": "Perform your prescribed duty, for doing so is better than not working. One cannot even maintain one's physical body without work.",
+            "transliteration": "niyataṁ kuru karma tvaṁ karma jyāyo hy akarmaṇaḥ\nśarīra-yātrāpi ca te na prasiddhyed akarmaṇaḥ",
+            "meaning": "Niyatam - prescribed; Kuru - perform; Karma - duty; Tvam - you..."
+        }
+    ]
+}

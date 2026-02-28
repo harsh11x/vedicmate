@@ -8,11 +8,17 @@ import '../../../../widgets/chalit_chart.dart';
 class KundliChartWidget extends StatelessWidget {
   final String title;
   final String chartType;
+  final String? lagnaSign;
+  final Map<int, String>? houses;
+  final Map<String, String>? planets;
 
   const KundliChartWidget({
     super.key,
     required this.title,
     required this.chartType,
+    this.lagnaSign,
+    this.houses,
+    this.planets,
   });
 
   @override
@@ -62,21 +68,21 @@ class KundliChartWidget extends StatelessWidget {
     switch (chartType) {
       case 'Lagna':
         return LagnaChart(
-          lagnaSign: 'Aries',
-          houses: _getLagnaHouses(),
-          planets: _getLagnaPlanets(),
+          lagnaSign: lagnaSign ?? 'Aries',
+          houses: houses ?? _getLagnaHouses(),
+          planets: planets ?? _getLagnaPlanets(),
         );
       case 'Navamsha':
         return NavamshaChart(
-          lagnaSign: 'Libra',
-          houses: _getNavamshaHouses(),
-          planets: _getNavamshaPlanets(),
+          lagnaSign: lagnaSign ?? 'Libra', // Default fallback
+          houses: houses ?? _getNavamshaHouses(),
+          planets: planets ?? _getNavamshaPlanets(),
         );
       case 'Moon':
         return MoonChart(
-          moonSign: 'Cancer',
-          houses: _getMoonHouses(),
-          planets: _getMoonPlanets(),
+          moonSign: lagnaSign ?? 'Cancer', // Reusing lagnaSign param as main sign
+          houses: houses ?? _getMoonHouses(),
+          planets: planets ?? _getMoonPlanets(),
         );
       case 'Chalit':
         return const ChalitChart(

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/theme/app_theme.dart';
-import '../core/utils/animations.dart';
+import 'sketchy_painter.dart';
 import '../models/ai_pandit_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/utils/animations.dart';
 
 class AIPanditsSection extends StatefulWidget {
   final List<AIPanditModel>? pandits;
   final String title;
+  final Color? backgroundColor;
+  final TextStyle? titleStyle;
   
   const AIPanditsSection({
     super.key, 
     this.pandits,
     this.title = 'All Pandits',
+    this.backgroundColor,
+    this.titleStyle,
   });
 
   @override
@@ -79,10 +84,8 @@ class _AIPanditsSectionState extends State<AIPanditsSection>
                     const SizedBox(width: 12),
                     Text(
                       widget.title,
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        letterSpacing: -0.5,
+                      style: widget.titleStyle ?? AppTheme.titleStyle.copyWith(
+                        fontSize: 24,
                         color: AppTheme.neutralDark,
                       ),
                     ),
@@ -163,6 +166,7 @@ class _AIPanditsSectionState extends State<AIPanditsSection>
                         HapticFeedback.mediumImpact();
                         context.push('/ai-pandit/profile/${pandit.id}');
                       },
+                      backgroundColor: widget.backgroundColor,
                     ),
                   ),
                 );
@@ -179,11 +183,13 @@ class _AIPanditItem extends StatefulWidget {
   final AIPanditModel pandit;
   final int index;
   final VoidCallback onTap;
+  final Color? backgroundColor;
 
   const _AIPanditItem({
     required this.pandit,
     required this.index,
     required this.onTap,
+    this.backgroundColor,
   });
 
   @override
@@ -224,137 +230,132 @@ class _AIPanditItemState extends State<_AIPanditItem>
       child: AnimatedBuilder(
         animation: _hoverController,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              width: 160, // Much wider for "bigger boxes"
-              decoration: AppTheme.glassMorphism.copyWith(
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: AppTheme.softShadow,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withOpacity(0.8),
-                    Colors.white.withOpacity(0.5),
-                  ],
-                ),
-              ),
-              child: Column(
-                children: [
-                  // Image Section with Status
-                  Expanded(
-                    flex: 3,
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                          child: widget.pandit.profileImage.startsWith('http')
-                              ? Image.network(
-                                  widget.pandit.profileImage,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                                )
-                              : Image.asset(
-                                  widget.pandit.profileImage,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => _buildPlaceholder(),
+          return SizedBox(
+            width: 160,
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: SketchyContainer(
+                backgroundColor: widget.backgroundColor ?? AppTheme.divineSurface,
+                borderColor: AppTheme.textBlack,
+                borderRadius: 16,
+                padding: 0,
+                margin: const EdgeInsets.only(bottom: 8), // Added explicit margin
+                child: Column(
+                  children: [
+                    // Image Section with Status
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                            child: widget.pandit.profileImage.startsWith('http')
+                                ? Image.network(
+                                    widget.pandit.profileImage,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                                  )
+                                : Image.asset(
+                                    widget.pandit.profileImage,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                                  ),
+                          ),
+                          // Gradient Overlay
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.1),
+                                    Colors.black.withOpacity(0.4),
+                                  ],
                                 ),
-                        ),
-                        // Gradient Overlay
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.1),
-                                  Colors.black.withOpacity(0.4),
-                                ],
                               ),
                             ),
                           ),
-                        ),
-                        // Online Status
-                        if (widget.pandit.isAvailable)
+                          // Online Status
+                          if (widget.pandit.isAvailable)
+                            Positioned(
+                              top: 6,
+                              right: 6,
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.successGreen,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 1.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppTheme.successGreen.withOpacity(0.5),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          // AI Badge (Mini)
                           Positioned(
                             top: 6,
-                            right: 6,
+                            left: 6,
                             child: Container(
-                              width: 8,
-                              height: 8,
+                              padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
-                                color: AppTheme.successGreen,
+                                gradient: AppTheme.primaryGradient,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.successGreen.withOpacity(0.5),
-                                    blurRadius: 4,
-                                  ),
-                                ],
+                                boxShadow: AppTheme.glowShadow,
                               ),
-                            ),
-                          ),
-                        // AI Badge (Mini)
-                        Positioned(
-                          top: 6,
-                          left: 6,
-                          child: Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              gradient: AppTheme.primaryGradient,
-                              shape: BoxShape.circle,
-                              boxShadow: AppTheme.glowShadow,
-                            ),
-                            child: const Icon(Icons.auto_awesome, size: 8, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Info Section
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.pandit.name,
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.neutralDark,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Text(
-                            '₹${widget.pandit.ratePerMinute.toInt()}/min',
-                            style: GoogleFonts.outfit(
-                              fontSize: 10,
-                              color: AppTheme.primaryOrange,
-                              fontWeight: FontWeight.bold,
+                              child: const Icon(Icons.auto_awesome, size: 8, color: Colors.white),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    
+                    // Info Section
+                    Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.pandit.name,
+                                style: AppTheme.bodyStyle.copyWith(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.neutralDark,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              '₹${widget.pandit.ratePerMinute.toInt()}/min',
+                              style: GoogleFonts.outfit(
+                                fontSize: 10,
+                                color: AppTheme.primaryOrange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

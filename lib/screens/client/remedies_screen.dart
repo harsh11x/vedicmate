@@ -72,7 +72,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
     final productsAsync = ref.watch(productsProvider(_selectedCategory));
 
     return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
+      backgroundColor: AppTheme.divineBackground,
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(productsProvider(_selectedCategory));
@@ -88,7 +88,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
               expandedHeight: 120,
               floating: false,
               pinned: true,
-              backgroundColor: AppTheme.white,
+              backgroundColor: AppTheme.divineBackground,
               elevation: 0,
               actions: [
                 Consumer(
@@ -131,21 +131,14 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
                 title: Text(
                   'Spiritual Remedies',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: AppTheme.titleStyle.copyWith(
+                        fontSize: 24,
                         color: AppTheme.neutralDark,
                       ),
                 ),
                 background: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppTheme.primaryOrange.withOpacity(0.1),
-                        AppTheme.yellowPrimary.withOpacity(0.05),
-                      ],
-                    ),
+                    color: AppTheme.divineBackground,
                   ),
                 ),
               ),

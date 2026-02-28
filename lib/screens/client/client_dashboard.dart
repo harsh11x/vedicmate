@@ -91,12 +91,12 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
                   end: Alignment.bottomCenter,
                   colors: isDark
                       ? [
+                          const Color(0xFF2D2D2D), // AppTheme.divinePrimary
                           const Color(0xFF1A1A1A),
-                          const Color(0xFF121212),
                         ]
                       : [
-                          const Color(0xFFFFF8E1),
-                          Colors.white,
+                          AppTheme.divineBackground,
+                          AppTheme.divineSurface,
                         ],
                 ),
               ),
@@ -126,18 +126,29 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
             left: 20,
             right: 20,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(36),
               child: BackdropFilter(
                 filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                 child: Container(
                   decoration: isDark
                       ? BoxDecoration(
-                          color: Colors.black.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(28),
-                          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1),
+                          color: AppTheme.divinePrimary.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(36),
+                          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
                         )
-                      : AppTheme.navBarGlass,
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      : BoxDecoration(
+                          color: AppTheme.divineSurface.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(36),
+                          border: Border.all(color: AppTheme.textBlack, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 22),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -547,6 +558,8 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                 child: AIPanditsSection(
                   title: 'Divine Consultation',
                   pandits: _filteredPandits,
+                  backgroundColor: AppTheme.divineSurface,
+                  titleStyle: AppTheme.titleStyle.copyWith(color: AppTheme.textBlack),
                 ),
               ).animate().fadeIn(delay: 200.ms).slideX(),
             ),
@@ -603,6 +616,36 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                     ),
                   ],
                 ).animate().fadeIn(delay: 400.ms).scale(),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+            // History & Knowledge Row
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _ActionCardV2(
+                        title: 'Vedic Timeline',
+                        subtitle: 'History',
+                        imagePath: 'assets/images/services/vedic_astrology.png',
+                        onTap: () => context.push('/history/timeline'),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _ActionCardV2(
+                        title: 'Sacred Texts',
+                        subtitle: 'Library',
+                        imagePath: 'assets/images/services/numerology.png', 
+                        onTap: () => context.push('/education/library'),
+                      ),
+                    ),
+                  ],
+                ).animate().fadeIn(delay: 450.ms).scale(),
               ),
             ),
 
@@ -809,18 +852,16 @@ class _ActionCardV2 extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: AppTheme.titleStyle.copyWith(
+                  fontSize: 22,
                   color: Colors.white,
-                  letterSpacing: 0.5,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
+                style: AppTheme.bodyStyle.copyWith(
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.white.withOpacity(0.9),
                 ),
@@ -886,19 +927,17 @@ class _AIServiceCard extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               label,
-              style: const TextStyle(
+              style: AppTheme.titleStyle.copyWith(
                 color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
+                fontSize: 18,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: TextStyle(
+              style: AppTheme.bodyStyle.copyWith(
                 color: Colors.white.withOpacity(0.9),
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),

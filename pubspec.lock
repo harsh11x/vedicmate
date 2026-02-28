@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  add_to_google_wallet:
+    dependency: "direct main"
+    description:
+      name: add_to_google_wallet
+      sha256: "853ec9601b4d239ab3ab736edabbaad61a5529f7f8aa8308ec5db64f4e33d3da"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   app_links:
     dependency: transitive
     description:
@@ -49,6 +57,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  apple_passkit:
+    dependency: "direct main"
+    description:
+      name: apple_passkit
+      sha256: d877a948f767aa192c756efa89fb9c656a4107afa42c0e5b2b4d2c89cf5a70d0
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   archive:
     dependency: transitive
     description:
@@ -73,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  audio_session:
+    dependency: "direct main"
+    description:
+      name: audio_session
+      sha256: "8f96a7fecbb718cb093070f868b4cdcb8a9b1053dce342ff8ab2fde10eb9afb7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
   barcode:
     dependency: transitive
     description:
@@ -273,14 +297,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
-  equatable:
-    dependency: transitive
-    description:
-      name: equatable
-      sha256: "3e0141505477fd8ad55d6eb4e7776d3fe8430be8e497ccb1521370c3f21a3e2b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.8"
   fake_async:
     dependency: transitive
     description:
@@ -515,6 +531,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.3"
+  flutter_svg:
+    dependency: transitive
+    description:
+      name: flutter_svg
+      sha256: "87fbd7c534435b6c5d9d98b01e1fd527812b82e68ddd8bd35fc45ed0fa8f0a95"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -629,6 +653,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  hive:
+    dependency: "direct main"
+    description:
+      name: hive
+      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
+  hive_flutter:
+    dependency: "direct main"
+    description:
+      name: hive_flutter
+      sha256: dca1da446b1d808a51689fb5d0c6c9510c0a2ba01e22805d492c73b68e33eecc
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   html:
     dependency: transitive
     description:
@@ -749,6 +789,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
+  just_audio:
+    dependency: "direct main"
+    description:
+      name: just_audio
+      sha256: "9694e4734f515f2a052493d1d7e0d6de219ee0427c7c29492e246ff32a219908"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.5"
+  just_audio_platform_interface:
+    dependency: transitive
+    description:
+      name: just_audio_platform_interface
+      sha256: "2532c8d6702528824445921c5ff10548b518b13f808c2e34c2fd54793b999a6a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.0"
+  just_audio_web:
+    dependency: transitive
+    description:
+      name: just_audio_web
+      sha256: "6ba8a2a7e87d57d32f0f7b42856ade3d6a9fbe0f1a11fabae0a4f00bb73f0663"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.16"
   jwt_decode:
     dependency: transitive
     description:
@@ -893,6 +957,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  payu_checkoutpro_flutter:
+    dependency: "direct main"
+    description:
+      name: payu_checkoutpro_flutter
+      sha256: "94a84ffa8b2977faaefd6d7c7099717c8aed23e2a797dcd087b0c490f12156a4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   pdf:
     dependency: "direct main"
     description:
@@ -1037,22 +1109,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.14.2"
-  purchases_flutter:
-    dependency: "direct main"
-    description:
-      name: purchases_flutter
-      sha256: "0a218eaca2acf22c481cd7760f7fded3a6e7265f1b711322be90ff86c8a69f9a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.11.1"
-  purchases_ui_flutter:
-    dependency: "direct main"
-    description:
-      name: purchases_ui_flutter
-      sha256: d55d4f32b98a569b70a558f22fb5f355154def88d36c72b25e066287b07fc772
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.11.1"
   qr:
     dependency: transitive
     description:
@@ -1306,6 +1362,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.12.0"
+  sweph:
+    dependency: "direct main"
+    description:
+      name: sweph
+      sha256: "32067efbf3984857a970a590adb6502373d199add4867936485678130824a241"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1+2.10.3"
   synchronized:
     dependency: transitive
     description:
@@ -1354,6 +1418,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  universal_ffi:
+    dependency: transitive
+    description:
+      name: universal_ffi
+      sha256: f723a01ff2ff70729ff266037e37a125df9dd85c7322073eda18bc29987bd870
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   url_launcher:
     dependency: "direct main"
     description:
@@ -1426,6 +1498,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.2"
+  vector_graphics:
+    dependency: transitive
+    description:
+      name: vector_graphics
+      sha256: a4f059dc26fc8295b5921376600a194c4ec7d55e72f2fe4c7d2831e103d461e6
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.19"
+  vector_graphics_codec:
+    dependency: transitive
+    description:
+      name: vector_graphics_codec
+      sha256: "99fd9fbd34d9f9a32efd7b6a6aae14125d8237b10403b422a6a6dfeac2806146"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.13"
+  vector_graphics_compiler:
+    dependency: transitive
+    description:
+      name: vector_graphics_compiler
+      sha256: "5a88dd14c0954a5398af544651c7fb51b457a2a556949bfb25369b210ef73a74"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   vector_math:
     dependency: transitive
     description:
@@ -1482,6 +1578,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "15.0.2"
+  wasm_ffi:
+    dependency: transitive
+    description:
+      name: wasm_ffi
+      sha256: bb58f268afc14f2591b9d15c797e74ad7f14696f2b87f0d49e00cf41bde0dc7a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   web:
     dependency: transitive
     description:

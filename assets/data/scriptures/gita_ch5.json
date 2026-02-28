@@ -1,0 +1,24 @@
+{
+    "chapter_number": 5,
+    "title": "Karma Sanyasa Yoga",
+    "translation": "The Yoga of Renunciation",
+    "summary": "Krishna explains that both renunciation of action and selfless action lead to liberation, but selfless action is more practical for most seekers.",
+    "verses": [
+        {
+            "id": "gita_5_1",
+            "number": 1,
+            "sanskrit": "अर्जुन उवाच |\nसंन्यासं कर्मणां कृष्ण पुनर्योगं च शंससि |\nयच्छ्रेय एतयोरेकं तन्मे ब्रूहि सुनिश्चितम् || १ ||",
+            "translation": "Arjuna said: O Krishna, first of all You ask me to renounce work, and then again You recommend work with devotion. Now will You kindly tell me definitely which of the two is more beneficial?",
+            "transliteration": "arjuna uvāca\nsannyāsaṁ karmaṇāṁ kṛṣṇa punar yogaṁ ca śaṁsasi\nyac chreya etayor ekaṁ tan me brūhi suniścitam",
+            "meaning": "Arjunah uvaca - Arjuna said; Sannyasam - renunciation..."
+        },
+        {
+            "id": "gita_5_2",
+            "number": 2,
+            "sanskrit": "श्रीभगवानुवाच |\nसंन्यासः कर्मयोगश्च निःश्रेयसकरावुभौ |\nतयोस्तु कर्मसंन्यासात्कर्मयोगो विशिष्यते || २ ||",
+            "translation": "The Supreme Personality of Godhead replied: The renunciation of work and work in devotion are both good for liberation. But, of the two, work in devotional service is better than renunciation of work.",
+            "transliteration": "śrī-bhagavān uvāca\nsannyāsaḥ karma-yogaś ca niḥśreyasa-karāv ubhau\ntayos tu karma-sannyāsāt karma-yogo viśiṣyate",
+            "meaning": "Sannyasah - renunciation; Karma-yogah - yoga of action..."
+        }
+    ]
+}

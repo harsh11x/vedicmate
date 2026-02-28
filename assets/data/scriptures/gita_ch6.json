@@ -1,0 +1,24 @@
+{
+    "chapter_number": 6,
+    "title": "Dhyana Yoga",
+    "translation": "The Yoga of Meditation",
+    "summary": "Krishna describes the practice of meditation (Dhyana Yoga), the mastery of the mind, and the state of equanimity reached by a yogi.",
+    "verses": [
+        {
+            "id": "gita_6_5",
+            "number": 5,
+            "sanskrit": "उद्धरेदात्मनात्मानं नात्मानमवसादयेत् |\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः || ५ ||",
+            "translation": "One must deliver himself with the help of his mind, and not degrade himself. The mind is the friend of the conditioned soul, and his enemy as well.",
+            "transliteration": "uddhared ātmanātmānaṁ nātmānam avasādayet\nātmaiva hy ātmano bandhur ātmaiva ripur ātmanaḥ",
+            "meaning": "Uddharet - one must lift; Atmana - by the mind; Atmanam - the self..."
+        },
+        {
+            "id": "gita_6_6",
+            "number": 6,
+            "sanskrit": "बन्धुरात्मात्मनस्तस्य येनात्मैवात्मना जितः |\nअनात्मनस्तु शत्रुत्वे वर्तेतात्मैव शत्रुवत् || ६ ||",
+            "translation": "For him who has conquered the mind, the mind is the best of friends; but for one who has failed to do so, his mind will remain the greatest enemy.",
+            "transliteration": "bandhur ātmātmanas tasya yenātmaivātmanā jitaḥ\nanātmanas tu śatrutve vartetātmaiva śatruvat",
+            "meaning": "Bandhuh - friend; Atma - the mind; Atmanah - of the creature..."
+        }
+    ]
+}

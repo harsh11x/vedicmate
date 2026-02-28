@@ -50,6 +50,7 @@ post_install do |installer|
       # Generate dSYM for Release/Profile to fix "Upload Symbols Failed" warnings
       if config.name == 'Release' || config.name == 'Profile'
         config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
+        config.build_settings['GCC_GENERATE_DEBUGGING_SYMBOLS'] = 'YES'
         config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
         config.build_settings['COPY_PHASE_STRIP'] = 'YES'
       end
@@ -64,16 +65,25 @@ post_install do |installer|
       # Insert dSYM block before the final "if [ COCOAPODS_PARALLEL_CODE_SIGN ]... wait fi" (must be after install_framework calls)
       dsym_block = "\n# Install dSYMs for XCFrameworks (fixes Upload Symbols Failed warnings)\n"
       dsym_block += "if [[ \"\$CONFIGURATION\" == \"Release\" ]] || [[ \"\$CONFIGURATION\" == \"Profile\" ]]; then\n"
+      dsym_block += "  # Razorpay dSYMs\n"
       dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM\"\n"
       dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
       dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM\"\n"
       dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
       dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-pod/Pod/RazorpayStandard.xcframework/ios-arm64/dSYMs/RazorpayStandard.framework.dSYM\"\n"
       dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
+      dsym_block += "  # WebRTC dSYM\n"
+      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/WebRTC-SDK/WebRTC.xcframework/ios-arm64/dSYMs/WebRTC.framework.dSYM\"\n"
+      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
       dsym_block += "fi\n\n"
+      
       # Match: before final "if [ COCOAPODS_PARALLEL ]... wait fi" at end
-      script_content.sub!(/fi\n\nif \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\n  wait\nfi\z/m) { |m| "fi\n#{dsym_block}if [ \"\${COCOAPODS_PARALLEL_CODE_SIGN}\" == \"true\" ]; then\n  wait\nfi" }
-      File.write(frameworks_script, script_content)
+      # We look for the last occurrence of the parallel code sign block
+      target_block_regex = /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\n  wait\nfi\s*\z/m
+      if script_content.match?(target_block_regex)
+        script_content.sub!(target_block_regex) { |m| "#{dsym_block}#{m}" }
+        File.write(frameworks_script, script_content)
+      end
     end
   end
 end

@@ -81,12 +81,14 @@ class CustomRequestService {
     }
   }
 
-  // Verify payment
+  // Verify PayU payment
   static Future<Map<String, dynamic>> verifyPayment({
     required String orderId,
-    required String razorpayPaymentId,
-    required String razorpayOrderId,
-    required String razorpaySignature,
+    required String txnid, // PayU Transaction ID
+    required String paymentMode,
+    required String status,
+    required String amount,
+    // Add other fields as needed by your backend
   }) async {
     try {
       final response = await http.post(
@@ -94,9 +96,11 @@ class CustomRequestService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'orderId': orderId,
-          'razorpayPaymentId': razorpayPaymentId,
-          'razorpayOrderId': razorpayOrderId,
-          'razorpaySignature': razorpaySignature,
+          'txnid': txnid,
+          'paymentMode': paymentMode,
+          'status': status,
+          'amount': amount,
+          'gateway': 'PayU',
         }),
       );
 

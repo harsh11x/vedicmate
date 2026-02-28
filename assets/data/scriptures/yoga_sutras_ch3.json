@@ -1,0 +1,32 @@
+{
+    "chapter_number": 3,
+    "title": "Vibhuti Pada",
+    "translation": "On Divine Powers",
+    "summary": "The third chapter describes the deeper meditative states of Dharana, Dhyana, and Samadhi, and the extraordinary powers (Vibhutis) that can arise from their mastery.",
+    "verses": [
+        {
+            "id": "yoga_3_1",
+            "number": 1,
+            "sanskrit": "देशबन्धश्चित्तस्य धारणा ||",
+            "translation": "Dharana is the binding of the mind to one place, object or idea.",
+            "transliteration": "deśabandhaś cittasya dhāraṇā",
+            "meaning": "desha - place; bandhash - binding; chittasya - of the mind; dharana - concentration"
+        },
+        {
+            "id": "yoga_3_2",
+            "number": 2,
+            "sanskrit": "तत्र प्रत्ययैकतानता ध्यानम् ||",
+            "translation": "The continuous flow of cognition towards that object is Dhyana (Meditation).",
+            "transliteration": "tatra pratyaya-ikatānatā dhyānam",
+            "meaning": "tatra - there; pratyaya - cognition; ekatanata - continuous flow; dhyanam - meditation"
+        },
+        {
+            "id": "yoga_3_3",
+            "number": 3,
+            "sanskrit": "तदेवार्थमात्रनिर्भासं स्वरूपशून्यमिव समाधिः ||",
+            "translation": "When that same meditation shines forth with the object alone and the self is as if empty of its own form, that is Samadhi.",
+            "transliteration": "tad eva arthamātra-nirbhāsaṁ svarūpa-śūnyam iva samādhiḥ",
+            "meaning": "tat - that; eva - itself; arthamatra - only the object; nirbhasam - shining forth..."
+        }
+    ]
+}

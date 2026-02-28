@@ -9,6 +9,7 @@ import 'dart:io';
 import '../../core/theme/app_theme.dart';
 import '../../core/constants/country_codes.dart';
 import '../../services/auth_service.dart';
+import '../../widgets/elegant_dropdown.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -872,15 +873,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         SizedBox(
                           width: 110,
-                          child: DropdownButtonFormField<CountryCode>(
+                          child: ElegantDropdown<CountryCode>(
                             value: _selectedCountry,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                              filled: user?.isAnonymous == true,
-                              fillColor: user?.isAnonymous == true ? AppTheme.neutralSoft : null,
-                            ),
-                            isExpanded: true,
+                            hint: "Code",
+                            prefixIcon: Icons.flag_rounded,
                             items: countryCodes
                                 .map((cc) => DropdownMenuItem(
                                       value: cc,

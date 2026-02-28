@@ -22,55 +22,12 @@ class _PaymentWalletScreenState extends ConsumerState<PaymentWalletScreen> {
   }
 
   Future<void> _rechargeWallet() async {
-    final amount = double.tryParse(_amountController.text);
-    if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid amount'),
-          backgroundColor: AppTheme.errorRed,
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      final walletService = ref.read(walletServiceProvider);
-      final userId = ref.read(currentUserIdProvider) ?? 'anonymous';
-      final paymentId = 'recharge_${DateTime.now().millisecondsSinceEpoch}';
-      final success = await walletService.addMoney(userId, amount, paymentId);
-      
-      if (success) {
-        // Refresh wallet balance
-        ref.invalidate(walletBalanceProvider);
-        ref.invalidate(walletNotifierProvider);
-        
-        if (mounted) {
-          _amountController.clear();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('₹${amount.toStringAsFixed(0)} added to wallet!'),
-              backgroundColor: AppTheme.successGreen,
-            ),
-          );
-        }
-      } else {
-        throw Exception('Failed to add money to wallet');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: AppTheme.errorRed,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Add money to wallet coming soon!'),
+        backgroundColor: AppTheme.primaryOrange,
+      ),
+    );
   }
 
   @override

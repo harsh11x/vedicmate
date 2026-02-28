@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/wallet_provider.dart';
 import '../../services/wallet_service.dart';
 import '../../services/auth_service.dart';
-import '../../services/revenuecat_service.dart';
+import '../../services/payu_service.dart';
 import '../../widgets/abstract_background.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
@@ -19,28 +18,17 @@ class WalletScreen extends ConsumerStatefulWidget {
 class _WalletScreenState extends ConsumerState<WalletScreen> {
   final WalletService _walletService = WalletService();
   final AuthService _authService = AuthService();
-  final RevenueCatService _revenueCatService = RevenueCatService();
+  final PayUService _payUService = PayUService();
 
-  // double _balance = 0.0; // Removed local state
   bool _isLoading = true;
   List<Map<String, dynamic>> _transactions = [];
-  List<Package> _walletPackages = [];
-
-  // Wallet credit amounts mapped to their values
-  final Map<String, int> _walletAmounts = {
-    'wallet_50': 50,
-    'wallet_100': 100,
-    'wallet_200': 200,
-    'wallet_500': 500,
-    'wallet_1000': 1000,
-    'wallet_2000': 2000,
-    'wallet_5000': 5000,
-  };
+  
+  // Wallet credit amounts
+  final List<int> _rechargeAmounts = [50, 100, 200, 500, 1000, 2000, 5000];
 
   @override
   void initState() {
     super.initState();
-    // _fetchData(); // We will fetch transactions and packages, but balance comes from Provider
     WidgetsBinding.instance.addPostFrameCallback((_) => _fetchData());
   }
 
@@ -49,83 +37,61 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     if (user != null) {
       setState(() => _isLoading = true);
       
-      // final balance = await _walletService.getBalance(user.uid); // Handled by Provider
-      final transactions = await _walletService.getTransactions(user.uid);
-      
-      // Fetch wallet offerings from RevenueCat
       try {
-        final offering = await _revenueCatService.getWalletOffering();
-        final packages = offering?.availablePackages ?? [];
+        final transactions = await _walletService.getTransactions(user.uid);
         
         if (mounted) {
           setState(() {
-            // _balance = balance;
             _transactions = transactions;
-            _walletPackages = packages;
             _isLoading = false;
           });
         }
       } catch (e) {
-        debugPrint('Error fetching wallet offerings: $e');
+        debugPrint('Error fetching wallet data: $e');
         if (mounted) {
-          setState(() {
-            // _balance = balance;
-            _transactions = transactions;
-            _isLoading = false;
-          });
+          setState(() => _isLoading = false);
         }
       }
     }
   }
 
-  Future<void> _purchaseWalletCredit(Package package) async {
-    final user = _authService.currentUser;
-    if (user == null) {
-      _showError('Please login to purchase wallet credits');
-      return;
-    }
+  Future<void> _initiateRecharge(int amount) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Add money to wallet coming soon!'),
+        backgroundColor: AppTheme.primaryOrange,
+      ),
+    );
+  }
 
-    setState(() => _isLoading = true);
-
+  Future<void> _handlePaymentSuccess(String userId, double amount, String txnid) async {
     try {
-      // Purchase via RevenueCat
-      final customerInfo = await _revenueCatService.purchaseWalletCredit(package);
-      
-      // Get the amount from package identifier
-      final amount = _walletAmounts[package.identifier] ?? 0;
-      
-      if (amount > 0) {
-        // Add credits to Supabase wallet
-        final success = await _walletService.addMoney(
-          user.uid,
-          amount.toDouble(),
-          customerInfo.originalAppUserId, // Use RevenueCat user ID as reference
-        );
+      // Add credits to Supabase wallet
+      final success = await _walletService.addMoney(
+        userId,
+        amount,
+        txnid,
+      );
 
-        if (success) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('₹$amount added to wallet successfully!'),
-                backgroundColor: AppTheme.successGreen,
-              ),
-            );
-          }
-          // Refresh provider
-          ref.invalidate(walletBalanceProvider);
-          await _fetchData();
-        } else {
-          _showError('Failed to update wallet balance');
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('₹$amount added to wallet successfully!'),
+              backgroundColor: AppTheme.successGreen,
+            ),
+          );
         }
+        // Refresh provider and data
+        ref.invalidate(walletBalanceProvider);
+        await _fetchData();
+      } else {
+        _showError('Payment successful but failed to update wallet. Please contact support.');
       }
     } catch (e) {
-      debugPrint('Purchase error: $e');
-      if (e.toString().contains('cancelled')) {
-        // User cancelled, don't show error
-      } else {
-        _showError('Purchase failed: ${e.toString()}');
-      }
-      setState(() => _isLoading = false);
+      _showError('Error updating wallet: $e');
+    } finally {
+       if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -165,8 +131,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         _buildBalanceCard(),
                         const SizedBox(height: 24),
 
-                        // Wallet Credit Packages
-                        _buildWalletPackagesSection(),
+                        // Recharge Options
+                        _buildRechargeGrid(),
                         const SizedBox(height: 24),
 
                         // Transactions
@@ -246,37 +212,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     );
   }
 
-  Widget _buildWalletPackagesSection() {
-    if (_walletPackages.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: AppTheme.glassMorphism,
-        child: Column(
-          children: [
-            const Icon(Icons.info_outline, color: AppTheme.neutralMedium, size: 48),
-            const SizedBox(height: 16),
-            Text(
-              'Wallet credits not available',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.neutralDark,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Please configure wallet credit products in RevenueCat dashboard',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                color: AppTheme.neutralMedium,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-
+  Widget _buildRechargeGrid() {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: AppTheme.glassMorphism,
@@ -301,12 +237,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               mainAxisSpacing: 12,
               childAspectRatio: 1.5,
             ),
-            itemCount: _walletPackages.length,
+            itemCount: _rechargeAmounts.length,
             itemBuilder: (context, index) {
-              final package = _walletPackages[index];
-              final amount = _walletAmounts[package.identifier] ?? 0;
-              
-              return _buildPackageCard(package, amount);
+              final amount = _rechargeAmounts[index];
+              return _buildRechargeCard(amount);
             },
           ),
         ],
@@ -314,9 +248,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     );
   }
 
-  Widget _buildPackageCard(Package package, int amount) {
+  Widget _buildRechargeCard(int amount) {
     return InkWell(
-      onTap: () => _purchaseWalletCredit(package),
+      onTap: () => _initiateRecharge(amount),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
@@ -340,14 +274,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.primaryOrange,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              package.storeProduct.priceString,
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                color: AppTheme.neutralMedium,
               ),
             ),
           ],

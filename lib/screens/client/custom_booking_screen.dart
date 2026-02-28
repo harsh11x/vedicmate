@@ -3,11 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// NOTE: Razorpay has been deprecated in favor of RevenueCat
-// This screen needs to be updated to use RevenueCat for payments
 import '../../core/theme/app_theme.dart';
-import '../shared/payment_wallet_screen.dart';
 import '../../services/custom_request_service.dart';
+import '../../services/payu_service.dart';
+import '../../widgets/elegant_dropdown.dart';
 
 class CustomBookingScreen extends StatefulWidget {
   const CustomBookingScreen({super.key});
@@ -37,7 +36,7 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
   
   // Payment
   bool _isProcessing = false;
-  String? _currentOrderId;
+  final PayUService _payUService = PayUService();
 
   @override
   void initState() {
@@ -50,7 +49,6 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
     super.dispose();
   }
 
-  // DEPRECATED: Payment processing removed - needs RevenueCat integration
   Future<void> _processPayment() async {
     // Validate
     if (_selectedTimeSlot == null) {
@@ -68,15 +66,100 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
       return;
     }
 
-    // TODO: Implement RevenueCat payment flow
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Payment functionality needs to be updated to use RevenueCat'),
-      ),
-    );
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please log in to continue')));
+      return;
+    }
+
+    setState(() => _isProcessing = true);
+
+    try {
+      // 1. Create Pending Order on Backend
+      final amount = priceValue as int;
+      final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate);
+
+      final orderRes = await CustomRequestService.createOrder(
+        userId: user.uid,
+        userName: user.displayName ?? 'User',
+        userEmail: user.email ?? '',
+        userPhone: user.phoneNumber ?? '',
+        serviceType: _selectedType,
+        date: dateStr,
+        timeSlot: _selectedTimeSlot!,
+        requirements: _requirementsController.text.trim(),
+        amount: amount,
+      );
+
+      if (orderRes['success'] != true) {
+        throw Exception(orderRes['error'] ?? 'Failed to create order');
+      }
+
+      final orderId = orderRes['orderId'];
+      final txnid = orderRes['txnid'] ?? 'TXN_${DateTime.now().millisecondsSinceEpoch}'; // Backup txnid if not from backend
+
+      // 2. Open PayU Checkout
+      _payUService.openCheckout(
+        txnid: txnid,
+        amount: amount.toString(),
+        productInfo: _selectedType,
+        firstName: user.displayName?.split(' ').first ?? 'User',
+        email: user.email ?? 'user@example.com',
+        phone: user.phoneNumber ?? '9999999999',
+        onPaymentSuccess: (response) async {
+          debugPrint('PayU Success: $response');
+          await _handlePaymentSuccess(orderId, response, amount);
+        },
+        onPaymentFailure: (response) {
+          debugPrint('PayU Failure: $response');
+          _showRetryDialog('Payment Failed: ${response['error_Message'] ?? 'Unknown error'}');
+          setState(() => _isProcessing = false);
+        },
+        onPaymentCancel: (response) {
+          debugPrint('PayU Cancelled: $response');
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payment Cancelled')));
+          setState(() => _isProcessing = false);
+        },
+      );
+
+    } catch (e) {
+      debugPrint('Booking Error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString().replaceAll('Exception:', '')}')),
+        );
+      }
+      setState(() => _isProcessing = false);
+    }
   }
 
-  // DEPRECATED: Payment handlers removed - needs RevenueCat integration
+  Future<void> _handlePaymentSuccess(String orderId, Map<String, dynamic> response, int amount) async {
+    try {
+      // 3. Verify Payment
+      final verifyRes = await CustomRequestService.verifyPayment(
+        orderId: orderId,
+        txnid: response['txnid'] ?? '',
+        paymentMode: response['mode'] ?? 'PayU',
+        status: 'success',
+        amount: amount.toString(),
+      );
+
+      if (verifyRes['success'] == true) {
+        if (mounted) {
+          _showSuccessDialog();
+        }
+      } else {
+        throw Exception('Payment verification failed on server');
+      }
+    } catch (e) {
+       debugPrint('Verification Error: $e');
+       if (mounted) {
+         _showRetryDialog('Payment successful but verification failed: $e');
+       }
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
 
   void _showSuccessDialog() {
     showDialog(
@@ -139,16 +222,6 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
           TextButton(
             onPressed: () => context.pop(),
             child: Text('Cancel', style: GoogleFonts.outfit()),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.pop();
-              _processPayment();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryOrange,
-            ),
-            child: Text('Try Again', style: GoogleFonts.outfit(color: Colors.white)),
           ),
         ],
       ),
@@ -288,51 +361,35 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
             // 1. Select Consultation Type
             _buildSectionLabel('Select Consultation Type'),
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.forestBackground),
-                boxShadow: AppTheme.softShadow,
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _selectedType,
-                  isExpanded: true,
-                  dropdownColor: AppTheme.white,
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.primaryOrange),
-                  style: GoogleFonts.outfit(
-                    color: AppTheme.neutralDark,
-                    fontSize: 16,
-                  ),
-                  items: _servicePrices.keys.map((String type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(type),
-                          Text(
-                            _servicePrices[type] == 'TBD' 
-                                ? 'Price TBD' 
-                                : '₹${_servicePrices[type]}',
-                            style: GoogleFonts.outfit(
-                              color: AppTheme.neutralMedium,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+            ElegantDropdown<String>(
+              value: _selectedType,
+              hint: "Select Consultation Type",
+              prefixIcon: Icons.auto_awesome_rounded,
+              items: _servicePrices.keys.map((String type) {
+                return DropdownMenuItem<String>(
+                  value: type,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(type),
+                      Text(
+                        _servicePrices[type] == 'TBD'
+                            ? 'Price TBD'
+                            : '₹${_servicePrices[type]}',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.neutralMedium,
+                          fontSize: 12,
+                        ),
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedType = newValue!;
-                    });
-                  },
-                ),
-              ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedType = newValue!;
+                });
+              },
             ),
 
              const SizedBox(height: 24),

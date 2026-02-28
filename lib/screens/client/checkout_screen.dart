@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/wallet_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/user_preferences_service.dart';
-import '../../services/revenuecat_service.dart';
+import '../../services/payu_service.dart';
 import '../../services/wallet_service.dart';
 import '../../services/order_service.dart';
 import '../../models/order_model.dart';
 import '../../services/auth_service.dart';
 import '../../core/config/env.dart';
-
 
 enum PaymentMethod { wallet, online }
 
@@ -21,11 +19,7 @@ class CheckoutScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic>? item;
   final bool isDirectBuy;
 
-  const CheckoutScreen({
-    super.key, 
-    this.item, 
-    this.isDirectBuy = false
-  });
+  const CheckoutScreen({super.key, this.item, this.isDirectBuy = false});
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -36,7 +30,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  
+
   // Detailed Address Controllers
   final _addressLine1Controller = TextEditingController();
   final _cityController = TextEditingController();
@@ -44,7 +38,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   final _zipController = TextEditingController();
 
   final _prefsService = UserPreferencesService();
-  final _revenueCatService = RevenueCatService();
+  final _payUService = PayUService();
   final _walletService = WalletService();
   final _orderService = OrderService();
   final _authService = AuthService();
@@ -52,14 +46,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   bool _saveAddress = true;
   PaymentMethod _paymentMethod = PaymentMethod.online;
   bool _isProcessing = false;
-  // double _walletBalance = 0.0; // Removed local state
   String? _userId;
 
   @override
   void initState() {
     super.initState();
     _loadSavedDetails();
-    // _fetchWalletBalance(); // Removed manual fetch
     _userId = _authService.currentUser?.uid; // Init user ID
   }
 
@@ -77,8 +69,6 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       });
     }
   }
-
-  // Removed _fetchWalletBalance method
 
   @override
   void dispose() {
@@ -117,70 +107,83 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      String? paymentId;
-      String paymentStatus = 'pending';
-
-      // 1. Process Payment
       if (_paymentMethod == PaymentMethod.wallet) {
-        final currentBalance = ref.read(walletBalanceProvider).valueOrNull ?? 0.0;
-        if (currentBalance < totalAmount) {
-          throw Exception('Insufficient wallet balance');
-        }
-
-        final transactionId = 'TXN_${DateTime.now().millisecondsSinceEpoch}';
-        
-        await _walletService.deductMoney(
-          _userId!,
-          totalAmount,
-          'Product Purchase',
-          category: 'purchase',
-          referenceId: transactionId,
-        );
-
-        // if (!success) throw Exception('Wallet transaction failed'); // deductMoney now throws on failure
-        
-        paymentId = transactionId;
-        paymentStatus = 'completed';
-
+        await _processWalletPayment(totalAmount);
       } else {
-        // Online Payment via RevenueCat
-        // NOTE: We are assuming single item purchase for matching with RC Package
-        // For cart with multiple items, this logic would need to be different (e.g. creating a dynamic cart package or enforcing 1 item type)
-        // For now, let's try to find a package for the first item or the single item.
-        
-        String productIdToSearch = '';
-        if (widget.item != null) {
-          productIdToSearch = widget.item!['id'].toString();
-        } else {
-          final cartItems = ref.read(cartProvider);
-          if (cartItems.isNotEmpty) {
-             // For cart, we might need a specific logic. 
-             // As a fallback for this demo, we'll try to find if there's a package matching the first item.
-             productIdToSearch = cartItems.first.id;
-          }
-        }
+        await _processOnlinePayment(totalAmount);
+      }
+    } catch (e) {
+      _handleError(e);
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
 
-        // Try to find package in RevenueCat
-        // If your product IDs in DB match RC product identifiers exactly
-        Package? package = await _revenueCatService.findPackage(productIdToSearch);
-        
-        if (package != null) {
-          final customerInfo = await _revenueCatService.purchaseProduct(package);
-          paymentId = customerInfo.originalAppUserId; // or transaction identifier if available
-          paymentStatus = 'completed';
-        } else {
-           // Fallback for demo/testing if package not configured in RC yet
-           // throw Exception('Product not available for online purchase');
-           
-           // TEMPORARY: Allow "Success" for demo purposes if RC setup is incomplete, 
-           // BUT show a warning. In production, this should block.
-           debugPrint('⚠️ Mocking online payment success for demo as package not found in RC: $productIdToSearch');
-           paymentId = 'DEMO_RC_${DateTime.now().millisecondsSinceEpoch}';
-           paymentStatus = 'completed';
-        }
+  Future<void> _processWalletPayment(double totalAmount) async {
+     // Watch the provider to get fresh balance
+      final balanceAsync = ref.read(walletBalanceProvider); // use read to get current state
+      double currentBalance = balanceAsync.valueOrNull ?? 0.0;
+      
+      // If provider is stale or empty, fetch directly
+      if (currentBalance == 0.0) {
+        currentBalance = await _walletService.getBalance(_userId!);
       }
 
-      // 2. Create Order
+      if (currentBalance < totalAmount) {
+        throw Exception(
+            'Insufficient wallet balance. You have ₹${currentBalance.toStringAsFixed(2)} but need ₹${totalAmount.toStringAsFixed(2)}');
+      }
+
+      final transactionId = 'TXN_${DateTime.now().millisecondsSinceEpoch}';
+
+      final success = await _walletService.deductMoney(
+        _userId!,
+        totalAmount,
+        'Product Purchase',
+        category: 'purchase',
+        referenceId: transactionId,
+      );
+
+      if (!success) {
+        throw Exception('Failed to deduct wallet balance');
+      }
+      
+      await _createOrder(totalAmount, transactionId);
+  }
+
+  Future<void> _processOnlinePayment(double totalAmount) async {
+    final txnid = 'TXN_PAYU_${DateTime.now().millisecondsSinceEpoch}';
+    final productInfo = widget.item != null ? (widget.item!['title'] ?? 'Product') : 'Cart Items';
+
+    _payUService.openCheckout(
+      txnid: txnid,
+      amount: totalAmount.toString(),
+      productInfo: productInfo,
+      firstName: _nameController.text.split(' ').first,
+      email: _emailController.text,
+      phone: _phoneController.text,
+      onPaymentSuccess: (response) async {
+         debugPrint('PayU Success: $response');
+         // PayU success might return a different txnid if specified, 
+         // but usually we use the one we sent or the PayU ID.
+         // Let's use the one we sent or what PayU returned.
+         final payuTxnId = response['txnid'] ?? txnid;
+         await _createOrder(totalAmount, payuTxnId);
+      },
+      onPaymentFailure: (response) {
+         debugPrint('PayU Failure: $response');
+         _handleError('Payment Failed: ${response['error_Message'] ?? 'Unknown error'}');
+         if (mounted) setState(() => _isProcessing = false);
+      },
+      onPaymentCancel: (response) {
+         debugPrint('PayU Cancelled: $response');
+         _handleError('Payment Cancelled');
+         if (mounted) setState(() => _isProcessing = false);
+      },
+    );
+  }
+
+  Future<void> _createOrder(double totalAmount, String paymentId) async {
+    try {
       final orderItems = _buildOrderItems();
       final shippingAddress = ShippingAddress(
         name: _nameController.text,
@@ -192,50 +195,63 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         zip: _zipController.text,
       );
 
-      final order = await _orderService.createOrder(
+      await _orderService.createOrder(
         userId: _userId!,
         items: orderItems,
-        subtotal: totalAmount, // Simplified: assume tax/delivery incl or calc separately
-        tax: 0, 
+        subtotal: totalAmount,
+        tax: 0,
         deliveryCharge: 0,
         totalAmount: totalAmount,
         shippingAddress: shippingAddress,
         paymentId: paymentId,
       );
 
-      // Success
+      // Success logic
       if (!widget.isDirectBuy) {
         ref.read(cartProvider.notifier).clearCart();
       }
-
-      // Refresh wallet balance after purchase
       ref.invalidate(walletBalanceProvider);
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Order placed successfully!'), backgroundColor: AppTheme.successGreen),
-        );
-        // Navigate to Orders or Home
-        context.go('/orders'); // Assuming /orders route exists, else pop
-      }
 
-    } catch (e) {
       if (mounted) {
+        setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString().replaceAll("Exception:", "")}'), backgroundColor: Colors.red),
+          const SnackBar(
+              content: Text('Order placed successfully!'),
+              backgroundColor: AppTheme.successGreen),
         );
+        context.go('/orders');
       }
-    } finally {
+    } catch (e) {
+      _handleError("Order Creation Failed: $e");
       if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  void _handleError(dynamic e) {
+    debugPrint('Checkout error: $e');
+    String errorMessage = e.toString();
+    if (errorMessage.contains('Exception:')) {
+      errorMessage = errorMessage.replaceAll('Exception:', '').trim();
+    }
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$errorMessage'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     }
   }
 
   List<OrderItem> _buildOrderItems() {
     if (widget.item != null) {
-      final img = (widget.item!['images'] is List && (widget.item!['images'] as List).isNotEmpty)
+      final img = (widget.item!['images'] is List &&
+              (widget.item!['images'] as List).isNotEmpty)
           ? (widget.item!['images'] as List).first
           : widget.item!['image'] ?? '';
-          
+
       return [
         OrderItem(
           id: widget.item!['id'],
@@ -247,13 +263,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ];
     } else {
       final cartItems = ref.read(cartProvider);
-      return cartItems.map((item) => OrderItem(
-        id: item.id,
-        title: item.title,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.image,
-      )).toList();
+      return cartItems
+          .map((item) => OrderItem(
+                id: item.id,
+                title: item.title,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image,
+              ))
+          .toList();
     }
   }
 
@@ -267,17 +285,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     double totalAmount = 0.0;
     String displayTitle = '';
     String displayImage = '';
-    
+
     if (singleItem != null) {
       totalAmount = (singleItem['price'] as num).toDouble();
       displayTitle = singleItem['title'] ?? singleItem['name'] ?? 'Product';
       final imgs = singleItem['images'];
-      if (imgs is List && imgs.isNotEmpty) displayImage = imgs.first;
-      else displayImage = singleItem['image'] ?? '';
+      if (imgs is List && imgs.isNotEmpty) {
+        displayImage = imgs.first;
+      } else {
+        displayImage = singleItem['image'] ?? '';
+      }
     } else {
       final cartItems = ref.watch(cartProvider);
       if (cartItems.isEmpty) {
-         return Scaffold(
+        return Scaffold(
           appBar: AppBar(leading: const BackButton(color: Colors.black)),
           body: const Center(child: Text("Cart is empty")),
         );
@@ -286,11 +307,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       displayTitle = 'Cart Total (${cartItems.length} items)';
       displayImage = cartItems.first.image;
     }
-    
+
     return Scaffold(
       backgroundColor: AppTheme.neutralSoft,
       appBar: AppBar(
-        title: Text('Checkout', style: GoogleFonts.outfit(color: AppTheme.neutralDark, fontWeight: FontWeight.bold)),
+        title: Text('Checkout',
+            style: GoogleFonts.outfit(
+                color: AppTheme.neutralDark, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: const BackButton(color: AppTheme.neutralDark),
@@ -351,47 +374,65 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               const SizedBox(height: 32),
 
               // Shipping Details
-              Text('Shipping Information', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('Shipping Information',
+                  style: GoogleFonts.outfit(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               _buildTextField('Full Name', _nameController, Icons.person),
               const SizedBox(height: 16),
-              _buildTextField('Email Address', _emailController, Icons.email, keyboardType: TextInputType.emailAddress),
+              _buildTextField('Email Address', _emailController, Icons.email,
+                  keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 16),
-              _buildTextField('Phone Number', _phoneController, Icons.phone, keyboardType: TextInputType.phone),
+              _buildTextField('Phone Number', _phoneController, Icons.phone,
+                  keyboardType: TextInputType.phone),
               const SizedBox(height: 24),
-              Text('Delivery Address', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w600)),
+              Text('Delivery Address',
+                  style: GoogleFonts.outfit(
+                      fontSize: 18, fontWeight: FontWeight.w600)),
               const SizedBox(height: 16),
-              _buildTextField('Street Address / Flat No', _addressLine1Controller, Icons.home, maxLines: 2),
+              _buildTextField('Street Address / Flat No',
+                  _addressLine1Controller, Icons.home,
+                  maxLines: 2),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(child: _buildTextField('City', _cityController, Icons.location_city)),
+                  Expanded(
+                      child: _buildTextField(
+                          'City', _cityController, Icons.location_city)),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildTextField('State', _stateController, Icons.map)),
+                  Expanded(
+                      child: _buildTextField(
+                          'State', _stateController, Icons.map)),
                 ],
               ),
               const SizedBox(height: 16),
-               Row(
+              Row(
                 children: [
-                   Expanded(child: _buildTextField('Pincode', _zipController, Icons.pin_drop, keyboardType: TextInputType.number)),
-                   const SizedBox(width: 16),
-                   Expanded(child: Container()), 
+                  Expanded(
+                      child: _buildTextField(
+                          'Pincode', _zipController, Icons.pin_drop,
+                          keyboardType: TextInputType.number)),
+                  const SizedBox(width: 16),
+                  Expanded(child: Container()),
                 ],
               ),
               const SizedBox(height: 16),
               CheckboxListTile(
                 value: _saveAddress,
                 onChanged: (val) => setState(() => _saveAddress = val!),
-                title: Text('Save details for later', style: GoogleFonts.outfit()),
+                title:
+                    Text('Save details for later', style: GoogleFonts.outfit()),
                 activeColor: AppTheme.primaryOrange,
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
               ),
-              
+
               const SizedBox(height: 32),
 
               // Payment Method Selection
-              Text('Payment Method', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('Payment Method',
+                  style: GoogleFonts.outfit(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(
@@ -405,9 +446,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       value: PaymentMethod.online,
                       groupValue: _paymentMethod,
                       onChanged: (val) => setState(() => _paymentMethod = val!),
-                      title: Text('Online Payment', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-                      subtitle: const Text('Credit/Debit Card, UPI via Store'),
-                      secondary: const Icon(Icons.payment, color: AppTheme.primaryOrange),
+                      title: Text('Online Payment',
+                          style:
+                              GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+                      subtitle: const Text('Credit/Debit Card, UPI / PayU'),
+                      secondary: const Icon(Icons.payment,
+                          color: AppTheme.primaryOrange),
                       activeColor: AppTheme.primaryOrange,
                     ),
                     const Divider(height: 1),
@@ -415,18 +459,23 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       value: PaymentMethod.wallet,
                       groupValue: _paymentMethod,
                       onChanged: (val) => setState(() => _paymentMethod = val!),
-                      title: Text('Wallet Balance', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-                      subtitle: Text('Available: ₹${walletBalance.toStringAsFixed(2)}'),
-                      secondary: const Icon(Icons.account_balance_wallet, color: AppTheme.primaryOrange),
+                      title: Text('Wallet Balance',
+                          style:
+                              GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+                      subtitle: Text(
+                          'Available: ₹${walletBalance.toStringAsFixed(2)}'),
+                      secondary: const Icon(Icons.account_balance_wallet,
+                          color: AppTheme.primaryOrange),
                       activeColor: AppTheme.primaryOrange,
                     ),
                   ],
                 ),
               ),
-              if (_paymentMethod == PaymentMethod.wallet && walletBalance < totalAmount)
+              if (_paymentMethod == PaymentMethod.wallet &&
+                  walletBalance < totalAmount)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, left: 12),
-                  child: Text(
+                  child: const Text(
                     'Insufficient wallet balance. Please recharge or use Online Payment.',
                     style: TextStyle(color: Colors.red, fontSize: 13),
                   ),
@@ -438,24 +487,26 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isProcessing 
-                    ? null 
-                    : (_paymentMethod == PaymentMethod.wallet && walletBalance < totalAmount) 
-                      ? null 
-                      : () => _initiatePayment(totalAmount),
+                  onPressed: _isProcessing
+                      ? null
+                      : (_paymentMethod == PaymentMethod.wallet &&
+                              walletBalance < totalAmount)
+                          ? null
+                          : () => _initiatePayment(totalAmount),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryOrange,
                     disabledBackgroundColor: Colors.grey.shade300,
                     padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                     elevation: 4,
                   ),
                   child: _isProcessing
                       ? const SizedBox(
-                          height: 24, 
-                          width: 24, 
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                        )
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 2))
                       : Text(
                           'Proceed to Pay ₹$totalAmount',
                           style: GoogleFonts.outfit(
@@ -474,7 +525,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {TextInputType? keyboardType, int maxLines = 1}) {
+  Widget _buildTextField(
+      String label, TextEditingController controller, IconData icon,
+      {TextInputType? keyboardType, int maxLines = 1}) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -497,14 +550,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       ),
     );
   }
 
   Widget _buildImage(String path) {
     if (path.isEmpty) return const _PlaceholderImage();
-    
+
     if (path.startsWith('http')) {
       return Image.network(
         path,
@@ -514,22 +568,19 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         errorBuilder: (_, __, ___) => const _PlaceholderImage(),
       );
     } else if (path.startsWith('assets/')) {
-        return Image.network(
-          '${EnvConfig.apiBaseUrl}/$path', 
+      return Image.network('${EnvConfig.apiBaseUrl}/$path',
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover, errorBuilder: (context, error, stack) {
+        return Image.asset(
+          path,
           width: 80,
           height: 80,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stack) {
-             return Image.asset(
-                path,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const _PlaceholderImage(),
-             );
-          }
+          errorBuilder: (_, __, ___) => const _PlaceholderImage(),
         );
-    } 
+      });
+    }
     return const _PlaceholderImage();
   }
 }

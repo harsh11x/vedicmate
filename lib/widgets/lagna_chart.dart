@@ -166,18 +166,25 @@ class LagnaChartPainter extends CustomPainter {
   }
 
   void _drawPlanetsInHouse(Canvas canvas, int houseNum, Offset center, Size size) {
-    // Filter planets in this house (Simulated matching)
-    // In a real app, we check if planet longitude falls in this house
-    // Here we just map randomly mostly or use the mock 'planets' map if it had house data. 
-    // Since 'planets' map is Name->Degree, we don't know the house easily without calculation.
-    // I will simulate placing a few planets for visual demo.
-    
-    // Mock simulation:
+    // Filter planets in this house
     List<String> planetsHere = [];
-    if (houseNum == 1) planetsHere = ['Sun'];
-    if (houseNum == 4) planetsHere = ['Moon', 'Merc'];
-    if (houseNum == 7) planetsHere = ['Jup'];
-    if (houseNum == 10) planetsHere = ['Sat', 'Rahu'];
+    
+    // Get the sign in this house
+    final houseSign = houses[houseNum];
+    if (houseSign == null) return;
+
+    // Check each planet to see if it belongs to this sign
+    planets.forEach((planetName, planetData) {
+      // planetData is like "Leo 15°" or "Ari"
+      // We check if it starts with the houseSign
+      if (planetData.startsWith(houseSign)) {
+        // Optional: formatting
+        // If it's D9, maybe just show Planet Name. 
+        // If D1, show Name + Deg? 
+        // For distinct visual, let's just show Planet Name to save space, or minimal info
+        planetsHere.add(planetName);
+      }
+    });
 
     double offsetY = 15;
     final planetStyle = TextStyle(

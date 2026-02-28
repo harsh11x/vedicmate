@@ -1,0 +1,32 @@
+{
+    "chapter_number": 2,
+    "title": "Sadhana Pada",
+    "translation": "On Practice",
+    "summary": "The second chapter of Patanjali's Yoga Sutras outlines the practical steps of Kriya Yoga and the first five limbs of Ashtanga Yoga.",
+    "verses": [
+        {
+            "id": "yoga_2_1",
+            "number": 1,
+            "sanskrit": "तपःस्वाध्यायेश्वरप्रणिधानानि क्रियायोगः ||",
+            "translation": "Austerity, self-study, and devotion to the Lord constitute Kriya Yoga.",
+            "transliteration": "tapaḥ svādhyāya-īśvarapraṇidhānāni kriyā-yogaḥ",
+            "meaning": "tapah - austerity; svadhyaya - self-study; ishvara-pranidhanani - devotion/surrender to Ishvara; kriya-yogah - yoga of action/practice"
+        },
+        {
+            "id": "yoga_2_28",
+            "number": 28,
+            "sanskrit": "योगाङ्गानुष्ठानादशुद्धिक्षये ज्ञानदीप्तिराविवेकख्यातेः ||",
+            "translation": "By the practice of the limbs of Yoga, the impurities are destroyed, and the light of wisdom shines forth leading to discriminative discernment.",
+            "transliteration": "yogāṅga-anuṣṭhānād aśuddhi-kṣaye jñāna-dīptir āviveka-khyāteḥ",
+            "meaning": "yoga-anga - limbs of yoga; anusthanad - by practice; ashuddhi-kshaye - destruction of impurities..."
+        },
+        {
+            "id": "yoga_2_29",
+            "number": 29,
+            "sanskrit": "यमनियमासनप्राणायामप्रत्याहारधारणाध्यानसमाधयोऽष्टावङ्गानि ||",
+            "translation": "Yama, Niyama, Asana, Pranayama, Pratyahara, Dharana, Dhyana, and Samadhi are the eight limbs of Yoga.",
+            "transliteration": "yama-niyama-āsana-prāṇāyāma-pratyāhāra-dhāraṇā-dhyāna-samādhayo 'ṣṭāvaṅgāni",
+            "meaning": "yama - restraints; niyama - observances; asana - posture; pranayama - breath control; pratyahara - withdrawal of senses; dharana - concentration; dhyana - meditation; samadhi - absorption"
+        }
+    ]
+}

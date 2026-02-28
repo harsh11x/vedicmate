@@ -1,0 +1,32 @@
+{
+    "chapter_number": 2,
+    "title": "Sankhya Yoga",
+    "translation": "Transcendental Knowledge",
+    "summary": "Chapter 2 is a summary of the entire Bhagavad Gita. Krishna begins His instructions by explaining the immortality of the soul and the importance of performing one's duty without attachment to results.",
+    "verses": [
+        {
+            "id": "bg_2_1",
+            "number": 1,
+            "sanskrit": "सञ्जय उवाच |\nतं तथा कृपयाविष्टमश्रुपूर्णाकुलेक्षणम् |\nविषीदन्तमिदं वाक्यमुवाच मधुसूदनः ||",
+            "translation": "Sanjaya said: Seeing Arjuna full of compassion, his mind depressed, his eyes full of tears, Madhusudana, Krishna, spoke the following words.",
+            "transliteration": "sañjaya uvāca\ntaṃ tathā kṛpayāviṣṭam aśru-pūrṇākule-kṣaṇam\nviṣīdantam idaṃ vākyam uvāca madhusūdanaḥ",
+            "meaning": "sañjayaḥ uvāca—Sanjaya said; tam—unto Arjuna; tathā—thus; kṛpayā—by pity; āviṣṭam—overwhelmed..."
+        },
+        {
+            "id": "bg_2_7",
+            "number": 7,
+            "sanskrit": "कार्पण्यदोषोपहतस्वभावः\nपृच्छामि त्वां धर्मसम्मूढचेताः |\nयच्छ्रेयः स्यान्निश्चितं ब्रूहि तन्मे\nशिष्यस्तेऽहं शाधि मां त्वां प्रपन्नम् ||",
+            "translation": "Now I am confused about my duty and have lost all composure because of miserly weakness. In this condition I am asking You to tell me for certain what is best for me. Now I am Your disciple, and a soul surrendered unto You. Please instruct me.",
+            "transliteration": "kārpaṇya-doṣopahata-svabhāvaḥ\npṛcchāmi tvāṃ dharma-sammūḍha-cetāḥ\nyac chreyaḥ syān niścitaṃ brūhi tan me\nśiṣyas te 'haṃ śādhi māṃ tvāṃ prapannam",
+            "meaning": "kārpaṇya—of miserliness; doṣa—by the flaw; upahata—being afflicted; sva-bhāvaḥ—characteristics..."
+        },
+        {
+            "id": "bg_2_47",
+            "number": 47,
+            "sanskrit": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन |\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ||",
+            "translation": "You have a right to perform your prescribed duty, but you are not entitled to the fruits of action. Never consider yourself the cause of the results of your activities, and never be attached to not doing your duty.",
+            "transliteration": "karmaṇy evādhikāras te mā phaleṣu kadācana\nmā karma-phala-hetur bhūr mā te saṅgo 'stv akarmaṇi",
+            "meaning": "karmaṇi—in prescribed duties; eva—certainly; adhikāraḥ—right; te—of you; mā—never..."
+        }
+    ]
+}

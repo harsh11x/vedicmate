@@ -1,0 +1,24 @@
+{
+    "chapter_number": 1,
+    "title": "Arjuna Vishada Yoga",
+    "translation": "Observing the Armies on the Battlefield of Kurukshetra",
+    "summary": "The first chapter describes the distress of Arjuna upon seeing his relatives, teachers, and friends on the opposing side of the battlefield. Overwhelmed by compassion and confusion about his duty, he refuses to fight.",
+    "verses": [
+        {
+            "id": "bg_1_1",
+            "number": 1,
+            "sanskrit": "धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः |\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय ||",
+            "translation": "Dhritarashtra said: O Sanjay, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?",
+            "transliteration": "dharma-kṣetre kuru-kṣetre samavetā yuyutsavaḥ\nmāmakāḥ pāṇḍavāś caiva kim akurvata sañjaya",
+            "meaning": "Dharmakshetre - in the field of dharma; Kurukshetre - in the field of the Kurus; samavetāḥ - assembled; yuyutsavaḥ - desiring to fight..."
+        },
+        {
+            "id": "bg_1_2",
+            "number": 2,
+            "sanskrit": "सञ्जय उवाच ।\nदृष्ट्वा तु पाण्डवानीकं व्यूढं दुर्योधनस्तदा ।\nआचार्यमुपसङ्गम्य राजा वचनमब्रवीत् ।।",
+            "translation": "Sanjay said: On observing the Pandava army standing in military formation, King Duryodhana approached his teacher Dronacharya and spoke the following words.",
+            "transliteration": "sañjaya uvāca\ndṛṣṭvā tu pāṇḍavānīkaṃ vyūḍhaṃ duryodhanas tadā\nācāryam upasaṅgamya rājā vacanam abravīt",
+            "meaning": "Sanjaya said - Sanjay said; dṛṣṭvā - having seen; tu - but; pāṇḍava-anīkam - the soldiers of the Pandavas; vyūḍham - arranged in a military phalanx..."
+        }
+    ]
+}

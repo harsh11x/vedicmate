@@ -42,6 +42,12 @@ import '../../screens/client/live_pooja_screen.dart';
 import '../../screens/client/custom_request_orders_screen.dart';
 import '../../screens/subscription/subscription_paywall_screen.dart';
 import '../../screens/subscription/customer_center_screen.dart';
+import '../../screens/education/library_screen.dart';
+import '../../screens/education/reader_screen.dart';
+import '../../screens/lifestyle/habit_tracker/habit_tracker_screen.dart';
+import '../../screens/lifestyle/journal/journal_list_screen.dart';
+import '../../screens/lifestyle/journal/journal_entry_screen.dart';
+import '../../features/history/screens/timeline_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final initialRouteProvider = Provider<String>((ref) => '/splash');
@@ -366,6 +372,43 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/subscription/customer-center',
         builder: (context, state) => const CustomerCenterScreen(),
+      ),
+      GoRoute(
+        path: '/education/library',
+        builder: (context, state) => const LibraryScreen(),
+      ),
+      GoRoute(
+        path: '/education/reader/:scriptureId',
+        builder: (context, state) {
+          final scriptureId = state.pathParameters['scriptureId'] ?? 'gita';
+          final title = state.uri.queryParameters['title'] ?? 'Scripture';
+          final chapterNum = int.tryParse(state.uri.queryParameters['chapter'] ?? '1') ?? 1;
+          
+          return ReaderScreen(
+            title: title,
+            chapterNumber: chapterNum,
+            scriptureId: scriptureId,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/lifestyle/habits',
+        builder: (context, state) => const HabitTrackerScreen(),
+      ),
+      GoRoute(
+        path: '/lifestyle/journal',
+        builder: (context, state) => const JournalListScreen(),
+      ),
+      GoRoute(
+        path: '/lifestyle/journal/entry',
+        builder: (context, state) {
+           final entry = state.extra as Map<String, dynamic>?;
+           return JournalEntryScreen(entry: entry);
+        },
+      ),
+      GoRoute(
+        path: '/history/timeline',
+        builder: (context, state) => const TimelineScreen(),
       ),
     ],
   );

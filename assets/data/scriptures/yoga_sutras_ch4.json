@@ -1,0 +1,24 @@
+{
+    "chapter_number": 4,
+    "title": "Kaivalya Pada",
+    "translation": "On Liberation",
+    "summary": "The final chapter discusses the nature of liberation (Kaivalya), the mechanics of karma, and the ultimate transcendence of the gunas.",
+    "verses": [
+        {
+            "id": "yoga_4_1",
+            "number": 1,
+            "sanskrit": "जन्मौषधिमन्त्रतपःसमाधिजाः सिद्धयः ||",
+            "translation": "The powers (Siddhis) are born of birth, medicinal herbs, mantras, austerities, or Samadhi.",
+            "transliteration": "janma-auṣadhi-mantra-tapaḥ-samādhijāḥ siddhayaḥ",
+            "meaning": "janma - birth; aushadhi - herbs; mantra - sacred chants; tapah - austerity; samadhijah - born of samadhi; siddhayah - powers"
+        },
+        {
+            "id": "yoga_4_34",
+            "number": 34,
+            "sanskrit": "पुरुषार्थशून्यानां गुणानां प्रतिप्रसवः कैवल्यं स्वरूपप्रतिष्ठा वा चित्शक्तिरिति ||",
+            "translation": "Kaivalya is the state of resolution of the gunas, being devoid of the purpose of the Purusha; it is the re-establishment of the power of consciousness in its own nature.",
+            "transliteration": "puruṣārtha-śūnyānāṁ guṇānāṁ pratiprasavaḥ kaivalyaṁ svarūpapratiṣṭhā vā citiśaktir iti",
+            "meaning": "purusha-artha - purpose of purusha; shunyanam - devoid of; gunanam - of the gunas; pratiprasavah - Resolution; kaivalyam - liberation..."
+        }
+    ]
+}

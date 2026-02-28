@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCfrhBl-XkAG6gZQvF3GEH5tI3b6dYgNKc',
-    appId: '1:848781830717:android:0976dc87632e6ad487d854',
+    appId: '1:848781830717:android:ecbab60e46c7e3c887d854',
     messagingSenderId: '848781830717',
     projectId: 'vedic-mate',
     storageBucket: 'vedic-mate.firebasestorage.app',

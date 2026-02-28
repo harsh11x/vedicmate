@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:country_state_city_pro/country_state_city_pro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:country_state_city_pro/country_state_city_pro.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/abstract_background.dart';
+import '../../../../widgets/sketchy_painter.dart';
 
 class CreateKundliScreen extends ConsumerStatefulWidget {
   const CreateKundliScreen({super.key});
@@ -25,6 +26,9 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String _selectedGender = 'Male';
+  String? _selectedCountry;
+  String? _selectedState;
+  String? _selectedCity;
 
   @override
   void initState() {
@@ -283,9 +287,11 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   }
 
   Widget _buildFormCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: AppTheme.glassMorphism,
+    return SketchyContainer(
+      backgroundColor: AppTheme.divineSurface,
+      borderColor: AppTheme.textBlack,
+      borderRadius: 24,
+      padding: 24,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -341,10 +347,11 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
 
   Widget _buildLocationPicker() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: AppTheme.forestBackground,
+        color: AppTheme.forestBackground.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.neutralMedium.withOpacity(0.2)),
       ),
       child: CountryStateCityPicker(
         country: _countryController,
@@ -352,22 +359,11 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         city: _cityController,
         dialogColor: Colors.white,
         textFieldDecoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppTheme.neutralMedium.withOpacity(0.3)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppTheme.neutralMedium.withOpacity(0.3)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppTheme.primaryOrange, width: 2),
-          ),
-          suffixIcon: const Icon(Icons.arrow_drop_down, color: AppTheme.primaryOrange),
+          border: InputBorder.none,
+          hintText: "Select Location",
+          hintStyle: TextStyle(color: AppTheme.neutralMedium),
+          prefixIcon: Icon(Icons.location_on_outlined, color: AppTheme.primaryOrange, size: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
     );

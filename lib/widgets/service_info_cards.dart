@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme/app_theme.dart';
+import 'sketchy_painter.dart';
 
 class ServiceInfoCards extends StatelessWidget {
   const ServiceInfoCards({super.key});
@@ -21,20 +22,17 @@ class ServiceInfoCards extends StatelessWidget {
                   children: [
                     Text(
                       'AI Astrology Services',
-                      // Simple Font
-                      style: AppTheme.bodyStyle.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
+                      style: AppTheme.titleStyle.copyWith(
+                            fontSize: 24,
                             color: AppTheme.textBlack,
                           ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Discover your cosmic path',
+                      'Discover your cosmic path through AI guidance',
                       style: AppTheme.bodyStyle.copyWith(
                             color: AppTheme.textGrey,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
                           ),
                     ),
                   ],
@@ -232,38 +230,15 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
         animation: _controller,
         builder: (context, child) {
           return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              height: cardHeight,
-              decoration: BoxDecoration(
-                // Richer white gradient
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.white,
-                    widget.accentColor.withOpacity(0.02),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  width: 1,
-                  color: _isHovered 
-                    ? widget.accentColor.withOpacity(0.5) 
-                    : Colors.grey.withOpacity(0.08),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _isHovered 
-                      ? widget.accentColor.withOpacity(0.2) 
-                      : Colors.black.withOpacity(0.04), // Softer shadow
-                    blurRadius: _isHovered ? 24 : 16,
-                    offset: const Offset(0, 8),
-                    spreadRadius: -2,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
+      scale: _scaleAnimation.value,
+      child: SizedBox(
+        height: cardHeight,
+        child: SketchyContainer(
+        backgroundColor: AppTheme.divineSurface,
+        borderColor: AppTheme.textBlack,
+        borderRadius: 24,
+        padding: 0,
+        child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: widget.fullWidth 
                   ? _buildFullWidthLayout(context)
@@ -385,11 +360,10 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                           children: [
                               Text(
                                 widget.title,
-                                // Simple Font
-                                style: AppTheme.bodyStyle.copyWith(
+                                style: AppTheme.titleStyle.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: AppTheme.textBlack,
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   height: 1.2,
                                 ),
                                 maxLines: 1,
@@ -400,7 +374,7 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                                 widget.description, // Changed to description for more info
                                 style: AppTheme.bodyStyle.copyWith(
                                   color: AppTheme.textGrey,
-                                  fontSize: 12, // Smaller
+                                  fontSize: 13, // Smaller
                                   height: 1.4,
                                 ),
                                 maxLines: 2,
@@ -414,7 +388,8 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                 ),
               ),
             ),
-          );
+          ),
+        );
         },
       ),
     );
@@ -428,14 +403,7 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  widget.accentColor.withOpacity(0.05),
-                  AppTheme.white,
-                ],
-              ),
+              color: AppTheme.divineSurface,
             ),
           ),
         ),
@@ -505,9 +473,10 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                 const SizedBox(height: 4),
                 Text(
                   widget.description,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: AppTheme.bodyStyle.copyWith(
                     color: AppTheme.neutralMedium,
                     height: 1.4,
+                    fontSize: 14,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

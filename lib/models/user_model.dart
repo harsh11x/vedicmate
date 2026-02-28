@@ -11,6 +11,15 @@ class UserModel {
   final bool isVerified;
   final Map<String, dynamic>? metadata;
 
+  final DateTime? birthDate;
+  final String? birthTime;
+  final String? birthPlace;
+  final double? latitude;
+  final double? longitude;
+  final String? timezone;
+  final String? preferredAyanamsa;
+  final String? preferredChartStyle;
+
   UserModel({
     required this.id,
     required this.name,
@@ -21,6 +30,14 @@ class UserModel {
     required this.createdAt,
     this.isVerified = false,
     this.metadata,
+    this.birthDate,
+    this.birthTime,
+    this.birthPlace,
+    this.latitude,
+    this.longitude,
+    this.timezone,
+    this.preferredAyanamsa,
+    this.preferredChartStyle,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +54,14 @@ class UserModel {
       createdAt: DateTime.parse(json['created_at'] as String),
       isVerified: json['is_verified'] as bool? ?? false,
       metadata: json['metadata'] as Map<String, dynamic>?,
+      birthDate: json['birth_date'] != null ? DateTime.parse(json['birth_date']) : null,
+      birthTime: json['birth_time'] as String?,
+      birthPlace: json['birth_place_name'] as String?,
+      latitude: json['birth_latitude'] != null ? (json['birth_latitude'] as num).toDouble() : null,
+      longitude: json['birth_longitude'] != null ? (json['birth_longitude'] as num).toDouble() : null,
+      timezone: json['birth_timezone'] as String?,
+      preferredAyanamsa: json['preferred_ayanamsa'] as String?,
+      preferredChartStyle: json['preferred_chart_style'] as String?,
     );
   }
 
@@ -51,6 +76,14 @@ class UserModel {
       'created_at': createdAt.toIso8601String(),
       'is_verified': isVerified,
       'metadata': metadata,
+      'birth_date': birthDate?.toIso8601String(),
+      'birth_time': birthTime,
+      'birth_place_name': birthPlace,
+      'birth_latitude': latitude,
+      'birth_longitude': longitude,
+      'birth_timezone': timezone,
+      'preferred_ayanamsa': preferredAyanamsa,
+      'preferred_chart_style': preferredChartStyle,
     };
   }
 }
