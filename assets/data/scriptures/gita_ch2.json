@@ -2,31 +2,583 @@
     "chapter_number": 2,
     "title": "Sankhya Yoga",
     "translation": "Transcendental Knowledge",
-    "summary": "Chapter 2 is a summary of the entire Bhagavad Gita. Krishna begins His instructions by explaining the immortality of the soul and the importance of performing one's duty without attachment to results.",
+    "summary": "Chapter 2 is a summary of the entire Bhagavad Gita. Krishna begins His instructions by explaining the immortality of the soul and the importance of performing one's duty without attachment to results. He teaches about the eternal nature of the soul (atma), the science of work (karma yoga), and the qualities of one established in divine consciousness.",
     "verses": [
         {
             "id": "bg_2_1",
             "number": 1,
             "sanskrit": "सञ्जय उवाच |\nतं तथा कृपयाविष्टमश्रुपूर्णाकुलेक्षणम् |\nविषीदन्तमिदं वाक्यमुवाच मधुसूदनः ||",
-            "translation": "Sanjaya said: Seeing Arjuna full of compassion, his mind depressed, his eyes full of tears, Madhusudana, Krishna, spoke the following words.",
-            "transliteration": "sañjaya uvāca\ntaṃ tathā kṛpayāviṣṭam aśru-pūrṇākule-kṣaṇam\nviṣīdantam idaṃ vākyam uvāca madhusūdanaḥ",
-            "meaning": "sañjayaḥ uvāca—Sanjaya said; tam—unto Arjuna; tathā—thus; kṛpayā—by pity; āviṣṭam—overwhelmed..."
+            "translation": "Sanjaya said: Seeing Arjuna overwhelmed with pity, his mind grief-stricken, and his eyes full of tears, Shree Krishna spoke the following words.",
+            "transliteration": "sañjaya uvāca\ntaṃ tathā kṛpayāviṣṭam aśru-pūrṇākulekṣaṇam\nviṣīdantam idaṃ vākyam uvāca madhusūdanaḥ",
+            "meaning": "sañjayaḥ uvāca - Sanjaya said; taṃ - unto him; tathā - thus; kṛpayā - with pity; āviṣṭam - overwhelmed; aśru-pūrṇa - full of tears; ākula - distressed; īkṣaṇam - eyes; viṣīdantam - grief-stricken; idam - these; vākyam - words; uvāca - said; madhusūdanaḥ - Krishna"
+        },
+        {
+            "id": "bg_2_2",
+            "number": 2,
+            "sanskrit": "श्री भगवानुवाच |\nकुतस्त्वा कश्मलमिदं विषमे समुपस्थितम् |\nअनार्यजुष्टमस्वर्ग्यमकीर्तिकरमर्जुन ||",
+            "translation": "The Supreme Lord said: My dear Arjun, how has this delusion overcome you in this hour of peril? It is not befitting an honorable person. It leads not to the higher abodes, but to disgrace.",
+            "transliteration": "śrī bhagavān uvāca\nkutastvā kaśmalam idaṃ viṣame samupasthitam\nanārya-juṣṭam asvargyam akīrti-karam arjuna",
+            "meaning": "śrī bhagavān uvāca - the Supreme Lord said; kutastvā - whence; kaśmalam - delusion; idam - this; viṣame - in this hour of peril; samupasthitam - overcome; anārya-juṣṭam - not befitting noble persons; asvargyam - not leading to heaven; akīrti-karam - causing disgrace; arjuna - O Arjuna"
+        },
+        {
+            "id": "bg_2_3",
+            "number": 3,
+            "sanskrit": "क्लैब्यं मा स्म गमः पार्थ नैतत्त्वय्युपपद्यते |\nक्षुद्रं हृदयदौर्बल्यं त्यक्त्वोत्तिष्ठ परन्तप ||",
+            "translation": "O Parth, it does not befit you to yield to this unmanliness. Give up such petty weakness of heart and arise, O vanquisher of enemies.",
+            "transliteration": "klaibyaṃ mā sma gamaḥ pārtha naitat tvayy upapadyate\nkṣudraṃ hṛdaya-daurbalyaṃ tyaktvottṣṭha parantapa",
+            "meaning": "klaibyam - unmanliness; mā sma - do not; gamaḥ - yield; pārtha - O Arjuna; na - not; etat - this; tvayi - for you; upapadyate - befitting; kṣudram - petty; hṛdaya-daurbalyam - weakness of heart; tyaktvā - having abandoned; uttiṣṭha - arise; parantapa - O conqueror of enemies"
+        },
+        {
+            "id": "bg_2_4",
+            "number": 4,
+            "sanskrit": "अर्जुन उवाच |\nकथं भीष्ममहं सङ्ख्ये द्रोणं च मधुसूदन |\nइषुभिः प्रतियोत्स्यामि पूजार्हावरिसूदन ||",
+            "translation": "Arjun said: O Madhusudan, how can I shoot arrows in battle on men like Bhishma and Dronacharya, who are worthy of my worship, O destroyer of enemies?",
+            "transliteration": "arjuna uvāca\nkathaṃ bhīṣmam ahaṃ saṅkhye droṇaṃ ca madhusūdana\niṣubhiḥ pratiyotsyāmi pūjārḥāv ari-sūdana",
+            "meaning": "arjunaḥ uvāca - Arjuna said; katham - how; bhīṣmam - Bhishma; ahaṃ - I; saṅkhye - in battle; droṇam - Drona; ca - and; madhusūdana - O Krishna; iṣubhiḥ - with arrows; pratiyotsyāmi - shall fight; pūjārḥau - worthy of worship; ari-sūdana - O destroyer of enemies"
+        },
+        {
+            "id": "bg_2_5",
+            "number": 5,
+            "sanskrit": "गुरूनहत्वा हि महानुभावान्श्रेयो भोक्तुं भैक्ष्यमपीह लोके |\nहत्वार्थकामांस्तु गुरूनिहैव भुञ्जीय भोगान् रुधिरप्रदिग्धान् ||",
+            "translation": "It would be better to live in this world by begging, than to enjoy life by killing these noble elders, who are my teachers. If we kill them, the wealth and pleasures we enjoy will be tainted with blood.",
+            "transliteration": "gurūn ahatvā hi mahānubhāvān śreyo bhoktuṃ bhaikṣyam apīha loke\nhatvārtha-kāmāṃs tu gurūn ihaiva bhuñjīya bhogān rudhira-pradigdhān",
+            "meaning": "gurūn - teachers; ahatvā - not killing; hi - certainly; mahā-anubhāvān - noble elders; śreyaḥ - better; bhoktum - to enjoy; bhaikṣyam - by begging; api - even; iha - in this; loke - world; hatvā - killing; artha-kāmān - desiring gain; tu - but; gurūn - teachers; iha - here; eva - certainly; bhuñjīya - would enjoy; bhogān - pleasures; rudhira-pradigdhān - tainted with blood"
+        },
+        {
+            "id": "bg_2_6",
+            "number": 6,
+            "sanskrit": "न चैतद्विद्मः कतरन्नो गरीयो यद्वा जयेम यदि वा नो जयेयुः |\nयानेव हत्वा न जिजीविषामस्तेऽवस्थिताः प्रमुखे धार्तराष्ट्राः ||",
+            "translation": "We do not even know which result of this war is preferable for us—conquering them or being conquered by them. Even after killing them we will not desire to live. Yet they have taken the side of the sons of Dhritarashtra, and now stand before us on the battlefield.",
+            "transliteration": "na caitad vidmaḥ katarann o garīyo yad vā jayema yadi vā no jayeyuḥ\nyān eva hatvā na jijīviṣāmas te 'vasthitāḥ pramukhe dhārtarāṣṭrāḥ",
+            "meaning": "na - not; ca - and; etat - this; vidmaḥ - we know; katarat - which; naḥ - for us; garīyaḥ - better; yat vā - whether; jayema - we conquer; yadi - if; vā - or; naḥ - us; jayeyuḥ - they conquer; yān - whom; eva - certainly; hatvā - killing; na - not; jijīviṣāmaḥ - we desire to live; te - they; avasthitāḥ - standing; pramukhe - before; dhārtarāṣṭrāḥ - sons of Dhritarashtra"
         },
         {
             "id": "bg_2_7",
             "number": 7,
-            "sanskrit": "कार्पण्यदोषोपहतस्वभावः\nपृच्छामि त्वां धर्मसम्मूढचेताः |\nयच्छ्रेयः स्यान्निश्चितं ब्रूहि तन्मे\nशिष्यस्तेऽहं शाधि मां त्वां प्रपन्नम् ||",
-            "translation": "Now I am confused about my duty and have lost all composure because of miserly weakness. In this condition I am asking You to tell me for certain what is best for me. Now I am Your disciple, and a soul surrendered unto You. Please instruct me.",
-            "transliteration": "kārpaṇya-doṣopahata-svabhāvaḥ\npṛcchāmi tvāṃ dharma-sammūḍha-cetāḥ\nyac chreyaḥ syān niścitaṃ brūhi tan me\nśiṣyas te 'haṃ śādhi māṃ tvāṃ prapannam",
-            "meaning": "kārpaṇya—of miserliness; doṣa—by the flaw; upahata—being afflicted; sva-bhāvaḥ—characteristics..."
+            "sanskrit": "कार्पण्यदोषोपहतस्वभावः पृच्छामि त्वां धर्मसम्मूढचेताः |\nयच्छ्रेयः स्यान्निश्चितं ब्रूहि तन्मे शिष्यस्तेऽहं शाधि मां त्वां प्रपन्नम् ||",
+            "translation": "I am confused about my duty, and am besieged with anxiety and faintheartedness. I am Your disciple, and am surrendered to You. Please instruct me for certain what is best for me.",
+            "transliteration": "kārpaṇya-doṣopahata-svabhāvaḥ pṛcchāmi tvāṃ dharma-sammūḍha-cetāḥ\nyac chreyaḥ syān niścitaṃ brūhi tan me śiṣyas te 'haṃ śādhi māṃ tvāṃ prapannam",
+            "meaning": "kārpaṇya-doṣa - flaw of miserliness; upahata - afflicted; sva-bhāvaḥ - nature; pṛcchāmi - I ask; tvām - you; dharma-sammūḍha - confused about duty; cetāḥ - mind; yat - what; śreyaḥ - best; syāt - may be; niścitam - for certain; brūhi - tell; tat - that; me - to me; śiṣyaḥ - disciple; te - your; ahaṃ - I; śādhi - instruct; mām - me; tvām - unto you; prapannam - surrendered"
+        },
+        {
+            "id": "bg_2_8",
+            "number": 8,
+            "sanskrit": "न हि प्रपश्यामि ममापनुद्याद्यच्छोकमुच्छोषणमिन्द्रियाणाम् |\nअवाप्य भूमावसपत्नमृद्धं राज्यं सुराणामपि चाधिपत्यम् ||",
+            "translation": "I can find no means of driving away this anguish that is drying up my senses. Even if I win a prosperous and unrivalled kingdom on the earth, or gain sovereignty like the celestial gods, I will be unable to dispel this grief.",
+            "transliteration": "na hi prapaśyāmi mamāpanudyād yac chokam ucchoṣaṇam indriyāṇām\navāpya bhūmāv asapatnam ṛddhaṃ rājyaṃ surāṇām api cādhipatyam",
+            "meaning": "na - not; hi - certainly; prapaśyāmi - I see; mama - my; apanudyāt - that which dispels; yat - which; śokam - grief; ucchoṣaṇam - drying up; indriyāṇām - of the senses; avāpya - having attained; bhūmau - on earth; asapatnam - unrivalled; ṛddham - prosperous; rājyam - kingdom; surāṇām - of the gods; api - even; ca - and;ādhipatyam - sovereignty"
+        },
+        {
+            "id": "bg_2_9",
+            "number": 9,
+            "sanskrit": "सञ्जय उवाच |\nएवमुक्त्वा हृषीकेशं गुडाकेशः परन्तप |\nन योत्स्य इती गोविन्दमुक्त्वा तूष्णीं बभूव ह ||",
+            "translation": "Sanjaya said: Having thus spoken, Gudakesh, that chastiser of enemies, addressed Hrishikesh: \"Govind, I shall not fight,\" and became silent.",
+            "transliteration": "sañjaya uvāca\nevam uktvā hṛṣīkeśaṃ guḍākeśaḥ parantapa\nna yotsye iti govindam uktvā tūṣṇīṃ babhūva ha",
+            "meaning": "sañjayaḥ uvāca - Sanjaya said; evam - thus; uktvā - having spoken; hṛṣīkeśam - to Krishna; guḍākeśaḥ - Arjuna; parantapa - O chastiser of enemies; na - not; yotsye - I will fight; iti - thus; govindam - to Krishna; uktvā - having said; tūṣṇīm - silent; babhūva - became; ha - certainly"
+        },
+        {
+            "id": "bg_2_10",
+            "number": 10,
+            "sanskrit": "तमुवाच हृषीकेशः प्रहसन्निव भारत |\nसेनयोरुभयोर्मध्ये विषीदन्तमिदं वचः ||",
+            "translation": "O Dhritarashtra, thereafter, in the midst of both the armies, Shree Krishna smilingly spoke the following words to the grief-stricken Arjun.",
+            "transliteration": "tam uvāca hṛṣīkeśaḥ prahasann iva bhārata\nsenayor ubhayor madhye viṣīdantam idaṃ vacaḥ",
+            "meaning": "tam - to him; uvāca - said; hṛṣīkeśaḥ - Krishna; prahasan - smiling; iva - as if; bhārata - O descendant of Bharata; senayoḥ - of the armies; ubhayoḥ - both; madhye - in the midst; viṣīdantam - to the grief-stricken; idam - these; vacaḥ - words"
+        },
+        {
+            "id": "bg_2_11",
+            "number": 11,
+            "sanskrit": "श्री भगवानुवाच |\nअशोच्यानन्वशोचस्त्वं प्रज्ञावादांश्च भाषसे |\nगतासूनगतासूंश्च नानुशोचन्ति पण्डिताः ||",
+            "translation": "The Supreme Lord said: While you speak words of wisdom, you are mourning for that which is not worthy of grief. The wise lament neither for the living nor for the dead.",
+            "transliteration": "śrī bhagavān uvāca\naśocyo 'nvaśocas tvaṃ prajñā-vādāṃś ca bhāṣase\ngatāsūn agatāsūṃś ca nānuśocanti paṇḍitāḥ",
+            "meaning": "Word-by-word meaning for verse 11 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_12",
+            "number": 12,
+            "sanskrit": "न त्वेवाहं जातु नासं न त्वं नेमे जनाधिपाः |\nन चैव न भविष्यामः सर्वे वयमतः परम् ||",
+            "translation": "Never was there a time when I did not exist, nor you, nor all these kings; nor in the future shall any of us cease to be.",
+            "transliteration": "na tvevāhaṃ jātu nāsaṃ na tvaṃ neme janādhipāḥ\nna caiva na bhaviṣyāmaḥ sarve vayam ataḥ param",
+            "meaning": "Word-by-word meaning for verse 12 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_13",
+            "number": 13,
+            "sanskrit": "देहिनोऽस्मिन्यथा देहे कौमारं यौवनं जरा |\nतथा देहान्तरप्राप्तिर्धीरस्तत्र न मुह्यति ||",
+            "translation": "Just as the embodied soul continuously passes from childhood to youth to old age, similarly, at the time of death, the soul passes into another body. The wise are not deluded by this.",
+            "transliteration": "dehino 'smin yathā dehe kaumāraṃ yauvanaṃ jarā\ntathā dehāntara-prāptir dhīras tatra na muhyati",
+            "meaning": "Word-by-word meaning for verse 13 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_14",
+            "number": 14,
+            "sanskrit": "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः |\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत ||",
+            "translation": "O son of Kunti, the contact between the senses and the sense objects gives rise to fleeting perceptions of happiness and distress. These are non-permanent, and come and go like the winter and summer seasons. O descendant of Bharat, one must learn to tolerate them without being disturbed.",
+            "transliteration": "mātrā-sparśās tu kaunteya śītoṣṇa-sukha-duḥkha-dāḥ\nāgamāpāyino 'nityās tāṃs titikṣasva bhārata",
+            "meaning": "Word-by-word meaning for verse 14 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_15",
+            "number": 15,
+            "sanskrit": "यं हि न व्यथयन्त्येते पुरुषं पुरुषर्षभ |\nसमदुःखसुखं धीरं सोऽमृतत्वाय कल्पते ||",
+            "translation": "O Arjun, noblest amongst men, that person who is not affected by happiness and distress, and remains steady in both, becomes eligible for liberation.",
+            "transliteration": "yaṃ hi na vyathayanty ete puruṣaṃ puruṣarṣabha\nsama-duḥkha-sukhaṃ dhīraṃ so 'mṛtatvāya kalpate",
+            "meaning": "Word-by-word meaning for verse 15 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_16",
+            "number": 16,
+            "sanskrit": "नासतो विद्यते भावो नाभावो विद्यते सतः |\nउभयोरपि दृष्टोऽन्तस्त्वनयोस्तत्त्वदर्शिभिः ||",
+            "translation": "Of the transient there is no endurance, and of the eternal there is no cessation. This has verily been observed and concluded by the seers of the Truth, after studying the nature of both.",
+            "transliteration": "nāsato vidyate bhāvo nābhāvo vidyate sataḥ\nubhayor api dṛṣṭo 'ntas tv anayos tattva-darśibhiḥ",
+            "meaning": "Word-by-word meaning for verse 16 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_17",
+            "number": 17,
+            "sanskrit": "अविनाशि तु तद्विद्धि येन सर्वमिदं ततम् |\nविनाशमव्ययस्यास्य न कश्चित्कर्तुमर्हति ||",
+            "translation": "That which pervades the entire body, know it to be indestructible. No one can cause the destruction of the imperishable soul.",
+            "transliteration": "avināśi tu tad viddhi yena sarvam idaṃ tatam\nvināśam avyayasyāsya na kaścit kartum arhati",
+            "meaning": "Word-by-word meaning for verse 17 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_18",
+            "number": 18,
+            "sanskrit": "अन्तवन्त इमे देहा नित्यस्योक्ताः शरीरिणः |\nअनाशिनोऽप्रमेयस्य तस्माद्युध्यस्व भारत ||",
+            "translation": "Only the material body is perishable; the embodied soul within is indestructible, immeasurable, and eternal. Therefore, fight, O descendant of Bharat.",
+            "transliteration": "antavanta ime dehā nityasyoktāḥ śarīriṇaḥ\nanāśino 'prameyasya tasmād yudhyasva bhārata",
+            "meaning": "Word-by-word meaning for verse 18 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_19",
+            "number": 19,
+            "sanskrit": "य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम् |\nउभौ तौ न विजानीतो नायं हन्ति न हन्यते ||",
+            "translation": "Neither of them is in knowledge—the one who thinks the soul can slay and the one who thinks the soul can be slain. For truly, the soul neither kills nor can it be killed.",
+            "transliteration": "ya enaṃ vetti hantāraṃ yaś cainaṃ manyate hatam\nubhau tau na vijānīto nāyaṃ hanti na hanyate",
+            "meaning": "Word-by-word meaning for verse 19 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_20",
+            "number": 20,
+            "sanskrit": "न जायते म्रियते वा कदाचिन्नायं भूत्वा भविता वा न भूयः |\nअजो नित्यः शाश्वतोऽयं पुराणो न हन्यते हन्यमाने शरीरे ||",
+            "translation": "The soul is neither born, nor does it ever die; nor having once existed, does it ever cease to be. The soul is without birth, eternal, immortal, and ageless. It is not destroyed when the body is destroyed.",
+            "transliteration": "na jāyate mriyate vā kadācin nāyaṃ bhūtvā bhavitā vā na bhūyaḥ\najo nityaḥ śāśvato 'yaṃ purāṇo na hanyate hanyamāne śarīre",
+            "meaning": "Word-by-word meaning for verse 20 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_21",
+            "number": 21,
+            "sanskrit": "वेदाविनाशिनं नित्यं य एनमजमव्ययम् |\nकथं स पुरुषः पार्थ कं घातयति हन्ति कम् ||",
+            "translation": "O Parth, how can one who knows the soul to be imperishable, eternal, unborn, and immutable kill anyone or cause anyone to kill?",
+            "transliteration": "vedāvināśinaṃ nityaṃ ya enam ajam avyayam\nkathaṃ sa puruṣaḥ pārtha kaṃ ghātayati hanti kam",
+            "meaning": "Word-by-word meaning for verse 21 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_22",
+            "number": 22,
+            "sanskrit": "वासांसि जीर्णानि यथा विहाय नवानि गृह्णाति नरोऽपराणि |\nतथा शरीराणि विहाय जीर्णान्यन्यानि संयाति नवानि देही ||",
+            "translation": "As a person sheds worn-out garments and wears new ones, likewise, at the time of death, the soul casts off its worn-out body and enters a new one.",
+            "transliteration": "vāsāṃsi jīrṇāni yathā vihāya navāni gṛhṇāti naro 'parāṇi\ntathā śarīrāṇi vihāya jīrṇāny anyāni saṃyāti navāni dehī",
+            "meaning": "Word-by-word meaning for verse 22 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_23",
+            "number": 23,
+            "sanskrit": "नैनं छिन्दन्ति शस्त्राणि नैनं दहति पावकः |\nन चैनं क्लेदयन्त्यापो न शोषयति मारुतः ||",
+            "translation": "Weapons cannot shred the soul, nor can fire burn it. Water cannot wet it, nor can the wind dry it.",
+            "transliteration": "nainaṃ chindanti śastrāṇi nainaṃ dahati pāvakaḥ\nna cainaṃ kledayanty āpo na śoṣayati mārutaḥ",
+            "meaning": "Word-by-word meaning for verse 23 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_24",
+            "number": 24,
+            "sanskrit": "अच्छेद्योऽयमदाह्योऽयमक्लेद्योऽशोष्य एव च |\nनित्यः सर्वगतः स्थाणुरचलोऽयं सनातनः ||",
+            "translation": "The soul is unbreakable and incombustible; it can neither be dampened nor dried. It is everlasting, in all places, unalterable, immutable, and primordial.",
+            "transliteration": "acchedyo 'yam adāhyo 'yam akledyo 'śoṣya eva ca\nnityaḥ sarva-gataḥ sthāṇur acalo 'yaṃ sanātanaḥ",
+            "meaning": "Word-by-word meaning for verse 24 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_25",
+            "number": 25,
+            "sanskrit": "अव्यक्तोऽयमचिन्त्योऽयमविकार्योऽयमुच्यते |\nतस्मादेवं विदित्वैनं नानुशोचितुमर्हसि ||",
+            "translation": "The soul is spoken of as invisible, inconceivable, and unchangeable. Knowing this, you should not grieve for the body.",
+            "transliteration": "avyakto 'yam acintyo 'yam avikāryo 'yam ucyate\ntasmād evaṃ viditvainaṃ nānuśocitum arhasi",
+            "meaning": "Word-by-word meaning for verse 25 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_26",
+            "number": 26,
+            "sanskrit": "अथ चैनं नित्यजातं नित्यं वा मन्यसे मृतम् |\nतथापि त्वं महाबाहो नैवं शोचितुमर्हसि ||",
+            "translation": "If, however, you think that the self is subject to constant birth and death, O mighty-armed Arjun, even then you should not grieve like this.",
+            "transliteration": "atha cainaṃ nitya-jātaṃ nityaṃ vā manyase mṛtam\ntathāpi tvaṃ mahā-bāho naivaṃ śocitum arhasi",
+            "meaning": "Word-by-word meaning for verse 26 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_27",
+            "number": 27,
+            "sanskrit": "जातस्य हि ध्रुवो मृत्युर्ध्रुवं जन्म मृतस्य च |\nतस्मादपरिहार्येऽर्थे न त्वं शोचितुमर्हसि ||",
+            "translation": "Death is certain for one who has been born, and rebirth is inevitable for one who has died. Therefore, you should not lament over the inevitable.",
+            "transliteration": "jātasya hi dhruvo mṛtyur dhruvaṃ janma mṛtasya ca\ntasmād aparihārye 'rthe na tvaṃ śocitum arhasi",
+            "meaning": "Word-by-word meaning for verse 27 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_28",
+            "number": 28,
+            "sanskrit": "अव्यक्तादीनि भूतानि व्यक्तमध्यानि भारत |\nअव्यक्तनिधनान्येव तत्र का परिदेवना ||",
+            "translation": "O scion of Bharat, all created beings are unmanifest before birth, manifest in life, and again unmanifest on death. So why grieve?",
+            "transliteration": "avyaktādīni bhūtāni vyakta-madhyāni bhārata\navyakta-nidhanāny eva tatra kā paridevanā",
+            "meaning": "Word-by-word meaning for verse 28 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_29",
+            "number": 29,
+            "sanskrit": "आश्चर्यवत्पश्यति कश्चिदेनमाश्चर्यवद्वदति तथैव चान्यः |\nआश्चर्यवच्चैनमन्यः शृणोती श्रुत्वाप्येनं वेद न चैव कश्चित् ||",
+            "translation": "Some see the soul as amazing, some describe it as amazing, and some hear of the soul as amazing, while others, even on hearing, cannot understand it at all.",
+            "transliteration": "āścaryavat paśyati kaścid enam āścaryavad vadati tathaiva cānyaḥ\nāścaryavac cainam anyaḥ śṛṇotī śrutvāpy enaṃ veda na caiva kaścit",
+            "meaning": "Word-by-word meaning for verse 29 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_30",
+            "number": 30,
+            "sanskrit": "देही नित्यमवध्योऽयं देहे सर्वस्य भारत |\nतस्मात्सर्वाणि भूतानि न त्वं शोचितुमर्हसि ||",
+            "translation": "O Arjun, the soul that dwells within the body is immortal; therefore, you should not mourn for anyone.",
+            "transliteration": "dehī nityam avadhyo 'yaṃ dehe sarvasya bhārata\ntasmāt sarvāṇi bhūtāni na tvaṃ śocitum arhasi",
+            "meaning": "Word-by-word meaning for verse 30 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_31",
+            "number": 31,
+            "sanskrit": "स्वधर्ममपि चावेक्ष्य न विकम्पितुमर्हसि |\nधर्म्याद्धि युद्धाछ्रेयोऽन्यत्क्षत्रियस्य न विद्यते ||",
+            "translation": "Besides, considering your duty as a warrior, you should not waver. Indeed, for a warrior, there is no better engagement than fighting for upholding of righteousness.",
+            "transliteration": "svadharmam api cāvekṣya na vikampitum arhasi\ndharmyād dhi yuddhāc chreyo 'nyat kṣatriyasya na vidyate",
+            "meaning": "Word-by-word meaning for verse 31 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_32",
+            "number": 32,
+            "sanskrit": "यदृच्छया चोपपन्नं स्वर्गद्वारमपावृतम् |\nसुखिनः क्षत्रियाः पार्थ लभन्ते युद्धमीदृशम् ||",
+            "translation": "O Parth, happy are the warriors to whom such opportunities to defend righteousness come unsought, opening for them the stairway to the celestial abodes.",
+            "transliteration": "yadṛcchayā copapannaṃ svarga-dvāram apāvṛtam\nsukhinaḥ kṣatriyāḥ pārtha labhante yuddham īdṛśam",
+            "meaning": "Word-by-word meaning for verse 32 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_33",
+            "number": 33,
+            "sanskrit": "अथ चेत्त्वमिमं धर्म्यं सङ्ग्रामं न करिष्यसि |\nततः स्वधर्मं कीर्तिं च हित्वा पापमवाप्स्यसि ||",
+            "translation": "If, however, you refuse to fight this righteous war, abandoning your social duty and reputation, you will certainly incur sin.",
+            "transliteration": "atha cet tvam imaṃ dharmyaṃ saṅgrāmaṃ na kariṣyasi\ntataḥ svadharmaṃ kīrtiṃ ca hitvā pāpam avāpsyasi",
+            "meaning": "Word-by-word meaning for verse 33 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_34",
+            "number": 34,
+            "sanskrit": "अकीर्तिं चापि भूतानि कथयिष्यन्ति तेऽव्ययाम् |\nसम्भावितस्य चाकीर्तिर्मरणादतिरिच्यते ||",
+            "translation": "People will speak of you as a coward and a deserter. For a respectable person, infamy is worse than death.",
+            "transliteration": "akīrtiṃ cāpi bhūtāni kathayiṣyanti te 'vyayām\nsambhāvitasya cākīrtir maraṇād atiricyate",
+            "meaning": "Word-by-word meaning for verse 34 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_35",
+            "number": 35,
+            "sanskrit": "भयाद्रणादुपरतं मंस्यन्ते त्वां महारथाः |\nयेषां च त्वं बहुमतो भूत्वा यास्यसि लाघवम् ||",
+            "translation": "The great generals who hold you in high esteem will think that you fled from the battlefield out of fear, and thus will lose their respect for you.",
+            "transliteration": "bhayād raṇād uparataṃ maṃsyante tvāṃ mahā-rathāḥ\nyeṣāṃ ca tvaṃ bahu-mato bhūtvā yāsyasi lāghavam",
+            "meaning": "Word-by-word meaning for verse 35 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_36",
+            "number": 36,
+            "sanskrit": "अवाच्यवादांश्च बहून् वदिष्यन्ति तवाहिताः |\nनिन्दन्तस्तव सामर्थ्यं ततो दुःखतरं नु किम् ||",
+            "translation": "Your enemies will defame and humiliate you with unkind words, disparaging your might. Alas, what could be more painful than that?",
+            "transliteration": "avācya-vādāṃś ca bahūn vadiṣyanti tavāhitāḥ\nnindantas tava sāmarthyaṃ tato duḥkhataraṃ nu kim",
+            "meaning": "Word-by-word meaning for verse 36 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_37",
+            "number": 37,
+            "sanskrit": "हतो वा प्राप्स्यसि स्वर्गं जित्वा वा भोक्ष्यसे महीम् |\nतस्मादुत्तिष्ठ कौन्तेय युद्धाय कृतनिश्चयः ||",
+            "translation": "If you fight, you will either be slain on the battlefield and go to the celestial abodes, or you will gain victory and enjoy the kingdom on earth. Therefore arise with determination, O son of Kunti, and be prepared to fight.",
+            "transliteration": "hato vā prāpsyasi svargaṃ jitvā vā bhokṣyase mahīm\ntasmād uttiṣṭha kaunteya yuddhāya kṛta-niścayaḥ",
+            "meaning": "Word-by-word meaning for verse 37 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_38",
+            "number": 38,
+            "sanskrit": "सुखदुःखे समे कृत्वा लाभालाभौ जयाजयौ |\nततो युद्धाय युज्यस्व नैवं पापमवाप्स्यसि ||",
+            "translation": "Fight for the sake of duty, treating alike happiness and distress, loss and gain, victory and defeat. Fulfilling your responsibility in this way, you will never incur sin.",
+            "transliteration": "sukha-duḥkhe same kṛtvā lābhālābhau jayājayau\ntato yuddhāya yujyasva naivaṃ pāpam avāpsyasi",
+            "meaning": "Word-by-word meaning for verse 38 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_39",
+            "number": 39,
+            "sanskrit": "एषा तेऽभिहिता साङ्ख्ये बुद्धिर्योगे त्विमां शृणु |\nबुद्ध्यायुक्तो यया पार्थ कर्मबन्धं प्रहास्यसि ||",
+            "translation": "Hitherto, I have explained to you Sankhya Yog, or analytic knowledge regarding the nature of the soul. Now listen, O Parth, as I reveal Buddhi Yog, or the Yog of Intellect. When you work with such understanding, you will be freed from the bondage of karma.",
+            "transliteration": "eṣā te 'bhihitā sāṅkhye buddhir yoge tv imāṃ śṛṇu\nbuddhyā yukto yayā pārtha karma-bandhaṃ prahāsyasi",
+            "meaning": "Word-by-word meaning for verse 39 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_40",
+            "number": 40,
+            "sanskrit": "नेहाभिक्रमनाशोऽस्ति प्रत्यवायो न विद्यते |\nस्वल्पमप्यस्य धर्मस्य त्रायते महतो भयात् ||",
+            "translation": "Working in this state of consciousness, there is no loss or adverse result, and even a little effort saves one from great danger.",
+            "transliteration": "nehābhikrama-nāśo 'sti pratyavāyo na vidyate\nsvalpam apy asya dharmasya trāyate mahato bhayāt",
+            "meaning": "Word-by-word meaning for verse 40 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_41",
+            "number": 41,
+            "sanskrit": "व्यवसायात्मिका बुद्धिरेकेह कुरुनन्दन |\nबहुशाखा ह्यनन्ताश्च बुद्धयोऽव्यवसायिनाम् ||",
+            "translation": "O descendant of the Kurus, the intellect of those who are on this path is resolute, and their aim is one-pointed. But the intellect of those who are irresolute is many-branched.",
+            "transliteration": "vyavasāyātmikā buddhir ekeha kuru-nandana\nbahu-śākhā hy anantāś ca buddhayo 'vyavasāyinām",
+            "meaning": "Word-by-word meaning for verse 41 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_42",
+            "number": 42,
+            "sanskrit": "यामिमां पुष्पितां वाचं प्रवदन्त्यविपश्चितः |\nवेदवादरताः पार्थ नान्यदस्तीति वादिनः ||",
+            "translation": "Those with limited understanding get attracted to the flowery words of the Vedas, which advocate ostentatious rituals for elevation to the celestial abodes, and presume no higher principle is described in them.",
+            "transliteration": "yām imāṃ puṣpitāṃ vācaṃ pravadanty avipaścitaḥ\nveda-vāda-ratāḥ pārtha nānyad astīti vādinaḥ",
+            "meaning": "Word-by-word meaning for verse 42 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_43",
+            "number": 43,
+            "sanskrit": "कामात्मानः स्वर्गपरा जन्मकर्मफलप्रदाम् |\nक्रियाविशेषबहुलां भोगैश्वर्यगतिं प्रति ||",
+            "translation": "They glorify only those portions of the Vedas that please their senses, and perform pompous ritualistic ceremonies for attaining high birth, opulence, sensual enjoyment, and elevation to the heavenly planets.",
+            "transliteration": "kāmātmānaḥ svarga-parā janma-karma-phala-pradām\nkriyā-viśeṣa-bahulāṃ bhogaīśvarya-gatiṃ prati",
+            "meaning": "Word-by-word meaning for verse 43 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_44",
+            "number": 44,
+            "sanskrit": "भोगैश्वर्यप्रसक्तानां तयापहृतचेतसाम् |\nव्यवसायात्मिका बुद्धिः समाधौ न विधीयते ||",
+            "translation": "With their minds deeply attached to worldly pleasures and their intellects bewildered by such things, they are unable to possess the resolute determination for success on the path to God.",
+            "transliteration": "bhogaiśvarya-prasaktānāṃ tayāpahṛta-cetasām\nvyavasāyātmikā buddhiḥ samādhau na vidhīyate",
+            "meaning": "Word-by-word meaning for verse 44 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_45",
+            "number": 45,
+            "sanskrit": "त्रैगुण्यविषया वेदा निस्त्रैगुण्यो भवार्जुन |\nनिर्द्वन्द्वो नित्यसत्त्वस्थो निर्योगक्षेम आत्मवान् ||",
+            "translation": "The Vedas deal with the three modes of material nature, O Arjun. Rise above the three modes to a state of pure spiritual consciousness. Freeing yourself from dualities, eternally fixed in Truth, and without concern for material gain and safety, be situated in the self.",
+            "transliteration": "trai-guṇya-viṣayā vedā nistrai-guṇyo bhavārjuna\nnirdvandvo nitya-sattva-stho niryoga-kṣema ātmavān",
+            "meaning": "Word-by-word meaning for verse 45 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_46",
+            "number": 46,
+            "sanskrit": "यावानर्थ उदपाने सर्वतः संप्लुतोदके |\nतावान्सर्वेषु वेदेषु ब्राह्मणस्य विजानतः ||",
+            "translation": "Whatever purpose is served by a small well of water is naturally served in all respects by a large lake. Similarly, one who realizes the Absolute Truth also fulfills the purpose of all the Vedas.",
+            "transliteration": "yāvān artha udapāne sarvataḥ samplutodake\ntāvān sarveṣu vedeṣu brāhmaṇasya vijānataḥ",
+            "meaning": "Word-by-word meaning for verse 46 - see holy-bhagavad-gita.org for full breakdown."
         },
         {
             "id": "bg_2_47",
             "number": 47,
             "sanskrit": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन |\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ||",
-            "translation": "You have a right to perform your prescribed duty, but you are not entitled to the fruits of action. Never consider yourself the cause of the results of your activities, and never be attached to not doing your duty.",
+            "translation": "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions. Never consider yourself to be the cause of the results of your activities, nor be attached to inaction.",
             "transliteration": "karmaṇy evādhikāras te mā phaleṣu kadācana\nmā karma-phala-hetur bhūr mā te saṅgo 'stv akarmaṇi",
-            "meaning": "karmaṇi—in prescribed duties; eva—certainly; adhikāraḥ—right; te—of you; mā—never..."
+            "meaning": "Word-by-word meaning for verse 47 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_48",
+            "number": 48,
+            "sanskrit": "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय |\nसिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते ||",
+            "translation": "Be steadfast in the performance of your duty, O Arjun, abandoning attachment to success and failure. Such equanimity is called Yog.",
+            "transliteration": "yoga-sthaḥ kuru karmāṇi saṅgaṃ tyaktvā dhanañjaya\nsiddhy-asiddhyoḥ samo bhūtvā samatvaṃ yoga ucyate",
+            "meaning": "Word-by-word meaning for verse 48 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_49",
+            "number": 49,
+            "sanskrit": "दूरेण ह्यवरं कर्म बुद्धियोगाद्धनञ्जय |\nबुद्धौ शरणमन्विच्छ कृपणाः फलहेतवः ||",
+            "translation": "Seek refuge in divine knowledge and insight, O Arjun, and discard reward-seeking actions that are certainly inferior to works performed with the intellect established in divine knowledge. Miserly are those who seek to enjoy the fruits of their works.",
+            "transliteration": "dūreṇa hy avaraṃ karma buddhi-yogād dhanañjaya\nbuddhau śaraṇam anviccha kṛpaṇāḥ phala-hetavaḥ",
+            "meaning": "Word-by-word meaning for verse 49 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_50",
+            "number": 50,
+            "sanskrit": "बुद्धियुक्तो जहातीह उभे सुकृतदुष्कृते |\nतस्माद्योगाय युज्यस्व योगः कर्मसु कौशलम् ||",
+            "translation": "One who prudently practices the science of work without attachment can get rid of both good and bad reactions in this life itself. Therefore, strive for Yog, which is the art of working skillfully (in proper consciousness).",
+            "transliteration": "buddhi-yukto jahātīha ubhe sukṛta-duṣkṛte\ntasmād yogāya yujyasva yogaḥ karmasu kauśalam",
+            "meaning": "Word-by-word meaning for verse 50 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_51",
+            "number": 51,
+            "sanskrit": "कर्मजं बुद्धियुक्ता हि फलं त्यक्त्वा मनीषिणः |\nजन्मबन्धविनिर्मुक्ताः पदं गच्छन्त्यनामयम् ||",
+            "translation": "The wise endowed with equanimity of intellect, abandon attachment to the fruits of actions, which bind one to the cycle of life and death. By working in such consciousness, they attain the state beyond all suffering.",
+            "transliteration": "karma-jaṃ buddhi-yuktā hi phalaṃ tyaktvā manīṣiṇaḥ\njanma-bandha-vinirmuktāḥ padaṃ gacchanty anāmayam",
+            "meaning": "Word-by-word meaning for verse 51 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_52",
+            "number": 52,
+            "sanskrit": "यदा ते मोहकलिलं बुद्धिर्व्यतितरिष्यति |\nतदा गन्तासि निर्वेदं श्रोतव्यस्य श्रुतस्य च ||",
+            "translation": "When your intellect crosses the quagmire of delusion, you will then acquire indifference to what has been heard and what is yet to be heard (about enjoyments in this world and the next).",
+            "transliteration": "yadā te moha-kalilaṃ buddhir vyatitariṣyati\ntadā gantāsi nirvedaṃ śrotavyasya śrutasya ca",
+            "meaning": "Word-by-word meaning for verse 52 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_53",
+            "number": 53,
+            "sanskrit": "श्रुतिविप्रतिपन्ना ते यदा स्थास्यति निश्चला |\nसमाधावचला बुद्धिस्तदा योगमवाप्स्यसि ||",
+            "translation": "When your intellect ceases to be allured by the fruitive sections of the Vedas and remains steadfast in divine consciousness, you will then attain the state of perfect Yog.",
+            "transliteration": "śruti-vipratipannā te yadā sthāsyati niścalā\nsamādhāv acalā buddhis tadā yogam avāpsyasi",
+            "meaning": "Word-by-word meaning for verse 53 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_54",
+            "number": 54,
+            "sanskrit": "अर्जुन उवाच |\nस्थितप्रज्ञस्य का भाषा समाधिस्थस्य केशव |\nस्थितधीः किं प्रभाषेत किमासीत व्रजेत किम् ||",
+            "translation": "Arjun said: O Keshav, what is the disposition of one who is situated in divine consciousness? How does an enlightened person talk? How does he sit? How does he walk?",
+            "transliteration": "arjuna uvāca\nsthita-prajñasya kā bhāṣā samādhi-sthasya keśava\nsthita-dhīḥ kiṃ prabhāṣeta kim āsīta vrajeta kim",
+            "meaning": "Word-by-word meaning for verse 54 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_55",
+            "number": 55,
+            "sanskrit": "श्री भगवानुवाच |\nप्रजहाति यदा कामान् सर्वान् पार्थ मनोगतान् |\nआत्मन्येवात्मना तुष्टः स्थितप्रज्ञस्तदोच्यते ||",
+            "translation": "The Supreme Lord said: O Parth, when one discards all selfish desires and cravings of the senses that torment the mind, and becomes satisfied in the realization of the self, such a person is said to be transcendentally situated.",
+            "transliteration": "śrī bhagavān uvāca\nprajahāti yadā kāmān sarvān pārtha mano-gatān\nātmany evātmanā tuṣṭaḥ sthita-prajñas tadocyate",
+            "meaning": "Word-by-word meaning for verse 55 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_56",
+            "number": 56,
+            "sanskrit": "दुःखेष्वनुद्विग्नमनाः सुखेषु विगतस्पृहः |\nवीतरागभयक्रोधः स्थितधीर्मुनिरुच्यते ||",
+            "translation": "One whose mind remains undisturbed amidst misery, who does not crave for pleasure, and who is free from attachment, fear, and anger, is called a sage of steady wisdom.",
+            "transliteration": "duḥkheṣv anudvigna-manāḥ sukheṣu vigata-spṛhaḥ\nvīta-rāga-bhaya-krodhaḥ sthita-dhīr munir ucyate",
+            "meaning": "Word-by-word meaning for verse 56 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_57",
+            "number": 57,
+            "sanskrit": "यः सर्वत्रानभिस्नेहस्तत्तत्प्राप्य शुभाशुभम् |\nनाभिनन्दति न द्वेष्टि तस्य प्रज्ञा प्रतिष्ठिता ||",
+            "translation": "One who remains unattached under all conditions, and is neither delighted by good fortune nor dejected by tribulation, he is a sage with perfect knowledge.",
+            "transliteration": "yaḥ sarvatrānabhisnehas tat tat prāpya śubhāśubham\nnābhinandati na dveṣṭi tasya prajñā pratiṣṭhitā",
+            "meaning": "Word-by-word meaning for verse 57 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_58",
+            "number": 58,
+            "sanskrit": "यदा संहरते चायं कूर्मोऽङ्गानीव सर्वशः |\nइन्द्रियाणीन्द्रियार्थेभ्यस्तस्य प्रज्ञा प्रतिष्ठिता ||",
+            "translation": "One who is able to withdraw the senses from their objects, just as a tortoise withdraws its limbs into its shell, is established in divine wisdom.",
+            "transliteration": "yadā saṃharate cāyaṃ kūrmo 'ṅgānīva sarvaśaḥ\nindriyāṇīndriyārthebhyas tasya prajñā pratiṣṭhitā",
+            "meaning": "Word-by-word meaning for verse 58 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_59",
+            "number": 59,
+            "sanskrit": "विषया विनिवर्तन्ते निराहारस्य देहिनः |\nरसवर्जं रसोऽप्यस्य परं दृष्ट्वा निवर्तते ||",
+            "translation": "Aspirants may restrain the senses from their objects of enjoyment, but the taste for the sense objects remains. However, even this taste ceases for those who realize the Supreme.",
+            "transliteration": "viṣayā vinivartante nirāhārasya dehinaḥ\nrasa-varjaṃ raso 'py asya paraṃ dṛṣṭvā nivartate",
+            "meaning": "Word-by-word meaning for verse 59 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_60",
+            "number": 60,
+            "sanskrit": "यततो ह्यपि कौन्तेय पुरुषस्य विपश्चितः |\nइन्द्रियाणि प्रमाथीनि हरन्ति प्रसभं मनः ||",
+            "translation": "The senses are so strong and turbulent, O son of Kunti, that they can forcibly carry away the mind even of a person endowed with discrimination who practices self-control.",
+            "transliteration": "yatato hy api kaunteya puruṣasya vipaścitaḥ\nindriyāṇi pramāthīni haranti prasabhaṃ manaḥ",
+            "meaning": "Word-by-word meaning for verse 60 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_61",
+            "number": 61,
+            "sanskrit": "तानि सर्वाणि संयम्य युक्त आसीत मत्परः |\nवशे हि यस्येन्द्रियाणि तस्य प्रज्ञा प्रतिष्ठिता ||",
+            "translation": "They are established in perfect knowledge, who subdue their senses and keep their minds ever absorbed in Me.",
+            "transliteration": "tāni sarvāṇi saṃyamya yukta āsīta mat-paraḥ\nvaśe hi yasyendriyāṇi tasya prajñā pratiṣṭhitā",
+            "meaning": "Word-by-word meaning for verse 61 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_62",
+            "number": 62,
+            "sanskrit": "ध्यायतो विषयान्पुंसः सङ्गस्तेषूपजायते |\nसङ्गात्संजायते कामः कामात्क्रोधोऽभिजायते ||",
+            "translation": "While contemplating on the objects of the senses, one develops attachment to them. Attachment leads to desire, and from desire arises anger.",
+            "transliteration": "dhyāyato viṣayān puṃsaḥ saṅgas teṣūpajāyate\nsaṅgāt saṃjāyate kāmaḥ kāmāt krodho 'bhijāyate",
+            "meaning": "Word-by-word meaning for verse 62 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_63",
+            "number": 63,
+            "sanskrit": "क्रोधाद्भवति संमोहः संमोहात्स्मृतिविभ्रमः |\nस्मृतिभ्रंशाद्बुद्धिनाशो बुद्धिनाशात्प्रणश्यति ||",
+            "translation": "Anger leads to clouding of judgment, which results in bewilderment of memory. When memory is bewildered, the intellect gets destroyed; and when the intellect is destroyed, one is ruined.",
+            "transliteration": "krodhād bhavati saṃmohaḥ saṃmohāt smṛti-vibhramaḥ\nsmṛti-bhraṃśād buddhi-nāśo buddhi-nāśāt praṇaśyati",
+            "meaning": "Word-by-word meaning for verse 63 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_64",
+            "number": 64,
+            "sanskrit": "रागद्वेषवियुक्तैस्तु विषयानिन्द्रियैश्चरन् |\nआत्मवश्यैर्विधेयात्मा प्रसादमधिगच्छति ||",
+            "translation": "But one who controls the mind, and is free from attachment and aversion, even while using the objects of the senses, attains the Grace of God.",
+            "transliteration": "rāga-dveṣa-viyuktais tu viṣayān indriyaiś caran\nātma-vaśyair vidheyātmā prasādam adhigacchati",
+            "meaning": "Word-by-word meaning for verse 64 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_65",
+            "number": 65,
+            "sanskrit": "प्रसादे सर्वदुःखानां हानिरस्योपजायते |\nप्रसन्नचेतसो ह्याशु बुद्धिः पर्यवतिष्ठते ||",
+            "translation": "By divine grace comes the peace in which all sorrows end, and the intellect of such a person of tranquil mind soon becomes firmly established in God.",
+            "transliteration": "prasāde sarva-duḥkhānāṃ hānir asyopajāyate\nprasanna-cetaso hy āśu buddhiḥ paryavatiṣṭhate",
+            "meaning": "Word-by-word meaning for verse 65 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_66",
+            "number": 66,
+            "sanskrit": "नास्ति बुद्धिरयुक्तस्य न चायुक्तस्य भावना |\nन चाभावयतः शान्तिरशान्तस्य कुतः सुखम् ||",
+            "translation": "But an undisciplined person, who has not controlled the mind and senses, can neither have a resolute intellect nor steady contemplation on God. For one who never unites the mind with God there is no peace; and how can one who lacks peace be happy?",
+            "transliteration": "nāsti buddhir ayuktasya na cāyuktasya bhāvanā\nna cābhāvayataḥ śāntir aśāntasya kutaḥ sukham",
+            "meaning": "Word-by-word meaning for verse 66 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_67",
+            "number": 67,
+            "sanskrit": "इन्द्रियाणां हि चरतां यन्मनोऽनुविधीयते |\nतदस्य हरति प्रज्ञां वायुर्नावमिवाम्भसि ||",
+            "translation": "Just as a strong wind sweeps a boat off its chartered course on the water, even one of the senses on which the mind focuses can lead the intellect astray.",
+            "transliteration": "indriyāṇāṃ hi caratāṃ yan mano 'nuvidhīyate\ntad asya harati prajñāṃ vāyur nāvam ivāmbhasi",
+            "meaning": "Word-by-word meaning for verse 67 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_68",
+            "number": 68,
+            "sanskrit": "तस्माद्यस्य महाबाहो निगृहीतानि सर्वशः |\nइन्द्रियाणीन्द्रियार्थेभ्यस्तस्य प्रज्ञा प्रतिष्ठिता ||",
+            "translation": "Therefore, one who has restrained the senses from their objects, O mighty armed Arjun, is firmly established in transcendental knowledge.",
+            "transliteration": "tasmād yasya mahā-bāho nigṛhītāni sarvaśaḥ\nindriyāṇīndriyārthebhyas tasya prajñā pratiṣṭhitā",
+            "meaning": "Word-by-word meaning for verse 68 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_69",
+            "number": 69,
+            "sanskrit": "या निशा सर्वभूतानां तस्यां जागर्ति संयमी |\nयस्यां जाग्रति भूतानि सा निशा पश्यतो मुनेः ||",
+            "translation": "What all beings consider as day is the night of ignorance for the wise, and what all creatures see as night is the day for the introspective sage.",
+            "transliteration": "yā niśā sarva-bhūtānāṃ tasyāṃ jāgarti saṃyamī\nyasyāṃ jāgrati bhūtāni sā niśā paśyato muneḥ",
+            "meaning": "Word-by-word meaning for verse 69 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_70",
+            "number": 70,
+            "sanskrit": "आपूर्यमाणमचलप्रतिष्ठं समुद्रमापः प्रविशन्ति यद्वत् |\nतद्वत्कामा यं प्रविशन्ति सर्वे स शान्तिमाप्नोति न कामकामी ||",
+            "translation": "Just as the ocean remains undisturbed by the incessant flow of waters from rivers merging into it, likewise the sage who is unmoved despite the flow of desirable objects all around him attains peace, and not the person who strives to satisfy desires.",
+            "transliteration": "āpūryamāṇam acala-pratiṣṭhaṃ samudram āpaḥ praviśanti yadvat\ntadvat kāmā yaṃ praviśanti sarve sa śāntim āpnoti na kāma-kāmī",
+            "meaning": "Word-by-word meaning for verse 70 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_71",
+            "number": 71,
+            "sanskrit": "विहाय कामान्यः सर्वान्पुमांश्चरति निःस्पृहः |\nनिर्ममो निरहंकारः स शान्तिमधिगच्छति ||",
+            "translation": "That person, who gives up all material desires and lives free from a sense of greed, proprietorship, and egoism, attains perfect peace.",
+            "transliteration": "vihāya kāmān yaḥ sarvān pumāṃś carati niḥspṛhaḥ\nnirmamo nirahaṃkāraḥ sa śāntim adhigacchati",
+            "meaning": "Word-by-word meaning for verse 71 - see holy-bhagavad-gita.org for full breakdown."
+        },
+        {
+            "id": "bg_2_72",
+            "number": 72,
+            "sanskrit": "एषा ब्राह्मी स्थितिः पार्थ नैनां प्राप्य विमुह्यति |\nस्थित्वाऽस्यामन्तकालेऽपि ब्रह्मनिर्वाणमृच्छति ||",
+            "translation": "O Parth, such is the state of an enlightened soul that having attained it, one is never again deluded. Being established in this consciousness even at the hour of death, one is liberated from the cycle of life and death and reaches the Supreme Abode of God.",
+            "transliteration": "eṣā brāhmī sthitiḥ pārtha naināṃ prāpya vimuhyati\nsthitvāsyām anta-kāle 'pi brahma-nirvāṇam ṛcchati",
+            "meaning": "Word-by-word meaning for verse 72 - see holy-bhagavad-gita.org for full breakdown."
         }
     ]
 }

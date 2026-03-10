@@ -1,16 +1,200 @@
 {
     "chapter_number": 16,
-    "title": "Daivasura Sampad Vibhaga Yoga",
-    "translation": "The Yoga of the Division between Divine and Demoniac Qualities",
-    "summary": "Krishna contrasts divine qualities that lead to liberation with demoniac qualities that lead to bondage, and urges Arjuna to follow the guidance of the scriptures.",
+    "title": "Daivāsura Sampad Vibhāg Yog",
+    "translation": "The Yog of Division between the Divine and Demoniac Natures",
+    "summary": "Krishna describes the divine qualities that lead to liberation and the demoniac qualities that lead to bondage. He advises to follow the divine path.",
     "verses": [
         {
-            "id": "gita_16_1",
+            "id": "bg_16_1",
             "number": 1,
-            "sanskrit": "श्रीभगवानुवाच |\nअभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः |\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम् || १ ||",
-            "translation": "The Supreme Personality of Godhead said: Fearlessness; purification of one's existence; cultivation of spiritual knowledge; charity; self-control; performance of sacrifice; study of the Vedas; austerity; simplicity...",
-            "transliteration": "śrī-bhagavān uvāca\nabhayaṁ sattva-saṁśuddhir jñāna-yoga-vyavasthitiḥ\ndānaṁ damaś ca yajñaś ca svādhyāyas tapa ārjavam",
-            "meaning": "Abhayam - fearlessness; Sattva-samshuddhih - purification of existence..."
+            "sanskrit": "श्रीभगवानुवाच |\nअभयं सत्त्वसंशुद्धिर्ज्ञानयोगव्यवस्थितिः |\nदानं दमश्च यज्ञश्च स्वाध्यायस्तप आर्जवम्",
+            "translation": "The Blessed Lord said  Fearlessness, purity of heart, steadfastness in knowledge and Yoga, almsgiving, control of the senses, sacrifice, study of scriptures, austerity and straightforwardness.",
+            "transliteration": "śrībhagavānuvāca \nabhayaṃ sattvasaṃśuddhirjñānayogavyavasthitiḥ \ndānaṃ damaśca yajñaśca svādhyāyastapa ārjavam",
+            "meaning": "अभयम् fearlessness - सत्त्वसंशुद्धिः purity of heart - ज्ञानयोगव्यवस्थितिः steadfastness in knowledge and Yoga - दानम् atmsgiving - दमः control of the senses - च and - यज्ञः sacrifice - च and - स्वाध्यायः study of Sastras - तपः austerity - आर्जवम् straightforwardness."
+        },
+        {
+            "id": "bg_16_2",
+            "number": 2,
+            "sanskrit": "अहिंसा सत्यमक्रोधस्त्यागः शान्तिरपैशुनम् |\nदया भूतेष्वलोलुप्त्वं मार्दवं ह्रीरचापलम्",
+            "translation": "Harmlessness, truth, absence of anger, renunciation, peacefulness, absence of crookedness, compassion towards beings, non-covetousness, gentleness, modesty, absence of fickleness.",
+            "transliteration": "ahiṃsā satyamakrodhastyāgaḥ śāntirapaiśunam \ndayā bhūteṣvaloluptvaṃ mārdavaṃ hrīracāpalam",
+            "meaning": "अहिंसा harmlessness - सत्यम् truth - अक्रोधः absence of anger - त्यागः renunciation - शान्तिः peacefulness - अपैशुनम् absence of crookedness - दया compassion - भूतेषु in beings - अलोलुप्त्वम् noncovetousness - मार्दवम् gentleness - ह्रीः modesty - अचापलम् absence of fickleness."
+        },
+        {
+            "id": "bg_16_3",
+            "number": 3,
+            "sanskrit": "तेजः क्षमा धृतिः शौचमद्रोहो नातिमानिता |\nभवन्ति सम्पदं दैवीमभिजातस्य भारत",
+            "translation": "Vigour, forgiveness, fortitude, purity, absence of hatred, absence of pride  these belong to the one born for a divine state, O Arjuna.",
+            "transliteration": "tejaḥ kṣamā dhṛtiḥ śaucamadroho nātimānitā \nbhavanti sampadaṃ daivīmabhijātasya bhārata",
+            "meaning": "तेजः vigour - क्षमा forgiveness - धृतिः fortitude - शौचम् purity - अद्रोहः absence of hatred - नातिमानिता absence of overpride - भवन्ति belong - सम्पदम् state - दैवीम् divine - अभिजातस्य to the one born for - भारत O descendant of Bharata (Arjuna)."
+        },
+        {
+            "id": "bg_16_4",
+            "number": 4,
+            "sanskrit": "दम्भो दर्पोऽभिमानश्च क्रोधः पारुष्यमेव च |\nअज्ञानं चाभिजातस्य पार्थ सम्पदमासुरीम्",
+            "translation": "Hypocrisy, arrogance and self-conceit, anger and also harshness and ignorance, belong to one who is born for a demoniacal state, O Partha (Arjuna).",
+            "transliteration": "dambho darpo.abhimānaśca krodhaḥ pāruṣyameva ca \najñānaṃ cābhijātasya pārtha sampadamāsurīm",
+            "meaning": "दम्भः hypocrisy - दर्पः arrogance - अभिमानः selfconceit - च and - क्रोधः wrath - पारुष्यम् harshness - एव even - च and - अज्ञानम् ignorance - च and - अभिजातस्य to the one born for - पार्थ O Partha - सम्पदम् state - ,आसुरीम् demoniacal."
+        },
+        {
+            "id": "bg_16_5",
+            "number": 5,
+            "sanskrit": "दैवी सम्पद्विमोक्षाय निबन्धायासुरी मता |\nमा शुचः सम्पदं दैवीमभिजातोऽसि पाण्डव",
+            "translation": "The divine nature is deemed conducive to liberation, and the demoniacal to bondage. Grieve not, O Arjuna, thou art born with divine endowments.",
+            "transliteration": "daivī sampadvimokṣāya nibandhāyāsurī matā \nmā śucaḥ sampadaṃ daivīmabhijāto.asi pāṇḍava",
+            "meaning": "दैवी divine - सम्पत् state - विमोक्षाय for liberation - निबन्धाय for bondage - आसुरी the demoniacal - मता is deemed - मा not - शुचः grieve - सम्पदम् state - दैवीम् the divine - अभिजातः one born for - असि (thou) art - पाण्डव O Pandava."
+        },
+        {
+            "id": "bg_16_6",
+            "number": 6,
+            "sanskrit": "द्वौ भूतसर्गौ लोकेऽस्मिन्दैव आसुर एव च |\nदैवो विस्तरशः प्रोक्त आसुरं पार्थ मे शृणु",
+            "translation": "There are two types of beings in this world, the divine and the demoniacal; the divine has been described at length; hear from Me, O Arjuna, of the demoniacal.",
+            "transliteration": "dvau bhūtasargau loke.asmindaiva āsura eva ca \ndaivo vistaraśaḥ prokta āsuraṃ pārtha me śṛṇu",
+            "meaning": "द्वौ two - भूतसर्गौ types of beings - लोके in world - अस्मिन् (in) this - दैवः the divine - आसुरः demonical - एव even - च and - दैवः the divine - विस्तरशः at length - प्रोक्तः has been described - आसुरम् demoniacal - पार्थ O Partha - मे from Me - श्रृणु hear."
+        },
+        {
+            "id": "bg_16_7",
+            "number": 7,
+            "sanskrit": "प्रवृत्तिं च निवृत्तिं च जना न विदुरासुराः |\nन शौचं नापि चाचारो न सत्यं तेषु विद्यते",
+            "translation": "The demoniacal know not what to do and what to refrain from; neither purity, nor right conduct nor truth is found in them.",
+            "transliteration": "pravṛttiṃ ca nivṛttiṃ ca janā na vidurāsurāḥ \nna śaucaṃ nāpi cācāro na satyaṃ teṣu vidyate",
+            "meaning": "प्रवृत्तिम् action - च and - निवृत्तिम् inaction - च and - जनाः men - न not - विदुः know - आसुराः the demoniac - न not - शौचम् purity - न not - अपि also - च and - आचारः (right) conduct - न not - सत्यम् truth - तेषु in them - विद्यते is."
+        },
+        {
+            "id": "bg_16_8",
+            "number": 8,
+            "sanskrit": "असत्यमप्रतिष्ठं ते जगदाहुरनीश्वरम् |\nअपरस्परसम्भूतं किमन्यत्कामहैतुकम्",
+            "translation": "They say, \"This universe is without truth, without (moral) basis, without a God, brought about by mutual union, with lust for its cause; what else?\"",
+            "transliteration": "asatyamapratiṣṭhaṃ te jagadāhuranīśvaram \naparasparasambhūtaṃ kimanyatkāmahaitukam",
+            "meaning": "असत्यम् without truth - अप्रतिष्ठम् without (moral) basis - ते they - जगत् the world - आहुः say - अनीश्वरम् without a God - अपरस्परसम्भूतम् brought about by mutual union - किम् what - अन्यत else - कामहैतुकम् with lust for its cause."
+        },
+        {
+            "id": "bg_16_9",
+            "number": 9,
+            "sanskrit": "एतां दृष्टिमवष्टभ्य नष्टात्मानोऽल्पबुद्धयः |\nप्रभवन्त्युग्रकर्माणः क्षयाय जगतोऽहिताः",
+            "translation": "Holding this view, these ruined souls of small intellect and fierce deeds, come forth as the enemies of the world for its destruction.",
+            "transliteration": "etāṃ dṛṣṭimavaṣṭabhya naṣṭātmāno.alpabuddhayaḥ \nprabhavantyugrakarmāṇaḥ kṣayāya jagato.ahitāḥ",
+            "meaning": "एताम् this - दृष्टिम् view - अवष्टभ्य holding - नष्टात्मानः ruined souls - अल्पबुद्धयः of small intellect - प्रभवन्ति come forth - उग्रकर्माणः of fierce deeds - क्षयाय for the destruction - जगतः of the world - अहिताः enemies."
+        },
+        {
+            "id": "bg_16_10",
+            "number": 10,
+            "sanskrit": "काममाश्रित्य दुष्पूरं दम्भमानमदान्विताः |\nमोहाद्गृहीत्वासद्ग्राहान्प्रवर्तन्तेऽशुचिव्रताः",
+            "translation": "Filled with insatiable desires, full of hypocrisy, pride and arrogance, holding evil ideas through delusion, they work with impure resolves.",
+            "transliteration": "kāmamāśritya duṣpūraṃ dambhamānamadānvitāḥ \nmohādgṛhītvāsadgrāhānpravartante.aśucivratāḥ",
+            "meaning": "कामम् desire - आश्रित्य abiding in - दुष्पूरम् insatiable - दम्भमानमदान्विताः full of hypocrisy - pride and,arrogance - मोहात् through delusion - गृहीत्वा having held - असद्ग्राहान् evil ideas - प्रवर्तन्ते they work - अशुचिव्रताः with impure resolves."
+        },
+        {
+            "id": "bg_16_11",
+            "number": 11,
+            "sanskrit": "चिन्तामपरिमेयां च प्रलयान्तामुपाश्रिताः |\nकामोपभोगपरमा एतावदिति निश्चिताः",
+            "translation": "Giving themselves over to immeasurable cares ending only with death, regarding gratification of lust as their highest aim, and feeling sure that that is all.",
+            "transliteration": "cintāmaparimeyāṃ ca pralayāntāmupāśritāḥ \nkāmopabhogaparamā etāvaditi niścitāḥ",
+            "meaning": "चिन्ताम् cares - अपरिमेयाम् immeasurable - च and - प्रलयान्तम् ending only with death - उपाश्रिताः refuged in - कामोपभोगपरमाः regarding gratification of lust as their highest aim - एतावत् that is all - इति thus - निश्चिताः feeling sure."
+        },
+        {
+            "id": "bg_16_12",
+            "number": 12,
+            "sanskrit": "आशापाशशतैर्बद्धाः कामक्रोधपरायणाः |\nईहन्ते कामभोगार्थमन्यायेनार्थसञ्चयान्",
+            "translation": "Bound by a hundred ties of hope, given over to lust and anger, they strive to obtain by unlawful means hoards to wealth for sensual enjoyments.",
+            "transliteration": "āśāpāśaśatairbaddhāḥ kāmakrodhaparāyaṇāḥ \nīhante kāmabhogārthamanyāyenārthasañcayān",
+            "meaning": "आशापाशशतैः by a hundred ties of hope - बद्धाः bound - कामक्रोधपरायणाः given over to lust and anger - ईहन्ते (they) strive (to attain) - कामभोगार्थम् for sensual enjoyment - अन्यायेन by unlawful means - अर्थसञ्चयान् hoards of wealth."
+        },
+        {
+            "id": "bg_16_13",
+            "number": 13,
+            "sanskrit": "इदमद्य मया लब्धमिमं प्राप्स्ये मनोरथम् |\nइदमस्तीदमपि मे भविष्यति पुनर्धनम्",
+            "translation": "\"This has been gained by me today; this desire of mine I shall fuffil; this is mine and this wealth also shall be mine in future.\"",
+            "transliteration": "idamadya mayā labdhamimaṃ prāpsye manoratham \nidamastīdamapi me bhaviṣyati punardhanam",
+            "meaning": "इदम् this - अद्य today - मया by me - लब्धम् has been gained - इमम् this - प्राप्स्ये (I) shall obtain - मनोरथम् desire - इदम् this - अस्ति is - इदम् this - अपि also - मे to me - भविष्यति shall be - पुनः again - धनम् wealth."
+        },
+        {
+            "id": "bg_16_14",
+            "number": 14,
+            "sanskrit": "असौ मया हतः शत्रुर्हनिष्ये चापरानपि |\nईश्वरोऽहमहं भोगी सिद्धोऽहं बलवान्सुखी",
+            "translation": "\"That enemy has been slain by me; and others also I shall slay. I am the lord. I enjoy. I am perfect, powerful and happy.\"",
+            "transliteration": "asau mayā hataḥ śatrurhaniṣye cāparānapi \nīśvaro.ahamahaṃ bhogī siddho.ahaṃ balavānsukhī",
+            "meaning": "असौ that - मया by me - हतः slain - शत्रुः enemy - हनिष्ये (I) shall slay - च and - अपरान् others - अपि also - ईश्वरः Lord - अहम् I - अहम् I - भोगी the enjoyer - सिद्धः perfect - अहम् I - भोगी the enjoyer - सिद्धः perfect - अहम् I - बलवान् powerful - सुखी happy."
+        },
+        {
+            "id": "bg_16_15",
+            "number": 15,
+            "sanskrit": "आढ्योऽभिजनवानस्मि कोऽन्योऽस्ति सदृशो मया |\nयक्ष्ये दास्यामि मोदिष्य इत्यज्ञानविमोहिताः",
+            "translation": "\"I am rich and born in a noble family. Who else is equal to me? I shall perform sacrifices. I shall give (charity). I shall rejoice,\" thus deluded by ignorance.",
+            "transliteration": "āḍhyo.abhijanavānasmi ko.anyo.asti sadṛśo mayā \nyakṣye dāsyāmi modiṣya ityajñānavimohitāḥ",
+            "meaning": "आढ्यः rich - अभिजनवान् wellborn - अस्मि (I) am - कः who - अन्यः else - अस्ति is - सदृशः eal - मया to me - यक्ष्ये (I) will sacrifice - दास्यामि (I) will give - मोदिष्ये (I) will rejoice - इति thus - अज्ञानविमोहिताः deluded by ignorance."
+        },
+        {
+            "id": "bg_16_16",
+            "number": 16,
+            "sanskrit": "अनेकचित्तविभ्रान्ता मोहजालसमावृताः |\nप्रसक्ताः कामभोगेषु पतन्ति नरकेऽशुचौ",
+            "translation": "Bewildered by many a fancy, entangled in the snare of delusion, addicted to the gratification of lust, they fall into a foul hell.",
+            "transliteration": "anekacittavibhrāntā mohajālasamāvṛtāḥ \nprasaktāḥ kāmabhogeṣu patanti narake.aśucau",
+            "meaning": "अनेकचित्तविभ्रान्ताः bewildred by many a fancy - मोहजालसमावृताः entangled in the snare of delusion - प्रसक्ताः addicted - कामभोगेषु to the gratification of lust - पतन्ति (they) fall - नरके into hell - अशुचौ foul."
+        },
+        {
+            "id": "bg_16_17",
+            "number": 17,
+            "sanskrit": "आत्मसम्भाविताः स्तब्धा धनमानमदान्विताः |\nयजन्ते नामयज्ञैस्ते दम्भेनाविधिपूर्वकम्",
+            "translation": "Self-conceited, stubborn, filled with the pride and intoxication of wealth, they perform sacrifices in name out of ostentation, contrary to scriptural ordinances.",
+            "transliteration": "ātmasambhāvitāḥ stabdhā dhanamānamadānvitāḥ \nyajante nāmayajñaiste dambhenāvidhipūrvakam",
+            "meaning": "आत्मसम्भाविताः selfconceited - स्तब्धाः stubborn - धनमानमदान्विताः filled with the pride and intoxication of wealth - यजन्ते (they) perform - नामयज्ञैः sacrifices in name - ते they - दम्भेन out of ostentation - अविधिपूर्वकम् contrary to scriptural ordinances."
+        },
+        {
+            "id": "bg_16_18",
+            "number": 18,
+            "sanskrit": "अहंकारं बलं दर्पं कामं क्रोधं च संश्रिताः |\nमामात्मपरदेहेषु प्रद्विषन्तोऽभ्यसूयकाः",
+            "translation": "Given over to egoism, power, haughtiness, lust and anger, these malicious people hate Me in their own bodies and in those of others.",
+            "transliteration": "ahaṃkāraṃ balaṃ darpaṃ kāmaṃ krodhaṃ ca saṃśritāḥ \nmāmātmaparadeheṣu pradviṣanto.abhyasūyakāḥ",
+            "meaning": "अहङ्कारम् egoism - बलम् power - दर्पम् haughtiness - कामम् lust - क्रोधम् anger - च and - संश्रिताः possessed of - माम् Me - आत्मपरदेहेषु in their own bodies and in those of others - प्रद्विषन्तः hating - अभ्यसूयकाः (these) malicious people."
+        },
+        {
+            "id": "bg_16_19",
+            "number": 19,
+            "sanskrit": "तानहं द्विषतः क्रुरान्संसारेषु नराधमान् |\nक्षिपाम्यजस्रमशुभानासुरीष्वेव योनिषु",
+            "translation": "Those cruel haters, worst among men in the world, I hurl those evil-doers into the wombs of demons only.",
+            "transliteration": "tānahaṃ dviṣataḥ krurānsaṃsāreṣu narādhamān \nkṣipāmyajasramaśubhānāsurīṣveva yoniṣu",
+            "meaning": "तान् those - अहम् I - द्विषतः (the) hating (ones) - क्रूरान् cruel - संसारेषु in the worlds - नराधमान् worst among men - क्षिपामि (I) hurl - अजस्रम् for ever - अशुभान् evildoers - आसुरीषु of demons - एव only - योनिषु in wombs."
+        },
+        {
+            "id": "bg_16_20",
+            "number": 20,
+            "sanskrit": "आसुरीं योनिमापन्ना मूढा जन्मनि जन्मनि |\nमामप्राप्यैव कौन्तेय ततो यान्त्यधमां गतिम्",
+            "translation": "Entering into demoniacal wombs and deluded, birth after birth, not attaining Me, they thus fall, O Arjuna, into a condition still lower than that.",
+            "transliteration": "āsurīṃ yonimāpannā mūḍhā janmani janmani \nmāmaprāpyaiva kaunteya tato yāntyadhamāṃ gatim",
+            "meaning": "असुरीम् demoniacal - योनिम् womb - आपन्नाः entering into - मूढाः deluded - जन्मनि जन्मनि in birth after birth - माम् Me - अप्राप्य not attaining - एव still - कौन्तेय O son of Kunti (Arjuna) - ततः than that - यान्ति (they) fall into - अधमाम् lower - गतिम् condition (path or goal)."
+        },
+        {
+            "id": "bg_16_21",
+            "number": 21,
+            "sanskrit": "त्रिविधं नरकस्येदं द्वारं नाशनमात्मनः |\nकामः क्रोधस्तथा लोभस्तस्मादेतत्त्रयं त्यजेत्",
+            "translation": "Triple is the gate of this hell, destructive of the self  lust, anger and greed; therefore one should abandon these three.",
+            "transliteration": "trividhaṃ narakasyedaṃ dvāraṃ nāśanamātmanaḥ \nkāmaḥ krodhastathā lobhastasmādetattrayaṃ tyajet",
+            "meaning": "त्रिविधम् triple - नरकस्य of hell - इदम् this - द्वारम् gate - नाशनम् destructive - आत्मनः of the self - कामः lust - क्रोधः anger - तथा also - लोभः greed - तस्मात् therefore - एतत् this - त्रयम् three - त्यजेत् (one) should abandon."
+        },
+        {
+            "id": "bg_16_22",
+            "number": 22,
+            "sanskrit": "एतैर्विमुक्तः कौन्तेय तमोद्वारैस्त्रिभिर्नरः |\nआचरत्यात्मनः श्रेयस्ततो याति परां गतिम्",
+            "translation": "A man who is liberated from these three gates to darkness, O Arjuna, practises what is good for him and thus goes to the Supreme Goal.",
+            "transliteration": "etairvimuktaḥ kaunteya tamodvāraistribhirnaraḥ \nācaratyātmanaḥ śreyastato yāti parāṃ gatim",
+            "meaning": "एतैः from these - विमुक्तः liberated - कौन्तेय O Kaunteya - तमोद्वारैः gates to darkness - त्रिभिः (by) three - नरः the man - आचरति practises - आत्मनः for him - श्रेयः what is good - ततः and then - याति goes to - पराम् the Supreme - गतिम् Goal."
+        },
+        {
+            "id": "bg_16_23",
+            "number": 23,
+            "sanskrit": "यः शास्त्रविधिमुत्सृज्य वर्तते कामकारतः |\nन स सिद्धिमवाप्नोति न सुखं न परां गतिम्",
+            "translation": "He who, having cast aside the ordinances of the scriptures, acts under the impulse of desire, attains not perfection, nor happiness nor the Supreme Goal.",
+            "transliteration": "yaḥ śāstravidhimutsṛjya vartate kāmakārataḥ \nna sa siddhimavāpnoti na sukhaṃ na parāṃ gatim",
+            "meaning": "यः who - शास्त्रविधिम् the ordinance of the scriptures - उत्सृज्य having cast aside - वर्तते acts - कामकारतः under the impulse of desire - न not - सः he - सिद्धिम् perfection - अवाप्नोति attains - न not - सुखम् happiness - न not - पराम् Supreme - गतिम् Goal."
+        },
+        {
+            "id": "bg_16_24",
+            "number": 24,
+            "sanskrit": "तस्माच्छास्त्रं प्रमाणं ते कार्याकार्यव्यवस्थितौ |\nज्ञात्वा शास्त्रविधानोक्तं कर्म कर्तुमिहार्हसि",
+            "translation": "Therefore, let the scripture be thy authority in determining what ought to be done and what ought not to be done. Having known what is said in the ordinance of the scriptures, thou shouldst act here in this world.",
+            "transliteration": "tasmācchāstraṃ pramāṇaṃ te kāryākāryavyavasthitau \njñātvā śāstravidhānoktaṃ karma kartumihārhasi",
+            "meaning": "तस्मात् therefore - शास्त्रम् scripture - प्रमाणम् (be) authority - ते they - कार्याकार्यव्यवस्थितौ in determining what ought to be done and what ought not to be done - ज्ञात्वा having known - शास्त्रविधानोक्तम् what is said in the ordinance of the scriptures - कर्म action - कर्तुम् to do - इह here (in this world) - अर्हसि shouldst."
         }
     ]
 }

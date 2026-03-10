@@ -1,16 +1,280 @@
 {
     "chapter_number": 9,
-    "title": "Raja Vidya Raja Guhya Yoga",
-    "translation": "The Yoga of the King of Knowledge and the King of Secrets",
-    "summary": "Krishna reveals the most confidential knowledge of His divine nature and the path of unalloyed devotion as the easiest means to attain Him.",
+    "title": "Rāja Vidyā Rāja Guhya Yog",
+    "translation": "The Yog of the Sovereign Science and Sovereign Secret",
+    "summary": "Krishna reveals the most confidential knowledge - that He is the source and dissolution of everything. He explains His relationship with creation and the glory of devotion to Him.",
     "verses": [
         {
-            "id": "gita_9_22",
+            "id": "bg_9_1",
+            "number": 1,
+            "sanskrit": "श्रीभगवानुवाच |\nइदं तु ते गुह्यतमं प्रवक्ष्याम्यनसूयवे |\nज्ञानं विज्ञानसहितं यज्ज्ञात्वा मोक्ष्यसेऽशुभात्",
+            "translation": "The Blessed Lord said  I shall now declare to thee who does not cavil, the greatest secret, the knowledge combined with experience (Self-realisation). Having known this thou shalt be free evil.",
+            "transliteration": "śrībhagavānuvāca \nidaṃ tu te guhyatamaṃ pravakṣyāmyanasūyave \njñānaṃ vijñānasahitaṃ yajjñātvā mokṣyase.aśubhāt",
+            "meaning": "इदम् this - तु indeed - ते to thee - गुह्यतमम् greatest secret - प्रवक्ष्यामि (I) shall declare - अनसूयवे to one who does not cavil - ज्ञानम् knowledge - विज्ञानसहितम् combined with experience - यत् which - ज्ञात्वा having known - मोक्ष्यसे thou shalt be free - अशुभात् from evil."
+        },
+        {
+            "id": "bg_9_2",
+            "number": 2,
+            "sanskrit": "राजविद्या राजगुह्यं पवित्रमिदमुत्तमम् |\nप्रत्यक्षावगमं धर्म्यं सुसुखं कर्तुमव्ययम्",
+            "translation": "This is the kingl science, the kingly secret, the supreme purifier, realisable by direct intuitional knowledge, according to righteousness, very easy to perform and imperishable.",
+            "transliteration": "rājavidyā rājaguhyaṃ pavitramidamuttamam \npratyakṣāvagamaṃ dharmyaṃ susukhaṃ kartumavyayam",
+            "meaning": "राजविद्या the king of sciences - राजगुह्यम् kingly secret - पवित्रम् purifier - इदम् this - उत्तमम् highest - प्रत्यक्षावगमम् realisable by direct - intuitional knowledge - धर्म्यम् according to righteousness - सुसुखम् very easy - कर्तुम् to perform - अव्ययम् imperishable."
+        },
+        {
+            "id": "bg_9_3",
+            "number": 3,
+            "sanskrit": "अश्रद्दधानाः पुरुषा धर्मस्यास्य परन्तप |\nअप्राप्य मां निवर्तन्ते मृत्युसंसारवर्त्मनि",
+            "translation": "Those who have no faith in this Dharma (knowledge of the Self), O Parantapa (Arjuna), return to the path of this world of death without attaining Me.",
+            "transliteration": "aśraddadhānāḥ puruṣā dharmasyāsya parantapa \naprāpya māṃ nivartante mṛtyusaṃsāravartmani",
+            "meaning": "अश्रद्दधानाः without faith - पुरुषाः men - धर्मस्य of duty - अस्य of this - परन्तप O scorcher of foes - अप्राप्य without attaining - माम् Me - निवर्तन्ते return - मृत्युसंसारवर्त्मनि in the path of this world of death."
+        },
+        {
+            "id": "bg_9_4",
+            "number": 4,
+            "sanskrit": "मया ततमिदं सर्वं जगदव्यक्तमूर्तिना |\nमत्स्थानि सर्वभूतानि न चाहं तेष्ववस्थितः",
+            "translation": "All this world is pervaded by Me in My unmanifest aspect; all beings exist in Me, but I do not dwell in them.",
+            "transliteration": "mayā tatamidaṃ sarvaṃ jagadavyaktamūrtinā \nmatsthāni sarvabhūtāni na cāhaṃ teṣvavasthitaḥ",
+            "meaning": "मया by Me - ततम् pervaded - इदम् this - सर्वम् all - जगत् world - अव्यक्तमूर्तिना by the unmanifested form - मत्स्थानि exist in Me - सर्वभूतानि all beings - न not - च and - अहम् I - तेषु in them - अवस्थितः placed."
+        },
+        {
+            "id": "bg_9_5",
+            "number": 5,
+            "sanskrit": "न च मत्स्थानि भूतानि पश्य मे योगमैश्वरम् |\nभूतभृन्न च भूतस्थो ममात्मा भूतभावनः",
+            "translation": "Nor do beings exist in Me (in reality); behold My divine Yoga, supporting all beings, but not dwelling in them, is My Self, the efficient cause of beings.",
+            "transliteration": "na ca matsthāni bhūtāni paśya me yogamaiśvaram \nbhūtabhṛnna ca bhūtastho mamātmā bhūtabhāvanaḥ",
+            "meaning": "न not - च and - मत्स्थानि dwelling in Me - भूतानि beings - पश्य behold - मे My - योगम् Yoga - ऐश्वरम् Divine - भूतभृत् supporting the beings - न not - च and - भूतस्थः dwelling in the beings - मम My - आत्मा Self - भूतभावनः bringing forth beings."
+        },
+        {
+            "id": "bg_9_6",
+            "number": 6,
+            "sanskrit": "यथाकाशस्थितो नित्यं वायुः सर्वत्रगो महान् |\nतथा सर्वाणि भूतानि मत्स्थानीत्युपधारय",
+            "translation": "As the mighty wind, moving everywhere, rests always in the ether, even so, know thou that all beings rest in Me.",
+            "transliteration": "yathākāśasthito nityaṃ vāyuḥ sarvatrago mahān \ntathā sarvāṇi bhūtāni matsthānītyupadhāraya",
+            "meaning": "यथा as - आकाशस्थितः rests in the Akasa - नित्यम् always - वायुः the air - सर्वत्रगः moving everywhere - महान् great - तथा so - सर्वाणि all - भूतानि beings - मत्स्थानि rest in Me - इति thus - उपधारय know."
+        },
+        {
+            "id": "bg_9_7",
+            "number": 7,
+            "sanskrit": "सर्वभूतानि कौन्तेय प्रकृतिं यान्ति मामिकाम् |\nकल्पक्षये पुनस्तानि कल्पादौ विसृजाम्यहम्",
+            "translation": "All beings, O Arjuna, go into My Nature at the end of a Kalpa; I send them forth again at the beginning of (the next) Kalpa.",
+            "transliteration": "sarvabhūtāni kaunteya prakṛtiṃ yānti māmikām \nkalpakṣaye punastāni kalpādau visṛjāmyaham",
+            "meaning": "सर्वभूतानि all beings - कौन्तेय O Kaunteya - प्रकृतिम् to Nature - यान्ति go - मामिकाम् My - कल्पक्षये at the end of the Kalpa - पुनः again - तानि them - कल्पादौ at the beginning of the Kalpa - विसृजामि send forth - अहम् I."
+        },
+        {
+            "id": "bg_9_8",
+            "number": 8,
+            "sanskrit": "प्रकृतिं स्वामवष्टभ्य विसृजामि पुनः पुनः |\nभूतग्राममिमं कृत्स्नमवशं प्रकृतेर्वशात्",
+            "translation": "Animating My Nature, I again and again send forth all this multitude of beings, helpless by the force of the Nature.",
+            "transliteration": "prakṛtiṃ svāmavaṣṭabhya visṛjāmi punaḥ punaḥ \nbhūtagrāmamimaṃ kṛtsnamavaśaṃ prakṛtervaśāt",
+            "meaning": "प्रकृतिम् Nature - स्वाम् My own - अवष्टभ्य having animated - विसृजामि (I) send forth - पुनः again - पुनः again - भूतग्रामम् multitude of beings - इमम् this - कृत्स्नम् all - अवशम् helpless - प्रकृतेः of Nature - वशात् by force."
+        },
+        {
+            "id": "bg_9_9",
+            "number": 9,
+            "sanskrit": "न च मां तानि कर्माणि निबध्नन्ति धनञ्जय |\nउदासीनवदासीनमसक्तं तेषु कर्मसु",
+            "translation": "These acts do not bind Me, O Arjuna, sitting like one indifferent, unattached to those acts.",
+            "transliteration": "na ca māṃ tāni karmāṇi nibadhnanti dhanañjaya \nudāsīnavadāsīnamasaktaṃ teṣu karmasu",
+            "meaning": "न not - च and - माम् Me - तानि these - कर्माणि acts - निबध्नन्ति bind - धनञ्जय O Dhananjaya - उदासीनवत् like one indifferent - आसीनम् sitting - असक्तम् unattached - तेषु in those - कर्मसु acts."
+        },
+        {
+            "id": "bg_9_10",
+            "number": 10,
+            "sanskrit": "मयाध्यक्षेण प्रकृतिः सूयते सचराचरम् |\nहेतुनानेन कौन्तेय जगद्विपरिवर्तते",
+            "translation": "Under Me as supervisor, Nature produces the moving and the unmoving; because of this, O Arjuna, the world revolves.",
+            "transliteration": "mayādhyakṣeṇa prakṛtiḥ sūyate sacarācaram \nhetunānena kaunteya jagadviparivartate",
+            "meaning": "मया by Me - अध्यक्षेण as supervisor - प्रकृतिः Nature - सूयते produces - सचराचरम् the moving and the unmoving - हेतुना by cause - अनेन by this - कौन्तेय O Kaunteya - जगत् the world - विपरिवर्तते revolves."
+        },
+        {
+            "id": "bg_9_11",
+            "number": 11,
+            "sanskrit": "अवजानन्ति मां मूढा मानुषीं तनुमाश्रितम् |\nपरं भावमजानन्तो मम भूतमहेश्वरम्",
+            "translation": "Fools disregard Me, clad in human form, not knowing My higher Being as the great Lord of (all) beings.",
+            "transliteration": "avajānanti māṃ mūḍhā mānuṣīṃ tanumāśritam \nparaṃ bhāvamajānanto mama bhūtamaheśvaram",
+            "meaning": "अवजानन्ति disregard - माम् Me - मूढाः fools - मानुषीम् human - तनुम् form - आश्रितम् assumed - परम् higher - भावम् state or nature - अजानन्तः not knowing - मम My - भूतमहेश्वरम् the Great Lord of beings."
+        },
+        {
+            "id": "bg_9_12",
+            "number": 12,
+            "sanskrit": "मोघाशा मोघकर्माणो मोघज्ञाना विचेतसः |\nराक्षसीमासुरीं चैव प्रकृतिं मोहिनीं श्रिताः",
+            "translation": "Of vain hopes, of vain actions, of vain knowledge and senseless, they verily are possessed of the deceitful nature of demons and undivine beings.",
+            "transliteration": "moghāśā moghakarmāṇo moghajñānā vicetasaḥ \nrākṣasīmāsurīṃ caiva prakṛtiṃ mohinīṃ śritāḥ",
+            "meaning": "मोघाशाः of vain hopes - मोघकर्माणः of vain actions - मोघज्ञानाः of vain knowledge - विचेतसः senseless - राक्षसीम् devilish - आसुरीम् undivine - च and - एव verily - प्रकृतिम् nature - मोहिनीम् deceitful - श्रिताः (are) possessed of."
+        },
+        {
+            "id": "bg_9_13",
+            "number": 13,
+            "sanskrit": "महात्मानस्तु मां पार्थ दैवीं प्रकृतिमाश्रिताः |\nभजन्त्यनन्यमनसो ज्ञात्वा भूतादिमव्ययम्",
+            "translation": "But the great souls, O Arjuna, partaking of My divine nature, worship Me with a single mind (with the mind devoted to nothing else), knowing Me as the imperishable source of beings.",
+            "transliteration": "mahātmānastu māṃ pārtha daivīṃ prakṛtimāśritāḥ \nbhajantyananyamanaso jñātvā bhūtādimavyayam",
+            "meaning": "महात्मानः great souls - तु but - माम् Me - पार्थ O Partha - दैवीम् divine - प्रकृतिम् nature - आश्रिताः refuged (in) - भजन्ति worship - अनन्यमनसः with a mind devoted to nothing else - ज्ञात्वा having known - भूतादिम् the source of beings - अव्ययम् imperishable."
+        },
+        {
+            "id": "bg_9_14",
+            "number": 14,
+            "sanskrit": "सततं कीर्तयन्तो मां यतन्तश्च दृढव्रताः |\nनमस्यन्तश्च मां भक्त्या नित्ययुक्ता उपासते",
+            "translation": "Always glorifying Me, striving,firm in vows, prostrating themselves before Me, they worship Me with devotion always steadfast.",
+            "transliteration": "satataṃ kīrtayanto māṃ yatantaśca dṛḍhavratāḥ \nnamasyantaśca māṃ bhaktyā nityayuktā upāsate",
+            "meaning": "सततम् always - कीर्तयन्तः glorifying - माम् Me - यतन्तः striving - च and - दृढव्रताः firm in vows - नमस्यन्तः prostrating - च and - माम् Me - भक्त्या with devotion - नित्ययुक्ताः always steadfast - उपासते worship."
+        },
+        {
+            "id": "bg_9_15",
+            "number": 15,
+            "sanskrit": "ज्ञानयज्ञेन चाप्यन्ये यजन्तो मामुपासते |\nएकत्वेन पृथक्त्वेन बहुधा विश्वतोमुखम्",
+            "translation": "Others also sacrificing with the wisdom-sacrifice worship Me, the All-faced, as one, as distinct, and as manifold.",
+            "transliteration": "jñānayajñena cāpyanye yajanto māmupāsate \nekatvena pṛthaktvena bahudhā viśvatomukham",
+            "meaning": "ज्ञानयज्ञेन with the wisdomsacrifice - च and - अपि also - अन्ये others - यजन्तः sacrificing - माम् Me - ,उपासते worhsip - एकत्वेन as one - पृथक्त्वेन as different - बहुधा in various ways - विश्वतोमुखम् the Allfaced."
+        },
+        {
+            "id": "bg_9_16",
+            "number": 16,
+            "sanskrit": "अहं क्रतुरहं यज्ञः स्वधाहमहमौषधम् |\nमन्त्रोऽहमहमेवाज्यमहमग्निरहं हुतम्",
+            "translation": "I am the Kratu; I am the Yajna; I am the offering (food) to the manes; I am the medicinal herbs and all the plants; I am the Mantra; I am also the Ghee or the melted butter; I am the fire; I am the oblation.",
+            "transliteration": "ahaṃ kraturahaṃ yajñaḥ svadhāhamahamauṣadham \nmantro.ahamahamevājyamahamagnirahaṃ hutam",
+            "meaning": "अहम् I - क्रतुः sacrifice - अहम् I - यज्ञः the sacrifice - स्वधा the offering to Pitris or ancestors - अहम् I - अहम् I - औषधम् the medicinal herbs and all plants - मन्त्रः sacred syllable - अहम् I - अहम् I - एव also - आज्यम् ghee or clarified butter - अहम् I - अग्निः the fire - अहम् I - हुतम् the offering."
+        },
+        {
+            "id": "bg_9_17",
+            "number": 17,
+            "sanskrit": "पिताहमस्य जगतो माता धाता पितामहः |\nवेद्यं पवित्रमोंकार ऋक्साम यजुरेव च",
+            "translation": "I am the father of this world, the mother, the dispenser of the fruits of actions and the \ngrandfather; the (one) thing to be known, the purifier, the sacred monosyllable (Om), and also the Rik-, the Sama-and the Yajur-Vedas.",
+            "transliteration": "pitāhamasya jagato mātā dhātā pitāmahaḥ \nvedyaṃ pavitramoṃkāra ṛksāma yajureva ca",
+            "meaning": "पिता father - अहम् I - अस्य of this - जगतः world - माता mother - धाता the dispenser of the fruits of actions - पितामहः grandfather - वेद्यम् the (one) thing to be known - पवित्रम् the purifier - ओंकारः the Omkara - ऋक् Rik - साम Sama - यजुः Yajus - एव also - च and."
+        },
+        {
+            "id": "bg_9_18",
+            "number": 18,
+            "sanskrit": "गतिर्भर्ता प्रभुः साक्षी निवासः शरणं सुहृत् |\nप्रभवः प्रलयः स्थानं निधानं बीजमव्ययम्",
+            "translation": "I am the goal, the supporter, the Lord, the witness, the abode, the shelter, the friend, the origin, the dissolution, the foundation, the treasure-house and the seed which is imperishable.",
+            "transliteration": "gatirbhartā prabhuḥ sākṣī nivāsaḥ śaraṇaṃ suhṛt \nprabhavaḥ pralayaḥ sthānaṃ nidhānaṃ bījamavyayam",
+            "meaning": "गतिः the goal - भर्ता the supporter - प्रभुः the Lord - साक्षी the witness - निवासः the abode - शरणम् the shelter - सुहृत् the friend - प्रभवः the origin - प्रलयः the dissolution - स्थानम् the foundation - निधानम् the treasurehouse - बीजम् the seed - अव्ययम् imperishable."
+        },
+        {
+            "id": "bg_9_19",
+            "number": 19,
+            "sanskrit": "तपाम्यहमहं वर्षं निगृह्णाम्युत्सृजामि च |\nअमृतं चैव मृत्युश्च सदसच्चाहमर्जुन",
+            "translation": "(As the sun) I give heat; I withhold and send forth the rain; I am immortality and also death, existence and non-existence, O Arjuna.",
+            "transliteration": "tapāmyahamahaṃ varṣaṃ nigṛhṇāmyutsṛjāmi ca \namṛtaṃ caiva mṛtyuśca sadasaccāhamarjuna",
+            "meaning": "तपामि give heat - अहम् I - अहम् I - वर्षम् rain - निगृह्णामि withhold - उत्सृजामि send forth - च and - अमृतम् immortality - च and - एव also - मृत्युः death - च and - सत् existence - असत् nonexistence - च and - अहम् I - अर्जुन O Arjuna."
+        },
+        {
+            "id": "bg_9_20",
+            "number": 20,
+            "sanskrit": "त्रैविद्या मां सोमपाः पूतपापा\nयज्ञैरिष्ट्वा स्वर्गतिं प्रार्थयन्ते |\nते पुण्यमासाद्य सुरेन्द्रलोक-\nमश्नन्ति दिव्यान्दिवि देवभोगान्",
+            "translation": "The knowers of the three Vedas, the drinkers of Soma, purified of all sins, worshipping Me by sacrifices, pray for the way to heaven; they reach the holy world of the Lord of the gods and enjoy in heavn the divine pleasures of the gods.",
+            "transliteration": "traividyā māṃ somapāḥ pūtapāpā yajñairiṣṭvā svargatiṃ prārthayante \nte puṇyamāsādya surendralokaṃ aśnanti divyāndivi devabhogān",
+            "meaning": "त्रैविद्याः the knowers of the three Vedas - माम् Me - सोमपाः the drinkers of Soma - पूतपापाः purified from sin - यज्ञैः by sacrifices - इष्ट्वा worshipping - स्वर्गतिम् way to heaven - प्रार्थयन्ते pray - ते they - पुण्यम् holy - आसाद्य having reached - सुरेन्द्रलोकम् the world of the Lord of gods - अश्नन्ति eat (enjoy) - दिव्यान् divine - दिवि in heaven - देवभोगान् the divine pleasures."
+        },
+        {
+            "id": "bg_9_21",
+            "number": 21,
+            "sanskrit": "ते तं भुक्त्वा स्वर्गलोकं विशालं\nक्षीणे पुण्ये मर्त्यलोकं विशन्ति |\nएवं त्रयीधर्ममनुप्रपन्ना\nगतागतं कामकामा लभन्ते",
+            "translation": "They, having enjoyed the vast heaven, enter the world of mortals when their merit is exhausted; thus abiding by the injunctions of the ï1threeï1 (Vedas) and desiring (objects of) desires, they attain to the state of going and returning.",
+            "transliteration": "te taṃ bhuktvā svargalokaṃ viśālaṃ kṣīṇe puṇye martyalokaṃ viśanti \nevaṃ trayīdharmamanuprapannā gatāgataṃ kāmakāmā labhante",
+            "meaning": "ते they - तम् that - भुक्त्वा having enjoyed - स्वर्गलोकम् heavenworld - विशालम् vast - क्षीणे at the exhaustion of - पुण्ये merit - मर्त्यलोकम् the world of mortals - विशन्ति enter - एवम् thus - त्रयीधर्मम् of the three Vedas - अनुप्रपन्नाः abiding by - गतागतम् the state of goind and returning - कामकामाः desiring desires - लभन्ते attain."
+        },
+        {
+            "id": "bg_9_22",
             "number": 22,
-            "sanskrit": "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते |\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम् || २२ ||",
-            "translation": "But those who always worship Me with exclusive devotion, meditating on My transcendental form—to them I carry what they lack, and I preserve what they have.",
-            "transliteration": "ananyāś cintayanto māṁ ye janāḥ paryupāsate\nteṣāṁ nityābhiyuktānāṁ yoga-kṣemaṁ vahāmy aham",
-            "meaning": "Ananyah - no other; Chintayantah - concentrating; Mam - on Me..."
+            "sanskrit": "अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते |\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्",
+            "translation": "For those men who worship Me alone, thinking of no other, for those ever-united, I secure what is not already possessed and preserve what they already possess.",
+            "transliteration": "ananyāścintayanto māṃ ye janāḥ paryupāsate \nteṣāṃ nityābhiyuktānāṃ yogakṣemaṃ vahāmyaham",
+            "meaning": "अनन्याः without others - चिन्तयन्तः thinking - माम् Me - ये who - जनाः men - पर्युपासते worship - तेषाम् of them - नित्याभियुक्तानाम् of the everunited - योगक्षेमम् the supply of what is not already possessed - and the preservation of what is already possessed - वहामि carry - अहम् I."
+        },
+        {
+            "id": "bg_9_23",
+            "number": 23,
+            "sanskrit": "येऽप्यन्यदेवता भक्ता यजन्ते श्रद्धयान्विताः |\nतेऽपि मामेव कौन्तेय यजन्त्यविधिपूर्वकम्",
+            "translation": "Even those devotees who, endowed with faith, worship other gods, worship Me alone, O Arjuna, b the wrong method.",
+            "transliteration": "ye.apyanyadevatābhaktā yajante śraddhayānvitāḥ \nte.api māmeva kaunteya yajantyavidhipūrvakam",
+            "meaning": "ये who - अपि even - अन्यदेवताः other gods - भक्ताः devotees - यजन्ते worship - श्रद्धया with faith - अन्विताः endowed - ते they - अपि also - माम् Me - एव alone - कौन्तेय O Kaunteya - यजन्ति worship - अविधिपूर्वकम् by the wrong method."
+        },
+        {
+            "id": "bg_9_24",
+            "number": 24,
+            "sanskrit": "अहं हि सर्वयज्ञानां भोक्ता च प्रभुरेव च |\nन तु मामभिजानन्ति तत्त्वेनातश्च्यवन्ति ते",
+            "translation": "(For) I alone am the enjoyer and also the Lord of all sacrifices; but they do not know Me in essence (in reality), and hence they fall (return to this mortal world).",
+            "transliteration": "ahaṃ hi sarvayajñānāṃ bhoktā ca prabhureva ca \nna tu māmabhijānanti tattvenātaścyavanti te",
+            "meaning": "अहम् I - हि verily - सर्वयज्ञानाम् of all sacrifices - भोक्ता enjoyer - च and - प्रभुः Lord - एव alone - च and - न not - तु but - माम् Me - अभिजानन्ति know - तत्त्वेन in essence (or in reality) - अतः hence - च्यवन्ति fall - ते they."
+        },
+        {
+            "id": "bg_9_25",
+            "number": 25,
+            "sanskrit": "यान्ति देवव्रता देवान्पितॄन्यान्ति पितृव्रताः |\nभूतानि यान्ति भूतेज्या यान्ति मद्याजिनोऽपि माम्",
+            "translation": "The worshippers of the gods go to them; to the manes go the ancestor-worshippers; to the deities who preside over the elements go their worshippers; but My devotees come to Me.",
+            "transliteration": "yānti devavratā devānpitṝnyānti pitṛvratāḥ \nbhūtāni yānti bhūtejyā yānti madyājino.api mām",
+            "meaning": "यान्ति go - देवव्रताः worshippers of the gods - देवान् to the gods - पितृ़न् to the Pitris or ancestors - यान्ति go - पितृव्रताः worshippers of the Pitris - भूतानि to the Bhutas - यान्ति go - भूतेज्याः the worshippers of the Bhutas - यान्ति go - मद्याजिनः My worshippers - अपि also - माम् to Me."
+        },
+        {
+            "id": "bg_9_26",
+            "number": 26,
+            "sanskrit": "पत्रं पुष्पं फलं तोयं यो मे भक्त्या प्रयच्छति |\nतदहं भक्त्युपहृतमश्नामि प्रयतात्मनः",
+            "translation": "Whoever offers Me with devotion a leaf, a flower, a fruit or a little water  that, so offered devotedly by the pure-minded, I accept.",
+            "transliteration": "patraṃ puṣpaṃ phalaṃ toyaṃ yo me bhaktyā prayacchati \ntadahaṃ bhaktyupahṛtamaśnāmi prayatātmanaḥ",
+            "meaning": "पत्रम् a leaf - पुष्पम् a flower - फलम् a fruit - तोयम् water - यः who - मे to Me - भक्त्या with devotion - प्रयच्छति,offers - तत् that - अहम् I - भक्त्युपहृतम् offered with devotion - अश्नामि eat (accept) - प्रयतात्मनः of the pureminded."
+        },
+        {
+            "id": "bg_9_27",
+            "number": 27,
+            "sanskrit": "यत्करोषि यदश्नासि यज्जुहोषि ददासि यत् |\nयत्तपस्यसि कौन्तेय तत्कुरुष्व मदर्पणम्",
+            "translation": "Whatever thou doest, whatever thou eatest, whatever thou offerest in sacrifice, whatever thou givest, whatever thou practisest as austerity, O Arjuna, do it as an offering unto Me.",
+            "transliteration": "yatkaroṣi yadaśnāsi yajjuhoṣi dadāsi yat \nyattapasyasi kaunteya tatkuruṣva madarpaṇam",
+            "meaning": "यत् whatever - करोषि thou doest - यत् whatever - अश्नासि thou eatest - यत् whatever - जुहोषि thou offerest in sacrifice - ददासि thou givest - यत् whatever - यत् whatever - तपस्यसि thou practisest as austerity - कौन्तेय O Kaunteya - तत् that - कुरुष्व do - मदर्पणम् offering unto Me."
+        },
+        {
+            "id": "bg_9_28",
+            "number": 28,
+            "sanskrit": "शुभाशुभफलैरेवं मोक्ष्यसे कर्मबन्धनैः |\nसंन्यासयोगयुक्तात्मा विमुक्तो मामुपैष्यसि",
+            "translation": "Thus shalt thou be freed from the bonds of actions yielding good and evil fruits; with the mind steadfast in the Yoga of renunciation, and liberated, thou shalt come unto Me.",
+            "transliteration": "śubhāśubhaphalairevaṃ mokṣyase karmabandhanaiḥ \nsaṃnyāsayogayuktātmā vimukto māmupaiṣyasi",
+            "meaning": "शुभाशुभफलैः from good and evil fruits - एवम् thus - मोक्ष्यसे (thou) shalt be freed - कर्मबन्धनैः from the bonds of actions - संन्यासयोगयुक्तात्मा with the mind steadfast in the Yoga of renunciation - विमुक्तः liberated - माम् to Me - उपैष्यसि (thou) shalt come."
+        },
+        {
+            "id": "bg_9_29",
+            "number": 29,
+            "sanskrit": "समोऽहं सर्वभूतेषु न मे द्वेष्योऽस्ति न प्रियः |\nये भजन्ति तु मां भक्त्या मयि ते तेषु चाप्यहम्",
+            "translation": "The same am I to all beings; to Me there is none hateful or dear; but those who worship Me with devotion are in Me and I am also in them.",
+            "transliteration": "samo.ahaṃ sarvabhūteṣu na me dveṣyo.asti na priyaḥ \nye bhajanti tu māṃ bhaktyā mayi te teṣu cāpyaham",
+            "meaning": "समः the same - अहम् I - सर्वभूतेषु in all beings - न not - मे to Me - द्वेष्यः hateful - अस्ति is - न not - प्रियः dear - ये who - भजन्ति worship - तु but - माम् Me - भक्त्या with devotion - मयि in Me - ते they - तेषु in them - च and - अपि also - अहम् I."
+        },
+        {
+            "id": "bg_9_30",
+            "number": 30,
+            "sanskrit": "अपि चेत्सुदुराचारो भजते मामनन्यभाक् |\nसाधुरेव स मन्तव्यः सम्यग्व्यवसितो हि सः",
+            "translation": "Even if the most sinful worships Me, with devotion to none else, he too should indeed by regarded as righteous for he has rightly resolved.",
+            "transliteration": "api cetsudurācāro bhajate māmananyabhāk \nsādhureva sa mantavyaḥ samyagvyavasito hi saḥ",
+            "meaning": "अपि even - चेत् if - सुदुराचारः a very wicked person - भजते worships - माम् Me - अनन्यभाक् with devotion to none else - साधुः righteous - एव verily - सः he - मन्तव्यः should be regarded - सम्यक् rightly - व्यवसितः resolved - हि indeed - सः he."
+        },
+        {
+            "id": "bg_9_31",
+            "number": 31,
+            "sanskrit": "क्षिप्रं भवति धर्मात्मा शश्वच्छान्तिं निगच्छति |\nकौन्तेय प्रतिजानीहि न मे भक्तः प्रणश्यति",
+            "translation": "Soon he becomes righteous and attains to eternal peace; O Arjuna, proclaim thou for certain that My devotee never perishes.",
+            "transliteration": "kṣipraṃ bhavati dharmātmā śaśvacchāntiṃ nigacchati \nkaunteya pratijānīhi na me bhaktaḥ praṇaśyati",
+            "meaning": "क्षिप्रम् soon - भवति (he) becomes - धर्मात्मा righteous - शश्वत् eternal - शान्तिम् peace - निगच्छति attains to - कौन्तेय O son of Kunti - प्रतिजानीहि proclaim for certain - न not - मे My - भक्तः Bhakta - प्रणश्यति perishes."
+        },
+        {
+            "id": "bg_9_32",
+            "number": 32,
+            "sanskrit": "मां हि पार्थ व्यपाश्रित्य येऽपि स्युः पापयोनयः |\nस्त्रियो वैश्यास्तथा शूद्रास्तेऽपि यान्ति परां गतिम्",
+            "translation": "For, taking refuge in Me, they also who, O Arjuna, may be of a sinful birth  women, Vaisyas as well as Sudras  attain the Supreme Goal.",
+            "transliteration": "māṃ hi pārtha vyapāśritya ye.api syuḥ pāpayonayaḥ \nstriyo vaiśyāstathā śūdrāste.api yānti parāṃ gatim",
+            "meaning": "माम् Me - हि indeed - पार्थ O Partha - व्यपाश्रित्य taking refuge in - ये who - अपि even - स्युः may be - पापयोनयः of sinful birth - स्त्रियः women - वैश्याः Vaisyas - तथा also - शूद्राः Sudras - ते they - अपि also - यान्ति attain - पराम् the Supreme - गतिम् Goal."
+        },
+        {
+            "id": "bg_9_33",
+            "number": 33,
+            "sanskrit": "किं पुनर्ब्राह्मणाः पुण्या भक्ता राजर्षयस्तथा |\nअनित्यमसुखं लोकमिमं प्राप्य भजस्व माम्",
+            "translation": "How much more (easily) then the hold Brahmins and devoted royal saints (attain the goal); having come to this impermanent and unhappy world, do thou worship Me.",
+            "transliteration": "kiṃ punarbrāhmaṇāḥ puṇyā bhaktā rājarṣayastathā \nanityamasukhaṃ lokamimaṃ prāpya bhajasva mām",
+            "meaning": "किम् पुनः how much more - ब्राह्मणाः Brahmins - पुण्याः holy - भक्ताः devoted - राजर्षयः royal saints - तथा also - अनित्यम् impermanent - असुखम् unhappy - लोकम् world - इमम् this - प्राप्य having obtained - भजस्व worship - माम् Me."
+        },
+        {
+            "id": "bg_9_34",
+            "number": 34,
+            "sanskrit": "मन्मना भव मद्भक्तो मद्याजी मां नमस्कुरु |\nमामेवैष्यसि युक्त्वैवमात्मानं मत्परायणः",
+            "translation": "Fix thy mind on Me; by devoted to Me; sacrifice unto Me; bow down to Me; having thus united thy whole self to Me, taking Me as the supreme goal, thou shalt come unto Me.",
+            "transliteration": "manmanā bhava madbhakto madyājī māṃ namaskuru \nmāmevaiṣyasi yuktvaivamātmānaṃ matparāyaṇaḥ",
+            "meaning": "मन्मनाः with mind filled with Me - भव be thou - मद्भक्तः My devotee - मद्याजी sacrificing unto Me - माम्,unto Me - नमस्कुरु bow down - माम् to Me - एव alone - एष्यसि thou shalt come - युक्त्वा having united - एवम् thus - आत्मानम् the self - मत्परायणः taking Me as the Supreme Goal."
         }
     ]
 }

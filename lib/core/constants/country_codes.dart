@@ -7,7 +7,7 @@ class CountryCode {
   const CountryCode({required this.code, required this.dialCode, required this.name});
 
   @override
-  String toString() => '$name ($code) $dialCode';
+  String toString() => '$dialCode ($code)';
 }
 
 /// Common country codes - India first, then others alphabetically

@@ -1,16 +1,168 @@
 {
     "chapter_number": 15,
-    "title": "Purushottama Yoga",
-    "translation": "The Yoga of the Supreme Person",
-    "summary": "Krishna uses the symbol of an inverted Banyan tree to explain the material world and reveals Himself as the Supreme Person (Purushottama) who transcends both the perishable and imperishable.",
+    "title": "Puruṣhottam Yog",
+    "translation": "The Yog of the Supreme Divine Personality",
+    "summary": "Krishna describes the eternal tree of material existence and the supreme abode. He reveals that He is beyond the perishable and imperishable - the Supreme Person.",
     "verses": [
         {
-            "id": "gita_15_1",
+            "id": "bg_15_1",
             "number": 1,
-            "sanskrit": "श्रीभगवानुवाच |\nऊर्ध्वमूलमधःशाखमश्वत्थं प्राहुरव्ययम् |\nछन्दांसि यस्य पर्णानि यस्तं वेद स वेदवित् || १ ||",
-            "translation": "The Supreme Personality of Godhead said: It is said that there is an imperishable banyan tree that has its roots upward and its branches down and whose leaves are the Vedic hymns. One who knows this tree is the knower of the Vedas.",
-            "transliteration": "śrī-bhagavān uvāca\nūrdhva-mūlam adhaḥ-śākham aśvatthaṁ prāhur avyayam\nchandāṁsi yasya parṇāni yas taṁ veda sa veda-vit",
-            "meaning": "Urdhva-mulam - with roots above; Adhah-shakham - branches below..."
+            "sanskrit": "श्रीभगवानुवाच |\nऊर्ध्वमूलमधःशाखमश्वत्थं प्राहुरव्ययम् |\nछन्दांसि यस्य पर्णानि यस्तं वेद स वेदवित्",
+            "translation": "The Blessed Lord said  They (the wise) speak of the indestructible peepul tree having its root above and branches below, whose leaves are the metres or hymns: he who knows it is a knower of the Vedas.",
+            "transliteration": "śrībhagavānuvāca \nūrdhvamūlamadhaḥśākhamaśvatthaṃ prāhuravyayam \nchandāṃsi yasya parṇāni yastaṃ veda sa vedavit",
+            "meaning": "ऊर्ध्वमूलम् rooted above - अधःशाखम् branches below - अश्वत्थम् the Asvattha - प्राहुः they speak of - अव्ययम् indestructible - छन्दांसि metres or hymns - यस्य of which - पर्णानि leaves - यः who - तम् that - वेद knows - सः he - वेदवित् is the knower of the Vedas."
+        },
+        {
+            "id": "bg_15_2",
+            "number": 2,
+            "sanskrit": "अधश्चोर्ध्वं प्रसृतास्तस्य शाखा\nगुणप्रवृद्धा विषयप्रवालाः |\nअधश्च मूलान्यनुसन्ततानि\nकर्मानुबन्धीनि मनुष्यलोके",
+            "translation": "Below and above spread its branches, nourished by the Gunas; sense-objects are its buds; and below, in the world of men, stretch forth the roots, originating action.",
+            "transliteration": "adhaścordhvaṃ prasṛtāstasya śākhā guṇapravṛddhā viṣayapravālāḥ \nadhaśca mūlānyanusantatāni karmānubandhīni manuṣyaloke",
+            "meaning": "अधः below - च and - ऊर्ध्वम् above - प्रसृताः spread - तस्य its - शाखाः branches - गुणप्रवृद्धाः nourished by the Gunas - विषयप्रवालाः senseobjects (are) its buds - अधः below - च and - मूलानि the roots - अनुसन्ततानि are stretched forth - कर्मानुबन्धीनि originating action - मनुष्यलोके in the world of men."
+        },
+        {
+            "id": "bg_15_3",
+            "number": 3,
+            "sanskrit": "न रूपमस्येह तथोपलभ्यते\nनान्तो न चादिर्न च सम्प्रतिष्ठा |\nअश्वत्थमेनं सुविरूढमूलं\nअसङ्गशस्त्रेण दृढेन छित्त्वा",
+            "translation": "Its form is not perceived here as such, neither its end nor its origin, nor its foundation nor resting place: having cut asunder this firmly rooted peepul tree with the strong axe of non-attachment.",
+            "transliteration": "na rūpamasyeha tathopalabhyate nānto na cādirna ca sampratiṣṭhā \naśvatthamenaṃ suvirūḍhamūlaṃ asaṅgaśastreṇa dṛḍhena chittvā",
+            "meaning": "न not - रूपम् form - अस्य its - इह here - तथा as such - उपलभ्यते is perceived - न not - अन्तः (its) end - न not - च and - आदिः (its) origin - न not - च and - संप्रतिष्ठा foundation or resting place - अश्वत्थम् Asvattha - एनम् this - सुविरूढमूलम् firmrooted - असङ्गशस्त्रेण with the axe of nonattachment - दृढेन strong - छित्त्वा having cut asunder."
+        },
+        {
+            "id": "bg_15_4",
+            "number": 4,
+            "sanskrit": "ततः पदं तत्परिमार्गितव्यं\nयस्मिन्गता न निवर्तन्ति भूयः |\nतमेव चाद्यं पुरुषं प्रपद्ये |\nयतः प्रवृत्तिः प्रसृता पुराणी",
+            "translation": "Then That goal should be sought for, whither having gone none returns again. I seek refuge in that Primeval Purusha Whence streamed forth the ancient activity or energy.",
+            "transliteration": "tataḥ padaṃ tatparimārgitavyaṃ yasmingatā na nivartanti bhūyaḥ \ntameva cādyaṃ puruṣaṃ prapadye \nyataḥ pravṛttiḥ prasṛtā purāṇī",
+            "meaning": "ततः then - पदम् goal - तत् That - परिमार्गितव्यम् should be sought for - यस्मिन् whither - गताः gone - न not - निवर्तन्ति return - भूयः again - तम् that - एव even - च and - आद्यम् primeval - पुरुषम् Purusha - प्रपद्ये I seek refuge - यतः whence - प्रवृत्तिः activity or energy - प्रसृता streamed forth - पुराणी ancient."
+        },
+        {
+            "id": "bg_15_5",
+            "number": 5,
+            "sanskrit": "निर्मानमोहा जितसङ्गदोषा\nअध्यात्मनित्या विनिवृत्तकामाः |\nद्वन्द्वैर्विमुक्ताः सुखदुःखसंज्ञैर्-\nगच्छन्त्यमूढाः पदमव्ययं तत्",
+            "translation": "Free from pride and delusion, victorious over the evil of attachment, dwelling constantly in the Self, their desires having completely turned away, freed from the pairs of opposites known as pleasure and pain, the undeluded reach the eternal goal.",
+            "transliteration": "nirmānamohā jitasaṅgadoṣā adhyātmanityā vinivṛttakāmāḥ \ndvandvairvimuktāḥ sukhaduḥkhasaṃjñaira- gacchantyamūḍhāḥ padamavyayaṃ tat",
+            "meaning": "निर्मानमोहाः free from pride and delusion - जितसङ्गदोषाः victorious over the evil of attachment - अध्यात्मनित्याः dwelling constantly in the Self - विनिवृत्तकामाः (their) desires having completely turned away - द्वन्द्वैः from the pairs of opposites - विमुक्ताः freed - सुखदुःखसंज्ञैः known as pleasure and pain - गच्छन्ति reach - अमूढाः the undeluded - पदम् goal - अव्ययम् eternal - तत् That."
+        },
+        {
+            "id": "bg_15_6",
+            "number": 6,
+            "sanskrit": "न तद्भासयते सूर्यो न शशाङ्को न पावकः |\nयद्गत्वा न निवर्तन्ते तद्धाम परमं मम",
+            "translation": "Neither doth the sun illumine there nor the moon, nor the fire; having gone thither they return not; that is My supreme abode.",
+            "transliteration": "na tadbhāsayate sūryo na śaśāṅko na pāvakaḥ \nyadgatvā na nivartante taddhāma paramaṃ mama",
+            "meaning": "न not - तत् that - भासयते illumines - सूर्यः the sun - न not - शशाङ्कः the moon - न not - पावकः fire - यत् to which - गत्वा having gone - न not - निवर्तन्ते (they) return - तत् that - धाम Abode - परमम् Supreme - मम My."
+        },
+        {
+            "id": "bg_15_7",
+            "number": 7,
+            "sanskrit": "ममैवांशो जीवलोके जीवभूतः सनातनः |\nमनःषष्ठानीन्द्रियाणि प्रकृतिस्थानि कर्षति",
+            "translation": "An eternal portion of Myself having become a living soul in the world of life, draws to (itself) the (five) senses with the mind for the sixth, abiding in Nature.",
+            "transliteration": "mamaivāṃśo jīvaloke jīvabhūtaḥ sanātanaḥ \nmanaḥṣaṣṭhānīndriyāṇi prakṛtisthāni karṣati",
+            "meaning": "मम My - एव even - अंशः portion - जीवलोके in the world of life - जीवभूतः having become a soul - सनातनः eternal - मनःषष्ठानि with mind as the sixth - इन्द्रियाणि the (five) Indriyas - प्रकृतिस्थानि abiding in Prakriti - कर्षति draws (to itself)."
+        },
+        {
+            "id": "bg_15_8",
+            "number": 8,
+            "sanskrit": "शरीरं यदवाप्नोति यच्चाप्युत्क्रामतीश्वरः |\nगृहीत्वैतानि संयाति वायुर्गन्धानिवाशयात्",
+            "translation": "When the Lord (as the individual soul) obtains a body and when He leaves it, He takes these and goes (with them) as the wind takes the scents from their seats (flowers, etc.).",
+            "transliteration": "śarīraṃ yadavāpnoti yaccāpyutkrāmatīśvaraḥ \ngṛhitvaitāni saṃyāti vāyurgandhānivāśayāt",
+            "meaning": "शरीरम् a body - यत् when - अवाप्नोति obtains - यत् when - च and - अपि also - उत्क्रामति leaves - ईश्वरः the Lord - गृहीत्वा taking - एतानि these - संयाति goes - वायुः the wind - गन्धान् the scents - इव as - आशयात् from (their) seats (the flowers)."
+        },
+        {
+            "id": "bg_15_9",
+            "number": 9,
+            "sanskrit": "श्रोत्रं चक्षुः स्पर्शनं च रसनं घ्राणमेव च |\nअधिष्ठाय मनश्चायं विषयानुपसेवते",
+            "translation": "Presiding over the ear, the eye, touch, taste and smell, as well as the mind, it enjoys the objects of the senses.",
+            "transliteration": "śrotraṃ cakṣuḥ sparśanaṃ ca rasanaṃ ghrāṇameva ca \nadhiṣṭhāya manaścāyaṃ viṣayānupasevate",
+            "meaning": "श्रोत्रम् the ear - चक्षुः the eye - स्पर्शनम् the (organ of) touch - च and - रसनम् the (organ of) taste - घ्राणम् the (organ of) smell - एव even - च and - अधिष्ठाय presiding over - मनः the mind - च and - अयम् this (soul) - विषयान् objects of the senses - उपसेवते enjoys."
+        },
+        {
+            "id": "bg_15_10",
+            "number": 10,
+            "sanskrit": "उत्क्रामन्तं स्थितं वापि भुञ्जानं वा गुणान्वितम् |\nविमूढा नानुपश्यन्ति पश्यन्ति ज्ञानचक्षुषः",
+            "translation": "The deluded do not see Him Who departs, stays and enjoys; but they who possess the eye of knowledge behold Him.",
+            "transliteration": "utkrāmantaṃ sthitaṃ vāpi bhuñjānaṃ vā guṇānvitam \nvimūḍhā nānupaśyanti paśyanti jñānacakṣuṣaḥ",
+            "meaning": "उत्क्रामन्तम् departing - स्थितम् staying - वा or - अपि also - भुञ्जानम् enjoying - वा or - गुणान्वितम् united with the Gunas - विमूढाः the deluded - न not - अनुपश्यन्ति do see (Him) - पश्यन्ति behold (Him) - ज्ञानचक्षुषः those who possess the eye of knowledge."
+        },
+        {
+            "id": "bg_15_11",
+            "number": 11,
+            "sanskrit": "यतन्तो योगिनश्चैनं पश्यन्त्यात्मन्यवस्थितम् |\nयतन्तोऽप्यकृतात्मानो नैनं पश्यन्त्यचेतसः",
+            "translation": "The Yogins striving (for perfection) behold Him dwelling in the Self; but, the unrefined and unintelligent, even though striving, see Him not.",
+            "transliteration": "yatanto yoginaścainaṃ paśyantyātmanyavasthitam \nyatanto.apyakṛtātmāno nainaṃ paśyantyacetasaḥ",
+            "meaning": "यतन्तः striving (for perfection) - योगिनः the Yogins - च and - एनम् this - पश्यन्ति see - आत्मनि in the Self - अवस्थितम् dwelling - यतन्तः striving - अपि also - अकृतात्मानः the unrefined - न not - एनम् this - पश्यन्ति see - अचेतसः unintelligent."
+        },
+        {
+            "id": "bg_15_12",
+            "number": 12,
+            "sanskrit": "यदादित्यगतं तेजो जगद्भासयतेऽखिलम् |\nयच्चन्द्रमसि यच्चाग्नौ तत्तेजो विद्धि मामकम्",
+            "translation": "That light which residing in the sun illumines the whole world, that which is in the moon and in the fire  know that light to be Mine.",
+            "transliteration": "yadādityagataṃ tejo jagadbhāsayate.akhilam \nyaccandramasi yaccāgnau tattejo viddhi māmakam",
+            "meaning": "यत् which - आदित्यगतम् residing in the sun - तेजः light - जगत् the world - भासयते illumines - अखिलम् whole - यत् which - चन्द्रमसि in the moon - यत् which - च and - अग्नौ in the fire - तत् that - तेजः light - विद्धि know - मामकम् Mine."
+        },
+        {
+            "id": "bg_15_13",
+            "number": 13,
+            "sanskrit": "गामाविश्य च भूतानि धारयाम्यहमोजसा |\nपुष्णामि चौषधीः सर्वाः सोमो भूत्वा रसात्मकः",
+            "translation": "Permeating the earth I support all beings by (My) energy; and having become the watery moon I nourish all herbs.",
+            "transliteration": "gāmāviśya ca bhūtāni dhārayāmyahamojasā \npuṣṇāmi cauṣadhīḥ sarvāḥ somo bhūtvā rasātmakaḥ",
+            "meaning": "गाम the earth - आविश्य permeating - च and - भूतानि all beings - धारयामि support - अहम् I - ओजसा by (My) energy - पुष्णामि (I) nourish - च and - औषधीः the herbs - सर्वाः all - सोमः moon - भूत्वा having become रसात्मकः watery."
+        },
+        {
+            "id": "bg_15_14",
+            "number": 14,
+            "sanskrit": "अहं वैश्वानरो भूत्वा प्राणिनां देहमाश्रितः |\nप्राणापानसमायुक्तः पचाम्यन्नं चतुर्विधम्",
+            "translation": "Having become the fire Vaisvanara, I abide in the body of living beings and, associated with the Prana and the Apana, digest the fourfold food.",
+            "transliteration": "ahaṃ vaiśvānaro bhūtvā prāṇināṃ dehamāśritaḥ \nprāṇāpānasamāyuktaḥ pacāmyannaṃ caturvidham",
+            "meaning": "अहम् I - वैश्वानरः (the fire) Vaisvanara - भूत्वा having become - प्राणिनाम् of living beings - देहम् the body - आश्रितः abiding - प्राणापानसमायुक्तः associated with Prana and Apana - पचामि (I) digest - अन्नम् food - चतुर्विधम् fourfold."
+        },
+        {
+            "id": "bg_15_15",
+            "number": 15,
+            "sanskrit": "सर्वस्य चाहं हृदि सन्निविष्टो\nमत्तः स्मृतिर्ज्ञानमपोहनञ्च |\nवेदैश्च सर्वैरहमेव वेद्यो\nवेदान्तकृद्वेदविदेव चाहम्",
+            "translation": "And I am seated in the hearts of all; from Me are memory and knowledge, as well as their absence. I am verily That which has to be known by all the Vedas; I am indeed the author of the Vedanta and the knower of the Vedas am I.",
+            "transliteration": "sarvasya cāhaṃ hṛdi sanniviṣṭo mattaḥ smṛtirjñānamapohanañca \nvedaiśca sarvairahameva vedyo vedāntakṛdvedavideva cāham",
+            "meaning": "सर्वस्य of all - च and - अहम् I - हृदि in the heart - सन्निविष्टः seated - मत्तः from Me - स्मृतिः memory - ज्ञानम् knowledge - अपोहनम् (their) absence - च and - वेदैः by the Vedas - च and - सर्वैः (by) all - अहम् I - एव even - वेद्यः to be known - वेदान्तकृत् the author of the Vedanta - वेदवित् the knower of Vedas - एव even - च and - अहम् I."
+        },
+        {
+            "id": "bg_15_16",
+            "number": 16,
+            "sanskrit": "द्वाविमौ पुरुषौ लोके क्षरश्चाक्षर एव च |\nक्षरः सर्वाणि भूतानि कूटस्थोऽक्षर उच्यते",
+            "translation": "Two Purushas there are in this world, the perishable and the imperishable. All beings are \nthe perishable and the Kutastha  the unchanging  is called the imperishable.",
+            "transliteration": "dvāvimau puruṣau loke kṣaraścākṣara eva ca \nkṣaraḥ sarvāṇi bhūtāni kūṭastho.akṣara ucyate",
+            "meaning": "द्वौ two - इमौ these - पुरुषौ Purushas (beings) - लोके in the world - क्षरः the perishable - च and - अक्षरः the imperishable - एव even - च and - क्षरः the perishable - सर्वाणि all - भूतानि beings - कूटस्थः the immutable (unchanging) - अक्षरः the imperishable - उच्यते is called."
+        },
+        {
+            "id": "bg_15_17",
+            "number": 17,
+            "sanskrit": "उत्तमः पुरुषस्त्वन्यः परमात्मेत्युधाहृतः |\nयो लोकत्रयमाविश्य बिभर्त्यव्यय ईश्वरः",
+            "translation": "But distinct is the Supreme Purusha called the highest Self, the indestructible Lord Who, pervading the three worlds, sustains them.",
+            "transliteration": "uttamaḥ puruṣastvanyaḥ paramātmetyudhāhṛtaḥ \nyo lokatrayamāviśya bibhartyavyaya īśvaraḥ",
+            "meaning": "उत्तमः the Supreme - पुरुषः Purusha - तु but - अन्यः another - परमात्मा the highest - Self - इति thus - उदाहृतः called - यः who - लोकत्रयम् the three worlds - आविश्य pervading - बिभर्ति sustains - अव्ययः the indestructible - ईश्वरः Lord."
+        },
+        {
+            "id": "bg_15_18",
+            "number": 18,
+            "sanskrit": "यस्मात्क्षरमतीतोऽहमक्षरादपि चोत्तमः |\nअतोऽस्मि लोके वेदे च प्रथितः पुरुषोत्तमः",
+            "translation": "As I transcend the perishable and am even higher than the imperishable, I am declared to be the highest Purusha in the world and in the Vedas.",
+            "transliteration": "yasmātkṣaramatīto.ahamakṣarādapi cottamaḥ \nato.asmi loke vedeca prathitaḥ puruṣottamaḥ",
+            "meaning": "यस्मात् as - क्षरम् the perishable - अतीतः transcend - अहम् I - अक्षरात् than the imperishable - अपि also - च and - उत्तमः best - अतः therefore - अस्मि (I) am - लोके in the world - वेदे in the Vedas - च and - प्रथितः declared - पुरुषोत्तमः the Highest Purusha."
+        },
+        {
+            "id": "bg_15_19",
+            "number": 19,
+            "sanskrit": "यो मामेवमसम्मूढो जानाति पुरुषोत्तमम् |\nस सर्वविद्भजति मां सर्वभावेन भारत",
+            "translation": "He who, undeluded, knows Me thus as the highest Purusha, he, knowing all, worships Me with his whole being (heart), O Arjuna.",
+            "transliteration": "yo māmevamasammūḍho jānāti puruṣottamam \nsa sarvavidbhajati māṃ sarvabhāvena bhārata",
+            "meaning": "यः who - माम् Me - एवम् thus - असम्मूढः undeluded - जानाति knows - पुरुषोत्तमम् the Supreme Purusha - सः he - सर्ववित् allknowing - भजति worships - माम् Me - सर्वभावेन with his whole being (heart) - भारत O Bharata."
+        },
+        {
+            "id": "bg_15_20",
+            "number": 20,
+            "sanskrit": "इति गुह्यतमं शास्त्रमिदमुक्तं मयानघ |\nएतद्बुद्ध्वा बुद्धिमान्स्यात्कृतकृत्यश्च भारत",
+            "translation": "Thus, this most secret science has been taught by Me, O sinless one; on knowing this, a man becomes wise, and all his duties are accomplished, O Arjuna.",
+            "transliteration": "iti guhyatamaṃ śāstramidamuktaṃ mayānagha \netadbuddhvā buddhimānsyātkṛtakṛtyaśca bhārata",
+            "meaning": "इति thus - गुह्यतमम् most secret - शास्त्रम् science (teaching) - इदम् this - उक्तम् has been taught - मया by Me - अनघ O sinless one - एतत् बुद्ध्वा knowing this - बुद्धिमान् wise - स्यात् will become - कृतकृत्यः (who has) accomplished all the duties - च and - भारत O Bharata."
         }
     ]
 }

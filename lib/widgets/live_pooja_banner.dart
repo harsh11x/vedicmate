@@ -51,14 +51,14 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
             // Removed internal margin as parent handles it
             height: 200,
             decoration: BoxDecoration(
-              // Gradient as fallback or overlay
-               color: Colors.black,
-              borderRadius: BorderRadius.circular(24),
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF512F).withOpacity(0.4),
-                  blurRadius: 15 + _pulseAnimation.value,
-                  spreadRadius: 1,
+                  color: AppTheme.divineGold.withOpacity(0.2 + _pulseAnimation.value * 0.01),
+                  blurRadius: 12 + _pulseAnimation.value * 0.5,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -81,11 +81,16 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
                    ),
                 ),
                 
-                // Dark Overlay for readability
+                // Warm overlay for readability
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.black.withOpacity(0.2), Colors.black.withOpacity(0.6)],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.3),
+                        Colors.black.withOpacity(0.75),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -110,9 +115,9 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: isLive ? Colors.redAccent.withOpacity(0.9) : Colors.black.withOpacity(0.6),
+                                    color: isLive ? AppTheme.divineGold.withOpacity(0.9) : Colors.black.withOpacity(0.6),
                                     borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                    border: Border.all(color: Colors.white.withOpacity(0.25)),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -170,12 +175,13 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.2),
-                            border: Border.all(color: Colors.white.withOpacity(0.5)),
+                            color: AppTheme.divineGold.withOpacity(0.4),
+                            border: Border.all(color: Colors.white.withOpacity(0.6), width: 2),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 10,
+                                color: AppTheme.divineGold.withOpacity(0.3),
+                                blurRadius: 12,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),

@@ -244,7 +244,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
   double get _spacingSmall => _isIOS ? 8.0 : 16.0;
   double get _spacingMedium => _isIOS ? 16.0 : 24.0;
   double get _spacingLarge => _isIOS ? 20.0 : 32.0; // was 20:32
-  double get _logoHeight => _isIOS ? 90.0 : 120.0; // Bump for Android
+  double get _logoHeight => _isIOS ? 130.0 : 160.0;
   double get _buttonHeight => _isIOS ? 48.0 : 56.0; // Standard Android touch target
   bool get _isDense => _isIOS;
 

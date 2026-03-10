@@ -107,7 +107,7 @@ class _ElegantDropdownState<T> extends State<ElegantDropdown<T>> {
       child: GestureDetector(
         onTap: _toggleDropdown,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
             color: AppTheme.divineSurface,
             borderRadius: BorderRadius.circular(16),
@@ -117,16 +117,20 @@ class _ElegantDropdownState<T> extends State<ElegantDropdown<T>> {
             ),
           ),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(widget.prefixIcon, color: AppTheme.primaryOrange, size: 22),
-              const SizedBox(width: 16),
-              Expanded(
+              Icon(widget.prefixIcon, color: AppTheme.primaryOrange, size: 20),
+              const SizedBox(width: 8),
+              Flexible(
                 child: Text(
                   widget.value?.toString() ?? widget.hint,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                   style: AppTheme.bodyStyle.copyWith(
                     color: widget.value == null ? AppTheme.textLight : AppTheme.textBlack,
                     fontWeight: widget.value == null ? FontWeight.normal : FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 13,
                   ),
                 ),
               ),

@@ -1,16 +1,632 @@
 {
     "chapter_number": 18,
-    "title": "Moksha Sanyasa Yoga",
-    "translation": "The Yoga of Liberation and Renunciation",
-    "summary": "The concluding chapter summarizes the entire Gita, emphasizing the importance of performing one's duty with devotion and ultimate surrender to the Divine as the path to supreme peace and liberation.",
+    "title": "Mokṣha Sanyās Yog",
+    "translation": "The Yog of Liberation and Renunciation",
+    "summary": "The concluding chapter summarizes the entire Gita, emphasizing performing duty with devotion and ultimate surrender to the Divine as the path to supreme peace and liberation.",
     "verses": [
         {
-            "id": "gita_18_66",
+            "id": "bg_18_1",
+            "number": 1,
+            "sanskrit": "अर्जुन उवाच |\nसंन्यासस्य महाबाहो तत्त्वमिच्छामि वेदितुम् |\nत्यागस्य च हृषीकेश पृथक्केशिनिषूदन",
+            "translation": "Arjuna said  I desire to know severally, O mighty-armed, the essence or truth of renunciation, O Hrishikesa, as also of abandonment, O slayer of Kesi.",
+            "transliteration": "arjuna uvāca \nsaṃnyāsasya mahābāho tattvamicchāmi veditum \ntyāgasya ca hṛṣīkeśa pṛthakkeśiniṣūdana",
+            "meaning": "संन्यासस्य of renunciation - महाबाहो O mightyarmed - तत्त्वम् the essence of truth - इच्छामि (I) wish - वेदितुम् to know - त्यागस्य of Tyaga or abandonment - च and - हृषीकेशः O Krishna - पृथक् severally - केशिनिषूदन् slayer of Kesi."
+        },
+        {
+            "id": "bg_18_2",
+            "number": 2,
+            "sanskrit": "श्रीभगवानुवाच |\nकाम्यानां कर्मणां न्यासं संन्यासं कवयो विदुः |\nसर्वकर्मफलत्यागं प्राहुस्त्यागं विचक्षणाः",
+            "translation": "The Blessed Lord said  The sages understand Sannyasa to be the renunciation of action with desire; the wise declare the abandonment of the fruits of all actions as Tyaga.",
+            "transliteration": "śrībhagavānuvāca \nkāmyānāṃ karmaṇāṃ nyāsaṃ saṃnyāsaṃ kavayo viduḥ \nsarvakarmaphalatyāgaṃ prāhustyāgaṃ vicakṣaṇāḥ",
+            "meaning": "English"
+        },
+        {
+            "id": "bg_18_3",
+            "number": 3,
+            "sanskrit": "त्याज्यं दोषवदित्येके कर्म प्राहुर्मनीषिणः |\nयज्ञदानतपःकर्म न त्याज्यमिति चापरे",
+            "translation": "Some philosophers declare that actions should be abandoned as an evil; while others (declare) that acts of sacrifice, gift and austerity should not be relinished.",
+            "transliteration": "tyājyaṃ doṣavadityeke karma prāhurmanīṣiṇaḥ \nyajñadānatapaḥkarma na tyājyamiti cāpare",
+            "meaning": "त्याज्यम् should be abandoned - दोषवत् (full of) as an evil - इति thus - एके some - कर्म action - प्राहुः declare - मनीषिणः philosophers - यज्ञदानतपःकर्म acts of sacrifice - gift and austerity - न not - त्याज्यम् should be relinished - इति thus - च and - अपरे others."
+        },
+        {
+            "id": "bg_18_4",
+            "number": 4,
+            "sanskrit": "निश्चयं शृणु मे तत्र त्यागे भरतसत्तम |\nत्यागो हि पुरुषव्याघ्र त्रिविधः सम्प्रकीर्तितः",
+            "translation": "Hear from Me the conclusion or the final truth about this abandonment, O best of the Bharatas; abandonment, verily, O best of men, has been declared to be of three kinds.",
+            "transliteration": "niścayaṃ śṛṇu me tatra tyāge bharatasattama \ntyāgo hi puruṣavyāghra trividhaḥ samprakīrtitaḥ",
+            "meaning": "निश्चयम् conclusion or the final truth - श्रृणु hear - मे My - तत्र there - त्यागे about abandonment - भरतसत्तम O best of the Bharatas - त्यागः abandonment - हि verily - पुरुषव्याघ्र O best of men - त्रिविधः of three kinds - संप्रकीर्तितः has been declared (to be)."
+        },
+        {
+            "id": "bg_18_5",
+            "number": 5,
+            "sanskrit": "यज्ञदानतपःकर्म न त्याज्यं कार्यमेव तत् |\nयज्ञो दानं तपश्चैव पावनानि मनीषिणाम्",
+            "translation": "Acts of sacrifice, gift and austerity should not be abandoned, but should be performed; sacrifice, gift and also austerity are the purifiers of the wise.",
+            "transliteration": "yajñadānatapaḥkarma na tyājyaṃ kāryameva tat \nyajño dānaṃ tapaścaiva pāvanāni manīṣiṇām",
+            "meaning": "यज्ञदानतपःकर्म acts of sacrifice - gift and austerity - न not - त्याज्यम् should be abandoned - कार्यम् should be performed - एव indeed - तत् that - यज्ञः sacrifice - दानम् gift - तपः austerity - च and - एव indeed - पावनानि purifiers - मनीषिणाम् of the wise."
+        },
+        {
+            "id": "bg_18_6",
+            "number": 6,
+            "sanskrit": "एतान्यपि तु कर्माणि सङ्गं त्यक्त्वा फलानि च |\nकर्तव्यानीति मे पार्थ निश्चितं मतमुत्तमम्",
+            "translation": "But even these actions should be performed leaving aside attachment and the desire for rewards, O Arjuna; this is My certain and best conviction.",
+            "transliteration": "etānyapi tu karmāṇi saṅgaṃ tyaktvā phalāni ca \nkartavyānīti me pārtha niścitaṃ matamuttamam",
+            "meaning": "एतानि these - अपि even - तु but - कर्माणि actions - सङ्गम् attachment - त्यक्त्वा leaving - फलानि fruits - च and - कर्तव्यानि should be performed - इति thus - मे My - पार्थ O Arjuna - निश्चितम् certain - मतम् belief - उत्तमम् best."
+        },
+        {
+            "id": "bg_18_7",
+            "number": 7,
+            "sanskrit": "नियतस्य तु संन्यासः कर्मणो नोपपद्यते |\nमोहात्तस्य परित्यागस्तामसः परिकीर्तितः",
+            "translation": "Verily the renunciation of obligatory action is not proper; the abandonment of the same from delusion is declared to be Tamasic.",
+            "transliteration": "niyatasya tu saṃnyāsaḥ karmaṇo nopapadyate \nmohāttasya parityāgastāmasaḥ parikīrtitaḥ",
+            "meaning": "नियतस्य obligatory - तु verily - संन्यासः renunciation - कर्मणः of action - न not - उपपद्यते is proper - मोहात् from delusion - तस्य of the same - परित्यागः abandonment - तामसः Tamasic - परिकीर्तितः is declared."
+        },
+        {
+            "id": "bg_18_8",
+            "number": 8,
+            "sanskrit": "दुःखमित्येव यत्कर्म कायक्लेशभयात्त्यजेत् |\nस कृत्वा राजसं त्यागं नैव त्यागफलं लभेत्",
+            "translation": "He who abandons action on account of the fear of bodily trouble (because it is painful), does not obtain the merit of renunciation by doing such Rajasic renunciation.",
+            "transliteration": "duḥkhamityeva yatkarma kāyakleśabhayāttyajet \nsa kṛtvā rājasaṃ tyāgaṃ naiva tyāgaphalaṃ labhet",
+            "meaning": "दुःखम् (it is) painful - इति thus - एव even - यत् which - कर्म action - कायक्लेशभयात् from fear of bodily trouble - त्यजेत् abandons - सः he - कृत्वा performing - राजसम् Rajasic - त्यागम् abandonment - न not - एव even - त्यागफलम् the fruit of abandonment - लभेत् obtains."
+        },
+        {
+            "id": "bg_18_9",
+            "number": 9,
+            "sanskrit": "कार्यमित्येव यत्कर्म नियतं क्रियतेऽर्जुन |\nसङ्गं त्यक्त्वा फलं चैव स त्यागः सात्त्विको मतः",
+            "translation": "Whatever obligatory action is done, O Arjuna, merely because it ought to be done, abandoning attachment and also the desire for reward, that renunciation is regarded as Sattvic (pure).",
+            "transliteration": "kāryamityeva yatkarma niyataṃ kriyate.arjuna \nsaṅgaṃ tyaktvā phalaṃ caiva sa tyāgaḥ sāttviko mataḥ",
+            "meaning": "कार्यम् ought to be done - इति thus - एव even - यत् which - कर्म action - नियतम् obligatory - क्रियते is performed - अर्जुन O Arjuna - सङ्गम् attachment - त्यक्त्वा abandoning - फलम् fruit - च and - एव even - सः that - त्यागः abandonment - सात्त्विकः Sattvic (pure) - मतः is regarded."
+        },
+        {
+            "id": "bg_18_10",
+            "number": 10,
+            "sanskrit": "न द्वेष्ट्यकुशलं कर्म कुशले नानुषज्जते |\nत्यागी सत्त्वसमाविष्टो मेधावी छिन्नसंशयः",
+            "translation": "The man of renunciation, pervaded by purity, intelligent, and with his doubts cut asunder, does not hate a disagreeable work nor is he attached to an agreeable one.",
+            "transliteration": "na dveṣṭyakuśalaṃ karma kuśale nānuṣajjate \ntyāgī sattvasamāviṣṭo medhāvī chinnasaṃśayaḥ",
+            "meaning": "न not - द्वेष्टि hates - अकुशलम् disagreeable - कर्म action - कुशले to an agreeable one - न not - अनुषज्जते is attached - त्यागी the abandoner - सत्त्वसमाविष्टः pervaded by purity - मेधावी intelligent - छिन्नसंशयः with his doubts cut asunder."
+        },
+        {
+            "id": "bg_18_11",
+            "number": 11,
+            "sanskrit": "न हि देहभृता शक्यं त्यक्तुं कर्माण्यशेषतः |\nयस्तु कर्मफलत्यागी स त्यागीत्यभिधीयते",
+            "translation": "Verily, it is not possible for an embodied being to abandon actions entirely; but he who relinishes the rewards of actions is verily called a man of renunciation.",
+            "transliteration": "na hi dehabhṛtā śakyaṃ tyaktuṃ karmāṇyaśeṣataḥ \nyastu karmaphalatyāgī sa tyāgītyabhidhīyate",
+            "meaning": "न not - हि verily - देहभृता by an embodied being - शक्यम् possible - त्यक्तुम् to abandon - कर्माणि actions - अशेषतः entirely - यः who - तु but - कर्मफलत्यागी relinisher of the fruits of actions - सः he - त्यागी relinisher - इति thus - अभिधीयते is called."
+        },
+        {
+            "id": "bg_18_12",
+            "number": 12,
+            "sanskrit": "अनिष्टमिष्टं मिश्रं च त्रिविधं कर्मणः फलम् |\nभवत्यत्यागिनां प्रेत्य न तु संन्यासिनां क्वचित्",
+            "translation": "The threefold fruit of action (evil, good and mixed) accrues after death to the non-abandoners, but never to the abandoners.",
+            "transliteration": "aniṣṭamiṣṭaṃ miśraṃ ca trividhaṃ karmaṇaḥ phalam \nbhavatyatyāgināṃ pretya na tu saṃnyāsināṃ kvacit",
+            "meaning": "अनिष्टम् unwished or disagreeable or evil - इष्टम् wished or agreeable or good - मिश्रम् mixed - च and - त्रिविधम् threefold - कर्मणः of action - फलम् fruit - भवति accrues - अत्यागिनाम् to nonrenouncers - प्रेत्य after death - न not - तु but - संन्यासिनाम् to renouncers - क्वचित् ever."
+        },
+        {
+            "id": "bg_18_13",
+            "number": 13,
+            "sanskrit": "पञ्चैतानि महाबाहो कारणानि निबोध मे |\nसाङ्ख्ये कृतान्ते प्रोक्तानि सिद्धये सर्वकर्मणाम्",
+            "translation": "Learn from Me, O mighty-armed Arjuna, these five causes as declared in the Sankhya system for the accomplishment of all actions.",
+            "transliteration": "pañcaitāni mahābāho kāraṇāni nibodha me \nsāṅkhye kṛtānte proktāni siddhaye sarvakarmaṇām",
+            "meaning": "पञ्च five - एतानि these - महाबाहो O mightyarmed - कारणानि causes - निबोध learn - मे from Me - सांख्ये in the Sankhya - कृतान्ते which is the end of all actions - प्रोक्तानि as declared - सिद्धये for the accomplishment - सर्वकर्मणाम् of all actions."
+        },
+        {
+            "id": "bg_18_14",
+            "number": 14,
+            "sanskrit": "अधिष्ठानं तथा कर्ता करणं च पृथग्विधम् |\nविविधाश्च पृथक्चेष्टा दैवं चैवात्र पञ्चमम्",
+            "translation": "The seat (body), the doer, the various senses, the different functions of various sorts, and the presiding deity, also, the fifth.",
+            "transliteration": "adhiṣṭhānaṃ tathā kartā karaṇaṃ ca pṛthagvidham \nvividhāśca pṛthakceṣṭā daivaṃ caivātra pañcamam",
+            "meaning": "अधिष्ठानम् the seat or body - तथा also - कर्ता the doer - करणम् the senses - च and - पृथग्विधम् of different - विविधाः various - च and - पृथक् different - चेष्टाः functions - दैवम् the presiding deity - च and - एव even - अत्र here - पञ्चमम् the fifth."
+        },
+        {
+            "id": "bg_18_15",
+            "number": 15,
+            "sanskrit": "शरीरवाङ्मनोभिर्यत्कर्म प्रारभते नरः |\nन्याय्यं वा विपरीतं वा पञ्चैते तस्य हेतवः",
+            "translation": "Whatever action a man performs with his body, speech and mind  whether right or the reverse  these five are its causes.",
+            "transliteration": "śarīravāṅmanobhiryatkarma prārabhate naraḥ \nnyāyyaṃ vā viparītaṃ vā pañcaite tasya hetavaḥ",
+            "meaning": "शरीरवाङ्मनोभिः by (his) body - speech and mind - यत् whatever - कर्म action - प्रारभते performs - नरः man - न्याय्यम् right - वा or - विपरीतम् the reverse - वा or - पञ्च five - एते these - तस्य its - हेतवः causes."
+        },
+        {
+            "id": "bg_18_16",
+            "number": 16,
+            "sanskrit": "तत्रैवं सति कर्तारमात्मानं केवलं तु यः |\nपश्यत्यकृतबुद्धित्वान्न स पश्यति दुर्मतिः",
+            "translation": "Now, such being the case, verily he who  owing to untrained understanding  looks upon his Self, which is isolated, as the agent, he of perverted intelligence, sees not.",
+            "transliteration": "tatraivaṃ sati kartāramātmānaṃ kevalaṃ tu yaḥ \npaśyatyakṛtabuddhitvānna sa paśyati durmatiḥ",
+            "meaning": "तत्र there (the case) - एवम् thus - सति being - कर्तारम् as the agent - आत्मानम् the Self - केवलम् alone - तु verily - यः who - पश्यति sees - अकृतबुद्धित्वात् owing to untrained understanding - न not - सः he - पश्यति sees - दुर्मतिः of perverted intelligence."
+        },
+        {
+            "id": "bg_18_17",
+            "number": 17,
+            "sanskrit": "यस्य नाहंकृतो भावो बुद्धिर्यस्य न लिप्यते |\nहत्वाऽपि स इमाँल्लोकान्न हन्ति न निबध्यते",
+            "translation": "He who is free from the egoistic notion, whose intelligence is not tainted (by good or evil), \nthough he slays these people, he slayeth not, nor is he bound (by the action).",
+            "transliteration": "yasya nāhaṃkṛto bhāvo buddhiryasya na lipyate \nhatvā.api sa imā.Nllokānna hanti na nibadhyate",
+            "meaning": "यस्य whose - न not - अहंकृतः egoistic - भावः the notion - बुद्धिः intelligence - यस्य of whom - न not - लिप्यते is tainted - हत्वा having slain - अपि even - सः he - इमान् these - लोकान् people - न not - हन्ति slays - न not - निबध्यते is bound."
+        },
+        {
+            "id": "bg_18_18",
+            "number": 18,
+            "sanskrit": "ज्ञानं ज्ञेयं परिज्ञाता त्रिविधा कर्मचोदना |\nकरणं कर्म कर्तेति त्रिविधः कर्मसंग्रहः",
+            "translation": "Knowledge, the knowable and the knower form the threefold impulse to action; the organ, the action and the agent form the threefold basis of action.",
+            "transliteration": "jñānaṃ jñeyaṃ parijñātā trividhā karmacodanā \nkaraṇaṃ karma karteti trividhaḥ karmasaṃgrahaḥ",
+            "meaning": "ज्ञानम् knowledge - ज्ञेयम् the knowable - परिज्ञाता the knower - त्रिविधा threefold - कर्मचोदना impulse to action - करणम् the organ - कर्म the action - कर्ता the agent - इति thus - त्रिविधः threefold - कर्मसंग्रहः the basis of action."
+        },
+        {
+            "id": "bg_18_19",
+            "number": 19,
+            "sanskrit": "ज्ञानं कर्म च कर्ताच त्रिधैव गुणभेदतः |\nप्रोच्यते गुणसङ्ख्याने यथावच्छृणु तान्यपि",
+            "translation": "Knowledge, action and actor are declared in the science of the Gunas (Sankhya philosophy) to be of three kinds only, according to the distinction of the Gunas. Of these also, hear duly.",
+            "transliteration": "jñānaṃ karma ca kartāca tridhaiva guṇabhedataḥ \nprocyate guṇasaṅkhyāne yathāvacchṛṇu tānyapi",
+            "meaning": "ज्ञानम् knowledge - कर्म action - च and - कर्ता actor - च and - त्रिधा of three kinds - एव only - गुणभेदतः according to the distinction of Gunas - प्रोच्यते are declared - गुणसंख्याने in the science of Gunas (Sankhya philosophy) - यथावत् duly - श्रृणु hear - तानि them - अपि also."
+        },
+        {
+            "id": "bg_18_20",
+            "number": 20,
+            "sanskrit": "सर्वभूतेषु येनैकं भावमव्ययमीक्षते |\nअविभक्तं विभक्तेषु तज्ज्ञानं विद्धि सात्त्विकम्",
+            "translation": "That by which one sees the one indestructible Reality in all beings, not separate in all the separate beings  know thou that knowledge to be Sattvic.",
+            "transliteration": "sarvabhūteṣu yenaikaṃ bhāvamavyayamīkṣate \navibhaktaṃ vibhakteṣu tajjñānaṃ viddhi sāttvikam",
+            "meaning": "सर्वभूतेषु in all beings - येन by which - एकम् one - भावम् reality - अव्ययम् indestructible - ईक्षते (one) sees - अविभक्तम् inseparable - विभक्तेषु in the separated - तत् that - ज्ञानम् knowledge - विद्धि know - सात्त्विकम् Sattvic (pure)."
+        },
+        {
+            "id": "bg_18_21",
+            "number": 21,
+            "sanskrit": "पृथक्त्वेन तु यज्ज्ञानं नानाभावान्पृथग्विधान् |\nवेत्ति सर्वेषु भूतेषु तज्ज्ञानं विद्धि राजसम्",
+            "translation": "But that knowledge which sees in all beings various entities of distinct kinds as different from one another  know thou that knowledge to be Rajasic.",
+            "transliteration": "pṛthaktvena tu yajjñānaṃ nānābhāvānpṛthagvidhān \nvetti sarveṣu bhūteṣu tajjñānaṃ viddhi rājasam",
+            "meaning": "पृथक्त्वेन as different from one another - तु but - यत् which - ज्ञानम् knowledge - नानाभावान् various entities - पृथग्विधान् of distinct kinds - वेत्ति knows - सर्वेषु (in) all - भूतेषु in beings - तत् that - ज्ञानम् knowledge - विद्धि know - राजसम् Rajasic."
+        },
+        {
+            "id": "bg_18_22",
+            "number": 22,
+            "sanskrit": "यत्तु कृत्स्नवदेकस्मिन्कार्ये सक्तमहैतुकम् |\nअतत्त्वार्थवदल्पं च तत्तामसमुदाहृतम्",
+            "translation": "But that which clings to one single effect as if it were the whole, without reason, without foundation in Truth, and trivial  that is declared to be Tamasic.",
+            "transliteration": "yattu kṛtsnavadekasminkārye saktamahaitukam \natattvārthavadalpaṃ ca tattāmasamudāhṛtam",
+            "meaning": "यत् which - तु but - कृत्स्नवत् as if it were the whole - एकस्मिन् one single - कार्ये to effect - सक्तम् attached - अहैतुकम् without reason - अतत्त्वार्थवत् without foundation in Truth - अल्पम् trivial - च and - तत् that - ,तामसम् Tamasic (dark) - उदाहृतम् is declared."
+        },
+        {
+            "id": "bg_18_23",
+            "number": 23,
+            "sanskrit": "नियतं सङ्गरहितमरागद्वेषतः कृतम् |\nअफलप्रेप्सुना कर्म यत्तत्सात्त्विकमुच्यते",
+            "translation": "An action which is ordained, which is free from attachment, and which is done without love or hatred by one who is not desirous of any reward  that action is declared to be Sattvic.",
+            "transliteration": "niyataṃ saṅgarahitamarāgadveṣataḥ kṛtam \naphalaprepsunā karma yattatsāttvikamucyate",
+            "meaning": "नियतम् ordained - सङ्गरहितम् free from attachment - अरागद्वेषतः without love or hatred - कृतम् done - अफलप्रेप्सुना by one not desirous of the fruit - कर्म action - यत् which - तत् that - सात्त्विकम् Sattvic (pure) - ुच्यते is declared."
+        },
+        {
+            "id": "bg_18_24",
+            "number": 24,
+            "sanskrit": "यत्तु कामेप्सुना कर्म साहंकारेण वा पुनः |\nक्रियते बहुलायासं तद्राजसमुदाहृतम्",
+            "translation": "But that action which is done by one longing for the fulfilment of desires or gain with egoism or with much effort  that is declared to be Rajasic (passionate).",
+            "transliteration": "yattu kāmepsunā karma sāhaṃkāreṇa vā punaḥ \nkriyate bahulāyāsaṃ tadrājasamudāhṛtam",
+            "meaning": "यत् which - तु but - कामेप्सुना by one longing for desires - कर्म action - साहङ्कारेण with egoism - वा or - पुनः again - क्रियते is performed - बहुलायासम् with much effort - तत् that - राजसम् Rajasic (passionate) - उदाहृतम् is declared."
+        },
+        {
+            "id": "bg_18_25",
+            "number": 25,
+            "sanskrit": "अनुबन्धं क्षयं हिंसामनपेक्ष्य च पौरुषम् |\nमोहादारभ्यते कर्म यत्तत्तामसमुच्यते",
+            "translation": "That action which is undertaken from delusion, without a regard for the conseences, loss, injury and (one's own) ability  that is declared to be Tamasic (dark).",
+            "transliteration": "anubandhaṃ kṣayaṃ hiṃsāmanapekṣya ca pauruṣam \nmohādārabhyate karma yattattāmasamucyate",
+            "meaning": "अनुबन्धम् conseence - क्षयम् loss - हिंसाम् injury - अनपेक्ष्य without regard - च and - पौरुषम् (ones own) ability - मोहात् from delusion - आरभ्यते is undertaken - कर्म action - यत् which - तत् that - तामसम् Tamasic (dark) - उच्यते is said."
+        },
+        {
+            "id": "bg_18_26",
+            "number": 26,
+            "sanskrit": "मुक्तसङ्गोऽनहंवादी धृत्युत्साहसमन्वितः |\nसिद्ध्यसिद्ध्योर्निर्विकारः कर्ता सात्त्विक उच्यते",
+            "translation": "An agent who is free from attachment, non-egoistic, endowed with firmness and enthusiasm, and unaffected by success or failure, is called Sattvic (pure).",
+            "transliteration": "muktasaṅgo.anahaṃvādī dhṛtyutsāhasamanvitaḥ \nsiddhyasiddhyornirvikāraḥ kartā sāttvika ucyate",
+            "meaning": "मुक्तसङ्गः who is free from attachment - अनहंवादी nonegoistic - धृत्युत्साहसमन्वितः endowed with firmness and enthusiasm - सिद्ध्यसिद्ध्योः in success or failure - निर्विकारः unaffected - कर्ता an agent - सात्त्विकः Sattvic (pure) - उच्यते is called."
+        },
+        {
+            "id": "bg_18_27",
+            "number": 27,
+            "sanskrit": "रागी कर्मफलप्रेप्सुर्लुब्धो हिंसात्मकोऽशुचिः |\nहर्षशोकान्वितः कर्ता राजसः परिकीर्तितः",
+            "translation": "Passionate, desiring to obtain the reward of actions, greedy, cruel, impure, moved by joy and sorrow, such an agent is said to be Rajasic (passionate).",
+            "transliteration": "rāgī karmaphalaprepsurlubdho hiṃsātmako.aśuciḥ \nharṣaśokānvitaḥ kartā rājasaḥ parikīrtitaḥ",
+            "meaning": "रागी passionate - कर्मफलप्रेप्सुः desirous of the fruit of action - लुब्धः greedy - हिंसात्मकः cruel - अशुचिः impure - हर्षशोकान्वितः moved by joy and sorrow - कर्ता agent - राजसः Rajasic (passionate) - परिकीर्तितः is called."
+        },
+        {
+            "id": "bg_18_28",
+            "number": 28,
+            "sanskrit": "अयुक्तः प्राकृतः स्तब्धः शठो नैष्कृतिकोऽलसः |\nविषादी दीर्घसूत्री च कर्ता तामस उच्यते",
+            "translation": "Unsteady, vulgar, unbending, cheating, malicious, lazy, desponding and procrastinating  such an agent is called Tamasic.",
+            "transliteration": "ayuktaḥ prākṛtaḥ stabdhaḥ śaṭho naiṣkṛtiko.alasaḥ \nviṣādī dīrghasūtrī ca kartā tāmasa ucyate",
+            "meaning": "अयुक्तः unsteady - प्राकृतः vulgar - स्तब्धः unbending - शठः cheating - नैष्कृतिकः malicious - अलसः lazy - विषादी desponding - दीर्घसूत्री procrastinating - च and - कर्ता agent - तामसः Tamasic (dark) - उच्यते is said."
+        },
+        {
+            "id": "bg_18_29",
+            "number": 29,
+            "sanskrit": "बुद्धेर्भेदं धृतेश्चैव गुणतस्त्रिविधं शृणु |\nप्रोच्यमानमशेषेण पृथक्त्वेन धनञ्जय",
+            "translation": "Hear thou the threefold division of intellect and firmness according to the Gunas, as I declare them fully and distinctly, O Arjuna.",
+            "transliteration": "buddherbhedaṃ dhṛteścaiva guṇatastrividhaṃ śṛṇu \nprocyamānamaśeṣeṇa pṛthaktvena dhanañjaya",
+            "meaning": "बुद्धेः of intellect - भेदम् division - धृतेः of firmness - च and - एव even - गुणतः according to alities - त्रिविधम् threefold - श्रृणु hear - प्रोच्यमानम् as I declare - अशेषेण fully - पृथक्त्वेन distinctly - धनञ्जय O Dhananjaya."
+        },
+        {
+            "id": "bg_18_30",
+            "number": 30,
+            "sanskrit": "प्रवृत्तिं च निवृत्तिं च कार्याकार्ये भयाभये |\nबन्धं मोक्षं च या वेत्ति बुद्धिः सा पार्थ सात्त्विकी",
+            "translation": "The intellect which knows the path of work and renunciation, what ought to be done and what ought not to be done, fear and fearlessness, bondage and liberation  that intellect is Sattvic (pure), O Arjuna.",
+            "transliteration": "pravṛttiṃ ca nivṛttiṃ ca kāryākārye bhayābhaye \nbandhaṃ mokṣaṃ ca yā vetti buddhiḥ sā pārtha sāttvikī",
+            "meaning": "प्रवृत्तिम् action - the path of work - च and - निवृत्तिम् the path of renunciation - च and - कार्याकार्ये what ought to be done and what ought not to be done - भयाभये fear and fearlessness - बन्धम् bondage - मोक्षम् liberation - च and - या which - वेत्ति knows - बुद्धिः intellect - सा that - पार्थ O Arjuna - सात्त्विकी Sattvic."
+        },
+        {
+            "id": "bg_18_31",
+            "number": 31,
+            "sanskrit": "यया धर्ममधर्मं च कार्यं चाकार्यमेव च |\nअयथावत्प्रजानाति बुद्धिः सा पार्थ राजसी",
+            "translation": "That, by which one wrongly understands Dharma and Adharma and also what ought to be done and what ought not to be done  that intellect, O Arjuna, is Rajasic (passionate).",
+            "transliteration": "yayā dharmamadharmaṃ ca kāryaṃ cākāryameva ca \nayathāvatprajānāti buddhiḥ sā pārtha rājasī",
+            "meaning": "यया by which - धर्मम् Dharma - अधर्मम् Adharma - च and - कार्यम् what ought to be done - च and - अकार्यम् what ought not to be done - एव even - च and - अयथावत् wrongly - प्रजानाति understands - बुद्धिः intellect - सा that - पार्थ O Partha - राजसी Rajasic (passionate)."
+        },
+        {
+            "id": "bg_18_32",
+            "number": 32,
+            "sanskrit": "अधर्मं धर्ममिति या मन्यते तमसावृता |\nसर्वार्थान्विपरीतांश्च बुद्धिः सा पार्थ तामसी",
+            "translation": "That, which, enveloped in darkness, sees Adharma as Dharma and all things perverted  that intellect, O Arjuna, is Tamasic (dark).",
+            "transliteration": "adharmaṃ dharmamiti yā manyate tamasāvṛtā \nsarvārthānviparītāṃśca buddhiḥ sā pārtha tāmasī",
+            "meaning": "अधर्मम् Adharma - धर्मम् Dharma - इति thus - या which - मन्यते thinks - तमसा by darkness - आवृता enveloped - सर्वार्थान् all things - विपरीतान् perverted - च and - बुद्धिः intellect - सा that - पार्थ O Partha - तामसी Tamasic (dark)."
+        },
+        {
+            "id": "bg_18_33",
+            "number": 33,
+            "sanskrit": "धृत्या यया धारयते मनःप्राणेन्द्रियक्रियाः |\nयोगेनाव्यभिचारिण्या धृतिः सा पार्थ सात्त्विकी",
+            "translation": "The unwavering firmness by which, through Yoga, the functions of the mind, the life-force and the senses are restrained  that firmness, O Arjuna, is Sattvic (pure).",
+            "transliteration": "dhṛtyā yayā dhārayate manaḥprāṇendriyakriyāḥ \nyogenāvyabhicāriṇyā dhṛtiḥ sā pārtha sāttvikī",
+            "meaning": "धृत्या by firmness - यया (by) which - धारयते holds - मनःप्राणेन्द्रियक्रियाः the functions of the mind - the Prana and the senses - योगेन by Yoga - अव्यभिचारिण्या unswerving - धृतिः firmness - सा that - पार्थ O Arjuna - सात्त्विकी Sattvic (pure)."
+        },
+        {
+            "id": "bg_18_34",
+            "number": 34,
+            "sanskrit": "यया तु धर्मकामार्थान्धृत्या धारयतेऽर्जुन |\nप्रसङ्गेन फलाकाङ्क्षी धृतिः सा पार्थ राजसी",
+            "translation": "But that, O Arjuna, by which, on account of attachment and desire for reward, one holds fast to Dharma (duty), enjoyment of pleasures and earning of wealth  that firmness, O Arjuna, is Rajasic (passionate).",
+            "transliteration": "yayā tu dharmakāmārthāndhṛtyā dhārayate.arjuna \nprasaṅgena phalākāṅkṣī dhṛtiḥ sā pārtha rājasī",
+            "meaning": "यया (by) which - तु but - धर्मकामार्थान् Dharma (duty) - desire and wealth - धृत्या by firmness - धारयते holds - अर्जुन O Arjuna - प्रसङ्गेन on account of attachment - फलाकाङ्क्षी desirous of the fruit of action - धृतिः firmness - सा that - पार्थ O Arjuna - राजसी Rajasic (passionate)."
+        },
+        {
+            "id": "bg_18_35",
+            "number": 35,
+            "sanskrit": "यया स्वप्नं भयं शोकं विषादं मदमेव च |\nन विमुञ्चति दुर्मेधा धृतिः सा पार्थ तामसी",
+            "translation": "That, by which a stupid man does not abandon sleep, fear, grief, despair and also conceit  that firmness, O Arjuna, is Tamasic.",
+            "transliteration": "yayā svapnaṃ bhayaṃ śokaṃ viṣādaṃ madameva ca \nna vimuñcati durmedhā dhṛtiḥ sā pārtha tāmasī",
+            "meaning": "यया by which - स्वप्नम् sleep - भयम् fear - शोकम् grief - विषादम् despair - मदम् conceit - एव indeed - च and - न not - विमुञ्चति abandons - दुर्मेधाः a stupid man - धृतिः firmness - सा that - पार्थ O Arjuna - तामसी Tamasic (dark)."
+        },
+        {
+            "id": "bg_18_36",
+            "number": 36,
+            "sanskrit": "सुखं त्विदानीं त्रिविधं शृणु मे भरतर्षभ |\nअभ्यासाद्रमते यत्र दुःखान्तं च निगच्छति",
+            "translation": "And now hear from Me, O Arjuna, of the threefold pleasure, in which one rejoices by practice and surely comes to the end of pain.",
+            "transliteration": "sukhaṃ tvidānīṃ trividhaṃ śṛṇu me bharatarṣabha \nabhyāsādramate yatra duḥkhāntaṃ ca nigacchati",
+            "meaning": "सुखम् pleasure - तु indeed - इदानीम् now - त्रिविधम् threefold - श्रृणु hear - मे of Me - भरतर्षभ O lord of the Bharatas - अभ्यासात् from practice - रमते rejoices - यत्र in which - दुःखान्तम् the end of pain - च and - निगच्छति (he) attains to."
+        },
+        {
+            "id": "bg_18_37",
+            "number": 37,
+            "sanskrit": "यत्तदग्रे विषमिव परिणामेऽमृतोपमम् |\nतत्सुखं सात्त्विकं प्रोक्तमात्मबुद्धिप्रसादजम्",
+            "translation": "That which is like poison at first but in the end like nectar  that happiness is declared to be Sattvic, born of the purity of one's own mind due to Self-realisation.",
+            "transliteration": "yattadagre viṣamiva pariṇāme.amṛtopamam \ntatsukhaṃ sāttvikaṃ proktamātmabuddhiprasādajam",
+            "meaning": "यत् which - तत् that - अग्रे at first - विषम् poison - इव like - परिणामे in the end - अमृतोपमम् like nectar - तत् that - सुखम् pleasure - सात्त्विकम् Sattvic - प्रोक्तम् is declared (to be) - आत्मबुद्धिप्रसादजम् born of the purity of ones own mind due to Selfrealisation."
+        },
+        {
+            "id": "bg_18_38",
+            "number": 38,
+            "sanskrit": "विषयेन्द्रियसंयोगाद्यत्तदग्रेऽमृतोपमम् |\nपरिणामे विषमिव तत्सुखं राजसं स्मृतम्",
+            "translation": "That happiness which arises from the contact of the sense-organs with the objects, which is at first like nectar, and in the end like poison  that is declared to be Rajasic.",
+            "transliteration": "viṣayendriyasaṃyogādyattadagre.amṛtopamam \npariṇāme viṣamiva tatsukhaṃ rājasaṃ smṛtam",
+            "meaning": "विषयेन्द्रियसंयोगात् from the contact of the senseorgans with the objects - यत् which - तत् that - अग्रे at first - अमृतोपमम् like nectar - परिणामे in the end - विषम् poison - इव like - तत् that - सुखम् pleasure - राजसम् Rajasic - स्मृतम् is declared."
+        },
+        {
+            "id": "bg_18_39",
+            "number": 39,
+            "sanskrit": "यदग्रे चानुबन्धे च सुखं मोहनमात्मनः |\nनिद्रालस्यप्रमादोत्थं तत्तामसमुदाहृतम्",
+            "translation": "That happiness which at first as well as in the seel deludes the self, and which arises from sleep, indolence and heedlessness  that is declared to be Tamasic.",
+            "transliteration": "yadagre cānubandhe ca sukhaṃ mohanamātmanaḥ \nnidrālasyapramādotthaṃ tattāmasamudāhṛtam",
+            "meaning": "यत् which - अग्रे at first - च and - अनुबन्धे in the seel - च and - सुखम् pleasure - मोहनम् delusive - आत्मनः of the self - निद्रालस्यप्रमादोत्थम् arising from sleep - indolence and heedlessness - तत् that - तामसम् Tamasic - उदाहृतम् is declared."
+        },
+        {
+            "id": "bg_18_40",
+            "number": 40,
+            "sanskrit": "न तदस्ति पृथिव्यां वा दिवि देवेषु वा पुनः |\nसत्त्वं प्रकृतिजैर्मुक्तं यदेभिः स्यात्त्रिभिर्गुणैः",
+            "translation": "There is no being on earth or again in heaven among the gods, that is liberated from the three alities born of Nature.",
+            "transliteration": "na tadasti pṛthivyāṃ vā divi deveṣu vā punaḥ \nsattvaṃ prakṛtijairmuktaṃ yadebhiḥ syāttribhirguṇaiḥ",
+            "meaning": "न not - तत् that - अस्ति is - पृथिव्याम् on the earth - वा or - दिवि in heaven - देवेषु among the gods - वा or - पुनः again - सत्त्वम् being - प्रकृतिजैः born of Prakriti (matter) - मुक्तम् freed - यत् which - एभिः from these - स्यात् may be - त्रिभिः from three - गुणैः by alities."
+        },
+        {
+            "id": "bg_18_41",
+            "number": 41,
+            "sanskrit": "ब्राह्मणक्षत्रियविशां शूद्राणां च परन्तप |\nकर्माणि प्रविभक्तानि स्वभावप्रभवैर्गुणैः",
+            "translation": "Of Brahmanas, Kshatriyas and Vaisyas, as also of Sudras, O Arjuna, the duties are distributed according to the alities born of their own nature.",
+            "transliteration": "brāhmaṇakṣatriyaviśāṃ śūdrāṇāṃ ca parantapa \nkarmāṇi pravibhaktāni svabhāvaprabhavairguṇaiḥ",
+            "meaning": "ब्राह्मणक्षत्रियविशाम् of Brahmanas - Kshatriyas and Vaisyas - शूद्राणाम् of Sudras - च as also - परंतप O Parantapa - कर्माणि duties - प्रविभक्तानि are distributed - स्वभावप्रभवैः born of their own nature - गुणैः by alities."
+        },
+        {
+            "id": "bg_18_42",
+            "number": 42,
+            "sanskrit": "शमो दमस्तपः शौचं क्षान्तिरार्जवमेव च |\nज्ञानं विज्ञानमास्तिक्यं ब्रह्मकर्म स्वभावजम्",
+            "translation": "Serenity, self-restraint, austerity, purity, forgiveness and also uprightness, knowledge, realisation and belief in God are the duties of the Brahmanas, born of (their own) nature.",
+            "transliteration": "śamo damastapaḥ śaucaṃ kṣāntirārjavameva ca \njñānaṃ vijñānamāstikyaṃ brahmakarma svabhāvajam",
+            "meaning": "शमः serenity - दमः selfrestraint - तपः austerity - शौचम् purity - क्षान्तिः forgiveness - आर्जवम् uprightness - एव even - च and - ज्ञानम् knowledge - विज्ञानम् realisation - आस्तिक्यम् belief in God - ब्रह्मकर्म (are) the duties of Brahmanas - स्वभावजम् born of nature."
+        },
+        {
+            "id": "bg_18_43",
+            "number": 43,
+            "sanskrit": "शौर्यं तेजो धृतिर्दाक्ष्यं युद्धे चाप्यपलायनम् |\nदानमीश्वरभावश्च क्षात्रं कर्म स्वभावजम्",
+            "translation": "Prowess, splendour, firmness, dexterity and also not fleeing from battle, generosity and lordliness are the duties of the Kshatriyas, born of (their own) nature.",
+            "transliteration": "śauryaṃ tejo dhṛtirdākṣyaṃ yuddhe cāpyapalāyanam \ndānamīśvarabhāvaśca kṣātraṃ karma svabhāvajam",
+            "meaning": "शौर्यम् prowess - तेजः splendour - धृतः firmness - दाक्ष्यम् dexterity - युद्धे in battle - च and - अपि also - अपलायनम् not fleeing - दानम् generosity - ईश्वरभावः lordliness - च and - क्षात्रम् of Kshatriyas - कर्म action - स्वभावजम् born of nature."
+        },
+        {
+            "id": "bg_18_44",
+            "number": 44,
+            "sanskrit": "कृषिगौरक्ष्यवाणिज्यं वैश्यकर्म स्वभावजम् |\nपरिचर्यात्मकं कर्म शूद्रस्यापि स्वभावजम्",
+            "translation": "Agriculture, cattle-rearing and trade are the duties of the Vaisya (merchant), born of (their own) nature; and action consisting of service is the duty of the Sudra (servant-class), born of (their own) nature.",
+            "transliteration": "kṛṣigaurakṣyavāṇijyaṃ vaiśyakarma svabhāvajam \nparicaryātmakaṃ karma śūdrasyāpi svabhāvajam",
+            "meaning": "कृषिगौरक्ष्यवाणिज्यम् agriculture - cattlerearing and trade - वैश्यकर्म the duties of Vaisya - स्वभावजम् born of nature - परिचर्यात्मकम् consisting of service - कर्म action - शूद्रस्य of the Sudra - अपि also - स्वभावजम् born of nature."
+        },
+        {
+            "id": "bg_18_45",
+            "number": 45,
+            "sanskrit": "स्वे स्वे कर्मण्यभिरतः संसिद्धिं लभते नरः |\nस्वकर्मनिरतः सिद्धिं यथा विन्दति तच्छृणु",
+            "translation": "He who does actions, offering them to Brahman, and abandoning attachment, is not tainted by sin, just as a lotus-leaf is not tainted by water.",
+            "transliteration": "sve sve karmaṇyabhirataḥ saṃsiddhiṃ labhate naraḥ \nsvakarmanirataḥ siddhiṃ yathā vindati tacchṛṇu",
+            "meaning": "ब्रह्मणि in Brahman - आधाय having placed - कर्माणि actions - सङ्गम् attachment - त्यक्त्वा having abandoned - करोति acts - यः who - लिप्यते is tainted - न not - सः he - पापेन by sin - पद्मपत्रम् lotusleaf - इव like - अम्भसा by water."
+        },
+        {
+            "id": "bg_18_46",
+            "number": 46,
+            "sanskrit": "यतः प्रवृत्तिर्भूतानां येन सर्वमिदं ततम् |\nस्वकर्मणा तमभ्यर्च्य सिद्धिं विन्दति मानवः",
+            "translation": "He from Whom all the beings have evolved and by Whom all this is pervaded  worshipping Him with his own duty, man attains perfection.",
+            "transliteration": "yataḥ pravṛttirbhūtānāṃ yena sarvamidaṃ tatam \nsvakarmaṇā tamabhyarcya siddhiṃ vindati mānavaḥ",
+            "meaning": "यतः from whom - प्रवृत्तिः (is) the evolution - भूतानाम् of beings - येन by whom - सर्वम् all - इदम् this - ततम् is pervaded - स्वकर्मणा with his own duty - तम् Him - अभ्यर्च्य worshipping - सिद्धिम् perfection - विन्दति attains - मानवः man."
+        },
+        {
+            "id": "bg_18_47",
+            "number": 47,
+            "sanskrit": "श्रेयान्स्वधर्मो विगुणः परधर्मात्स्वनुष्ठितात् |\nस्वभावनियतं कर्म कुर्वन्नाप्नोति किल्बिषम्",
+            "translation": "Better is one's own duty (though) destitute of merits, than the duty of another well performed. He who does the duty ordained by his own nature incurs no sin.",
+            "transliteration": "śreyānsvadharmo viguṇaḥ paradharmātsvanuṣṭhitāt \nsvabhāvaniyataṃ karma kurvannāpnoti kilbiṣam",
+            "meaning": "श्रेयान् better - स्वधर्मः ones own duty - विगुणः (though) destitute of merits - परधर्मात् that the duty of another - स्वनुष्ठितात् (than) well performed - स्वभावनियतम् ordained by his own nature - कर्म action - कुर्वन् doing - न not - आप्नोति (he) incurs - किल्बिषम् sin."
+        },
+        {
+            "id": "bg_18_48",
+            "number": 48,
+            "sanskrit": "सहजं कर्म कौन्तेय सदोषमपि न त्यजेत् |\nसर्वारम्भा हि दोषेण धूमेनाग्निरिवावृताः",
+            "translation": "One should not abandon, O Arjuna, the duty to which one is born, though faulty; for, all undertakings are enveloped by evil, as fire by smoke.",
+            "transliteration": "sahajaṃ karma kaunteya sadoṣamapi na tyajet \nsarvārambhā hi doṣeṇa dhūmenāgnirivāvṛtāḥ",
+            "meaning": "सहजम् which is born - कर्म action - कौन्तेय O Kaunteya - सदोषम् with fault - अपि even - न not - त्यजेत् (one) should abandon - सर्वारम्भाः all undertakings - हि for - दोषेण by evil - धूमेन by smoke - अग्निः fire - इव like - आवृताः are enveloped."
+        },
+        {
+            "id": "bg_18_49",
+            "number": 49,
+            "sanskrit": "असक्तबुद्धिः सर्वत्र जितात्मा विगतस्पृहः |\nनैष्कर्म्यसिद्धिं परमां संन्यासेनाधिगच्छति",
+            "translation": "He whose intellect is unattached everywhere, who has subdued his self, from whom desire has fled,  he by renunciation, attains the supreme state of freedom from action.",
+            "transliteration": "asaktabuddhiḥ sarvatra jitātmā vigataspṛhaḥ \nnaiṣkarmyasiddhiṃ paramāṃ saṃnyāsenādhigacchati",
+            "meaning": "असक्तबुद्धिः whose intellect is unattached - सर्वत्र eveywhere - जितात्मा who has subdued his self - विगतस्पृहः whose desire has fled - नैष्कर्म्यसिद्धिम् the perfection consisting in freedom from action - परमाम् the supreme - संन्यासेन by renunciaion - अधिगच्छति (he) attains."
+        },
+        {
+            "id": "bg_18_50",
+            "number": 50,
+            "sanskrit": "सिद्धिं प्राप्तो यथा ब्रह्म तथाप्नोति निबोध मे |\nसमासेनैव कौन्तेय निष्ठा ज्ञानस्य या परा",
+            "translation": "Learn from Me in brief, O Arjuna, how he who has attained perfection reaches Brahman (the Eternal), that supreme state of knowledge.",
+            "transliteration": "siddhiṃ prāpto yathā brahma tathāpnoti nibodha me \nsamāsenaiva kaunteya niṣṭhā jñānasya yā parā",
+            "meaning": "सिद्धिम् perfection - प्राप्तः attained - यथा as - ब्रह्म Brahman (the Eternal) - तथा so - आप्नोति obtains - निबोध learn - मे of Me - समासेन in brief - एव even - कौन्तेय O son of Kunti - निष्ठा state - ज्ञानस्य of knowledge - या or - परा highest."
+        },
+        {
+            "id": "bg_18_51",
+            "number": 51,
+            "sanskrit": "बुद्ध्या विशुद्धया युक्तो धृत्यात्मानं नियम्य च |\nशब्दादीन्विषयांस्त्यक्त्वा रागद्वेषौ व्युदस्य च",
+            "translation": "Endowed with a pure intellect, controlling the self by firmness, relinishing sound and other objects and abandoning attraction and hatred.",
+            "transliteration": "buddhyā viśuddhayā yukto dhṛtyātmānaṃ niyamya ca \nśabdādīnviṣayāṃstyaktvā rāgadveṣau vyudasya ca",
+            "meaning": "बुद्ध्या with an intellect - विशुद्धया pure - युक्तः endowed - धृत्या by firmness - आत्मानम् the self - नियम्य controlling - च and - शब्दादीन् sound and other - विषयान् senseobjects - त्यक्त्वा relinishing - रागद्वेषौ attraction and hatred - व्युदस्य abandoning - च and."
+        },
+        {
+            "id": "bg_18_52",
+            "number": 52,
+            "sanskrit": "विविक्तसेवी लघ्वाशी यतवाक्कायमानसः |\nध्यानयोगपरो नित्यं वैराग्यं समुपाश्रितः",
+            "translation": "Dwelling in solitude, eating but little, with speech, body and mind subdued, always engaged in meditation and concentration, resorting to dispassion.",
+            "transliteration": "viviktasevī laghvāśī yatavākkāyamānasaḥ \ndhyānayogaparo nityaṃ vairāgyaṃ samupāśritaḥ",
+            "meaning": "विविक्तसेवी dwelling in solitude - लघ्वाशी eating but little - यतवाक्कायमानसः speech - body and mind subdued - ध्यानयोगपरः engaged in meditation and concentration - नित्यम् always - वैराग्यम् dispassion - समुपाश्रितः resorting to."
+        },
+        {
+            "id": "bg_18_53",
+            "number": 53,
+            "sanskrit": "अहंकारं बलं दर्पं कामं क्रोधं परिग्रहम् |\nविमुच्य निर्ममः शान्तो ब्रह्मभूयाय कल्पते",
+            "translation": "Having abandoned egoism, strength, arrogance, desire, anger and covetousness, and free from the notion of 'mine' and peaceful,  he is fit for becoming Brahman.",
+            "transliteration": "ahaṃkāraṃ balaṃ darpaṃ kāmaṃ krodhaṃ parigraham \nvimucya nirmamaḥ śānto brahmabhūyāya kalpate",
+            "meaning": "अहङ्कारम् egoism - बलम् strength - दर्पम् arrogance - कामम् desire - क्रोधम् anger - परिग्रहम् covetousness - विमुच्य having abandoned - निर्ममः without mineness - शान्तः peaceful - ब्रह्मभूयाय for becoming Brahman - कल्पते (he) is fit."
+        },
+        {
+            "id": "bg_18_54",
+            "number": 54,
+            "sanskrit": "ब्रह्मभूतः प्रसन्नात्मा न शोचति न काङ्क्षति |\nसमः सर्वेषु भूतेषु मद्भक्तिं लभते पराम्",
+            "translation": "Becoming Brahman, serene in the Self, he neither grieves nor desires, the same to all beings, he obtains supreme devotion to Me.",
+            "transliteration": "brahmabhūtaḥ prasannātmā na śocati na kāṅkṣati \nsamaḥ sarveṣu bhūteṣu madbhaktiṃ labhate parām",
+            "meaning": "ब्रह्मभूतः having become Brahman - प्रसन्नात्मा sereneminded - न not - शोचति (he) grieves - न not - काङ्क्षति desires - समः the same - सर्वेषु all - भूतेषु in beings - मद्भक्तिम् devotion unto Me - लभते obtains - पराम् supreme."
+        },
+        {
+            "id": "bg_18_55",
+            "number": 55,
+            "sanskrit": "भक्त्या मामभिजानाति यावान्यश्चास्मि तत्त्वतः |\nततो मां तत्त्वतो ज्ञात्वा विशते तदनन्तरम्",
+            "translation": "By devotion he knows Me in truth, what and who I am; then having known Me in truth, he forthwith enters into the Supreme.",
+            "transliteration": "bhaktyā māmabhijānāti yāvānyaścāsmi tattvataḥ \ntato māṃ tattvato jñātvā viśate tadanantaram",
+            "meaning": "भक्त्या by devotion - माम् Me - अभिजानाति (he) knows - यावान् what - यः who - च and - अस्मि (I) am - तत्त्वतः in truth - ततः then - माम् Me - तत्त्वतः in truth - ज्ञात्वा having known - विशते (he) enters - तत् that - अनन्तरम् afterwards."
+        },
+        {
+            "id": "bg_18_56",
+            "number": 56,
+            "sanskrit": "सर्वकर्माण्यपि सदा कुर्वाणो मद्व्यपाश्रयः |\nमत्प्रसादादवाप्नोति शाश्वतं पदमव्ययम्",
+            "translation": "Doing all actions always having taken refuge in Me, by My grace he obtains the eternal indestructible state of being.",
+            "transliteration": "sarvakarmāṇyapi sadā kurvāṇo madvyapāśrayaḥ \nmatprasādādavāpnoti śāśvataṃ padamavyayam",
+            "meaning": "सर्वकर्माणि all actions - अपि also - सदा always - कुर्वाणः doing - मद्व्यपाश्रयः taking refuge in Me - मत्प्रसादात् by My grace - अवाप्नोति obtains - शाश्वतम् the eternal - पदम् state or abode - अव्ययम् indestructible."
+        },
+        {
+            "id": "bg_18_57",
+            "number": 57,
+            "sanskrit": "चेतसा सर्वकर्माणि मयि संन्यस्य मत्परः |\nबुद्धियोगमुपाश्रित्य मच्चित्तः सततं भव",
+            "translation": "Mentally renouncing all actions in Me, having Me as the highest goal, resorting to the Yoga of discrimination do thou ever fix thy mind on Me.",
+            "transliteration": "cetasā sarvakarmāṇi mayi saṃnyasya matparaḥ \nbuddhiyogamupāśritya maccittaḥ satataṃ bhava",
+            "meaning": "चेतसा mentally - सर्वकर्माणि all actions - मयि in Me - संन्यस्य resigning - मत्परः having Me as the highest goal - बुद्धियोगम् the Yoga of discrimination - उपाश्रित्य resorting to - मच्चित्तः with the mind fixed on Me - सततम् always - भव be."
+        },
+        {
+            "id": "bg_18_58",
+            "number": 58,
+            "sanskrit": "मच्चित्तः सर्वदुर्गाणि मत्प्रसादात्तरिष्यसि |\nअथ चेत्त्वमहंकारान्न श्रोष्यसि विनङ्क्ष्यसि",
+            "translation": "Fixing thy mind on Me, thou shalt by My grace overcome all obstacles; but if from egoism thou wilt not hear Me, thou shalt perish.",
+            "transliteration": "maccittaḥ sarvadurgāṇi matprasādāttariṣyasi \natha cettvamahaṃkārānna śroṣyasi vinaṅkṣyasi",
+            "meaning": "मच्चित्तः fixing thy mind on Me - सर्वदुर्गाणि all obstacles - मत्प्रसादात् by My grace - तरिष्यसि (thou) shalt overcome - अथ now - चेत् if - त्वम् thou - अहङ्कारात् from egoism - न not - श्रोष्यसि (thou) wilt hear - विनङ्क्ष्यसि (thou) shalt perish."
+        },
+        {
+            "id": "bg_18_59",
+            "number": 59,
+            "sanskrit": "यदहंकारमाश्रित्य न योत्स्य इति मन्यसे |\nमिथ्यैष व्यवसायस्ते प्रकृतिस्त्वां नियोक्ष्यति",
+            "translation": "If, filled with egoism, thou thinkest: \"I will not fight\", vain is this, thy resolve; Nature will compel thee.",
+            "transliteration": "yadahaṃkāramāśritya na yotsya iti manyase \nmithyaiṣa vyavasāyaste prakṛtistvāṃ niyokṣyati",
+            "meaning": "यत् if - अहङ्कारम् egoism - आश्रित्य having taken refuge in - न not - योत्स्ये (I) will fight - इति thus - मन्यसे (thou) thinkest - मिथ्या vain - एषः this - व्यवसायः resolve - ते thy - प्रकृतिः nature - त्वाम् thee - नियोक्ष्यति will compel."
+        },
+        {
+            "id": "bg_18_60",
+            "number": 60,
+            "sanskrit": "स्वभावजेन कौन्तेय निबद्धः स्वेन कर्मणा |\nकर्तुं नेच्छसि यन्मोहात्करिष्यस्यवशोपि तत्",
+            "translation": "O Arjuna, bound by thy own Karma (action) born of thy own nature, that which from delusion thou wishest not to do, even that thou shalt do helplessly.",
+            "transliteration": "svabhāvajena kaunteya nibaddhaḥ svena karmaṇā \nkartuṃ necchasi yanmohātkariṣyasyavaśopi tat",
+            "meaning": "स्वभावजेन born of (thy) own nature - कौन्तेय O son of Kunti - निबद्धः bound - स्वेन (thy) own - कर्मणा by action - कर्तुम् to do - न not - इच्छसि (thou) wishest - यत् which - मोहात् from delusion - करिष्यसि (thou) shalt do - अवशः helpless - अपि also - तत् that."
+        },
+        {
+            "id": "bg_18_61",
+            "number": 61,
+            "sanskrit": "ईश्वरः सर्वभूतानां हृद्देशेऽर्जुन तिष्ठति |\nभ्रामयन्सर्वभूतानि यन्त्रारूढानि मायया",
+            "translation": "The Lord dwells in the hearts of all beings, O Arjuna, causing all beings, by His illusive power, to revolve as if mounted on a machine.",
+            "transliteration": "īśvaraḥ sarvabhūtānāṃ hṛddeśe.arjuna tiṣṭhati \nbhrāmayansarvabhūtāni yantrārūḍhāni māyayā",
+            "meaning": "ईश्वरः the Lord - सर्वभूतानाम् of all beings - हृद्देशे in the hearts - अर्जुन O Arjuna - तिष्ठति dwells - भ्रामयन् causing to revolve - सर्वभूतानि all beings - यन्त्रारूढानि mounted on a machine - मायया by illusion."
+        },
+        {
+            "id": "bg_18_62",
+            "number": 62,
+            "sanskrit": "तमेव शरणं गच्छ सर्वभावेन भारत |\nतत्प्रसादात्परां शान्तिं स्थानं प्राप्स्यसि शाश्वतम्",
+            "translation": "Fly unto Him for refuge with all thy being, O Arjuna; by His grace thou shalt obtain supreme peace (and) the eternal abode.",
+            "transliteration": "tameva śaraṇaṃ gaccha sarvabhāvena bhārata \ntatprasādātparāṃ śāntiṃ sthānaṃ prāpsyasi śāśvatam",
+            "meaning": "तम् to Him - एव even - शरणम् गच्छ take refuge - सर्वभावेन with all thy being - भारत O Bharata - तत्प्रसादात् by His grace - पराम् supreme - शान्तिम् peace - स्थानम् the abode - प्राप्स्यसि (thou) shalt obtain - शाश्वतम् eternal."
+        },
+        {
+            "id": "bg_18_63",
+            "number": 63,
+            "sanskrit": "इति ते ज्ञानमाख्यातं गुह्याद्गुह्यतरं मया |\nविमृश्यैतदशेषेण यथेच्छसि तथा कुरु",
+            "translation": "Thus has wisdom, more secret than secrecy itself, been declared unto thee by Me; having reflected over it fully, then act as thou wishest.",
+            "transliteration": "iti te jñānamākhyātaṃ guhyādguhyataraṃ mayā \nvimṛśyaitadaśeṣeṇa yathecchasi tathā kuru",
+            "meaning": "इति thus - ते to thee - ज्ञानम् wisdom - आख्यातम् has been declared - गुह्यात् than the secret - गुह्यतरम् more secret - मया by Me - विमृश्य reflecting over - एतत् this - अशेषेण fully - यथा as - इच्छसि (thou) wishest - तथा so - कुरु act."
+        },
+        {
+            "id": "bg_18_64",
+            "number": 64,
+            "sanskrit": "सर्वगुह्यतमं भूयः शृणु मे परमं वचः |\nइष्टोऽसि मे दृढमिति ततो वक्ष्यामि ते हितम्",
+            "translation": "Hear thou again My supreme word, most secret of all; because thou art dearly beloved of Me, I will tell thee what is good.",
+            "transliteration": "sarvaguhyatamaṃ bhūyaḥ śṛṇu me paramaṃ vacaḥ \niṣṭo.asi me dṛḍhamiti tato vakṣyāmi te hitam",
+            "meaning": "सर्वगुह्यतमम् the most secret of all - भूयः again - श्रृणु hear - मे My - परमम् supreme - वचः word - इष्टः beloved - असि (thou) art - मे of Me - दृढम् dearly - इति thus - ततः therefore - वक्ष्यामि (I) will speak - ते thy - हितम् what is good."
+        },
+        {
+            "id": "bg_18_65",
+            "number": 65,
+            "sanskrit": "मन्मना भव मद्भक्तो मद्याजी मां नमस्कुरु |\nमामेवैष्यसि सत्यं ते प्रतिजाने प्रियोऽसि मे",
+            "translation": "Fix thy mind on Me, by devoted to Me, sacrifice to Me, bow down to Me. Thou shalt come even to Me; truly do I promise unto thee, (for) thou art dear to Me.",
+            "transliteration": "manmanā bhava madbhakto madyājī māṃ namaskuru \nmāmevaiṣyasi satyaṃ te pratijāne priyo.asi me",
+            "meaning": "मन्मनाः with mind fixed on Me - भव be - मद्भक्तः devoted to Me - मद्याजी sacrifice to Me - माम् to Me - नमस्कुरु bow down - माम् to Me - एव even - एष्यसि (thou) shalt come - सत्यम् truth - ते to thee - प्रतिजाने (I) promise - प्रियः dear - असि (thou) art - मे of Me."
+        },
+        {
+            "id": "bg_18_66",
             "number": 66,
-            "sanskrit": "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज |\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः || ६६ ||",
-            "translation": "Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.",
-            "transliteration": "sarva-dharmān parityajya mām ekaṁ śaraṇaṁ vraja\nahaṁ tvāṁ sarva-pāpebhyo mokṣayiṣyāmi mā śucaḥ",
-            "meaning": "Sarva-dharman - all varieties of religion; Parityajya - abandoning..."
+            "sanskrit": "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज |\nअहं त्वा सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः",
+            "translation": "Abandoning all duties, take refuge in Me alone: I will liberate thee from all sins; grieve not.",
+            "transliteration": "sarvadharmānparityajya māmekaṃ śaraṇaṃ vraja \nahaṃ tvāṃ sarvapāpebhyo mokṣyayiṣyāmi mā śucaḥ",
+            "meaning": "सर्वधर्मान् all duties - परित्यज्य having abandoned - माम् to Me - एकम् alone - शरणम् refuge - व्रज take - अहम् I - त्वा thee - सर्वपापेभ्यः from all sins - मोक्षयिष्यामि will liberate - मा dont - शुचः grieve."
+        },
+        {
+            "id": "bg_18_67",
+            "number": 67,
+            "sanskrit": "इदं ते नातपस्काय नाभक्ताय कदाचन |\nन चाशुश्रूषवे वाच्यं न च मां योऽभ्यसूयति",
+            "translation": "This is never to be spoken by thee to one who is devoid of austerities or devotion, nor to one who does not render service or who does not desire to listen, nor to one who cavils at Me.",
+            "transliteration": "idaṃ te nātapaskāya nābhaktāya kadācana \nna cāśuśrūṣave vācyaṃ na ca māṃ yo.abhyasūyati",
+            "meaning": "इदम् this - ते by thee - न not - अतपस्काय to one who is devoid of austerity - न not - अभक्ताय to one who is not devoted - कदाचन never - न not - च and - अशुश्रूषवे to one who does not render service or who does not desire to listen - वाच्यम् to be spoken - न not - च and - माम् Me - यः who - अभ्यसूयति cavils at."
+        },
+        {
+            "id": "bg_18_68",
+            "number": 68,
+            "sanskrit": "य इदं परमं गुह्यं मद्भक्तेष्वभिधास्यति |\nभक्तिं मयि परां कृत्वा मामेवैष्यत्यसंशयः",
+            "translation": "He who with supreme devotion to Me will teach this supreme secret to My devotees, shall doubtlessly come to Me.",
+            "transliteration": "ya idaṃ paramaṃ guhyaṃ madbhakteṣvabhidhāsyati \nbhaktiṃ mayi parāṃ kṛtvā māmevaiṣyatyasaṃśayaḥ",
+            "meaning": "यः who - इमम् this - परमम् supreme - गुह्यम् secret - मद्भक्तेषु in My devotees - अभिधास्यति shall declare - भक्तिम् devotion - मयि in Me - पराम् supreme - कृत्वा having done - माम् to Me - एव even - एष्यति shall come - असंशयः doubtless."
+        },
+        {
+            "id": "bg_18_69",
+            "number": 69,
+            "sanskrit": "न च तस्मान्मनुष्येषु कश्चिन्मे प्रियकृत्तमः |\nभविता न च मे तस्मादन्यः प्रियतरो भुवि",
+            "translation": "Nor is there any among men who does dearer service to Me, nor shall there be another on earth dearer to Me than he.",
+            "transliteration": "na ca tasmānmanuṣyeṣu kaścinme priyakṛttamaḥ \nbhavitā na ca me tasmādanyaḥ priyataro bhuvi",
+            "meaning": "न not - च and - तस्मात् than he - मनुष्येषु among men - कश्चित् any - मे of Me - प्रियकृत्तमः one who does dearer service - भविता shall be - न not - च and - मे of Me - तस्मात् than he - अन्यः another - प्रियतरः dearer - भुवि on the earth."
+        },
+        {
+            "id": "bg_18_70",
+            "number": 70,
+            "sanskrit": "अध्येष्यते च य इमं धर्म्यं संवादमावयोः |\nज्ञानयज्ञेन तेनाहमिष्टः स्यामिति मे मतिः",
+            "translation": "And he who will study this sacred dialogue of ours, by him I shall have been worshipped by the sacrifice of wisdom,  such is My conviction.",
+            "transliteration": "adhyeṣyate ca ya imaṃ dharmyaṃ saṃvādamāvayoḥ \njñānayajñena tenāhamiṣṭaḥ syāmiti me matiḥ",
+            "meaning": "अध्येष्यते shall study - च and - यः who - इमम् this - धर्म्यम् sacred - संवादम् dialogue - आवयोः of ours - ज्ञानयज्ञेन by the sacrifice of wisdom - तेन by him - अहम् I - इष्टः worshipped - स्याम् (I) shall have been - इति thus - मे My - मतिः conviction."
+        },
+        {
+            "id": "bg_18_71",
+            "number": 71,
+            "sanskrit": "श्रद्धावाननसूयश्च शृणुयादपि यो नरः |\nसोऽपि मुक्तः शुभाँल्लोकान्प्राप्नुयात्पुण्यकर्मणाम्",
+            "translation": "Also the man who hears this, full of faith and free from malice, he, too, liberated, shall attain to the happy worlds of those of righteous deeds.",
+            "transliteration": "śraddhāvānanasūyaśca śṛṇuyādapi yo naraḥ \nso.api muktaḥ śubhā.Nllokānprāpnuyātpuṇyakarmaṇām",
+            "meaning": "श्रद्धावान् full of faith - अनसूयः free from malice - च and - श्रृणुयात् may hear - अपि also - यः who - नरः man - सः he - अपि also - मुक्तः liberated - शुभान् happy - लोकान् worlds - प्राप्नुयात् shall attain - पुण्यकर्मणाम् of those of righteous deeds."
+        },
+        {
+            "id": "bg_18_72",
+            "number": 72,
+            "sanskrit": "कच्चिदेतच्छ्रुतं पार्थ त्वयैकाग्रेण चेतसा |\nकच्चिदज्ञानसम्मोहः प्रनष्टस्ते धनञ्जय",
+            "translation": "Has this been heard, O Arjuna, with one-pointed mind? Has the delusion of thy ignorance been destroyed, O Dhananjaya?",
+            "transliteration": "kaccidetacchrutaṃ pārtha tvayaikāgreṇa cetasā \nkaccidajñānasammohaḥ pranaṣṭaste dhanañjaya",
+            "meaning": "कच्चित् whether - एतत् this - श्रुतम् heard - पार्थ O son of Kunti (Arjuna) - त्वया by thee - एकाग्रेण onepointed - चेतसा by mind - कच्चित् whether - अज्ञानसंमोहः the delusion of ignorance - प्रनष्टः has been destroyed - ते thy - धनञ्जय O Dhananjaya."
+        },
+        {
+            "id": "bg_18_73",
+            "number": 73,
+            "sanskrit": "अर्जुन उवाच |\nनष्टो मोहः स्मृतिर्लब्धा त्वत्प्रसादान्मयाच्युत |\nस्थितोऽस्मि गतसन्देहः करिष्ये वचनं तव",
+            "translation": "Arjuna said  Destroyed is my delusion as I have gained my knowledge (memory) through Thy grace, O Krishna. I remain freed from doubts. I will act according to Thy word.",
+            "transliteration": "arjuna uvāca \nnaṣṭo mohaḥ smṛtirlabdhā tvatprasādānmayācyuta \nsthito.asmi gatasandehaḥ kariṣye vacanaṃ tava",
+            "meaning": "नष्टः is destroyed - मोहः delusion - स्मृतिः memory (knowledge) - लब्धा has been gained - त्वत्प्रसादात् through Thy grace - मया by me - अच्युत O Krishna - स्थितः अस्मि I remain - गतसन्देहः freed from doubts - करिष्ये (I) will do - वचनम् word - तव Thy."
+        },
+        {
+            "id": "bg_18_74",
+            "number": 74,
+            "sanskrit": "सञ्जय उवाच |\nइत्यहं वासुदेवस्य पार्थस्य च महात्मनः |\nसंवादमिममश्रौषमद्भुतं रोमहर्षणम्",
+            "translation": "Sanjaya said  Thus I have heard this wonderful dialogue between Krishna and the high-souled Arjuna, which causes the hair to stand on end.",
+            "transliteration": "sañjaya uvāca \nityahaṃ vāsudevasya pārthasya ca mahātmanaḥ \nsaṃvādamimamaśrauṣamadbhutaṃ romaharṣaṇam",
+            "meaning": "इति thus - अहम् I - वासुदेवस्य of Krishna - पार्थस्य of Arjuna - च and - महात्मनः highsouled - संवादम् dialogue - इमम् this - अश्रौषम् (I) have heard - अद्भुतम् wonderful - रोमहर्षणम् which causes the hair to stand on end."
+        },
+        {
+            "id": "bg_18_75",
+            "number": 75,
+            "sanskrit": "व्यासप्रसादाच्छ्रुतवानेतद्गुह्यमहं परम् |\nयोगं योगेश्वरात्कृष्णात्साक्षात्कथयतः स्वयम्",
+            "translation": "Through the grace of Vyasa I have heard this supreme and most secret Yoga direct from Krishna, the Lord of Yoga, Himself declaring it.",
+            "transliteration": "vyāsaprasādācchrutavānetadguhyamahaṃ param \nyogaṃ yogeśvarātkṛṣṇātsākṣātkathayataḥ svayam",
+            "meaning": "व्यासप्रसादात् through the grace of Vyasa - श्रुतवान् have heard - एतत् this - गुह्यम् secret - अहम् I - परम् supreme - योगम् Yoga - योगेश्वरात् from the Lord of Yoga - कृष्णात् from Krishna - साक्षात् directly - कथयतः declaring - स्वयम् Himself."
+        },
+        {
+            "id": "bg_18_76",
+            "number": 76,
+            "sanskrit": "राजन्संस्मृत्य संस्मृत्य संवादमिममद्भुतम् |\nकेशवार्जुनयोः पुण्यं हृष्यामि च मुहुर्मुहुः",
+            "translation": "O King, remembering this wonderful and holy dialogue between Krishna and Arjuna, I rejoice again and again.",
+            "transliteration": "rājansaṃsmṛtya saṃsmṛtya saṃvādamimamadbhutam \nkeśavārjunayoḥ puṇyaṃ hṛṣyāmi ca muhurmuhuḥ",
+            "meaning": "राजन् O King - संस्मृत्य having remembered - संस्मृत्य having remembered - संवादम् the dialogue - इमम् this - अद्भुतम् wonderful - केशवार्जुनयोः between Kesava and Arjuna - पुण्यम् holy - हृष्यामि (I) rejoice - च and - मुहुः again - मुहुः again."
+        },
+        {
+            "id": "bg_18_77",
+            "number": 77,
+            "sanskrit": "तच्च संस्मृत्य संस्मृत्य रूपमत्यद्भुतं हरेः |\nविस्मयो मे महान् राजन्हृष्यामि च पुनः पुनः",
+            "translation": "And, remembering again and again, also that most wonderful form of Hari, great is my wonder, O King; and I rejoice again and again.",
+            "transliteration": "tacca saṃsmṛtya saṃsmṛtya rūpamatyadbhutaṃ hareḥ \nvismayo me mahān rājanhṛṣyāmi ca punaḥ punaḥ",
+            "meaning": "तत् that - च and - संस्मृत्य having remembered - संस्मृत्य having remembered - रूपम् the form - अत्यद्भुतम् the most wonderful - हरेः of Hari - विस्मयः wonder - मे my - महान् great - राजन् O King - हृष्यामि (I) rejoice - च and - पुनः again - पुनः again."
+        },
+        {
+            "id": "bg_18_78",
+            "number": 78,
+            "sanskrit": "यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः |\nतत्र श्रीर्विजयो भूतिर्ध्रुवा नीतिर्मतिर्मम",
+            "translation": "Wherever is Krishna, the Lord of Yoga; wherever is Arjuna, the wielder of the bow; there are prosperity, victory, happiness and firm policy; such is my conviction.",
+            "transliteration": "yatra yogeśvaraḥ kṛṣṇo yatra pārtho dhanurdharaḥ \ntatra śrīrvijayo bhūtirdhruvā nītirmatirmama",
+            "meaning": "यत्र wherever - योगेश्वरः the Lord of Yoga - कृष्णः Krishna - यत्र wherever - पार्थः Arjuna - धनुर्धरः the archer - तत्र there - श्रीः prosperity - विजयः victory - भूतिः happiness - ध्रुवा firm - नीतिः policy - मतिः conviction - मम my."
         }
     ]
 }

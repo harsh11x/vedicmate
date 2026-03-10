@@ -30,13 +30,6 @@ class LibraryScreen extends StatelessWidget {
             icon: Icons.menu_book,
             onTap: () => _navigateToReader(context, 'isha_upanishad', 'Isha Upanishad', 0),
           ),
-          _buildScriptureCard(
-            context,
-            title: 'Yoga Sutras',
-            subtitle: 'The Path of Patanjali',
-            icon: Icons.self_improvement,
-            onTap: () => _navigateToReader(context, 'yoga_sutras', 'Yoga Sutras', 1),
-          ),
           const SizedBox(height: 24),
           _buildSectionHeader('Vedic Hymns'),
            _buildScriptureCard(

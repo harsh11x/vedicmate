@@ -1,16 +1,232 @@
 {
     "chapter_number": 8,
-    "title": "Akshara Brahma Yoga",
-    "translation": "The Yoga of the Imperishable Brahman",
-    "summary": "Krishna explains the nature of the soul, the supreme reality, and the importance of remembering Him at the time of death for attaining liberation.",
+    "title": "Akṣhar Brahma Yog",
+    "translation": "The Yog of the Eternal God",
+    "summary": "Krishna describes significant concepts from the Upanishads. He explains that remembering God at death leads to attaining Him. He talks about the cycle of creation and the divine Abode beyond it.",
     "verses": [
         {
-            "id": "gita_8_5",
+            "id": "bg_8_1",
+            "number": 1,
+            "sanskrit": "अर्जुन उवाच |\nकिं तद् ब्रह्म किमध्यात्मं किं कर्म पुरुषोत्तम |\nअधिभूतं च किं प्रोक्तमधिदैवं किमुच्यते",
+            "translation": "Swami Sivananda did not comment on this sloka",
+            "transliteration": "arjuna uvāca \nkiṃ tad brahma kimadhyātmaṃ kiṃ karma puruṣottama \nadhibhūtaṃ ca kiṃ proktamadhidaivaṃ kimucyate",
+            "meaning": "Swami Sivananda did not comment on this sloka"
+        },
+        {
+            "id": "bg_8_2",
+            "number": 2,
+            "sanskrit": "अधियज्ञः कथं कोऽत्र देहेऽस्मिन्मधुसूदन |\nप्रयाणकाले च कथं ज्ञेयोऽसि नियतात्मभिः",
+            "translation": "Who and how is Adhiyajna here in this body, O destroyer of Madhu (Krishna)? And how at the time of death, art Thou to be known by the self-controlled?",
+            "transliteration": "adhiyajñaḥ kathaṃ ko.atra dehe.asminmadhusūdana \nprayāṇakāle ca kathaṃ jñeyo.asi niyatātmabhiḥ",
+            "meaning": "अधियज्ञः Adhiyajna - कथम् how - कः who - अत्र here - देहे in body - अस्मिन् this - मधुसूदन O Madhusudana - प्रयाणकाले at the time of death - च and - कथम् how - ज्ञेयः knowable - असि art - नियतात्मभिः by the selfcontrolled."
+        },
+        {
+            "id": "bg_8_3",
+            "number": 3,
+            "sanskrit": "श्रीभगवानुवाच |\nअक्षरं ब्रह्म परमं स्वभावोऽध्यात्ममुच्यते |\nभूतभावोद्भवकरो विसर्गः कर्मसंज्ञितः",
+            "translation": "The Blessed Lord said  Brahman is the Imperishable, the Supreme; Its essential nature is called Self-knowledge; the offering (to the gods) which causes existence and manifestation of beings and which also sustains them is called action.",
+            "transliteration": "śrībhagavānuvāca \nakṣaraṃ brahma paramaṃ svabhāvo.adhyātmamucyate \nbhūtabhāvodbhavakaro visargaḥ karmasaṃjñitaḥ",
+            "meaning": "अक्षरम् imperishable - ब्रह्म Brahman - परमम् Supreme - स्वभावः (His) Nature - अध्यात्मम् Selfknowledge - उच्यते is called - भूतभावोद्भवकरः that which causes the origin and growth of beings - विसर्गः offering (to gods) - कर्मसंज्ञितः is called action."
+        },
+        {
+            "id": "bg_8_4",
+            "number": 4,
+            "sanskrit": "अधिभूतं क्षरो भावः पुरुषश्चाधिदैवतम् |\nअधियज्ञोऽहमेवात्र देहे देहभृतां वर",
+            "translation": "Adhibhuta (knowledge of the elements) pertains to My perishable Nature and the Purusha or the Soul is the Adhidaiva; I alone am the Adhiyajna here in this body, O best among the embodied (men).",
+            "transliteration": "adhibhūtaṃ kṣaro bhāvaḥ puruṣaścādhidaivatam \nadhiyajño.ahamevātra dehe dehabhṛtāṃ vara",
+            "meaning": "अधिभूतम् Adhibhuta - क्षरः perishable - भावः nature - पुरुषः the soul - च and - अधिदैवतम् Adhidaivata - अधियज्ञः Adhiyajna - अहम् I - एव alone - अत्र here - देहे in the body - देहभृताम् of the embodied - वर O best."
+        },
+        {
+            "id": "bg_8_5",
             "number": 5,
-            "sanskrit": "अन्तकाले च मामेव स्मरन्मुक्त्वा कलेवरम् |\nयः प्रयाति स मद्भावं याति नास्त्यत्र संशयः || ५ ||",
-            "translation": "And whoever, at the end of his life, quits his body remembering Me alone at once attains My nature. Of this there is no doubt.",
-            "transliteration": "anta-kāle ca mām eva smaran muktvā kalevaram\nyaḥ prayāti sa mad-bhāvaṁ yāti nāsty atra saṁśayaḥ",
-            "meaning": "Anta-kale - at the end of life; Ca - also; Mam - Me; Eva - certainly..."
+            "sanskrit": "अन्तकाले च मामेव स्मरन्मुक्त्वा कलेवरम् |\nयः प्रयाति स मद्भावं याति नास्त्यत्र संशयः",
+            "translation": "And whosoever, leaving the body, goes forth remembering Me alone, at the time of death, he attains My Being: there is no doubt about this.",
+            "transliteration": "antakāle ca māmeva smaranmuktvā kalevaram \nyaḥ prayāti sa madbhāvaṃ yāti nāstyatra saṃśayaḥ",
+            "meaning": "No"
+        },
+        {
+            "id": "bg_8_6",
+            "number": 6,
+            "sanskrit": "यं यं वापि स्मरन्भावं त्यजत्यन्ते कलेवरम् |\nतं तमेवैति कौन्तेय सदा तद्भावभावितः",
+            "translation": "Whosoever at the end leaves the body, thinking of any being, to that being only does he go, O son of Kunti (Arjuna), because of his constant thought of that being.",
+            "transliteration": "yaṃ yaṃ vāpi smaranbhāvaṃ tyajatyante kalevaram \ntaṃ tamevaiti kaunteya sadā tadbhāvabhāvitaḥ",
+            "meaning": "यम् which - यम् which - वा or - अपि even - स्मरन् remembering - भावम् nature (idea of object) - त्यजति leaves - अन्ते in the end - कलेवरम् the body - तम् to that - तम् to that - एव only - एति goes - कौन्तेय O Kaunteya - सदा constantly - तद्भावभावितः thinking of that object."
+        },
+        {
+            "id": "bg_8_7",
+            "number": 7,
+            "sanskrit": "तस्मात्सर्वेषु कालेषु मामनुस्मर युध्य च |\nमय्यर्पितमनोबुद्धिर्मामेवैष्यस्यसंशयः (orसंशयम्)",
+            "translation": "Therefore at all times remember Me only and fight. With mind and intellect fixed (or absorbed) in Me, thou shalt doubtessly come to Me alone.",
+            "transliteration": "tasmātsarveṣu kāleṣu māmanusmara yudhya ca \nmayyarpitamanobuddhirmāmevaiṣyasyasaṃśayaḥ",
+            "meaning": "तस्मात् therefore - सर्वेषु in all - कालेषु (in) times - माम् Me - अनुस्मर remember - युध्य fight - च and - मय्यर्पितमनोबुद्धिः with mind and intellect fixed (or absorbed) in Me - माम् to Me - एव alone - एष्यसि (thou) shalt come to - असंशयम् doubtless."
+        },
+        {
+            "id": "bg_8_8",
+            "number": 8,
+            "sanskrit": "अभ्यासयोगयुक्तेन चेतसा नान्यगामिना |\nपरमं पुरुषं दिव्यं याति पार्थानुचिन्तयन्",
+            "translation": "With the mind not moving towards any other thing, made steadfast by the method of habitual meditation, and constantly meditating, one goes to the Supreme Person, the Resplendent, O Arjuna.",
+            "transliteration": "orsaṃśayama abhyāsayogayuktena cetasā nānyagāminā \nparamaṃ puruṣaṃ divyaṃ yāti pārthānucintayan",
+            "meaning": "अभ्यासयोगयुक्तेन (with the mind made) steadfast by the method of habitual meditation - चेतसा with the mind - न not - अन्यगामिना moving towards any other thing - परमम् Supreme - पुरुषम् Purusha - दिव्यम् the resplendent - याति goes - पार्थ O Partha - अनुचिन्तयन् meditating."
+        },
+        {
+            "id": "bg_8_9",
+            "number": 9,
+            "sanskrit": "कविं पुराणमनुशासितार-\nमणोरणीयंसमनुस्मरेद्यः |\nसर्वस्य धातारमचिन्त्यरूप-\nमादित्यवर्णं तमसः परस्तात्",
+            "translation": "Whosoever meditates on the Omniscient, the Ancient, the Ruler (of the whole world), minuter than an atom, the supporter of all, of inconceivable form, effulgent like the sun and beyond the darkness of ignorance.",
+            "transliteration": "kaviṃ purāṇamanuśāsitāraṃ aṇoraṇīyaṃsamanusmaredyaḥ \nsarvasya dhātāramacintyarūpaṃ ādityavarṇaṃ tamasaḥ parastāt",
+            "meaning": "कविम् Omniscient - पुराणम् Ancient - अनुशासितारम् the Ruler (of the whole world) - अणोः than atom - अणीयांसम् minuter - अनुस्मरेत् remembers - यः who - सर्वस्य of all - धातारम् supporter - अचिन्त्यरूपम् one whose form is inconceivable - आदित्यवर्णम् effulgent like the sun - तमसः from the darkness (of ignorance) - परस्तात् beyond."
+        },
+        {
+            "id": "bg_8_10",
+            "number": 10,
+            "sanskrit": "प्रयाणकाले मनसाऽचलेन\nभक्त्या युक्तो योगबलेन चैव |\nभ्रुवोर्मध्ये प्राणमावेश्य सम्यक्\nस तं परं पुरुषमुपैति दिव्यम्",
+            "translation": "At the time of death, with unshaken mind, endowed with devotio, by the power of Yoga, fixing the whole life-breath in the middle of the two eyrows, he reaches that resplendent Supreme Person.",
+            "transliteration": "prayāṇakāle manasā.acalena bhaktyā yukto yogabalena caiva \nbhruvormadhye prāṇamāveśya samyak sa taṃ paraṃ puruṣamupaiti divyam",
+            "meaning": "प्रयाणकाले at the time of death - मनसा with mind - अचलेन unshaken - भक्त्या with devotion - युक्तः joined - योगबलेन by the power of Yoga - च and - एव only - भ्रुवोः of the two eyrows - मध्ये in the middle - प्राणम् Prana (breath) - आवेश्य having placed - सम्यक् thoroughly - सः he - तम् that - परम् Supreme - पुरुषम् Purusha - उपैति reaches - दिव्यम् resplendent."
+        },
+        {
+            "id": "bg_8_11",
+            "number": 11,
+            "sanskrit": "यदक्षरं वेदविदो वदन्ति\nविशन्ति यद्यतयो वीतरागाः |\nयदिच्छन्तो ब्रह्मचर्यं चरन्ति\nतत्ते पदं संग्रहेण प्रवक्ष्ये",
+            "translation": "That which is declared Imperishable by those who know the Vedas, that which the self-controlled (ascetics or Sannyasins) and passion-free enter, that desiring which celibacy is practised  that goal I will declare to thee in brief.",
+            "transliteration": "yadakṣaraṃ vedavido vadanti viśanti yadyatayo vītarāgāḥ \nyadicchanto brahmacaryaṃ caranti tatte padaṃ saṃgraheṇa pravakṣye",
+            "meaning": "यत् which - अक्षरम् imperishable - वेदविदः knowers of the Vedas - वदन्ति declare - विशन्ति enter - यत् which - यतयः the selfcontrolled (ascetics or Sannyasins) - वीतरागाः freed from attachment - यत् which - इच्छन्तः desiring - ब्रह्मचर्यम् celibacy - चरन्ति practise - तत् that - ते to thee - पदम् goal - संग्रहेण in brief - प्रवक्ष्ये (I) will declare."
+        },
+        {
+            "id": "bg_8_12",
+            "number": 12,
+            "sanskrit": "सर्वद्वाराणि संयम्य मनो हृदि निरुध्य च |\nमूध्न्यार्धायात्मनः प्राणमास्थितो योगधारणाम्",
+            "translation": "Having closed all the gates, confined the mind in the heart and fixed the life-breath in the head, engaged in the practice of concentration.",
+            "transliteration": "sarvadvārāṇi saṃyamya mano hṛdi nirudhya ca \nmūdhnyā^^rdhāyātmanaḥ prāṇamāsthito yogadhāraṇām",
+            "meaning": "सर्वद्वाराणि all gates - संयम्य having controlled - मनः mind - हृदि in the heart - निरुध्य having confined - ट and - मूर्ध्नि in the head - आधाय having placed - आत्मनः of the self - प्राणम् breath - आस्थितः established (in) - योगधारणाम् practice of concentration."
+        },
+        {
+            "id": "bg_8_13",
+            "number": 13,
+            "sanskrit": "ओमित्येकाक्षरं ब्रह्म व्याहरन्मामनुस्मरन् |\nयः प्रयाति त्यजन्देहं स याति परमां गतिम्",
+            "translation": "Uttering the one-syllabled Om  the Brahman  and remembering Me, he who departs, leaving the body, attains to the Supreme Goal.",
+            "transliteration": "omityekākṣaraṃ brahma vyāharanmāmanusmaran \nyaḥ prayāti tyajandehaṃ sa yāti paramāṃ gatim",
+            "meaning": "Om - इति thus - एकाक्षरम् onesyllabled - ब्रह्म Brahman - व्याहरन् uttering - माम् Me - अनुस्मरन् remembering - यः who - प्रयाति departs - त्यजन् leaving - देहम् the body - सः he - याति attains - परमाम् supreme - गतिम् goal."
+        },
+        {
+            "id": "bg_8_14",
+            "number": 14,
+            "sanskrit": "अनन्यचेताः सततं यो मां स्मरति नित्यशः |\nतस्याहं सुलभः पार्थ नित्ययुक्तस्य योगिनः",
+            "translation": "I am easily attainable by that ever-steadfast Yogi who constantly and daily remembers Me (for a long time), not thinking of anything else (with a single mind or one-pointed mind), O Partha (Arjuna).",
+            "transliteration": "ananyacetāḥ satataṃ yo māṃ smarati nityaśaḥ \ntasyāhaṃ sulabhaḥ pārtha nityayuktasya yoginaḥ",
+            "meaning": "अनन्यचेताः with the mind not thinking of any other object - सततम् constantly - यः who - माम् Me - स्मरति remembers - नित्यशः daily - तस्य of him - अहम् I - सुलभः easily attainable - पार्थ O Partha - नित्ययुक्तस्य eversteadfast - योगिनः of Yogi."
+        },
+        {
+            "id": "bg_8_15",
+            "number": 15,
+            "sanskrit": "मामुपेत्य पुनर्जन्म दुःखालयमशाश्वतम् |\nनाप्नुवन्ति महात्मानः संसिद्धिं परमां गताः",
+            "translation": "Having attained Me these great souls do not again take birth (here) which is the place of pain \nand is non-eternal: they have reached the highest perfection (liberation).",
+            "transliteration": "māmupetya punarjanma duḥkhālayamaśāśvatam \nnāpnuvanti mahātmānaḥ saṃsiddhiṃ paramāṃ gatāḥ",
+            "meaning": "माम् to Me - उपेत्य having attained - पुनर्जन्म rirth - दुःखालयम् the place of pain - अशाश्वतम् noneternal - न not - आप्नुवन्ति get - महात्मानः Mahatmas or the great souls - संसिद्धिम् to perfection - परमाम् highest - गताः having reached."
+        },
+        {
+            "id": "bg_8_16",
+            "number": 16,
+            "sanskrit": "आब्रह्मभुवनाल्लोकाः पुनरावर्तिनोऽर्जुन |\nमामुपेत्य तु कौन्तेय पुनर्जन्म न विद्यते",
+            "translation": "(All) the worlds including the world of Brahma are subject to return again, O Arjuna; but he who reaches Me, O son of Kunti, has no rirth.",
+            "transliteration": "ābrahmabhuvanāllokāḥ punarāvartino.arjuna \nmāmupetya tu kaunteya punarjanma na vidyate",
+            "meaning": "आब्रह्मभुवनात् up to the world of Brahma - लोकाः worlds - पुनरावर्तिनः subject to return - अर्जुन O Arjuna - माम् Me - उपेत्य having attained - तु but - कौन्तेय O Kaunteya - पुनर्जन्म rirth - न not - विद्यते is."
+        },
+        {
+            "id": "bg_8_17",
+            "number": 17,
+            "sanskrit": "सहस्रयुगपर्यन्तमहर्यद् ब्रह्मणो विदुः |\nरात्रिं युगसहस्रान्तां तेऽहोरात्रविदो जनाः",
+            "translation": "Those people who know the day of Brahma which is of a duration of a thousand Yugas (ages) and the night which is also of a thousand Yugas duration, they know day and night.",
+            "transliteration": "sahasrayugaparyantamaharyad brahmaṇo viduḥ \nrātriṃ yugasahasrāntāṃ te.ahorātravido janāḥ",
+            "meaning": "सहस्रयुगपर्यन्तम् ending in a thousand Yugas (ages) - अहः day - यत् which - ब्रह्मणः of Brahma - विदुः know - रात्रिम् the night - युगसहस्रान्ताम् ending in a thousand Yugas (ages) - ते they - अहोरात्रविदः knowers of day and night - जनाः people."
+        },
+        {
+            "id": "bg_8_18",
+            "number": 18,
+            "sanskrit": "अव्यक्ताद् व्यक्तयः सर्वाः प्रभवन्त्यहरागमे |\nरात्र्यागमे प्रलीयन्ते तत्रैवाव्यक्तसंज्ञके",
+            "translation": "From the Unmanifested all the manifested (worlds) proceed at the coming of the 'day'; at the coming of the 'night' they dissolve verily into ï1thatï1 alone which is called the Unmanifested.",
+            "transliteration": "avyaktād vyaktayaḥ sarvāḥ prabhavantyaharāgame \nrātryāgame pralīyante tatraivāvyaktasaṃjñake",
+            "meaning": "अव्यक्तात् from the Unmanifested - व्यक्तयः the manifested - सर्वाः all - प्रभवन्ति proceed - अहरागमे at the coming of day - रात्र्यागमे at the coming of night - प्रलीयन्ते dissolve - तत्र there - एव verily - अव्यक्तसंज्ञके in that which is called the Unmanifested."
+        },
+        {
+            "id": "bg_8_19",
+            "number": 19,
+            "sanskrit": "भूतग्रामः स एवायं भूत्वा भूत्वा प्रलीयते |\nरात्र्यागमेऽवशः पार्थ प्रभवत्यहरागमे",
+            "translation": "This same multitude of beings, being born again and again, is dissolved, helplessly, O Arjuna (into the Unmanifested) at the coming of the night and comes forth at the coming of the day.",
+            "transliteration": "bhūtagrāmaḥ sa evāyaṃ bhūtvā bhūtvā pralīyate \nrātryāgame.avaśaḥ pārtha prabhavatyaharāgame",
+            "meaning": "भूतग्रामः multitude of beings - सः that - एव verily - अयम् this - भूत्वा भूत्वा being born again and again - प्रलीयते dissolves - रात्र्यागमे at the coming of night - अवशः helpless - पार्थ O Partha - प्रभवति comes forth - अहरागमे at the coming of day."
+        },
+        {
+            "id": "bg_8_20",
+            "number": 20,
+            "sanskrit": "परस्तस्मात्तु भावोऽन्योऽव्यक्तोऽव्यक्तात्सनातनः |\nयः स सर्वेषु भूतेषु नश्यत्सु न विनश्यति",
+            "translation": "But verily there exists, higher than this Unmanifested, another unmanifested Eternal, which is not destroyed when all beings are destroyed.",
+            "transliteration": "parastasmāttu bhāvo.anyo.avyakto.avyaktātsanātanaḥ \nyaḥ sa sarveṣu bhūteṣu naśyatsu na vinaśyati",
+            "meaning": "परः higher - तस्मात् than that - तु but - भावः existence - अन्यः another - अव्यक्तः unmanifested - अव्यक्तात् than the unmanifested - सनातनः Eternal - यः who - सः that - सर्वेषु all - भूतेषु beings - नश्यत्सु when destroyed - न not - विनश्यति is destroyed."
+        },
+        {
+            "id": "bg_8_21",
+            "number": 21,
+            "sanskrit": "अव्यक्तोऽक्षर इत्युक्तस्तमाहुः परमां गतिम् |\nयं प्राप्य न निवर्तन्ते तद्धाम परमं मम",
+            "translation": "What is called the Unmanifested and the Imperishable, That they say is the highest goal. They who reach It do not return (to this Samsara). That is My highest abode (place or state).",
+            "transliteration": "avyakto.akṣara ityuktastamāhuḥ paramāṃ gatim \nyaṃ prāpya na nivartante taddhāma paramaṃ mama",
+            "meaning": "अव्यक्तः unmanifested - अक्षरः imperishable - इति thus - उक्तः called - तम् That - आहुः (they) say - परमाम् the highest - गतिम् goal (path) - यम् which - प्राप्य having reached - न not - निवर्तन्ते return - तत् that - धाम abode (place or state) - परमम् highest - मम My."
+        },
+        {
+            "id": "bg_8_22",
+            "number": 22,
+            "sanskrit": "पुरुषः स परः पार्थ भक्त्या लभ्यस्त्वनन्यया |\nयस्यान्तःस्थानि भूतानि येन सर्वमिदं ततम्",
+            "translation": "That highest Purusha, O Arjuna, is attainable by unswerving devotion to Him alone within Whom all beings dwell and by Whom all this is pervaded.",
+            "transliteration": "puruṣaḥ sa paraḥ pārtha bhaktyā labhyastvananyayā \nyasyāntaḥsthāni bhūtāni yena sarvamidaṃ tatam",
+            "meaning": "पुरुषः Purusha - सः that - परः highest - पार्थ O Partha - भक्त्या by devotion - लभ्यः is attainable - तु verily - अनन्यया without another object (unswerving) - यस्य of whom - अन्तःस्थानि dwelling within - भूतानि beings - येन by whom - सर्वम् all - इदम् this - ततम् pervaded."
+        },
+        {
+            "id": "bg_8_23",
+            "number": 23,
+            "sanskrit": "यत्र काले त्वनावृत्तिमावृत्तिं चैव योगिनः |\nप्रयाता यान्ति तं कालं वक्ष्यामि भरतर्षभ",
+            "translation": "Now I will tell thee, O chief of Bharatas, the times departing at which the Yogis will return or not return.",
+            "transliteration": "yatra kāle tvanāvṛttimāvṛttiṃ caiva yoginaḥ \nprayātā yānti taṃ kālaṃ vakṣyāmi bharatarṣabha",
+            "meaning": "यत्र where - काले in time - तु verily - अनावृत्तिम् nonreturn - आवृत्तिम् return - च and - एव even - योगिनः Yogis - प्रयाताः departing - यान्ति go to - तम् that - कालम् time - वक्ष्यामि (I) will tell - भरतर्षभ O chief of Bharatas."
+        },
+        {
+            "id": "bg_8_24",
+            "number": 24,
+            "sanskrit": "अग्निर्जोतिरहः शुक्लः षण्मासा उत्तरायणम् |\nतत्र प्रयाता गच्छन्ति ब्रह्म ब्रह्मविदो जनाः",
+            "translation": "Fire, light daytime, the bright fortnight, the six months of the northern path of the sun (the northern solstice)  departing then (by these) men who know Brahman go to Brahman.",
+            "transliteration": "agnirjotirahaḥ śuklaḥ ṣaṇmāsā uttarāyaṇam \ntatra prayātā gacchanti brahma brahmavido janāḥ",
+            "meaning": "अग्निः fire - ज्योतिः light - अहः day - शुक्लः the bright fortnight - षण्मासाः six months - उत्तरायणम् the northern path of the sun - तत्र there - प्रयाताः departed - गच्छन्ति go - ब्रह्म to Brahman - ब्रह्मविदः knowers of Brahman - जनाः people."
+        },
+        {
+            "id": "bg_8_25",
+            "number": 25,
+            "sanskrit": "धूमो रात्रिस्तथा कृष्णः षण्मासा दक्षिणायनम् |\nतत्र चान्द्रमसं ज्योतिर्योगी प्राप्य निवर्तते",
+            "translation": "Attaining to the lunar light by smoke, night time, the dark fortnight also, the six months of the southern path of the sun (the southern solstice), the Yogi returns.",
+            "transliteration": "dhūmo rātristathā kṛṣṇaḥ ṣaṇmāsā dakṣiṇāyanam \ntatra cāndramasaṃ jyotiryogī prāpya nivartate",
+            "meaning": "धूमः smoke - रात्रिः night - तथा also - कृष्णः the dark (fortnight) - षण्मासाः the six months - दक्षिणायनम् the southern path of the sun - तत्र there - चान्द्रमसम् lunar - ज्योतिः light - योगी the Yogi - प्राप्य having attained - निवर्तते returns."
+        },
+        {
+            "id": "bg_8_26",
+            "number": 26,
+            "sanskrit": "शुक्लकृष्णे गती ह्येते जगतः शाश्वते मते |\nएकया यात्यनावृत्तिमन्ययावर्तते पुनः",
+            "translation": "The bright and the dark paths of the world are verily thought to be eternal; by the one (the bright path) a man goes not to return and by the other (the dark path) he returns.",
+            "transliteration": "śuklakṛṣṇe gatī hyete jagataḥ śāśvate mate \nekayā yātyanāvṛttimanyayāvartate punaḥ",
+            "meaning": "शुक्लकृष्णे bright and dark - गती (two) paths - हि verily - एते these - जगतः of the world - शाश्वते eternal - मते are thought - एकया by one - याति (he) goes - अनावृत्तिम् to nonreturn - अन्यया by another - आवर्तते (he) returns - पुनः again."
+        },
+        {
+            "id": "bg_8_27",
+            "number": 27,
+            "sanskrit": "नैते सृती पार्थ जानन्योगी मुह्यति कश्चन |\nतस्मात्सर्वेषु कालेषु योगयुक्तो भवार्जुन",
+            "translation": "Knowing these paths, O Arjuna, no Yogi is deluded; therefore at all times be steadfast in Yoga.",
+            "transliteration": "naite sṛtī pārtha jānanyogī muhyati kaścana \ntasmātsarveṣu kāleṣu yogayukto bhavārjuna",
+            "meaning": "न not - एते these - सृती two paths - पार्थ O Partha - जानन् knowing - योगी the Yogi - मुह्यति is deluded - कश्चन anyone - तस्मात् therefore - सर्वेषु in all - कालेषु times - योगयुक्तः steadfast in Yoga - भव (be) thou - अर्जुन O Arjuna."
+        },
+        {
+            "id": "bg_8_28",
+            "number": 28,
+            "sanskrit": "वेदेषु यज्ञेषु तपःसु चैव\nदानेषु यत्पुण्यफलं प्रदिष्टम् |\nअत्येति तत्सर्वमिदं विदित्वा\nयोगी परं स्थानमुपैति चाद्यम्",
+            "translation": "Whatever fruit of merit is declared (in the scriptures) to accrue from (the study of) the Vedas, (the performance of) sacrifices, (the practice of) austerities, and gifts  beyond all this goes the Yogi, having known this; and he attains to the Supreme Primeval (first or ancient) Abode.",
+            "transliteration": "vedeṣu yajñeṣu tapaḥsu caiva dāneṣu yatpuṇyaphalaṃ pradiṣṭam \natyeti tatsarvamidaṃ viditvā yogī paraṃ sthānamupaiti cādyam",
+            "meaning": "वेदेषु in the Vedas - यज्ञेषु in sacrifices - तपःसु in austerities - च and - एव also - दानेषु in gifts - यत् whatever - पुण्यफलम् fruit of merit - प्रदिष्टम् is declared - अत्येति goes beyond - तत् that - सर्वम् all - इदम् this - विदित्वा having known - योगी the Yogi - परम् Supreme - स्थानम् abode - उपैति attains - च and - आद्यम् primeval (first - ancient)."
         }
     ]
 }

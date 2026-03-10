@@ -151,8 +151,8 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
               children: [
                 Image.asset(
                   'assets/images/logo.png',
-                  width: 150,
-                  height: 150,
+                  width: 220,
+                  height: 220,
                   errorBuilder: (_, __, ___) => const Icon(Icons.star, size: 80, color: Colors.orange),
                 ),
                 const SizedBox(height: 24),

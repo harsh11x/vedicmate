@@ -123,6 +123,18 @@ class _ReaderScreenState extends State<ReaderScreen> {
       appBar: AppBar(
         title: Text('${widget.title} - Ch ${widget.chapterNumber}'),
         backgroundColor: AppTheme.primaryOrange,
+        actions: isYogaSutras
+            ? [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: TextButton.icon(
+                    onPressed: () => context.push('/education/yoga-poses'),
+                    icon: const Icon(Icons.self_improvement, size: 20, color: Colors.white),
+                    label: const Text('Yoga Poses', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ]
+            : null,
       ),
       body: FutureBuilder<ScriptureChapter>(
         future: _chapterFuture,
@@ -222,16 +234,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
           );
         },
       ),
-      floatingActionButton: isYogaSutras
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                context.push('/education/yoga-poses');
-              },
-              backgroundColor: AppTheme.primaryOrange,
-              icon: const Icon(Icons.self_improvement),
-              label: const Text('View Yoga Poses'),
-            )
-          : null,
     );
   }
 

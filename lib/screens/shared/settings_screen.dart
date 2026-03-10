@@ -11,7 +11,6 @@ import '../../services/wallet_service.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 import '../../providers/auth_provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../providers/font_scale_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -372,26 +371,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 12),
                   _SettingsCard(
                     children: [
-// Language settings removed as per user request (handled in chat only)
-                      _SettingsTile(
-                        icon: Icons.dark_mode_outlined,
-                        title: AppLocalizations.of(context)!.darkMode,
-                        subtitle: 'Switch to dark theme',
-                        trailing: Consumer(
-                          builder: (context, ref, _) {
-                            final themeMode = ref.watch(themeModeProvider);
-                            final isDark = themeMode == ThemeMode.dark;
-                            return Switch(
-                              value: isDark,
-                              onChanged: (value) {
-                                ref.read(themeModeProvider.notifier).setFromBool(value);
-                              },
-                              activeColor: AppTheme.primaryOrange,
-                            );
-                          },
-                        ),
-                      ),
-                      _Divider(),
                       _SettingsTile(
                         icon: Icons.text_fields,
                         title: 'Font Size',

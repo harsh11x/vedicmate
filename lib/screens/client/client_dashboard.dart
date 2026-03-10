@@ -25,6 +25,7 @@ import 'reels_screen.dart';
 import '../../providers/auth_provider.dart'; // Correctly placed import
 import 'remedies_screen.dart';
 import 'ai_pandit_chat_screen.dart';
+import 'ai_pandit_chat_list_screen.dart';
 import '../../widgets/live_pooja_banner.dart';
 import '../../widgets/custom_request_banner.dart';
 import '../shared/booking_scheduling_screen.dart';
@@ -82,22 +83,25 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
         extendBody: true,
         body: Stack(
         children: [
-          // Background Gradient - theme-aware
+          // Background - richer gradient with depth
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: isDark
                       ? [
-                          const Color(0xFF2D2D2D), // AppTheme.divinePrimary
+                          const Color(0xFF2D2D2D),
                           const Color(0xFF1A1A1A),
                         ]
                       : [
-                          AppTheme.divineBackground,
-                          AppTheme.divineSurface,
+                          const Color(0xFFFFF8ED), // Warmer cream
+                          const Color(0xFFFFF5E0),
+                          const Color(0xFFFFF9E6),
+                          const Color(0xFFFDF6E8),
                         ],
+                  stops: const [0.0, 0.35, 0.7, 1.0],
                 ),
               ),
             ),
@@ -400,13 +404,28 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // 1. Minimal Header (Logo + Greeting + Actions)
+            // 1. Header with greeting and actions
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Decorative top accent
+                    Container(
+                      height: 4,
+                      width: 48,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.divineGold,
+                            AppTheme.divineGold.withOpacity(0.6),
+                          ],
+                        ),
+                      ),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -416,35 +435,28 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                             children: [
                               Text(
                                 greeting,
-                                style: AppTheme.bodyStyle.copyWith(
+                                style: GoogleFonts.outfit(
                                   color: AppTheme.textGrey,
-                                  fontSize: 14,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.3,
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      '${userName.split(' ').first}',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FontStyle.italic,
-                                        color: AppTheme.textBlack,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Text('✨', style: TextStyle(fontSize: 20)),
-                                ],
+                              const SizedBox(height: 4),
+                              Text(
+                                userName.split(' ').first,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppTheme.textBlack,
+                                  letterSpacing: -0.5,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        // Actions Row (Wallet, Cart, Profile Pic if available)
                         Row(
                           children: [
-                            // Wallet
                             Consumer(
                               builder: (context, ref, child) {
                                 final walletBalanceAsync = ref.watch(walletBalanceProvider);
@@ -452,19 +464,30 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                                 return GestureDetector(
                                   onTap: () => context.push('/client/wallet'),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                                     decoration: BoxDecoration(
-                                      color: AppTheme.divineSurface,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(color: AppTheme.divineGold.withOpacity(0.3)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.04),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.account_balance_wallet_outlined, size: 18, color: AppTheme.textBlack),
+                                        Icon(Icons.account_balance_wallet_rounded, size: 18, color: AppTheme.divineGold),
                                         const SizedBox(width: 8),
                                         Text(
                                           '₹${balance.toStringAsFixed(0)}',
-                                          style: AppTheme.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                                          style: GoogleFonts.outfit(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            color: AppTheme.textBlack,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -473,7 +496,6 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                               },
                             ),
                             const SizedBox(width: 12),
-                            // Cart
                             Consumer(
                               builder: (context, ref, child) {
                                 final cartItems = ref.watch(cartProvider);
@@ -486,22 +508,39 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: AppTheme.divineSurface, // White
+                                          color: Colors.white,
                                           shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                                          border: Border.all(color: AppTheme.divineGold.withOpacity(0.3)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.04),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
                                         ),
-                                        child: const Icon(Icons.shopping_bag_outlined, color: AppTheme.textBlack, size: 20),
+                                        child: Icon(Icons.shopping_bag_outlined, color: AppTheme.textBlack, size: 20),
                                       ),
                                       if (itemCount > 0)
                                         Positioned(
                                           right: -2,
                                           top: -2,
-                                          child: CircleAvatar(
-                                            radius: 8,
-                                            backgroundColor: AppTheme.divineGold,
-                                            child: Text(
-                                              '$itemCount',
-                                              style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: const BoxDecoration(
+                                              color: AppTheme.divineGold,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                                            child: Center(
+                                              child: Text(
+                                                '$itemCount',
+                                                style: GoogleFonts.outfit(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -514,17 +553,21 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                         ),
                       ],
                     ),
-                    
                     const SizedBox(height: 24),
-                    
-                    // Search Bar (Minimal)
+                    // Search Bar
                     Container(
                       height: 52,
                       decoration: BoxDecoration(
-                        color: AppTheme.divineSurface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.withOpacity(0.05)),
-                        boxShadow: AppTheme.softShadow,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: TextField(
                         controller: widget.searchController,
@@ -547,7 +590,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       ),
                     ),
                   ],
-                ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0),
+                ).animate().fadeIn(duration: 500.ms, curve: Curves.easeOutCubic).slideY(begin: -0.05, end: 0, duration: 500.ms, curve: Curves.easeOutCubic),
               ),
             ),
 
@@ -561,7 +604,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                   backgroundColor: AppTheme.divineSurface,
                   titleStyle: AppTheme.titleStyle.copyWith(color: AppTheme.textBlack),
                 ),
-              ).animate().fadeIn(delay: 200.ms).slideX(),
+              ).animate().fadeIn(delay: 100.ms, duration: 450.ms, curve: Curves.easeOutCubic).slideX(begin: 0.03, end: 0, duration: 450.ms, curve: Curves.easeOutCubic),
             ),
 
             // 3. Live Pooja Banner (Moved Up)
@@ -570,22 +613,21 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
               sliver: SliverToBoxAdapter(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    // Match Action Box borders
-                    border: Border.all(color: Colors.grey.withOpacity(0.05)),
-                    // Minimal shadow like action boxes
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
                       ),
                     ],
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: LivePoojaBanner(
                      onTap: () => context.push('/live-pooja'),
                   ),
-                ).animate().fadeIn(delay: 300.ms),
+                ).animate().fadeIn(delay: 180.ms, duration: 450.ms, curve: Curves.easeOutCubic),
               ),
             ),
 
@@ -615,7 +657,25 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       ),
                     ),
                   ],
-                ).animate().fadeIn(delay: 400.ms).scale(),
+                ).animate().fadeIn(delay: 260.ms, duration: 480.ms, curve: Curves.easeOutCubic).slideY(begin: 0.03, end: 0, duration: 480.ms, curve: Curves.easeOutCubic),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+            // Yoga Sutras - Direct access on home
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
+                child: _ActionCardV2(
+                  title: 'Yoga Sutras',
+                  subtitle: 'Patanjali\'s Path',
+                  imagePath: 'assets/images/services/vedic_astrology.png',
+                  onTap: () => context.push(Uri(
+                    path: '/education/reader/yoga_sutras',
+                    queryParameters: {'title': 'Yoga Sutras', 'chapter': '1'},
+                  ).toString()),
+                ).animate().fadeIn(delay: 340.ms, duration: 480.ms, curve: Curves.easeOutCubic).slideY(begin: 0.03, end: 0, duration: 480.ms, curve: Curves.easeOutCubic),
               ),
             ),
 
@@ -645,7 +705,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       ),
                     ),
                   ],
-                ).animate().fadeIn(delay: 450.ms).scale(),
+                ).animate().fadeIn(delay: 420.ms, duration: 480.ms, curve: Curves.easeOutCubic).slideY(begin: 0.03, end: 0, duration: 480.ms, curve: Curves.easeOutCubic),
               ),
             ),
 
@@ -657,20 +717,21 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
               sliver: SliverToBoxAdapter(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.grey.withOpacity(0.05)),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
                       ),
                     ],
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: CustomRequestBanner(
                     onTap: () => context.push('/booking/custom'),
                   ),
-                ).animate().fadeIn(delay: 450.ms),
+                ).animate().fadeIn(delay: 500.ms, duration: 450.ms, curve: Curves.easeOutCubic),
               ),
             ),
             
@@ -686,20 +747,21 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          width: 4,
+                          height: 28,
                           decoration: BoxDecoration(
-                            gradient: AppTheme.primaryGradient,
-                            borderRadius: BorderRadius.circular(12),
+                            color: AppTheme.divineGold,
+                            borderRadius: BorderRadius.circular(2),
                           ),
-                          child: const Icon(Icons.auto_awesome_mosaic_rounded, color: Colors.white, size: 20),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 14),
                         Text(
                           'Explore Services',
                           style: GoogleFonts.outfit(
-                            fontSize: 22, 
-                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
                             color: AppTheme.textBlack,
+                            letterSpacing: -0.3,
                           ),
                         ),
                       ],
@@ -708,7 +770,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                   const SizedBox(height: 16),
                   ServiceInfoCards(), 
                 ],
-              ).animate().fadeIn(delay: 500.ms),
+              ).animate().fadeIn(delay: 580.ms, duration: 480.ms, curve: Curves.easeOutCubic),
             ),
             
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
@@ -739,7 +801,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       onTap: () => context.push('/settings')
                     ),
                   ],
-                ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.2, end: 0),
+                ).animate().fadeIn(delay: 660.ms, duration: 500.ms, curve: Curves.easeOutCubic).slideY(begin: 0.05, end: 0, duration: 500.ms, curve: Curves.easeOutCubic),
               ),
             ),
 
@@ -756,26 +818,27 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
       onTap: onTap,
       child: Container(
         width: 100,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppTheme.divineGold.withOpacity(0.25)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: AppTheme.primaryOrange, size: 28),
-            const SizedBox(height: 8),
+            Icon(icon, color: AppTheme.divineGold, size: 26),
+            const SizedBox(height: 10),
             Text(
               label,
-              style: AppTheme.bodyStyle.copyWith(
+              style: GoogleFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppTheme.textBlack,
@@ -815,55 +878,79 @@ class _ActionCardV2 extends StatelessWidget {
       child: Container(
         height: 160,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.3), 
-              BlendMode.darken
-            ),
-          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.divineGold.withOpacity(0.25), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 12,
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+              spreadRadius: -2,
+            ),
+            BoxShadow(
+              color: AppTheme.divineGold.withOpacity(0.08),
+              blurRadius: 20,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.8),
-              ],
-              stops: const [0.4, 1.0],
-            ),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              Text(
-                title,
-                style: AppTheme.titleStyle.copyWith(
-                  fontSize: 22,
-                  color: Colors.white,
+              Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: AppTheme.divineGold.withOpacity(0.2),
+                  child: Icon(Icons.image_not_supported, size: 40, color: AppTheme.divineGold),
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: AppTheme.bodyStyle.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white.withOpacity(0.9),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.5),
+                      Colors.black.withOpacity(0.85),
+                    ],
+                    stops: const [0.2, 0.6, 1.0],
+                  ),
+                ),
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: -0.3,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -1193,73 +1280,107 @@ class _ChatTab extends ConsumerWidget {
 
           final chatRooms = snapshot.data ?? [];
 
-          if (chatRooms.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.chat_bubble_outline, size: 64, color: AppTheme.forestBackground),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No chats yet',
-                    style: Theme.of(context).textTheme.titleLarge,
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Start a conversation',
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.textBlack,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Chat with our AI-powered expert pandits',
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          color: AppTheme.textGrey,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Start a conversation with an AI Pandit',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.neutralMedium,
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final pandit = AIPandits.allPandits[index];
+                      return PanditListTile(
+                        pandit: pandit,
+                        onChatTap: () => context.push('/ai-pandit/chat?panditId=${pandit.id}'),
+                        onCallTap: () => context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
+                      );
+                    },
+                    childCount: AIPandits.allPandits.length,
+                  ),
+                ),
+              ),
+              if (chatRooms.isNotEmpty) ...[
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      'Your Chats',
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.textBlack,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => context.push('/ai-pandits/all'),
-                    child: const Text('Browse AI Pandits'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: chatRooms.length,
-            itemBuilder: (context, index) {
-              final chatRoom = chatRooms[index];
-              final participants = chatRoom['participantNames'] as Map<String, dynamic>? ?? {};
-              final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-              final otherParticipantName = participants.entries
-                  .firstWhere(
-                    (e) => e.key != currentUserId,
-                    orElse: () => MapEntry('', 'Pandit'),
-                  )
-                  .value as String? ?? 'Pandit';
-
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
-                    child: Icon(Icons.person, color: AppTheme.primaryOrange),
-                  ),
-                  title: Text(
-                    otherParticipantName,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(
-                    chatRoom['lastMessage'] ?? 'No messages yet',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: Icon(Icons.chevron_right),
-                  onTap: () {
-                    // Navigate to chat screen
-                    // We need booking ID - for now use chat room ID
-                    context.push('/chat/${chatRoom['id']}');
-                  },
                 ),
-              );
-            },
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final chatRoom = chatRooms[index];
+                        final participants = chatRoom['participantNames'] as Map<String, dynamic>? ?? {};
+                        final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+                        final otherParticipantName = participants.entries
+                            .firstWhere(
+                              (e) => e.key != currentUserId,
+                              orElse: () => MapEntry('', 'Pandit'),
+                            )
+                            .value as String? ?? 'Pandit';
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
+                              child: Icon(Icons.person, color: AppTheme.primaryOrange),
+                            ),
+                            title: Text(
+                              otherParticipantName,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              chatRoom['lastMessage'] ?? 'No messages yet',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: Icon(Icons.chevron_right),
+                            onTap: () => context.push('/chat/${chatRoom['id']}'),
+                          ),
+                        );
+                      },
+                      childCount: chatRooms.length,
+                    ),
+                  ),
+                ),
+              ],
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            ],
           );
         },
       ),

@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import '../../core/theme/app_theme.dart';
 import '../../core/constants/country_codes.dart';
@@ -379,6 +380,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _pickImage(ImageSource source) async {
     try {
+      if (source == ImageSource.gallery) {
+        final status = await Permission.photos.request();
+        if (!status.isGranted && !status.isLimited) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Photo permission is needed to choose a profile picture'),
+                backgroundColor: AppTheme.errorRed,
+                action: SnackBarAction(
+                  label: 'Settings',
+                  onPressed: () => openAppSettings(),
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      } else if (source == ImageSource.camera) {
+        final status = await Permission.camera.request();
+        if (!status.isGranted) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Camera permission is needed to take a profile picture'),
+                backgroundColor: AppTheme.errorRed,
+                action: SnackBarAction(
+                  label: 'Settings',
+                  onPressed: () => openAppSettings(),
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: source,
@@ -396,9 +433,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final msg = e.toString().toLowerCase().contains('permission')
+            ? 'Please grant photo permission in device Settings'
+            : 'Could not open image picker. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error selecting image: $e'),
+            content: Text(msg),
             backgroundColor: AppTheme.errorRed,
           ),
         );
@@ -409,27 +449,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppTheme.primaryOrange),
-              title: const Text('Camera'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library, color: AppTheme.primaryOrange),
-              title: const Text('Gallery'),
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-          ],
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: AppTheme.primaryOrange),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) _pickImage(ImageSource.camera);
+                  });
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: AppTheme.primaryOrange),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) _pickImage(ImageSource.gallery);
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -471,16 +522,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await user.reload();
       debugPrint('✓ Firebase Auth updated');
 
-      // Update Supabase
+      // Update Supabase (users table uses avatar_url)
       try {
         debugPrint('📝 Updating Supabase...');
         await Supabase.instance.client
             .from('users')
-            .update({'photo_url': photoURL})
+            .update({'avatar_url': photoURL})
             .eq('id', user.uid);
         debugPrint('✓ Supabase updated');
       } catch (e) {
-        debugPrint('⚠️ Could not update Supabase photo_url: $e');
+        debugPrint('⚠️ Could not update Supabase avatar_url: $e');
         // Continue anyway, Firebase Auth is updated
       }
 
@@ -506,10 +557,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       debugPrint('❌ Error uploading image: $e');
       if (mounted) {
         setState(() => _isUploadingImage = false);
+        final msg = e.toString().contains('Permission')
+            ? 'Please grant photo/camera permission in Settings'
+            : 'Could not upload image. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error uploading image: $e'),
+            content: Text(msg),
             backgroundColor: AppTheme.errorRed,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -872,7 +927,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 110,
+                          width: 130,
                           child: ElegantDropdown<CountryCode>(
                             value: _selectedCountry,
                             hint: "Code",
@@ -881,7 +936,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 .map((cc) => DropdownMenuItem(
                                       value: cc,
                                       child: Text(
-                                        '${cc.code} ${cc.dialCode}',
+                                        '${cc.dialCode} (${cc.code})',
                                         style: const TextStyle(fontSize: 13),
                                         overflow: TextOverflow.ellipsis,
                                       ),

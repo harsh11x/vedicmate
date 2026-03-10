@@ -1,16 +1,168 @@
 {
     "chapter_number": 12,
-    "title": "Bhakti Yoga",
-    "translation": "The Yoga of Devotion",
-    "summary": "Krishna explains that the path of personal devotion (Bhakti) is the swiftest and most direct way to attain Him, and lists the qualities of a devotee who is dear to Him.",
+    "title": "Bhakti Yog",
+    "translation": "The Yog of Devotion",
+    "summary": "Arjuna asks whether worshipping the formless Brahman or the personal form of God is superior. Krishna explains that devotion to the personal form is easier and most dear to Him.",
     "verses": [
         {
-            "id": "gita_12_2",
+            "id": "bg_12_1",
+            "number": 1,
+            "sanskrit": "अर्जुन उवाच |\nएवं सततयुक्ता ये भक्तास्त्वां पर्युपासते |\nये चाप्यक्षरमव्यक्तं तेषां के योगवित्तमाः",
+            "translation": "Arjuna said  Those devotees who, ever steadfast, thus worship Thee and those also who worship the imperishable and the unmanifested  which of them are better versed in Yoga?",
+            "transliteration": "arjuna uvāca \nevaṃ satatayuktā ye bhaktāstvāṃ paryupāsate \nye cāpyakṣaramavyaktaṃ teṣāṃ ke yogavittamāḥ",
+            "meaning": "एवम् thus - सततयुक्ताः ever steadfast - ये who - भक्ताः devotees - त्वाम् Thee - पर्युपासते worship - ये who - च and - अपि also - अक्षरम् the imperishable - अव्यक्तम् the unmanifested - तेषाम् of them - के who - योगवित्तमाः better versed in Yoga."
+        },
+        {
+            "id": "bg_12_2",
             "number": 2,
-            "sanskrit": "श्रीभगवानुवाच |\nमय्यावेश्य मनो ये मां नित्ययुक्ता उपासते |\nश्रद्धया परयोपेतास्ते मे युक्ततमा मताः || २ ||",
-            "translation": "The Supreme Personality of Godhead said: Those who fix their minds on My personal form and are always engaged in worshipping Me with great and transcendental faith are considered by Me to be most perfect.",
-            "transliteration": "śrī-bhagavān uvāca\nmayy āveśya mano ye māṁ nitya-yuktā upāsate\nśraddhayā parayopetās te me yuktatamā matāḥ",
-            "meaning": "Mayi - on Me; Aveshya - fixing; Manah - the mind..."
+            "sanskrit": "श्रीभगवानुवाच |\nमय्यावेश्य मनो ये मां नित्ययुक्ता उपासते |\nश्रद्धया परयोपेताः ते मे युक्ततमा मताः",
+            "translation": "The Blessed Lord said  Those who, fixing their mind on Me, worship Me, ever steadfast and endowed with supreme faith, are the best in Yoga in My opinion.",
+            "transliteration": "śrībhagavānuvāca \nmayyāveśya mano ye māṃ nityayuktā upāsate \nśraddhayā parayopetāḥ te me yuktatamā matāḥ",
+            "meaning": "मयि on Me - आवेश्य fixing - मनः the mind - ये who - माम् Me - नित्ययुक्ताः ever steadfast - उपासते worship - श्रद्धया with faith - परया supreme - उपेताः endowed - ते those - मे of Me - युक्ततमाः the best versed in Yoga - मताः (in My) opinion."
+        },
+        {
+            "id": "bg_12_3",
+            "number": 3,
+            "sanskrit": "ये त्वक्षरमनिर्देश्यमव्यक्तं पर्युपासते |\nसर्वत्रगमचिन्त्यञ्च कूटस्थमचलन्ध्रुवम्",
+            "translation": "Swami Sivananda did not comment on this sloka",
+            "transliteration": "ye tvakṣaramanirdeśyamavyaktaṃ paryupāsate \nsarvatragamacintyañca kūṭasthamacalandhruvam",
+            "meaning": "Swami Sivananda did not comment on this sloka"
+        },
+        {
+            "id": "bg_12_4",
+            "number": 4,
+            "sanskrit": "सन्नियम्येन्द्रियग्रामं सर्वत्र समबुद्धयः |\nते प्राप्नुवन्ति मामेव सर्वभूतहिते रताः",
+            "translation": "Having restrained all the senses, even-minded everywhere, intent on the welfare of all beings  verily they also come unto Me.",
+            "transliteration": "sanniyamyendriyagrāmaṃ sarvatra samabuddhayaḥ \nte prāpnuvanti māmeva sarvabhūtahite ratāḥ",
+            "meaning": "संनियम्य having restrained - इन्द्रियग्रामम् the aggregate of the senses - सर्वत्र everywhere - समबुद्धयः evenminded - ते they - प्राप्नुवन्ति obtian - माम् Me - एव only - सर्वभूतहिते in the welfare of all beings - रताः rejoicers."
+        },
+        {
+            "id": "bg_12_5",
+            "number": 5,
+            "sanskrit": "क्लेशोऽधिकतरस्तेषामव्यक्तासक्तचेतसाम् |\nअव्यक्ता हि गतिर्दुःखं देहवद्भिरवाप्यते",
+            "translation": "Greater is their trouble whose minds are set on the unmanifested; for the goal; the unmanifested, is very hard for the embodied to reach.",
+            "transliteration": "kleśo.adhikatarasteṣāmavyaktāsaktacetasām ||\navyaktā hi gatirduḥkhaṃ dehavadbhiravāpyate",
+            "meaning": "क्लेशः the trouble - अधिकतरः (is) greater - तेषाम् of those - अव्यक्तासक्तचेतसाम् whose minds are set on the unmanifested - अव्यक्ता the unmanifested - हि for - गतिः goal - दुःखम् pain - देहवद्भिः by the embodied - अवाप्यते is reached."
+        },
+        {
+            "id": "bg_12_6",
+            "number": 6,
+            "sanskrit": "ये तु सर्वाणि कर्माणि मयि संन्यस्य मत्परः |\nअनन्येनैव योगेन मां ध्यायन्त उपासते",
+            "translation": "But to those who worship Me, renouncing all actions in Me, regarding Me as the supreme gaol, meditating on Me with single-minded Yoga.",
+            "transliteration": "ye tu sarvāṇi karmāṇi mayi saṃnyasya matparaḥ \nananyenaiva yogena māṃ dhyāyanta upāsate",
+            "meaning": "ये who - तु but - सर्वाणि all - कर्माणि actions - मयि in Me - संन्यस्य renouncing - मत्पराः regarding Me as the supreme goal - अनन्येन singleminded - एव even - योगेन with the Yoga - माम् Me - ध्यायन्तः meditating - उपासते worship."
+        },
+        {
+            "id": "bg_12_7",
+            "number": 7,
+            "sanskrit": "तेषामहं समुद्धर्ता मृत्युसंसारसागरात् |\nभवामि नचिरात्पार्थ मय्यावेशितचेतसाम्",
+            "translation": "To those whose minds are set on Me, O Arjuna, verily I become ere long the saviour out of the ocean of Samsara.",
+            "transliteration": "teṣāmahaṃ samuddhartā mṛtyusaṃsārasāgarāt \nbhavāmi nacirātpārtha mayyāveśitacetasām",
+            "meaning": "तेषाम् for them - अहम् I - समुद्धर्ता the saviour - मृत्युसंसारसागरात् out of the ocean of the mortal Samsara - भवामि (I) become - नचिरात् ere long - पार्थ O Arjuna - मयि in Me - आवेशितचेतसाम् of those whose minds are set."
+        },
+        {
+            "id": "bg_12_8",
+            "number": 8,
+            "sanskrit": "मय्येव मन आधत्स्व मयि बुद्धिं निवेशय |\nनिवसिष्यसि मय्येव अत ऊर्ध्वं न संशयः",
+            "translation": "Fix thy mind in Me only, thy intellect in Me, (then) thou shalt no doubt live in Me alone hereafter.",
+            "transliteration": "mayyeva mana ādhatsva mayi buddhiṃ niveśaya \nnivasiṣyasi mayyeva ata ūrdhvaṃ na saṃśayaḥ",
+            "meaning": "मयि in Me - एव only - मनः the mind - आधत्स्व fix - मयि in Me - बुद्धिम् (thy) intellect - निवेशय place - निवसिष्यसि thou shalt live - मयि in Me - एव alone - अतः ऊर्ध्वम् hereafter - न not - संशयः doubt."
+        },
+        {
+            "id": "bg_12_9",
+            "number": 9,
+            "sanskrit": "अथ चित्तं समाधातुं न शक्नोषि मयि स्थिरम् |\nअभ्यासयोगेन ततो मामिच्छाप्तुं धनञ्जय",
+            "translation": "If thou art unable to fix thy mind steadily on Me, then by the Yoga of constant practice do thou seek to reach Me, O Arjuna.",
+            "transliteration": "atha cittaṃ samādhātuṃ na śaknoṣi mayi sthiram \nabhyāsayogena tato māmicchāptuṃ dhanañjaya",
+            "meaning": "अथ if - चित्तम् the mind - समाधातुम् to fix - न not - शक्नोषि (thou) art able - मयि in Me - स्थिरम् steadily - अभ्यासयोगेन by the Yoga of constant practice - ततः them - माम् Me - इच्छ wish - आप्तुम् to reach - धनञ्जय O Arjuna."
+        },
+        {
+            "id": "bg_12_10",
+            "number": 10,
+            "sanskrit": "अभ्यासेऽप्यसमर्थोऽसि मत्कर्मपरमो भव |\nमदर्थमपि कर्माणि कुर्वन्सिद्धिमवाप्स्यसि",
+            "translation": "If thou art unable to practise even this Abhyasa Yoga, be thou intent on doing actions for My sake; even by doing actions for My sake, thou shalt attain perfection.",
+            "transliteration": "abhyāse.apyasamartho.asi matkarmaparamo bhava \nmadarthamapi karmāṇi kurvansiddhimavāpsyasi",
+            "meaning": "अभ्यासे in practice - अपि also - असमर्थः not capable - असि (thou) art - मत्कर्मपरमः intent on doing actions for My sake - भव be - मदर्थम् for My sake - अपि also - कर्माणि actions - कुर्वन् by doing - सिद्धिम् perfection - अवाप्स्यसि thou shalt attain."
+        },
+        {
+            "id": "bg_12_11",
+            "number": 11,
+            "sanskrit": "अथैतदप्यशक्तोऽसि कर्तुं मद्योगमाश्रितः |\nसर्वकर्मफलत्यागं ततः कुरु यतात्मवान्",
+            "translation": "If thou art unable to do even this, then, resorting to union with Me, renounce the fruits of all actions with the self controlled.",
+            "transliteration": "athaitadapyaśakto.asi kartuṃ madyogamāśritaḥ \nsarvakarmaphalatyāgaṃ tataḥ kuru yatātmavān",
+            "meaning": "अथ if - एतत् this - अपि also - अशक्तः unable - असि (thou) art - कर्तुम् to do - मद्योगम् My Yoga - आश्रितः resorting to - सर्वकर्मफलत्यागम् the renunciation of the fruits of all actions - ततः then - कुरु do - यतात्मवान् selfcontrolled."
+        },
+        {
+            "id": "bg_12_12",
+            "number": 12,
+            "sanskrit": "श्रेयो हि ज्ञानमभ्यासाज्ज्ञानाद्ध्यानं विशिष्यते |\nध्यानात्कर्मफलत्यागस्त्यागाच्छान्तिरनन्तरम्",
+            "translation": "Better indeed is knowledge than practice; than knowledge meditation is better; than meditation the renunciation of the fruits of actions: peace immediately follows renunciation.",
+            "transliteration": "śreyo hi jñānamabhyāsājjñānāddhyānaṃ viśiṣyate \ndhyānātkarmaphalatyāgastyāgācchāntiranantaram",
+            "meaning": "श्रेयः better - हि indeed - ज्ञानम् knowledge - अभ्यासात् than practice - ज्ञानात् than knowledge - ध्यानम् meditation - विशिष्यते excels - ध्यानात् than meditation - कर्मफलत्यागः the renunciation of the fruits of actions - त्यागात् from renunciation - शान्तिः peace - अनन्तरम् immediately."
+        },
+        {
+            "id": "bg_12_13",
+            "number": 13,
+            "sanskrit": "अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च |\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी",
+            "translation": "He who hates no creature, who is friendly and compassionate to all, who is free from attachment and egoism, balanced in pleasure and pain, and forgiving.",
+            "transliteration": "adveṣṭā sarvabhūtānāṃ maitraḥ karuṇa eva ca \nnirmamo nirahaṅkāraḥ samaduḥkhasukhaḥ kṣamī",
+            "meaning": "अद्वेष्टा nonhater - सर्वभूतानाम् of (to) all creatures - मैत्रः friendly - करुणः compassionate - एव even - च and - निर्ममः without mineness - निरहङ्कारः without egoism - समदुःखसुखः balanced in pleasure and pain - क्षमी forgiving."
+        },
+        {
+            "id": "bg_12_14",
+            "number": 14,
+            "sanskrit": "सन्तुष्टः सततं योगी यतात्मा दृढनिश्चयः |\nमय्यर्पितमनोबुद्धिर्यो मद्भक्तः स मे प्रियः",
+            "translation": "Ever content, steady in meditation, self-controlled, possessed of firm conviction, with the mind and intellect dedicated to Me, he, My devtoee, is dear to Me.",
+            "transliteration": "santuṣṭaḥ satataṃ yogī yatātmā dṛḍhaniścayaḥ \nmayyarpitamanobuddhiryo madbhaktaḥ sa me priyaḥ",
+            "meaning": "सन्तुष्टः contented - सततम् ever - योगी Yogi - यतात्मा selfcontrolled - दृढनिश्चयः possessed of firm,conviction - मयि अर्पितमनोबुद्धिः with mind and intellect dedicated to Me - यः who - मद्भक्तः My devotee - सः he - मे to Me - प्रियः dear."
+        },
+        {
+            "id": "bg_12_15",
+            "number": 15,
+            "sanskrit": "यस्मान्नोद्विजते लोको लोकान्नोद्विजते च यः |\nहर्षामर्षभयोद्वेगैर्मुक्तो यः स च मे प्रियः",
+            "translation": "He by whom the world is not agitated and who cannot be agitated by the world, and who is freed from joy, anger, fear and anxiety  he is dear to Me.",
+            "transliteration": "yasmānnodvijate loko lokānnodvijate ca yaḥ \nharṣāmarṣabhayodvegairmukto yaḥ sa ca me priyaḥ",
+            "meaning": "यस्मात् for whom - न not - उद्विजते is agitated - लोकः the world - लोकात् from the world - न not - उद्विजते is agitated - च and - यः who - हर्षामर्षभयोद्वेगैः by (from) joy - wrath - fear and anxiety - मुक्तः freed - यः who - सः he - च and - मे to Me - प्रियः dear."
+        },
+        {
+            "id": "bg_12_16",
+            "number": 16,
+            "sanskrit": "अनपेक्षः शुचिर्दक्ष उदासीनो गतव्यथः |\nसर्वारम्भपरित्यागी यो मद्भक्तः स मे प्रियः",
+            "translation": "He who is free from wants, pure, expert, unconcerned, and free from pain, renouncing all undertakings or commencements  he who is (thus) devoted to Me, is dear to Me.",
+            "transliteration": "anapekṣaḥ śucirdakṣa udāsīno gatavyathaḥ \nsarvārambhaparityāgī yo madbhaktaḥ sa me priyaḥ",
+            "meaning": "अनपेक्षः (he who is) free from wants - शुचिः pure - दक्षः expert - उदासीनः unconcerned - गतव्यथः free from pain - सर्वारम्भपरित्यागी renouncing all undertakings or commencements - यः who - मद्भक्तः My,devotee - सः he - मे to Me - प्रियः dear.CommentarY He is free from dependence. He is indifferent to the body - the senses - the objects of the senses and their mutual connections. He has external and internal purity. External purity is attained through earth and water (washing and bathing). Inner purity is attained by the eradication of likes and dislikes - lust - anger - jealousy - etc. - and t"
+        },
+        {
+            "id": "bg_12_17",
+            "number": 17,
+            "sanskrit": "यो न हृष्यति न द्वेष्टि न शोचति न काङ्क्षति |\nशुभाशुभपरित्यागी भक्तिमान्यः स मे प्रियः",
+            "translation": "He who neither rejoices, nor hates, nor grieves, nor desires, renouncing good and evil, and who is full of devotion, is dear to Me.",
+            "transliteration": "yo na hṛṣyati na dveṣṭi na śocati na kāṅkṣati \nśubhāśubhaparityāgī bhaktimānyaḥ sa me priyaḥ",
+            "meaning": "यः who - न not - हृष्यति rejoices - न not - द्वेष्टि hates - न not - शोचति grieves - न not - काङ्क्षति desires - शुभाशुभपरित्यागी renouncing good and evil - भक्तिमान् full of devotion - यः who - सः he - मे to Me - प्रियः dear."
+        },
+        {
+            "id": "bg_12_18",
+            "number": 18,
+            "sanskrit": "समः शत्रौ च मित्रे च तथा मानापमानयोः |\nशीतोष्णसुखदुःखेषु समः सङ्गविवर्जितः",
+            "translation": "Swami Sivananda did not comment on this sloka",
+            "transliteration": "samaḥ śatrau ca mitre ca tathā mānāpamānayoḥ \nśītoṣṇasukhaduḥkheṣu samaḥ saṅgavivarjitaḥ",
+            "meaning": "Swami Sivananda did not comment on this sloka"
+        },
+        {
+            "id": "bg_12_19",
+            "number": 19,
+            "sanskrit": "तुल्यनिन्दास्तुतिर्मौनी सन्तुष्टो येन केनचित् |\nअनिकेतः स्थिरमतिर्भक्तिमान्मे प्रियो नरः",
+            "translation": "He to whom censure and praise are eal, who is silent, content with anything, homeless, of a steady mind, and full of devotion  that man is dear to Me.",
+            "transliteration": "tulyanindāstutirmaunī santuṣṭo yena kenacit \naniketaḥ sthiramatirbhaktimānme priyo naraḥ",
+            "meaning": "तुल्यनिन्दास्तुतिः to whom censure and praise are eal - मौनी -- silent - सन्तुष्टः contented - येनकेनचित् with anything - अनिकेतः homeless - स्थिरमतिः steadyminded - भक्तिमान् full of devotion - मे to Me - प्रियः dear - नरः (that) man."
+        },
+        {
+            "id": "bg_12_20",
+            "number": 20,
+            "sanskrit": "ये तु धर्म्यामृतमिदं यथोक्तं पर्युपासते |\nश्रद्दधाना मत्परमा भक्तास्तेऽतीव मे प्रियाः",
+            "translation": "They verily who follow this immortal Dharma (law or doctrine) as described above, endowed with faith, regarding Me as their supreme goal, they, the devotees, are exceedingly dear to Me.",
+            "transliteration": "ye tu dharmyāmṛtamidaṃ yathoktaṃ paryupāsate \nśraddadhānā matparamā bhaktāste.atīva me priyāḥ",
+            "meaning": "ये who - तु indeed - धर्म्यामृतम् immortal Dharma (Law) - इदम् this - यथोक्तम् as declared (above) - पर्युपासते follow - श्रद्दधानाः endowed with faith - मत्परमाः regarding Me as their Supreme - भक्ताः devotees - ते they - अतीव exceedingly - मे to Me - प्रियाः dear."
         }
     ]
 }

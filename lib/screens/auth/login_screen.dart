@@ -228,7 +228,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     // Platform-specific sizing
     final isIOS = Platform.isIOS;
-    final double logoHeight = isIOS ? 120 : 180;
+    final double logoHeight = isIOS ? 160 : 220;
     final double titleSize = isIOS ? 28 : 34; // Larger title for Android
     final double buttonHeight = isIOS ? 48 : 56; // Standard touch target
     final double spacingSmall = isIOS ? 8 : 16;

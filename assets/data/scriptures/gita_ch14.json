@@ -1,16 +1,224 @@
 {
     "chapter_number": 14,
-    "title": "Gunatraya Vibhaga Yoga",
-    "translation": "The Yoga of the Division of the Three Gunas",
-    "summary": "Krishna explains the three modes of material nature—Sattva (goodness), Rajas (passion), and Tamas (ignorance)—their effects on consciousness, and how to transcend them.",
+    "title": "Guṇa Traya Vibhāg Yog",
+    "translation": "The Yog of the Three Modes of Material Nature",
+    "summary": "Krishna explains the three modes of material nature (sattva, rajas, tamas) and how they bind the soul. He describes the path to transcend these modes.",
     "verses": [
         {
-            "id": "gita_14_5",
+            "id": "bg_14_1",
+            "number": 1,
+            "sanskrit": "श्रीभगवानुवाच |\nपरं भूयः प्रवक्ष्यामि ज्ञानानां ज्ञानमुत्तमम् |\nयज्ज्ञात्वा मुनयः सर्वे परां सिद्धिमितो गताः",
+            "translation": "The Blessed Lord said  I will again declare (to thee) that supreme knowledge, the best of all knowledge, having known which all the sages have gone to the supreme perfection after this life.",
+            "transliteration": "śrībhagavānuvāca \nparaṃ bhūyaḥ pravakṣyāmi jñānānāṃ jñānamuttamam \nyajjñātvā munayaḥ sarve parāṃ siddhimito gatāḥ",
+            "meaning": "परम् supreme - भूयः again - प्रवक्ष्यामि (I) will declare - ज्ञानानाम् of all knowledge - ज्ञानम् knowledge - उत्तमम् the best - यत् which - ज्ञात्वा having known - मुनयः the sages - सर्वे all - पराम् supreme - सिद्धिम् to perfection - इतः after this life - गताः gone."
+        },
+        {
+            "id": "bg_14_2",
+            "number": 2,
+            "sanskrit": "इदं ज्ञानमुपाश्रित्य मम साधर्म्यमागताः |\nसर्गेऽपि नोपजायन्ते प्रलये न व्यथन्ति च",
+            "translation": "They who, having taken refuge in this knowledge, have attained to unity with Me, are neither born at the time of creation nor are they disturbed at the time of dissolution.",
+            "transliteration": "idaṃ jñānamupāśritya mama sādharmyamāgatāḥ \nsarge.api nopajāyante pralaye na vyathanti ca",
+            "meaning": "इदम् this - ज्ञानम् knowledge - उपाश्रित्य having taken refuge in - मम My - साधर्म्यम् unity - आगताः have attained to - सर्गे at the time of creation - अपि also - न not - उपजायन्ते are born - प्रलये at the time of dissolution - न not - व्यथन्ति are (they) disturbed - च and."
+        },
+        {
+            "id": "bg_14_3",
+            "number": 3,
+            "sanskrit": "मम योनिर्महद् ब्रह्म तस्मिन्गर्भं दधाम्यहम् |\nसम्भवः सर्वभूतानां ततो भवति भारत",
+            "translation": "My womb is the great Brahma; in that I place the germ; thence, O Arjuna, is the birth of all beings.",
+            "transliteration": "mama yonirmahad brahma tasmingarbhaṃ dadhāmyaham \nsambhavaḥ sarvabhūtānāṃ tato bhavati bhārata",
+            "meaning": "मम My - योनिः womb - महत् the great - ब्रह्म Brahma - तस्मिन् in that - गर्भम् germ - दधामि bears - अहम I - संभवः the birth - सर्वभूतानाम् of all beings - ततः thence - भवति is - भारत O descendant of Bharata (Arjuna)."
+        },
+        {
+            "id": "bg_14_4",
+            "number": 4,
+            "sanskrit": "सर्वयोनिषु कौन्तेय मूर्तयः सम्भवन्ति याः |\nतासां ब्रह्म महद्योनिरहं बीजप्रदः पिता",
+            "translation": "Whatever forms are produced, O Arjuna, in any womb whatsoever, the great Brahma is their womb and I am the seed-giving father.",
+            "transliteration": "sarvayoniṣu kaunteya mūrtayaḥ sambhavanti yāḥ \ntāsāṃ brahma mahadyonirahaṃ bījapradaḥ pitā",
+            "meaning": "सर्वयोनिषु in all the wombs - कौन्तेय O son of Kunti (Arjuna) - मूर्तयः forms - सम्भवन्ति are produced - याः which - तासाम् their - ब्रह्म Brahma - महत् great - योनिः womb - अहम् I - बीजप्रदः seedgiving - पिता father."
+        },
+        {
+            "id": "bg_14_5",
             "number": 5,
-            "sanskrit": "सत्त्वं रजस्तम इति गुणाः प्रकृतिसम्भवाः |\nनिबध्नन्ति महाबाहो देहे देहिनमव्ययम् || ५ ||",
-            "translation": "Material nature consists of three modes—goodness, passion and ignorance. When the eternal living entity comes in contact with nature, O mighty-armed Arjuna, he becomes conditioned by these modes.",
-            "transliteration": "sattvaṁ rajas tama iti guṇāḥ prakṛti-sambhavāḥ\nnibadhnanti mahā-bāho dehe dehinam avyayam",
-            "meaning": "Sattvam - mode of goodness; Rajah - mode of passion; Tamah - mode of ignorance..."
+            "sanskrit": "सत्त्वं रजस्तम इति गुणाः प्रकृतिसम्भवाः |\nनिबध्नन्ति महाबाहो देहे देहिनमव्ययम्",
+            "translation": "Purity, passion and inertia  these alities, O Arjuna, born of Nature, bind fast in the body, the embodied, the indestructible.",
+            "transliteration": "sattvaṃ rajastama iti guṇāḥ prakṛtisambhavāḥ \nnibadhnanti mahābāho dehe dehinamavyayam",
+            "meaning": "सत्त्वम् purity - रजः passion - तमः inertia - इति these - गुणाः alities - प्रकृतिसंभवाः born of Prakriti - निबध्नन्ति bind - महाबाहो O mightyarmed - देहे in the body - देहिनम् the embodied - अव्ययम् the,indestructible."
+        },
+        {
+            "id": "bg_14_6",
+            "number": 6,
+            "sanskrit": "तत्र सत्त्वं निर्मलत्वात्प्रकाशकमनामयम् |\nसुखसङ्गेन बध्नाति ज्ञानसङ्गेन चानघ",
+            "translation": "Of these, Sattva, which from its stainlessness is luminous and healthy, binds by attachment to happiness and by attachment to knowledge, O sinless one.",
+            "transliteration": "tatra sattvaṃ nirmalatvātprakāśakamanāmayam \nsukhasaṅgena badhnāti jñānasaṅgena cānagha",
+            "meaning": "तत्र of these - सत्त्वम् purity - निर्मलत्वात् from its stainlessness - प्रकाशकम् luminous - अनामयम् healthy - सुखसङ्गेन by attachment to happiness - बध्नाति binds - ज्ञानसङ्गेन by attachment to knowledge - च and - अनग O sinless one."
+        },
+        {
+            "id": "bg_14_7",
+            "number": 7,
+            "sanskrit": "रजो रागात्मकं विद्धि तृष्णासङ्गसमुद्भवम् |\nतन्निबध्नाति कौन्तेय कर्मसङ्गेन देहिनम्",
+            "translation": "Know thou Rajas to be of the nature of passion, the source of thirst (for sensual enjoyment) and attachment; it binds fast, O Arjuna, the embodied one by attachment to action.",
+            "transliteration": "rajo rāgātmakaṃ viddhi tṛṣṇāsaṅgasamudbhavam \ntannibadhnāti kaunteya karmasaṅgena dehinam",
+            "meaning": "रजः Rajas - रागात्मकम् of the nature of passion - विद्धि know - तृष्णासङ्गसमुद्भवम् the source of thirst and attachment - तत् that - निबध्नाति binds - कौन्तेय O son of Kunti (Arjuna) - कर्मसङ्गेन by attachment to action - देहिनम् the embodied one."
+        },
+        {
+            "id": "bg_14_8",
+            "number": 8,
+            "sanskrit": "तमस्त्वज्ञानजं विद्धि मोहनं सर्वदेहिनाम् |\nप्रमादालस्यनिद्राभिस्तन्निबध्नाति भारत",
+            "translation": "But know thou Tamas to be born of ignorance, deluding all embodied beings; it binds fast, O Arjuna, by heedlessness, indolence and sleep.",
+            "transliteration": "tamastvajñānajaṃ viddhi mohanaṃ sarvadehinām \npramādālasyanidrābhistannibadhnāti bhārata",
+            "meaning": "तमः inertia - तु but - अज्ञानजम् born of ignorance - विद्धि know - मोहनम् deluding - सर्वदेहिनाम् to all,embodied beings - प्रमादालस्यनिद्राभिः by heedlessness - indolence and sleep - तत् that - निबध्नाति binds fast - भारत O descendant of Bharata (Arjuna)."
+        },
+        {
+            "id": "bg_14_9",
+            "number": 9,
+            "sanskrit": "सत्त्वं सुखे सञ्जयति रजः कर्मणि भारत |\nज्ञानमावृत्य तु तमः प्रमादे सञ्जयत्युत",
+            "translation": "Sattva attaches to happiness, Rajas to action, O Arjuna, while Tamas verily shrouding knowledge attaches to heedlessness.",
+            "transliteration": "sattvaṃ sukhe sañjayati rajaḥ karmaṇi bhārata \njñānamāvṛtya tu tamaḥ pramāde sañjayatyuta",
+            "meaning": "सत्त्वम् purity - सुखे to happiness - सञ्जयति attaches - रजः active force - कर्मणि to action - भारत O Bharata - ज्ञानम् knowledge - आवृत्य shrouding - तु verily - तमः inertia - प्रमादे to heedlessness - सञ्जयति attaches - उत but."
+        },
+        {
+            "id": "bg_14_10",
+            "number": 10,
+            "sanskrit": "रजस्तमश्चाभिभूय सत्त्वं भवति भारत |\nरजः सत्त्वं तमश्चैव तमः सत्त्वं रजस्तथा",
+            "translation": "Now Sattva arises (prevails), O Arjuna, having overpowered Rajas and Tamas; nor Rajas, having overpowered Sattva and Tamas; and now Tamas, having overpowered Sattva and Rajas.",
+            "transliteration": "rajastamaścābhibhūya sattvaṃ bhavati bhārata \nrajaḥ sattvaṃ tamaścaiva tamaḥ sattvaṃ rajastathā",
+            "meaning": "रजः Rajas - तमः inertia - च and - अभिभूय having overpowered - सत्त्वम् Sattva - भवति arises - भारत O Arjuna - रजः Rajas - सत्त्वम् Sattva - तमः inertia - च and - एव even - तमः inertia - सत्त्वम् purity - रजः active force - तथा also."
+        },
+        {
+            "id": "bg_14_11",
+            "number": 11,
+            "sanskrit": "सर्वद्वारेषु देहेऽस्मिन्प्रकाश उपजायते |\nज्ञानं यदा तदा विद्याद्विवृद्धं सत्त्वमित्युत",
+            "translation": "When through every gate (sense) in this body, the wisdom-light shines, then it may be known that Sattva is predominant.",
+            "transliteration": "sarvadvāreṣu dehe.asminprakāśa upajāyate \njñānaṃ yadā tadā vidyādvivṛddhaṃ sattvamityuta",
+            "meaning": "सर्वद्वारेषु through every gate (sense) - देहे in the body - अस्मिन् in this - प्रकाशः wisdomlight - उपजायते shines - ज्ञानम् knowledge - यदा when - तदा then - विद्यात् (it) may be known - विवृद्धम् (is) predominant - सत्त्वम्,Sattva - इति thus - उत indeed."
+        },
+        {
+            "id": "bg_14_12",
+            "number": 12,
+            "sanskrit": "लोभः प्रवृत्तिरारम्भः कर्मणामशमः स्पृहा |\nरजस्येतानि जायन्ते विवृद्धे भरतर्षभ",
+            "translation": "Greed, activity, the undertaking of actions, restlessness, longing  these arise when Rajas is predominant, O Arjuna.",
+            "transliteration": "lobhaḥ pravṛttirārambhaḥ karmaṇāmaśamaḥ spṛhā \nrajasyetāni jāyante vivṛddhe bharatarṣabha",
+            "meaning": "लोभः greed - प्रवृत्तिः activity - आरम्भः the undertaking - कर्मणाम् of actions - अशमः restlessness - स्पृहा longing - रजसि in Rajas - एतानि these - जायन्ते arise - विवृद्धे having become predominant - भरतर्षभ O best of the Bharatas (or O Lord of the Bharatas)."
+        },
+        {
+            "id": "bg_14_13",
+            "number": 13,
+            "sanskrit": "अप्रकाशोऽप्रवृत्तिश्च प्रमादो मोह एव च |\nतमस्येतानि जायन्ते विवृद्धे कुरुनन्दन",
+            "translation": "Darkness, inertness, heedlessness and delusion  these arise when Tamas is predominant, O Arjuna.",
+            "transliteration": "aprakāśo.apravṛttiśca pramādo moha eva ca \ntamasyetāni jāyante vivṛddhe kurunandana",
+            "meaning": "अप्रकाशः darkness - अप्रवृत्तिः inertness - च and - प्रमादः heedlessness - मोहः delusion - एव even - च and - तमसि in inertia - एतानि these - जायन्ते arise - विवृद्धे have become prdominant - कुरुनन्दन O descendant of Kuru (Arjuna)."
+        },
+        {
+            "id": "bg_14_14",
+            "number": 14,
+            "sanskrit": "यदा सत्त्वे प्रवृद्धे तु प्रलयं याति देहभृत् |\nतदोत्तमविदां लोकानमलान्प्रतिपद्यते",
+            "translation": "If the embodied one meets with death when Sattva is predominant, then he attains to the spotless worlds of the knowers of the Highest.",
+            "transliteration": "yadā sattve pravṛddhe tu pralayaṃ yāti dehabhṛt \ntadottamavidāṃ lokānamalānpratipadyate",
+            "meaning": "यदा when - सत्त्वे in Sattva - प्रवृद्धे having become predominant - तु verily - प्रलयम् death - याति meets - देहभृत् the embodied one - तदा then - उत्तमविदाम् of the knowers of the Highest - लोकान् to the worlds - अमलान् of the spotless - प्रतिपद्यते (he) attains."
+        },
+        {
+            "id": "bg_14_15",
+            "number": 15,
+            "sanskrit": "रजसि प्रलयं गत्वा कर्मसङ्गिषु जायते |\nतथा प्रलीनस्तमसि मूढयोनिषु जायते",
+            "translation": "Meeting death in Rajas, he is born among those who are attached to action; and dying in Tamas, he is born in the womb of the senseless.",
+            "transliteration": "rajasi pralayaṃ gatvā karmasaṅgiṣu jāyate \ntathā pralīnastamasi mūḍhayoniṣu jāyate",
+            "meaning": "रजसि in Rajas - प्रलयम् death - गत्वा meeting - कर्मसङ्गिषु among those attached to action - जायते (he) is born - तथा so - प्रलीनः dying - तमसि in inertia - मूढयोनिषु in the wombs of the senseless - जायते (he) is born."
+        },
+        {
+            "id": "bg_14_16",
+            "number": 16,
+            "sanskrit": "कर्मणः सुकृतस्याहुः सात्त्विकं निर्मलं फलम् |\nरजसस्तु फलं दुःखमज्ञानं तमसः फलम्",
+            "translation": "The fruit of good action, they say, is Sattvic and pure, verily the fruit of Rajas is pain, and ignorance is the fruit of Tamas.",
+            "transliteration": "karmaṇaḥ sukṛtasyāhuḥ sāttvikaṃ nirmalaṃ phalam \nrajasastu phalaṃ duḥkhamajñānaṃ tamasaḥ phalam",
+            "meaning": "कर्मणः of action - सुकृतस्य (of) good - आहुः (they) say - सात्त्विकम् Sattvic - निर्मलम् pure - फलम् the fruit - रजसः of Rajas - तु verily - फलम् the fruit - दुःखम् pain - अज्ञानम् ignorance - तमसः of inertia - फलम् the fruit."
+        },
+        {
+            "id": "bg_14_17",
+            "number": 17,
+            "sanskrit": "सत्त्वात्सञ्जायते ज्ञानं रजसो लोभ एव च |\nप्रमादमोहौ तमसो भवतोऽज्ञानमेव च",
+            "translation": "From Sattva arises knowledge, and greed from Rajas; heedlessness and delusion arise from Tamas, and also ignorance.",
+            "transliteration": "sattvātsañjāyate jñānaṃ rajaso lobha eva ca \npramādamohau tamaso bhavato.ajñānameva ca",
+            "meaning": "सत्त्वात् from purity - सञ्जायते arises - ज्ञानम् knowledge - रजसः from activity - लोभः greed - एव even - च and - प्रमादमोहौ heedlessness and delusion - तमसः from inertia - अज्ञानम् ignorance - एव even - च and."
+        },
+        {
+            "id": "bg_14_18",
+            "number": 18,
+            "sanskrit": "ऊर्ध्वं गच्छन्ति सत्त्वस्था मध्ये तिष्ठन्ति राजसाः |\nजघन्यगुणवृत्तिस्था अधो गच्छन्ति तामसाः",
+            "translation": "Those who are seated in Sattva go upwards; the Rajasic dwell in the middle; and the Tamasic, abiding in the function of the lowest Guna, go downwards.",
+            "transliteration": "ūrdhvaṃ gacchanti sattvasthā madhye tiṣṭhanti rājasāḥ \njaghanyaguṇavṛttisthā adho gacchanti tāmasāḥ",
+            "meaning": "ऊर्ध्वम् upwards - गच्छन्ति go - सत्त्वस्थाः in Sattva seated - मध्ये in the middle - तिष्ठन्ति dwell - राजसाः the Rajasic - जघन्यगुणवृत्तिस्थाः abiding in the function of the lowest Guna - अधः downwards - गच्छन्ति go - तामसाः the Tamasic."
+        },
+        {
+            "id": "bg_14_19",
+            "number": 19,
+            "sanskrit": "नान्यं गुणेभ्यः कर्तारं यदा द्रष्टानुपश्यति |\nगुणेभ्यश्च परं वेत्ति मद्भावं सोऽधिगच्छति",
+            "translation": "When the seer beholds no agent other than the Gunas and knows That which is higher than they, he attains to My Being.",
+            "transliteration": "nānyaṃ guṇebhyaḥ kartāraṃ yadā draṣṭānupaśyati \nguṇebhyaśca paraṃ vetti madbhāvaṃ so.adhigacchati",
+            "meaning": "न not - अन्यम् other - गुणेभ्यः than the Gunas - कर्तारम् agent - यदा when - द्रष्टा the seer - अनुपश्यति beholds - गुणेभ्यः than the alities - च and - परम् higher - वेत्ति knows - मद्भावम् My Being - सः he - अधिगच्छति,attains to."
+        },
+        {
+            "id": "bg_14_20",
+            "number": 20,
+            "sanskrit": "गुणानेतानतीत्य त्रीन्देही देहसमुद्भवान् |\nजन्ममृत्युजरादुःखैर्विमुक्तोऽमृतमश्नुते",
+            "translation": "The embodied one having crossed beyond these three Gunas out of which the body is evolved, is freed from birth, death, decay and pain, and attains to immortality.",
+            "transliteration": "guṇānetānatītya trīndehī dehasamudbhavān \njanmamṛtyujarāduḥkhairvimukto.amṛtamaśnute",
+            "meaning": "गुणान् Gunas - एतान् these - अतीत्य having crossed - त्रीन् three - देही the embodied - देहसमुद्भवान् out of which the body is evolved - जन्ममृत्युजरादुःखैः from birth - death - decay and pain - विमुक्तः freed - अमृतम् immortality - अश्नुते attains to."
+        },
+        {
+            "id": "bg_14_21",
+            "number": 21,
+            "sanskrit": "अर्जुन उवाच |\nकैर्लिङ्गैस्त्रीन्गुणानेतानतीतो भवति प्रभो |\nकिमाचारः कथं चैतांस्त्रीन्गुणानतिवर्तते",
+            "translation": "Arjuna said  What are the marks of him who has transcended the three alities, O Lord? What is his conduct and how does he go beyond these three alities?",
+            "transliteration": "arjuna uvāca \nkairliṅgaistrīnguṇānetānatīto bhavati prabho \nkimācāraḥ kathaṃ caitāṃstrīnguṇānativartate",
+            "meaning": "कैः by what - लिंगैः by marks - त्रीन् three - गुणान् Gunas - एतान् these - अतीतः crossed - भवति becomes - प्रभो O Lord - किमाचारः what (is his) conduct - कथम् how - च and - एतान् these - त्रीन् three - गुणान् Gunas - अतिवर्तते goes beyond."
+        },
+        {
+            "id": "bg_14_22",
+            "number": 22,
+            "sanskrit": "श्रीभगवानुवाच |\nप्रकाशं च प्रवृत्तिं च मोहमेव च पाण्डव |\nन द्वेष्टि सम्प्रवृत्तानि न निवृत्तानि काङ्क्षति",
+            "translation": "The Blessed Lord said  When light, activity and delusion are present, he hates them not, nor does he long for them when they are absent.",
+            "transliteration": "śrībhagavānuvāca \nprakāśaṃ ca pravṛttiṃ ca mohameva ca pāṇḍava \nna dveṣṭi sampravṛttāni na nivṛttāni kāṅkṣati",
+            "meaning": "प्रकाशम् light - च and - प्रवृत्तिम् activity - च and - मोहम् delusion - एव even - च and - पाण्डव O Arjuna - न not - द्वेष्टि hates - सम्प्रवृत्तानि (when) gone forth - न not - निवृत्तानि when absent - काङ्क्षति longs."
+        },
+        {
+            "id": "bg_14_23",
+            "number": 23,
+            "sanskrit": "उदासीनवदासीनो गुणैर्यो न विचाल्यते |\nगुणा वर्तन्त इत्येवं योऽवतिष्ठति नेङ्गते",
+            "translation": "He who, seated like one unconcerned, is not moved by the alities, and who, knowing that the alities are active, is self-centred and moves not.",
+            "transliteration": "udāsīnavadāsīno guṇairyo na vicālyate \nguṇā vartanta ityevaṃ yo.avatiṣṭhati neṅgate",
+            "meaning": "उदासीनवत् like one unconcerned - आसीनः seated - गुणैः by the Gunas - यः who - न not - विचाल्यते is moved - गुणाः the Gunas - वर्तन्ते operate - इति thus - एव even - यः who - अवतिष्ठति is selfcentred - न not - इङ्गते moves."
+        },
+        {
+            "id": "bg_14_24",
+            "number": 24,
+            "sanskrit": "समदुःखसुखः स्वस्थः समलोष्टाश्मकाञ्चनः |\nतुल्यप्रियाप्रियो धीरस्तुल्यनिन्दात्मसंस्तुतिः",
+            "translation": "Who is the same in pleasure and pain, who dwells in the Self, to whom a clod of earth, stone and gold are alike, who is the same to the dear and the unfriendly, who is firm, and to whom censure and praise are as one.",
+            "transliteration": "samaduḥkhasukhaḥ svasthaḥ samaloṣṭāśmakāñcanaḥ \ntulyapriyāpriyo dhīrastulyanindātmasaṃstutiḥ",
+            "meaning": "समदुःखसुखः alike in pleasure and pain - स्वस्थः standing in his own Self - समलोष्टाश्मकाञ्चनः regarding a clod of earth - a stone and gold alike - तुल्यप्रियाप्रियः the same to the dear and the undear - धीरः firm - तुल्यनिन्दात्मसंस्तुतिः the same in censure and praise."
+        },
+        {
+            "id": "bg_14_25",
+            "number": 25,
+            "sanskrit": "मानापमानयोस्तुल्यस्तुल्यो मित्रारिपक्षयोः |\nसर्वारम्भपरित्यागी गुणातीतः स उच्यते",
+            "translation": "Who is the same in honour and dishonour, the same to friend and foe, abandoning all undertakings  he is said to have transcended the alities.",
+            "transliteration": "mānāpamānayostulyastulyo mitrāripakṣayoḥ \nsarvārambhaparityāgī guṇātītaḥ sa ucyate",
+            "meaning": "मानापमानयोः in honour and dishonour - तुल्यः the same - तुल्यः the same - मित्रारिपक्षयोः to friend and foe - सर्वारम्भपरित्यागी abandoning all undertakings - गुणातीतः crossed the Gunas - सः he - उच्यते is said."
+        },
+        {
+            "id": "bg_14_26",
+            "number": 26,
+            "sanskrit": "मां च योऽव्यभिचारेण भक्तियोगेन सेवते |\nस गुणान्समतीत्यैतान्ब्रह्मभूयाय कल्पते",
+            "translation": "And he who serves Me with unswerving devotion, he, crossing beyond the alities, is fit for becoming Brahman.",
+            "transliteration": "māṃ ca yo.avyabhicāreṇa bhaktiyogena sevate \nsa guṇānsamatītyaitānbrahmabhūyāya kalpate",
+            "meaning": "माम् Me - च and - यः who - अव्यभिचारेण unswerving - भक्तियोगेन with devotion - सेवते serves - सः he - गुणान् Gunas - समतीत्य crossing beyond - एतान् these - ब्रह्मभूयाय for becoming Brahman - कल्पते is fit."
+        },
+        {
+            "id": "bg_14_27",
+            "number": 27,
+            "sanskrit": "ब्रह्मणो हि प्रतिष्ठाहममृतस्याव्ययस्य च |\nशाश्वतस्य च धर्मस्य सुखस्यैकान्तिकस्य च",
+            "translation": "For I am the abode of Brahman, the immortal and the immutable, of everlasting Dharma and of absolute bliss.",
+            "transliteration": "brahmaṇo hi pratiṣṭhāhamamṛtasyāvyayasya ca \nśāśvatasya ca dharmasya sukhasyaikāntikasya ca",
+            "meaning": "ब्रह्मणः of Brahman - हि indeed - प्रतिष्ठा the abode - अहम् I - अमृतस्य the immortal - अव्ययस्य the immutable - च and - शाश्वतस्य everlasting - च and - धर्मस्य of Dharma - सुखस्य of bliss - एकान्तिकस्य absolute - च and."
         }
     ]
 }

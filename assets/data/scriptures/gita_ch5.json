@@ -1,24 +1,240 @@
 {
     "chapter_number": 5,
     "title": "Karma Sanyasa Yoga",
-    "translation": "The Yoga of Renunciation",
-    "summary": "Krishna explains that both renunciation of action and selfless action lead to liberation, but selfless action is more practical for most seekers.",
+    "translation": "The Yog of Renunciation",
+    "summary": "Shree Krishna compares karm sanyās yog (the path of renunciation of actions) with karm yog (the path of work in devotion). Both lead to the same destination, but karm yog is more practical for most. The karm yogis perform duties without attachment, remaining unaffected like a lotus in water.",
     "verses": [
         {
-            "id": "gita_5_1",
+            "id": "bg_5_1",
             "number": 1,
-            "sanskrit": "अर्जुन उवाच |\nसंन्यासं कर्मणां कृष्ण पुनर्योगं च शंससि |\nयच्छ्रेय एतयोरेकं तन्मे ब्रूहि सुनिश्चितम् || १ ||",
-            "translation": "Arjuna said: O Krishna, first of all You ask me to renounce work, and then again You recommend work with devotion. Now will You kindly tell me definitely which of the two is more beneficial?",
-            "transliteration": "arjuna uvāca\nsannyāsaṁ karmaṇāṁ kṛṣṇa punar yogaṁ ca śaṁsasi\nyac chreya etayor ekaṁ tan me brūhi suniścitam",
-            "meaning": "Arjunah uvaca - Arjuna said; Sannyasam - renunciation..."
+            "sanskrit": "अर्जुन उवाच |\nसंन्यासं कर्मणां कृष्ण पुनर्योगं च शंससि |\nयच्छ्रेय एतयोरेकं तन्मे ब्रूहि सुनिश्चितम् ||",
+            "translation": "Arjuna said: O Krishna, You praised karm sanyās (the path of renunciation of actions), and You also advised to do karm yog (work with devotion). Please tell me decisively which of the two is more beneficial?",
+            "transliteration": "arjuna uvāca\nsannyāsaṃ karmaṇāṃ kṛṣṇa punar yogaṃ ca śaṃsasi\nyac chreya etayor ekaṃ tan me brūhi suniścitam",
+            "meaning": "arjuna uvāca - Arjuna said; sannyāsam - renunciation; karmaṇām - of actions; kṛṣṇa - O Krishna; punaḥ - again; yogam - yoga; ca - and; śaṃsasi - You praise; yat - which; śreyaḥ - more beneficial; etayoḥ - of these two; ekam - one; tat - that; me - to me; brūhi - tell; suniścitam - decisively"
         },
         {
-            "id": "gita_5_2",
+            "id": "bg_5_2",
             "number": 2,
-            "sanskrit": "श्रीभगवानुवाच |\nसंन्यासः कर्मयोगश्च निःश्रेयसकरावुभौ |\nतयोस्तु कर्मसंन्यासात्कर्मयोगो विशिष्यते || २ ||",
-            "translation": "The Supreme Personality of Godhead replied: The renunciation of work and work in devotion are both good for liberation. But, of the two, work in devotional service is better than renunciation of work.",
+            "sanskrit": "श्रीभगवानुवाच |\nसंन्यासः कर्मयोगश्च निःश्रेयसकरावुभौ |\nतयोस्तु कर्मसंन्यासात्कर्मयोगो विशिष्यते ||",
+            "translation": "The Supreme Lord said: Both the path of karm sanyās (renunciation of actions) and karm yog (working in devotion) lead to the supreme goal. But karm yog is superior to karm sanyās.",
             "transliteration": "śrī-bhagavān uvāca\nsannyāsaḥ karma-yogaś ca niḥśreyasa-karāv ubhau\ntayos tu karma-sannyāsāt karma-yogo viśiṣyate",
-            "meaning": "Sannyasah - renunciation; Karma-yogah - yoga of action..."
+            "meaning": "śrī-bhagavān uvāca - the Lord said; sannyāsaḥ - renunciation; karma-yogaḥ - karma yoga; ca - and; niḥśreyasa-karau - leading to supreme; ubhau - both; tayoḥ - of the two; tu - but; karma-sannyāsāt - than renunciation; karma-yogaḥ - karma yoga; viśiṣyate - is superior"
+        },
+        {
+            "id": "bg_5_3",
+            "number": 3,
+            "sanskrit": "ज्ञेयः स नित्यसंन्यासी यो न द्वेष्टि न काङ्क्षति |\nनिर्द्वन्द्वो हि महाबाहो सुखं बन्धात्प्रमुच्यते ||",
+            "translation": "The karm yogis, who neither desire nor hate anything, should be considered always renounced. Free from all dualities, they are easily liberated from the bonds of material energy.",
+            "transliteration": "jñeyaḥ sa nitya-sannyāsī yo na dveṣṭi na kāṅkṣati\nnirdvandvo hi mahā-bāho sukhaṃ bandhāt pramucyate",
+            "meaning": "jñeyaḥ - should be known; saḥ - that; nitya-sannyāsī - eternal renunciate; yaḥ - who; na - neither; dveṣṭi - hates; na - nor; kāṅkṣati - desires; nirdvandvaḥ - free from dualities; hi - certainly; mahā-bāho - O mighty-armed; sukham - easily; bandhāt - from bondage; pramucyate - is liberated"
+        },
+        {
+            "id": "bg_5_4",
+            "number": 4,
+            "sanskrit": "साङ्ख्ययोगौ पृथग्बालाः प्रवदन्ति न पण्डिताः |\nएकमप्यास्थितः सम्यगुभयोर्विन्दते फलम् ||",
+            "translation": "Only the ignorant speak of sānkhya (renunciation of actions) and karm yog (work in devotion) as different. Those who are truly learned say that by applying ourselves to any one of these paths, we can achieve the results of both.",
+            "transliteration": "sāṅkhya-yogau pṛthag bālāḥ pravadanti na paṇḍitāḥ\nekam apy āsthitaḥ samyag ubhayor vindate phalam",
+            "meaning": "sāṅkhya - renunciation; yogau - and yoga; pṛthak - different; bālāḥ - ignorant; pravadanti - say; na - not; paṇḍitāḥ - learned; ekam - one; api - even; āsthitaḥ - established in; samyak - properly; ubhayoḥ - of both; vindate - attains; phalam - result"
+        },
+        {
+            "id": "bg_5_5",
+            "number": 5,
+            "sanskrit": "यत्साङ्ख्यैः प्राप्यते स्थानं तद्योगैरपि गम्यते |\nएकं साङ्ख्यं च योगं च यः पश्यति स पश्यति ||",
+            "translation": "The supreme state that is attained by means of karm sanyās is also attained by working in devotion. Hence, those who see karm sanyās and karm yog to be identical, truly see things as they are.",
+            "transliteration": "yat sāṅkhyaiḥ prāpyate sthānaṃ tad yogair api gamyate\nekaṃ sāṅkhyaṃ ca yogaṃ ca yaḥ paśyati sa paśyati",
+            "meaning": "yat - what; sāṅkhyaiḥ - by renunciation; prāpyate - is attained; sthānam - state; tat - that; yogaiḥ - by yoga; api - also; gamyate - is attained; ekam - one; sāṅkhyam - renunciation; ca - and; yogam - yoga; ca - and; yaḥ - who; paśyati - sees; saḥ - they; paśyati - truly see"
+        },
+        {
+            "id": "bg_5_6",
+            "number": 6,
+            "sanskrit": "संन्यासस्तु महाबाहो दुःखमाप्तुमयोगतः |\nयोगयुक्तो मुनिर्ब्रह्म नचिरेणाधिगच्छति ||",
+            "translation": "Perfect renunciation (karm sanyās) is difficult to attain without performing work in devotion (karm yog), O mighty-armed Arjuna, but the sage who is adept in karm yog quickly attains the Supreme.",
+            "transliteration": "sannyāsas tu mahā-bāho duḥkham āptum ayogataḥ\nyoga-yukto munir brahma na cireṇādhigacchati",
+            "meaning": "sannyāsaḥ - renunciation; tu - but; mahā-bāho - O mighty-armed; duḥkham - difficult; āptum - to attain; ayogataḥ - without yoga; yoga-yuktaḥ - united with yoga; muniḥ - sage; brahma - Brahman; na - not; cireṇa - long; adhigacchati - attains"
+        },
+        {
+            "id": "bg_5_7",
+            "number": 7,
+            "sanskrit": "योगयुक्तो विशुद्धात्मा विजितात्मा जितेन्द्रियः |\nसर्वभूतात्मभूतात्मा कुर्वन्नपि न लिप्यते ||",
+            "translation": "The karm yogis, who are of purified intellect, and who control the mind and senses, see the Soul of all souls in every living being. Though performing all kinds of actions, they are never entangled.",
+            "transliteration": "yoga-yukto viśuddhātmā vijitātmā jitendriyaḥ\nsarva-bhūtātma-bhūtātmā kurvann api na lipyate",
+            "meaning": "yoga-yuktaḥ - united with yoga; viśuddha-ātmā - pure soul; vijita-ātmā - conquered mind; jita-indriyaḥ - conquered senses; sarva-bhūta-ātma - soul of all beings; bhūta-ātmā - in all beings; kurvan - performing; api - although; na - not; lipyate - is entangled"
+        },
+        {
+            "id": "bg_5_8",
+            "number": 8,
+            "sanskrit": "नैव किञ्चित्करोमीति युक्तो मन्येत तत्त्ववित् |\nपश्यन्शृण्वन्स्पृशञ्जिघ्रन्नश्नन्गच्छन्स्वपञ्श्वसन् ||",
+            "translation": "Those steadfast in karm yog, always think, \"I am not the doer,\" even while engaged in seeing, hearing, touching, smelling, eating, moving, sleeping, and breathing.",
+            "transliteration": "naiva kiñcit karomīti yukto manyeta tattva-vit\npaśyan śṛṇvan spṛśañ jighrann aśnan gacchan svapañ śvasan",
+            "meaning": "na - not; eva - indeed; kiñcit - anything; karomi - I do; iti - thus; yuktaḥ - united; manyeta - thinks; tattva-vit - knower of truth; paśyan - seeing; śṛṇvan - hearing; spṛśan - touching; jighran - smelling; aśnan - eating; gacchan - going; svapan - sleeping; śvasan - breathing"
+        },
+        {
+            "id": "bg_5_9",
+            "number": 9,
+            "sanskrit": "प्रलपन्विसृजन्गृह्णन्नुन्मिषन्निमिषन्नपि |\nइन्द्रियाणीन्द्रियार्थेषु वर्तन्त इती धारयन् ||",
+            "translation": "With the light of divine knowledge, they see that it is only the material senses that are moving amongst their objects—speaking, releasing, grasping, opening and closing the eyes.",
+            "transliteration": "pralapan visṛjan gṛhṇann unmiṣann nimiṣann api\nindriyāṇīndriyārtheṣu vartanta itī dhārayan",
+            "meaning": "pralapan - speaking; visṛjan - releasing; gṛhṇan - grasping; unmiṣan - opening; nimiṣan - closing; api - even; indriyāṇi - senses; indriya-artheṣu - in sense objects; vartante - move; iti - thus; dhārayan - convinced"
+        },
+        {
+            "id": "bg_5_10",
+            "number": 10,
+            "sanskrit": "ब्रह्मण्याधाय कर्माणि सङ्गं त्यक्त्वा करोति यः |\nलिप्यते न स पापेन पद्मपत्रमिवाम्भसा ||",
+            "translation": "Those who dedicate their actions to God, abandoning all attachment, remain untouched by sin, just as a lotus leaf is untouched by water.",
+            "transliteration": "brahmaṇy ādhāya karmāṇi saṅgaṃ tyaktvā karoti yaḥ\nlipyate na sa pāpena padma-patram ivāmbhasā",
+            "meaning": "brahmaṇi - in Brahman; ādhāya - dedicating; karmāṇi - actions; saṅgam - attachment; tyaktvā - having abandoned; karoti - performs; yaḥ - who; lipyate - is affected; na - not; saḥ - they; pāpena - by sin; padma-patram - lotus leaf; iva - like; ambhasā - by water"
+        },
+        {
+            "id": "bg_5_11",
+            "number": 11,
+            "sanskrit": "कायेन मनसा बुद्ध्या केवलैरिन्द्रियैरपि |\nयोगिनः कर्म कुर्वन्ति सङ्गं त्यक्त्वाऽऽत्मशुद्धये ||",
+            "translation": "The yogis, while giving up attachment, perform actions with their body, senses, mind, and intellect, only for the purpose of self-purification.",
+            "transliteration": "kāyena manasā buddhyā kevalair indriyair api\nyoginaḥ karma kurvanti saṅgaṃ tyaktvātmā-śuddhaye",
+            "meaning": "kāyena - with body; manasā - with mind; buddhyā - with intellect; kevalaiḥ - only; indriyaiḥ - with senses; api - even; yoginaḥ - yogis; karma - action; kurvanti - perform; saṅgam - attachment; tyaktvā - having given up; ātma-śuddhaye - for self-purification"
+        },
+        {
+            "id": "bg_5_12",
+            "number": 12,
+            "sanskrit": "युक्तः कर्मफलं त्यक्त्वा शान्तिमाप्नोति नैष्ठिकीम् |\nअयुक्तः कामकारेण फले सक्तो निबध्यते ||",
+            "translation": "Offering the results of all activities to God, the karm yogis attain everlasting peace. Whereas those who, being impelled by their desires, work with a selfish motive become entangled because they are attached to the fruits of their actions.",
+            "transliteration": "yuktaḥ karma-phalaṃ tyaktvā śāntim āpnoti naiṣṭhikīm\nayuktaḥ kāma-kāreṇa phale sakto nibadhyate",
+            "meaning": "yuktaḥ - united; karma-phalam - fruits of action; tyaktvā - having abandoned; śāntim - peace; āpnoti - attains; naiṣṭhikīm - everlasting; ayuktaḥ - not united; kāma-kāreṇa - by desire; phale - in fruit; saktaḥ - attached; nibadhyate - is bound"
+        },
+        {
+            "id": "bg_5_13",
+            "number": 13,
+            "sanskrit": "सर्वकर्माणि मनसा संन्यस्यास्ते सुखं वशी |\nनवद्वारे पुरे देही नैव कुर्वन्न कारयन् ||",
+            "translation": "The embodied beings who are self-controlled and detached reside happily in the city of nine gates free from thoughts that they are the doers or the cause of anything.",
+            "transliteration": "sarva-karmāṇi manasā sannyasyāste sukhaṃ vaśī\nnava-dvāre pure dehī naiva kurvann kārayan",
+            "meaning": "sarva-karmāṇi - all actions; manasā - by mind; sannyasya - having renounced; āste - remains; sukham - happily; vaśī - self-controlled; nava-dvāre - nine gates; pure - in city; dehī - embodied; na - not; eva - indeed; kurvan - doing; na - not; kārayan - causing"
+        },
+        {
+            "id": "bg_5_14",
+            "number": 14,
+            "sanskrit": "न कर्तृत्वं न कर्माणि लोकस्य सृजति प्रभुः |\nन कर्मफलसंयोगं स्वभावस्तु प्रवर्तते ||",
+            "translation": "Neither the sense of doership nor the nature of actions comes from God; nor does He create the fruits of actions. All this is enacted by the modes of material nature (guṇas).",
+            "transliteration": "na kartṛtvaṃ na karmāṇi lokasya sṛjati prabhuḥ\nna karma-phala-saṃyogaṃ svabhāvas tu pravartate",
+            "meaning": "na - neither; kartṛtvam - sense of doership; na - nor; karmāṇi - actions; lokasya - of people; sṛjati - creates; prabhuḥ - Lord; na - nor; karma-phala-saṃyogam - fruits of action; svabhāvaḥ - nature; tu - but; pravartate - acts"
+        },
+        {
+            "id": "bg_5_15",
+            "number": 15,
+            "sanskrit": "नादत्ते कस्यचित्पापं न चैव सुकृतं विभुः |\nअज्ञानेनावृतं ज्ञानं तेन मुह्यन्ति जन्तवः ||",
+            "translation": "The omnipresent God does not involve Himself in the sinful or virtuous deeds of anyone. The living entities are deluded because their inner knowledge is covered by ignorance.",
+            "transliteration": "nādatte kasyacit pāpaṃ na caiva sukṛtaṃ vibhuḥ\najñānena vṛtaṃ jñānaṃ tena muhyanti jantavaḥ",
+            "meaning": "na - not; ādatte - accepts; kasyacit - anyone's; pāpam - sin; na - nor; ca - and; eva - indeed; sukṛtam - virtue; vibhuḥ - Lord; ajñānena - by ignorance; āvṛtam - covered; jñānam - knowledge; tena - by that; muhyanti - are deluded; jantavaḥ - beings"
+        },
+        {
+            "id": "bg_5_16",
+            "number": 16,
+            "sanskrit": "ज्ञानेन तु तदज्ञानं येषां नाशितमात्मनः |\nतेषामादित्यवज्ज्ञानं प्रकाशयति तत्परम् ||",
+            "translation": "But for those whose ignorance is destroyed by divine knowledge, the Supreme Entity is revealed, just as the sun illumines everything when it rises.",
+            "transliteration": "jñānena tu tad ajñānaṃ yeṣāṃ nāśitam ātmanaḥ\nteṣām āditya-vaj jñānaṃ prakāśayati tat param",
+            "meaning": "jñānena - by knowledge; tu - but; tat - that; ajñānam - ignorance; yeṣām - whose; nāśitam - destroyed; ātmanaḥ - of self; teṣām - their; āditya-vat - like sun; jñānam - knowledge; prakāśayati - illumines; tat - that; param - Supreme"
+        },
+        {
+            "id": "bg_5_17",
+            "number": 17,
+            "sanskrit": "तद्बुद्धयस्तदात्मानस्तन्निष्ठास्तत्परायणाः |\nगच्छन्त्यपुनरावृत्तिं ज्ञाननिर्धूतकल्मषाः ||",
+            "translation": "Those whose intellect is fixed in God, who are completely absorbed in God, with firm faith in Him as the supreme goal, such persons quickly reach the state from which there is no return, their sins having been dispelled by the light of knowledge.",
+            "transliteration": "tad-buddhayas tad-ātmānas tan-niṣṭhās tat-parāyaṇāḥ\ngacchanty apunarvṛttiṃ jñāna-nirdhūta-kalmaṣāḥ",
+            "meaning": "tat-buddhayaḥ - intellect on That; tad-ātmānaḥ - self in That; tat-niṣṭhāḥ - fixed in That; tat-parāyaṇāḥ - devoted to That; gacchanti - go; apunarvṛttim - no return; jñāna - by knowledge; nirdhūta - dispelled; kalmaṣāḥ - sins"
+        },
+        {
+            "id": "bg_5_18",
+            "number": 18,
+            "sanskrit": "विद्याविनयसंपन्ने ब्राह्मणे गवि हस्तिनि |\nशुनि चैव श्वपाके च पण्डिताः समदर्शिनः ||",
+            "translation": "The truly learned, with the eyes of divine knowledge, see with equal vision a Brahmin, a cow, an elephant, a dog, and a dog-eater.",
+            "transliteration": "vidyā-vinaya-sampanne brāhmaṇe gavi hastini\nśuni caiva śva-pāke ca paṇḍitāḥ sama-darśinaḥ",
+            "meaning": "vidyā - knowledge; vinaya - humility; sampanne - endowed; brāhmaṇe - Brahmin; gavi - cow; hastini - elephant; śuni - dog; ca - and; eva - indeed; śva-pāke - dog-eater; ca - and; paṇḍitāḥ - wise; sama-darśinaḥ - equal vision"
+        },
+        {
+            "id": "bg_5_19",
+            "number": 19,
+            "sanskrit": "इहैव तैर्जितः सर्गो येषां साम्ये स्थितं मनः |\nनिर्दोषं हि समं ब्रह्म तस्माद्ब्रह्मणि ते स्थिताः ||",
+            "translation": "Those whose minds are established in equality of vision conquer the cycle of birth and death in this very life. They possess the flawless qualities of God, and are therefore seated in the Absolute Truth.",
+            "transliteration": "ihaiva tair jitaḥ sargo yeṣāṃ sāmye sthitaṃ manaḥ\nnirdoṣaṃ hi samaṃ brahma tasmād brahmaṇi te sthitāḥ",
+            "meaning": "iha - here; eva - indeed; taiḥ - by them; jitaḥ - conquered; sargaḥ - creation; yeṣām - whose; sāmye - in equality; sthitam - fixed; manaḥ - mind; nirdoṣam - flawless; hi - for; samam - equal; brahma - Brahman; tasmāt - therefore; brahmaṇi - in Brahman; te - they; sthitāḥ - situated"
+        },
+        {
+            "id": "bg_5_20",
+            "number": 20,
+            "sanskrit": "न प्रहृष्येत्प्रियं प्राप्य नोद्विजेत्प्राप्य चाप्रियम् |\nस्थिरबुद्धिरसम्मूढो ब्रह्मविद्ब्रह्मणि स्थितः ||",
+            "translation": "Established in God, having a firm understanding of divine knowledge and not hampered by delusion, they neither rejoice in getting something pleasant nor grieve on experiencing the unpleasant.",
+            "transliteration": "na prahṛṣyet priyaṃ prāpya nodvijet prāpya cāpriyam\nsthira-buddhir asammūḍho brahma-vid brahmaṇi sthitaḥ",
+            "meaning": "na - not; prahṛṣyet - rejoices; priyam - pleasant; prāpya - attaining; na - not; udvijet - is disturbed; prāpya - attaining; ca - and; apriyam - unpleasant; sthira-buddhiḥ - steady intellect; asammūḍhaḥ - undeluded; brahma-vit - knower of Brahman; brahmaṇi - in Brahman; sthitaḥ - situated"
+        },
+        {
+            "id": "bg_5_21",
+            "number": 21,
+            "sanskrit": "बाह्यस्पर्शेष्वसक्तात्मा विन्दत्यात्मनि यत्सुखम् |\nस ब्रह्मयोगयुक्तात्मा सुखमक्षयमश्नुते ||",
+            "translation": "Those who are not attached to external sense pleasures realize divine bliss in the self. Being united with God through Yog, they experience unending happiness.",
+            "transliteration": "bāhya-sparśeṣv asaktātmā vindaty ātmani yat sukham\nsa brahma-yoga-yuktātmā sukham akṣayam aśnute",
+            "meaning": "bāhya-sparśeṣu - in external contacts; asakta-ātmā - unattached; vindati - finds; ātmani - in self; yat - which; sukham - happiness; saḥ - they; brahma-yoga-yukta-ātmā - united with Brahman; sukham - happiness; akṣayam - imperishable; aśnute - enjoys"
+        },
+        {
+            "id": "bg_5_22",
+            "number": 22,
+            "sanskrit": "ये हि संस्पर्शजा भोगा दुःखयोनय एव ते |\nआद्यन्तवन्तः कौन्तेय न तेषु रमते बुधः ||",
+            "translation": "The pleasures that arise from contact with the sense objects, though appearing as enjoyable to worldly-minded people, are verily a source of misery. O son of Kunti, such pleasures have a beginning and an end, so the wise do not delight in them.",
+            "transliteration": "ye hi saṃsparśa-jā bhogā duḥkha-yonaya eva te\nādy-antavantaḥ kaunteya na teṣu ramate budhaḥ",
+            "meaning": "ye - which; hi - verily; saṃsparśa-jāḥ - born of contact; bhogāḥ - pleasures; duḥkha-yonayaḥ - source of misery; eva - indeed; te - they; ādi-anta-vantaḥ - with beginning and end; kaunteya - O Arjuna; na - not; teṣu - in those; ramate - delights; budhaḥ - wise"
+        },
+        {
+            "id": "bg_5_23",
+            "number": 23,
+            "sanskrit": "शक्नोतीहैव यः सोढुं प्राक्शरीरविमोक्षणात् |\nकामक्रोधोद्भवं वेगं स युक्तः स सुखी नरः ||",
+            "translation": "Those persons are yogis, who before giving up the body are able to check the forces of desire and anger; and they alone are happy.",
+            "transliteration": "śaknotīhaiva yaḥ soḍhuṃ prāk śarīra-vimokṣaṇāt\nkāma-krodhodbhavaṃ vegaṃ sa yuktaḥ sa sukhī naraḥ",
+            "meaning": "śaknoti - is able; iha eva - in this life; yaḥ - who; soḍhum - to withstand; prāk - before; śarīra-vimokṣaṇāt - leaving body; kāma-krodha - desire and anger; udbhavam - arising from; vegam - force; saḥ - they; yuktaḥ - yogi; saḥ - they; sukhī - happy; naraḥ - person"
+        },
+        {
+            "id": "bg_5_24",
+            "number": 24,
+            "sanskrit": "योऽन्तःसुखोऽन्तरारामस्तथान्तर्ज्योतिरेव यः |\nस योगी ब्रह्मनिर्वाणं ब्रह्मभूतोऽधिगच्छति ||",
+            "translation": "Those who are happy within themselves, enjoying the delight of God within, and are illumined by the inner light, such yogis are united with the Lord and are liberated from material existence.",
+            "transliteration": "yo 'ntaḥ-sukho 'ntar-ārāmas tathāntar-jyotir eva yaḥ\nsa yogī brahma-nirvāṇaṃ brahma-bhūto 'dhigacchati",
+            "meaning": "yaḥ - who; antaḥ-sukhaḥ - happy within; antar-ārāmaḥ - rejoicing within; tathā - and; antar-jyotiḥ - inner light; eva - indeed; yaḥ - who; saḥ - they; yogī - yogi; brahma-nirvāṇam - liberation; brahma-bhūtaḥ - Brahman; adhigacchati - attains"
+        },
+        {
+            "id": "bg_5_25",
+            "number": 25,
+            "sanskrit": "लभन्ते ब्रह्मनिर्वाणमृषयः क्षीणकल्मषाः |\nछिन्नद्वैधा यतात्मानः सर्वभूतहिते रताः ||",
+            "translation": "Those holy persons, whose sins have been purged, whose doubts are annihilated, whose minds are disciplined, and who are devoted to the welfare of all beings, attain God and are liberated from material existence.",
+            "transliteration": "labhante brahma-nirvāṇam ṛṣayaḥ kṣīṇa-kalmaṣāḥ\nchinnadvaidhā yatātmānaḥ sarva-bhūta-hite ratāḥ",
+            "meaning": "labhante - attain; brahma-nirvāṇam - liberation; ṛṣayaḥ - sages; kṣīṇa-kalmaṣāḥ - sins destroyed; chinna-dvaidhāḥ - doubts cut; yata-ātmānaḥ - self-controlled; sarva-bhūta-hite - welfare of all; ratāḥ - devoted"
+        },
+        {
+            "id": "bg_5_26",
+            "number": 26,
+            "sanskrit": "कामक्रोधवियुक्तानां यतीनां यतचेतसाम् |\nअभितो ब्रह्मनिर्वाणं वर्तते विदितात्मनाम् ||",
+            "translation": "For those sanyāsīs, who have broken out of anger and lust through constant effort, who have subdued their mind, and are self-realized, liberation from material existence is both here and hereafter.",
+            "transliteration": "kāma-krodha-viyuktānāṃ yatīnāṃ yata-cetasām\nabhito brahma-nirvāṇaṃ vartate viditātmanām",
+            "meaning": "kāma-krodha - desire and anger; viyuktānām - of those free; yatīnām - of ascetics; yata-cetasām - controlled mind; abhitaḥ - on all sides; brahma-nirvāṇam - liberation; vartate - exists; vidita-ātmanām - of self-realized"
+        },
+        {
+            "id": "bg_5_27",
+            "number": 27,
+            "sanskrit": "स्पर्शान्कृत्वा बहिर्बाह्यांश्चक्षुश्चैवान्तरे भ्रुवोः |\nप्राणापानौ समौ कृत्वा नासाभ्यन्तरचारिणौ ||",
+            "translation": "Shutting out all thoughts of external enjoyment, with the gaze fixed on the space between the eyebrows, equalizing the flow of the incoming and outgoing breath in the nostrils.",
+            "transliteration": "sparśān kṛtvā bahir bāhyāṃś cakṣuś caivāntare bhruvoḥ\nprāṇāpānau samau kṛtvā nāsābhyantara-cāriṇau",
+            "meaning": "sparśān - sense contacts; kṛtvā - keeping; bahiḥ - outside; bāhyān - external; cakṣuḥ - eyes; ca - and; eva - indeed; antare - between; bhruvoḥ - eyebrows; prāṇa-apānau - in and out breath; samau - equal; kṛtvā - making; nāsā - nostrils; abhyantara - within; cāriṇau - moving"
+        },
+        {
+            "id": "bg_5_28",
+            "number": 28,
+            "sanskrit": "यतेन्द्रियमनोबुद्धिर्मुनिर्मोक्षपरायणः |\nविगतेच्छाभयक्रोधो यः सदा मुक्त एव सः ||",
+            "translation": "And thus controlling the senses, mind, and intellect, the sage who becomes free from desire, fear, and anger, always lives in freedom.",
+            "transliteration": "yata-indriya-mano-buddhir munir mokṣa-parāyaṇaḥ\nvigatecchā-bhaya-krodho yaḥ sadā mukta eva saḥ",
+            "meaning": "yata - controlled; indriya - senses; manaḥ - mind; buddhiḥ - intellect; muniḥ - sage; mokṣa - liberation; parāyaṇaḥ - devoted; vigata - gone; icchā - desire; bhaya - fear; krodhaḥ - anger; yaḥ - who; sadā - always; muktaḥ - free; eva - indeed; saḥ - they"
+        },
+        {
+            "id": "bg_5_29",
+            "number": 29,
+            "sanskrit": "भोक्तारं यज्ञतपसां सर्वलोकमहेश्वरम् |\nसुहृदं सर्वभूतानां ज्ञात्वा मां शान्तिमृच्छति ||",
+            "translation": "Having realized Me as the enjoyer of all sacrifices and austerities, the Supreme Lord of all the worlds and the selfless friend of all living beings, My devotee attains peace.",
+            "transliteration": "bhoktāraṃ yajña-tapasāṃ sarva-loka-maheśvaram\nsuhṛdaṃ sarva-bhūtānāṃ jñātvā māṃ śāntim ṛcchati",
+            "meaning": "bhoktāram - enjoyer; yajña-tapasām - of sacrifices and penances; sarva-loka - all worlds; mahā-īśvaram - great Lord; suhṛdam - friend; sarva-bhūtānām - of all beings; jñātvā - knowing; mām - Me; śāntim - peace; ṛcchati - attains"
         }
     ]
 }

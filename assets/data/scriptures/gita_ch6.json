@@ -1,24 +1,384 @@
 {
     "chapter_number": 6,
-    "title": "Dhyana Yoga",
-    "translation": "The Yoga of Meditation",
-    "summary": "Krishna describes the practice of meditation (Dhyana Yoga), the mastery of the mind, and the state of equanimity reached by a yogi.",
+    "title": "Dhyān Yog",
+    "translation": "The Yog of Meditation",
+    "summary": "Shree Krishna continues the comparative evaluation between karm yog and karm sanyas. He reiterates that karm yog is more practicable. The yogis strive to conquer the mind through meditation. Arjun asks about unsuccessful yogis; Krishna reassures that those who strive for God-realization overcome evil.",
     "verses": [
         {
-            "id": "gita_6_5",
-            "number": 5,
-            "sanskrit": "उद्धरेदात्मनात्मानं नात्मानमवसादयेत् |\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः || ५ ||",
-            "translation": "One must deliver himself with the help of his mind, and not degrade himself. The mind is the friend of the conditioned soul, and his enemy as well.",
-            "transliteration": "uddhared ātmanātmānaṁ nātmānam avasādayet\nātmaiva hy ātmano bandhur ātmaiva ripur ātmanaḥ",
-            "meaning": "Uddharet - one must lift; Atmana - by the mind; Atmanam - the self..."
+            "id": "bg_6_1",
+            "number": 1,
+            "sanskrit": "श्रीभगवानुवाच |\nअनाश्रितः कर्मफलं कार्यं कर्म करोति यः |\nस संन्यासी च योगी च न निरग्निर्न चाक्रियः",
+            "translation": "The Blessed Lord said  He who performs his bounden duty without depending on the fruits of his actions  he is a Sannyasi and a Yogi; not he who is without fire and without action.",
+            "transliteration": "śrībhagavānuvāca \nanāśritaḥ karmaphalaṃ kāryaṃ karma karoti yaḥ \nsa saṃnyāsī ca yogī ca na niragnirna cākriyaḥ",
+            "meaning": "अनाश्रितः not depending (on) - कर्मफलम् fruit of action - कार्यम् bounden - कर्म duty - करोति performs - यः who - सः he - संन्यासी Sannyasi (ascetic) - च and - योगी Yogi - च and - न not - निरग्निः without fire - न not - च and - अक्रियः without action."
         },
         {
-            "id": "gita_6_6",
+            "id": "bg_6_2",
+            "number": 2,
+            "sanskrit": "यं संन्यासमिति प्राहुर्योगं तं विद्धि पाण्डव |\nन ह्यसंन्यस्तसङ्कल्पो योगी भवति कश्चन",
+            "translation": "Do thou, O Arjuna, know Yoga to be that which they call renunciation; no one verily becomes a Yogi who has not renounced thoughts.",
+            "transliteration": "yaṃ saṃnyāsamiti prāhuryogaṃ taṃ viddhi pāṇḍava \nna hyasaṃnyastasaṅkalpo yogī bhavati kaścana",
+            "meaning": "यम् which - संन्यासम् renunciation - इति thus - प्राहुः (they) call - योगम् Yoga - तम् that - विद्धि know - पाण्डव O Pandava - न not - हि verily - असंन्यस्तसङ्कल्पः one who has not renounced thoughts - योगी Yogi - भवति becomes - कश्चन anyone."
+        },
+        {
+            "id": "bg_6_3",
+            "number": 3,
+            "sanskrit": "आरुरुक्षोर्मुनेर्योगं कर्म कारणमुच्यते |\nयोगारूढस्य तस्यैव शमः कारणमुच्यते",
+            "translation": "For a sage who wishes to attain to Yoga, action is said to be the means; for the same sage who has attained to Yoga, inaction (iescence) is said to be the means.",
+            "transliteration": "ārurukṣormuneryogaṃ karma kāraṇamucyate \nyogārūḍhasya tasyaiva śamaḥ kāraṇamucyate",
+            "meaning": "आरुरुक्षोः wishing to climb - मुनेः of a Muni or sage - योगम् Yoga - कर्म action - कारणम् the cause - उच्यते is said - योगारूढस्य of one who has attained to Yoga - तस्य of him - एव even - शमः inaction (iescence) - कारणम् the cause - उच्यते is said."
+        },
+        {
+            "id": "bg_6_4",
+            "number": 4,
+            "sanskrit": "यदा हि नेन्द्रियार्थेषु न कर्मस्वनुषज्जते |\nसर्वसङ्कल्पसंन्यासी योगारूढस्तदोच्यते",
+            "translation": "When a man is not attached to the sense-objects or to actions, having renounced all thoughts, then he is said to have attained to Yoga.",
+            "transliteration": "yadā hi nendriyārtheṣu na karmasvanuṣajjate \nsarvasaṅkalpasaṃnyāsī yogārūḍhastadocyate",
+            "meaning": "यदा when - हि verily - न not - इन्द्रयार्थेषु in senseobjects - न not - कर्मसु in actions - अनुषज्जते is attached - सर्वसङ्कल्पसंन्यासी renouncer of all thoughts - योगारूढः one who has attained to Yoga - तदा then - उच्यते is said."
+        },
+        {
+            "id": "bg_6_5",
+            "number": 5,
+            "sanskrit": "उद्धरेदात्मनात्मानं नात्मानमवसादयेत् |\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः",
+            "translation": "One should raise oneself by one's Self alone; let not one lower oneself; for the Self alone is the friend of oneself, and the Self alone is the enemy of oneself.",
+            "transliteration": "uddharedātmanātmānaṃ nātmānamavasādayet \nātmaiva hyātmano bandhurātmaiva ripurātmanaḥ",
+            "meaning": "उद्धरेत् should raise - आत्मना by the Self - आत्मानम् the self - न not - आत्मानम् the self - अवसादयेत् let (him) lower - आत्मा the Self - एव only - हि verily - आत्मनः of the self - बन्धुः friend - आत्मा the Self - एव only - रिपुः the enemy - आत्मनः of the self."
+        },
+        {
+            "id": "bg_6_6",
             "number": 6,
-            "sanskrit": "बन्धुरात्मात्मनस्तस्य येनात्मैवात्मना जितः |\nअनात्मनस्तु शत्रुत्वे वर्तेतात्मैव शत्रुवत् || ६ ||",
-            "translation": "For him who has conquered the mind, the mind is the best of friends; but for one who has failed to do so, his mind will remain the greatest enemy.",
-            "transliteration": "bandhur ātmātmanas tasya yenātmaivātmanā jitaḥ\nanātmanas tu śatrutve vartetātmaiva śatruvat",
-            "meaning": "Bandhuh - friend; Atma - the mind; Atmanah - of the creature..."
+            "sanskrit": "बन्धुरात्मात्मनस्तस्य येनात्मैवात्मना जितः |\nअनात्मनस्तु शत्रुत्वे वर्तेतात्मैव शत्रुवत्",
+            "translation": "The Self is the friend of the self of him by whom the self has been conered by the Self, but to the unconered self, this Self stands in the position of an enemy, like an (external) foe.",
+            "transliteration": "bandhurātmātmanastasya yenātmaivātmanā jitaḥ \nanātmanastu śatrutve vartetātmaiva śatruvat",
+            "meaning": "बन्धुः friend - आत्मा the Self - आत्मनः of the self - तस्य his - येन by whom - आत्मा the self - एव even - आत्मना by the Self - जितः is conered - अनात्मनः of unconered self - तु but - शत्रुत्वे in the place of an enemy - वर्तेत would remain - आत्मा the Self - एव even - शत्रुवत् like an enemy."
+        },
+        {
+            "id": "bg_6_7",
+            "number": 7,
+            "sanskrit": "जितात्मनः प्रशान्तस्य परमात्मा समाहितः |\nशीतोष्णसुखदुःखेषु तथा मानापमानयोः",
+            "translation": "The Supreme Self of him who is self-controlled and peaceful is balanced in cold and heat, pleasure and pain, as also in honour and dishonour.",
+            "transliteration": "jitātmanaḥ praśāntasya paramātmā samāhitaḥ \nśītoṣṇasukhaduḥkheṣu tathā mānāpamānayoḥ",
+            "meaning": "जितात्मनः of the selfcontrolled - प्रशान्तस्य of the peaceful - परमात्मा the Supreem Self - समाहितः balanced - शीतोष्णसुखदुःखेषु in cold and heat - pleasure and pain - तथा as also - मानापमानयोः in honour and dishonour."
+        },
+        {
+            "id": "bg_6_8",
+            "number": 8,
+            "sanskrit": "ज्ञानविज्ञानतृप्तात्मा कूटस्थो विजितेन्द्रियः |\nयुक्त इत्युच्यते योगी समलोष्टाश्मकाञ्चनः",
+            "translation": "The Yogi who is satisfied with the knowledge and the wisdom (of the Self), who has conered the senses, and to whom a clod of earth, a piece of stone and gold are the same, is said to be harmonied (i.e., is said to have attained Nirvikalpa Samadhi).",
+            "transliteration": "jñānavijñānatṛptātmā kūṭastho vijitendriyaḥ \nyukta ityucyate yogī samaloṣṭāśmakāñcanaḥ",
+            "meaning": "ज्ञानविज्ञानतृप्तात्मा one who is satisfied with knowledge and wisdom (Selfrealisation) - कूटस्थः unshaken - विजितेन्द्रियः who has conered the senses - युक्तः united or harmonised - इति thus - उच्यते is said - योगी Yogi - समलोष्टाश्मकाञ्चनः one to whom a lump of earth - a stone and gold are the same."
+        },
+        {
+            "id": "bg_6_9",
+            "number": 9,
+            "sanskrit": "सुहृन्मित्रार्युदासीनमध्यस्थद्वेष्यबन्धुषु |\nसाधुष्वपि च पापेषु समबुद्धिर्विशिष्यते",
+            "translation": "He who is of the same mind to the good-hearted, friends, enemies, the indifferent, the neutral, the hateful, the relatives, the righteous and the unrighteous, excels.",
+            "transliteration": "suhṛnmitrāryudāsīnamadhyasthadveṣyabandhuṣu \nsādhuṣvapi ca pāpeṣu samabuddhirviśiṣyate",
+            "meaning": "सुह्यन्मित्रार्युदासीनमध्यस्थद्वेष्यबन्धुषु in the goodhearted - in friends - in enemies - in the indifferent - in neutrals - in haters and in relatives - साधुषु in the righteous - अपि also - च and - पापेषु in the unrighteous - ,समबुद्धिः one who has eal mind - विशिष्यते excels."
+        },
+        {
+            "id": "bg_6_10",
+            "number": 10,
+            "sanskrit": "योगी युञ्जीत सततमात्मानं रहसि स्थितः |\nएकाकी यतचित्तात्मा निराशीरपरिग्रहः",
+            "translation": "Let the Yogi try constantly to keep the mind steady, remaining in solitude, alone, with the mind and the body controlled, and free from hope and covetousness.",
+            "transliteration": "yogī yuñjīta satatamātmānaṃ rahasi sthitaḥ \nekākī yatacittātmā nirāśīraparigrahaḥ",
+            "meaning": "योगी the Yogi - युञ्जीत let him keep the mind steady - सततम् constantly - आत्मानम् self - रहसि in solitude - स्थितः remaining - एकाकी alone - यतचित्तात्मा one with the mind and the body controlled - निराशीः free from hope - अपरिग्रहः noncovetousness."
+        },
+        {
+            "id": "bg_6_11",
+            "number": 11,
+            "sanskrit": "शुचौ देशे प्रतिष्ठाप्य स्थिरमासनमात्मनः |\nनात्युच्छ्रितं नातिनीचं चैलाजिनकुशोत्तरम्",
+            "translation": "In a clean spot, having established a firm seat of his own, neither too high nor too low, made of a cloth, a skin and Kusa-grass, one over the other.",
+            "transliteration": "śucau deśe pratiṣṭhāpya sthiramāsanamātmanaḥ \nnātyucchritaṃ nātinīcaṃ cailājinakuśottaram",
+            "meaning": "शुचौ in a clean - देशे spot - प्रतिष्ठाप्य having established - स्थिरम् firm - आसनम् seat - आत्मनः his own - न not - अत्युच्छ्रितम् very high - न not - अतिनीचम् very low - चैलाजिनकुशोत्तरम् a cloth - skin and Kusagrass - one over the other."
+        },
+        {
+            "id": "bg_6_12",
+            "number": 12,
+            "sanskrit": "तत्रैकाग्रं मनः कृत्वा यतचित्तेन्द्रियक्रियः |\nउपविश्यासने युञ्ज्याद्योगमात्मविशुद्धये",
+            "translation": "There, having made the mind one-pointed, with the actions of the mind and the senses controlled, let him, seated on the seat, practise Yoga for the purification of the self.",
+            "transliteration": "tatraikāgraṃ manaḥ kṛtvā yatacittendriyakriyaḥ \nupaviśyāsane yuñjyādyogamātmaviśuddhaye",
+            "meaning": "तत्र there - एकाग्रम् onepointed - मनः the mind - कृत्वा having made - यतचित्तेन्द्रियक्रियः one who has controlled the actions of the mind and the senses - उपविश्य being seated - आसने on the seat - युञ्ज्यात् let him practise - योगम् Yoga - आत्मविशुद्धये for the purification of the self."
+        },
+        {
+            "id": "bg_6_13",
+            "number": 13,
+            "sanskrit": "समं कायशिरोग्रीवं धारयन्नचलं स्थिरः |\nसम्प्रेक्ष्य नासिकाग्रं स्वं दिशश्चानवलोकयन्",
+            "translation": "Let him firmly hold his body, head and neck erect and still, gazing at the tip of his nose, without looking around.",
+            "transliteration": "samaṃ kāyaśirogrīvaṃ dhārayannacalaṃ sthiraḥ \nsamprekṣya nāsikāgraṃ svaṃ diśaścānavalokayan",
+            "meaning": "समम् erect - कायशिरोग्रीवम् body - head and neck - धारयन् holding - अचलम् still - स्थिरः steady - संप्रेक्ष्य,gazing at - नासिकाग्रम् tip of the nose - स्वम् ones own - दिशः directions - च and - अनवलोकयन् not looking."
+        },
+        {
+            "id": "bg_6_14",
+            "number": 14,
+            "sanskrit": "प्रशान्तात्मा विगतभीर्ब्रह्मचारिव्रते स्थितः |\nमनः संयम्य मच्चित्तो युक्त आसीत मत्परः",
+            "translation": "Serene-minded, fearless, firm in the vow of a Brahmachari, having controlled the mind, thinking of Me and balanced in mind, let him sit, having Me as his supreme goal.",
+            "transliteration": "praśāntātmā vigatabhīrbrahmacārivrate sthitaḥ \nmanaḥ saṃyamya maccitto yukta āsīta matparaḥ",
+            "meaning": "प्रशान्तात्मा sereneminded - विगतभीः fearless - ब्रह्मचारिव्रते in the vow of Brahmacharya - स्थितः firm - मनः the mind - संयम्य having controlled - मच्चित्तः thinking on Me - युक्तः balanced - आसीत let him sit - मत्परः Me as the supreme goal."
+        },
+        {
+            "id": "bg_6_15",
+            "number": 15,
+            "sanskrit": "युञ्जन्नेवं सदात्मानं योगी नियतमानसः |\nशान्तिं निर्वाणपरमां मत्संस्थामधिगच्छति",
+            "translation": "Thus always keeping the mind balanced, the Yogi, with the mind controlled, attains to the peace abiding in Me, which culminates in liberation.",
+            "transliteration": "yuñjannevaṃ sadātmānaṃ yogī niyatamānasaḥ \nśāntiṃ nirvāṇaparamāṃ matsaṃsthāmadhigacchati",
+            "meaning": "युञ्जन्  balancing - एवम् thus - सदा always - आत्मानम् the self - योगी Yogi - नियतमानसः one with the controlled mind - शान्तिम् to peace - निर्वाणपरमाम् that which culminates in Nirvana (Moksha) - मत्संस्थाम् abiding in Me - अधिगच्छति attains."
+        },
+        {
+            "id": "bg_6_16",
+            "number": 16,
+            "sanskrit": "नात्यश्नतस्तु योगोऽस्ति न चैकान्तमनश्नतः |\nन चातिस्वप्नशीलस्य जाग्रतो नैव चार्जुन",
+            "translation": "Verily Yoga is not possible for him who eats too much, nor for him who does not eat at all, nor for him who sleeps too much, nor for him who is (always) awake, O Arjuna.",
+            "transliteration": "nātyaśnatastu yogo.asti na caikāntamanaśnataḥ \nna cātisvapnaśīlasya jāgrato naiva cārjuna",
+            "meaning": "न not - अत्यश्नतः of one who eats too much - तु verily - योगः Yoga - अस्ति is - न not - च and - एकान्तम् at all - अनश्नतः of one who does not eat - न not - च and - अतिस्वप्नशीलस्य of one who sleeps too much - जाग्रतः one who is awake - न not - एव even - च and - अर्जुन O Arjuna."
+        },
+        {
+            "id": "bg_6_17",
+            "number": 17,
+            "sanskrit": "युक्ताहारविहारस्य युक्तचेष्टस्य कर्मसु |\nयुक्तस्वप्नावबोधस्य योगो भवति दुःखहा",
+            "translation": "Yoga becomes the destroyer of pain for him who is moderate in eating and recreation (such \nas walking, etc.), who is moderate in exertion in actions, who is moderate in sleep and wakefulness.",
+            "transliteration": "yuktāhāravihārasya yuktaceṣṭasya karmasu \nyuktasvapnāvabodhasya yogo bhavati duḥkhahā",
+            "meaning": "युक्ताहारविहारस्य of one who is moderate in eating and recreation (such as walking - etc.) - युक्तचेष्टस्य कर्मसु of one who is moderate in exertion in actions - युक्तस्वप्नावबोधस्य of one who is moderate in sleep and wakefulness - योगः Yoga - भवति becomes - दुःखहा the destroyer of pain."
+        },
+        {
+            "id": "bg_6_18",
+            "number": 18,
+            "sanskrit": "यदा विनियतं चित्तमात्मन्येवावतिष्ठते |\nनिःस्पृहः सर्वकामेभ्यो युक्त इत्युच्यते तदा",
+            "translation": "When the perfectly controlled mind rests in the Self only, free from longing for all the objects of desires, then it is said, 'He is united'.",
+            "transliteration": "yadā viniyataṃ cittamātmanyevāvatiṣṭhate \nniḥspṛhaḥ sarvakāmebhyo yukta ityucyate tadā",
+            "meaning": "यदा when - विनियतम् perfectly controlled - चित्तम् mind - आत्मनि in the Self - एव only - अवतिष्ठते rests - निःस्पृहः free from longing - सर्वकामेभ्यः from all (objects of) desires - युक्तः united - इति thus - उच्यते is said - तदा then."
+        },
+        {
+            "id": "bg_6_19",
+            "number": 19,
+            "sanskrit": "यथा दीपो निवातस्थो नेङ्गते सोपमा स्मृता |\nयोगिनो यतचित्तस्य युञ्जतो योगमात्मनः",
+            "translation": "As a lamp placed in a windless spot does not flicker  to such is compared the Yogi of controlled mind, practising Yoga in the Self (or absorbed in the Yoga of the Self).",
+            "transliteration": "yathā dīpo nivātastho neṅgate sopamā smṛtā \nyogino yatacittasya yuñjato yogamātmanaḥ",
+            "meaning": "यथा as - दीपः lamp - निवातस्थः placed in a windless place - न not - इङ्गते flicker - सा that - उपमा simile - स्मृता is thought - योगिनः of the Yogi - यतचित्तस्य of one with controlled mind - युञ्जतः of the practising - योगम् the Yoga - आत्मनः of the Self."
+        },
+        {
+            "id": "bg_6_20",
+            "number": 20,
+            "sanskrit": "यत्रोपरमते चित्तं निरुद्धं योगसेवया |\nयत्र चैवात्मनात्मानं पश्यन्नात्मनि तुष्यति",
+            "translation": "When the mind, restrained by the practice of Yoga attains to quietude and when seeing the Self by the self, he is satisfied in his own Self.",
+            "transliteration": "yatroparamate cittaṃ niruddhaṃ yogasevayā \nyatra caivātmanātmānaṃ paśyannātmani tuṣyati",
+            "meaning": "यत्र where - उपरमते attains ietude - चित्तम् mind - निरुद्धम् restrained - योगसेवया by the practice of Yoga - यत्र where - च and - एव only - आत्मना by the Self - आत्मानम् the Self - पश्यन् seeing - आत्मनि in the Self - तुष्यति is satisfied."
+        },
+        {
+            "id": "bg_6_21",
+            "number": 21,
+            "sanskrit": "सुखमात्यन्तिकं यत्तद् बुद्धिग्राह्यमतीन्द्रियम् |\nवेत्ति यत्र न चैवायं स्थितश्चलति तत्त्वतः",
+            "translation": "When he (the Yogi) feels that Infinite Bliss which can be grasped by the (pure) intellect and which transcends the senses, and established wherein he never moves from the Reality.",
+            "transliteration": "sukhamātyantikaṃ yattad buddhigrāhyamatīndriyam \nvetti yatra na caivāyaṃ sthitaścalati tattvataḥ",
+            "meaning": "सुखम् bliss - आत्यन्तिकम् infinite - यत् which - तत् that - बुद्धिग्राह्यम् that which can be grasped by reason - अतीन्द्रियम् transcending the senses - वेत्ति knows - यत्र where - न not - च and - एव even - अयम् this - स्थितः established - चलति moves - तत्त्वतः from the Reality."
+        },
+        {
+            "id": "bg_6_22",
+            "number": 22,
+            "sanskrit": "यं लब्ध्वा चापरं लाभं मन्यते नाधिकं ततः |\nयस्मिन्स्थितो न दुःखेन गुरुणापि विचाल्यते",
+            "translation": "Which, having obtained, he thinks there is no other gain superior to it; wherein estabished, he is not moved even by heavy sorrow.",
+            "transliteration": "yaṃ labdhvā cāparaṃ lābhaṃ manyate nādhikaṃ tataḥ \nyasminsthito na duḥkhena guruṇāpi vicālyate",
+            "meaning": "यम् which - लब्ध्वा having obtained - च and - अपरम् other - लाभम् gain - मन्यते thinks - न not - अधिकम् greater - ततः than that - यस्मिन् in which - स्थितः established - न not - दुःखेन by sorrow - गुरुणा (by) heavy - अपि even - विचाल्यते is moved."
+        },
+        {
+            "id": "bg_6_23",
+            "number": 23,
+            "sanskrit": "तं विद्याद् दुःखसंयोगवियोगं योगसंज्ञितम् |\nस निश्चयेन योक्तव्यो योगोऽनिर्विण्णचेतसा",
+            "translation": "Let that be known by the name of Yoga, the severance from union with pain. This Yoga should be practised with determination and with an undesponding mind.",
+            "transliteration": "taṃ vidyād duḥkhasaṃyogaviyogaṃ yogasaṃjñitam \nsa niścayena yoktavyo yogo.anirviṇṇacetasā",
+            "meaning": "तम् that - विद्यात् let (him) know - दुःखसंयोगवियोगम् a state of severnace from union with pain - योगसंज्ञितम् called by the name of Yoga - सः that - निश्चयेन with determination - योक्तव्यः should be practised - योगः Yoga - अनिर्विण्णचेतसा with undesponding mind."
+        },
+        {
+            "id": "bg_6_24",
+            "number": 24,
+            "sanskrit": "सङ्कल्पप्रभवान्कामांस्त्यक्त्वा सर्वानशेषतः |\nमनसैवेन्द्रियग्रामं विनियम्य समन्ततः",
+            "translation": "Abandoning without reserve all desires born of Sankalpa (thought and imagination) and completely restraining the whole group of the senses by the mind from all sides.",
+            "transliteration": "saṅkalpaprabhavānkāmāṃstyaktvā sarvānaśeṣataḥ \nmanasaivendriyagrāmaṃ viniyamya samantataḥ",
+            "meaning": "सङ्कल्पप्रभवान् born of Sankalpa (imagination) - कामान् desires - त्यक्त्वा having abandoned - सर्वान् all - अशेषतः without reserve - मनसा by the mind - एव even - इन्द्रियग्रामम् the whole group of senses - विनियम्य completely restraining - समन्ततः from all sides."
+        },
+        {
+            "id": "bg_6_25",
+            "number": 25,
+            "sanskrit": "शनैः शनैरुपरमेद् बुद्ध्या धृतिगृहीतया |\nआत्मसंस्थं मनः कृत्वा न किञ्चिदपि चिन्तयेत्",
+            "translation": "Little by little let him attain to ietude by the intellect held firmly; having made the mind establish itself in the Self, let him not think of anything.",
+            "transliteration": "śanaiḥ śanairuparamed buddhyā dhṛtigṛhītayā \nātmasaṃsthaṃ manaḥ kṛtvā na kiñcidapi cintayet",
+            "meaning": "शनैः gradually - शनैः gradually - उपरमेत् let him attain to ietude - बुद्ध्या by the intellect - धृतिगृहीतया held in firmness - आत्मसंस्थम् placed in the Self - मनः the mind - कृत्वा having made - न not - किञ्चित् anything - अपि even - चिन्तयेत् let him think."
+        },
+        {
+            "id": "bg_6_26",
+            "number": 26,
+            "sanskrit": "यतो यतो निश्चरति मनश्चञ्चलमस्थिरम् |\nततस्ततो नियम्यैतदात्मन्येव वशं नयेत्",
+            "translation": "From whatever cause the restless and unsteady mind wanders away, from that let him restrain it and bring it under the control of the Self alone.",
+            "transliteration": "yato yato niścarati manaścañcalamasthiram \ntatastato niyamyaitadātmanyeva vaśaṃ nayet",
+            "meaning": "यतःयतः from whatever cause - निश्चरति wanders away - मनः mind - चञ्चलम् restless - अस्थिरम् unsteady - ततःततः from that - नियम्य having restrained - एतत् this - आत्मनि in the Self - एव alone - वशम् (under) control - नयेत् let (him) bring."
+        },
+        {
+            "id": "bg_6_27",
+            "number": 27,
+            "sanskrit": "प्रशान्तमनसं ह्येनं योगिनं सुखमुत्तमम् |\nउपैति शान्तरजसं ब्रह्मभूतमकल्मषम्",
+            "translation": "Supreme Bliss verily comes to this Yogi whose mind is ite peaceful, whose passion is ieted, who has become Brahman and who is free from sin.",
+            "transliteration": "praśāntamanasaṃ hyenaṃ yoginaṃ sukhamuttamam \nupaiti śāntarajasaṃ brahmabhūtamakalmaṣam",
+            "meaning": "प्रशान्तमनसम् one of peaceful mind - हि verily - एनम् this - योगिनम् Yogi - सुखम् bliss - उत्तमम् supreme - उपैति comes - शान्तरजसम् one whose passion is ieted - ब्रह्मभूतम् one who has become Brahman - अकल्मषम् one who is free from sin."
+        },
+        {
+            "id": "bg_6_28",
+            "number": 28,
+            "sanskrit": "युञ्जन्नेवं सदात्मानं योगी विगतकल्मषः |\nसुखेन ब्रह्मसंस्पर्शमत्यन्तं सुखमश्नुते",
+            "translation": "The Yogi, always engaging the mind thus (in the practice of Yoga), freed from sins, easily enjoys the Infinite Bliss of contact with Brahman (the Eternal).",
+            "transliteration": "yuñjannevaṃ sadātmānaṃ yogī vigatakalmaṣaḥ \nsukhena brahmasaṃsparśamatyantaṃ sukhamaśnute",
+            "meaning": "युञ्जन् practising Yoga - एवम् thus - सदा always - आत्मानम् the self - योगी Yogi - विगतकल्मषः freed from sin - सुखेन easily - ब्रह्मसंस्पर्शम् caused by contact with Brahman - अत्यन्तम् infinite - सुखम् bliss - अश्नुते enjoys."
+        },
+        {
+            "id": "bg_6_29",
+            "number": 29,
+            "sanskrit": "सर्वभूतस्थमात्मानं सर्वभूतानि चात्मनि |\nईक्षते योगयुक्तात्मा सर्वत्र समदर्शनः",
+            "translation": "With the mind harmonised by Yoga he sees the Self abiding in all beings and all beings in the Self; he sees the same everywhere.",
+            "transliteration": "sarvabhūtasthamātmānaṃ sarvabhūtāni cātmani \nīkṣate yogayuktātmā sarvatra samadarśanaḥ",
+            "meaning": "सर्वभूतस्थम् abiding in all beings - आत्मानम् the Self - सर्वभूतानि all beings - च and - आत्मनि in the Self - ,ईक्षते sees - योगयुक्तात्मा one who is harmonised by Yoga - सर्वत्र everywhere - समदर्शनः one who sees the same everywhere."
+        },
+        {
+            "id": "bg_6_30",
+            "number": 30,
+            "sanskrit": "यो मां पश्यति सर्वत्र सर्वं च मयि पश्यति |\nतस्याहं न प्रणश्यामि स च मे न प्रणश्यति",
+            "translation": "He who sees Me everywhere and sees everything in Me, he never becomes separated from Me, nor do I become separated from him.",
+            "transliteration": "yo māṃ paśyati sarvatra sarvaṃ ca mayi paśyati \ntasyāhaṃ na praṇaśyāmi sa ca me na praṇaśyati",
+            "meaning": "यः who - माम् Me - पश्यति sees - सर्वत्र everywhere - सर्वम् all - च and - मयि in Me - पश्यति sees - तस्य of him - अहम् I - न not - प्रणश्यामि vanish - सः he - च and - मे to Me - न not - प्रणश्यति vanishes."
+        },
+        {
+            "id": "bg_6_31",
+            "number": 31,
+            "sanskrit": "सर्वभूतस्थितं यो मां भजत्येकत्वमास्थितः |\nसर्वथा वर्तमानोऽपि स योगी मयि वर्तते",
+            "translation": "He who, being established in unity, worships Me Who dwells in all beings, that Yogi abides in Me, whatever may be his mode of living.",
+            "transliteration": "sarvabhūtasthitaṃ yo māṃ bhajatyekatvamāsthitaḥ \nsarvathā vartamāno.api sa yogī mayi vartate",
+            "meaning": "सर्वभूतस्थितम् abiding in all beings - यः who - माम् Me - भजति worships - एकत्वम् unity - आस्थितः established - सर्वथा in every way - वर्तमानः remaining - अपि also - सः that - योगी Yogi - मयि in Me - वर्तते abides."
+        },
+        {
+            "id": "bg_6_32",
+            "number": 32,
+            "sanskrit": "आत्मौपम्येन सर्वत्र समं पश्यति योऽर्जुन |\nसुखं वा यदि वा दुःखं स योगी परमो मतः",
+            "translation": "He who, through the likeness of the Self, O Arjuna, sees eality everywhere, be it pleasure or pain, he is regarded as the highest Yogi.",
+            "transliteration": "ātmaupamyena sarvatra samaṃ paśyati yo.arjuna \nsukhaṃ vā yadi vā duḥkhaṃ sa yogī paramo mataḥ",
+            "meaning": "आत्मौपम्येन through the likeness of the Self - सर्वत्र everywhere - समम् eality - पश्यति sees - यः who - अर्जुन O Arjuna - सुखम् pleasure - वा and - यदि if - वा or - दुःखम् pain - सः he - योगी Yogi - परमः highest - मतः is regarded."
+        },
+        {
+            "id": "bg_6_33",
+            "number": 33,
+            "sanskrit": "अर्जुन उवाच |\nयोऽयं योगस्त्वया प्रोक्तः साम्येन मधुसूदन |\nएतस्याहं न पश्यामि चञ्चलत्वात्स्थितिं स्थिराम्",
+            "translation": "Arjuna said  This Yoga of eanimity taught by Thee, O Krishna, I do not see its steady continuance, because of the restlessness (of the mind).",
+            "transliteration": "arjuna uvāca \nyo.ayaṃ yogastvayā proktaḥ sāmyena madhusūdana \netasyāhaṃ na paśyāmi cañcalatvātsthitiṃ sthirām",
+            "meaning": "यः which - अयम् this - योगः Yoga - त्वया by Thee - प्रोक्तः taught - साम्येन by eanimity - मधुसूदन O slayer of Madhu - एतस्य its - अहम् I - न not - पश्यामि see - चञ्चलत्वात् from restlessness - स्थितिम् continuance - स्थिराम् steady."
+        },
+        {
+            "id": "bg_6_34",
+            "number": 34,
+            "sanskrit": "चञ्चलं हि मनः कृष्ण प्रमाथि बलवद् दृढम् |\nतस्याहं निग्रहं मन्ये वायोरिव सुदुष्करम्",
+            "translation": "The mind verily is restless, turbulent, strong and unyielding, O Krishna: I deem it as difficult to control it as to control the wind.",
+            "transliteration": "cañcalaṃ hi manaḥ kṛṣṇa pramāthi balavad dṛḍham \ntasyāhaṃ nigrahaṃ manye vāyoriva suduṣkaram",
+            "meaning": "चञ्चलम् restless - हि verily - मनः the mind - कृष्ण O Krishna - प्रमाथि turbulent - बलवत् strong - दृढम् unyielding - तस्य of it - अहम् I - निग्रहम् control - मन्ये think - वायोः of the wind - इव as - सुदुष्करम् difficult to do."
+        },
+        {
+            "id": "bg_6_35",
+            "number": 35,
+            "sanskrit": "श्रीभगवानुवाच |\nअसंशयं महाबाहो मनो दुर्निग्रहं चलम् |\nअभ्यासेन तु कौन्तेय वैराग्येण च गृह्यते",
+            "translation": "The Blessed Lord said  Undoubtedly, O mighty-armed Arjuna, the mind is difficult to control and restless; but by practice and by dispassion it may be restrained.",
+            "transliteration": "śrībhagavānuvāca \nasaṃśayaṃ mahābāho mano durnigrahaṃ calam \nabhyāsena tu kaunteya vairāgyeṇa ca gṛhyate",
+            "meaning": "असंशयम् undoubtedly - महाबाहो O mightyarmed - मनः the mind - दुर्निग्रहम् difficult to control - चलम् restless - अभ्यासेन by practice - तु but - कौन्तेय O Kaunteya - वैराग्येण by dispassion - च and - गृह्यते is restrained."
+        },
+        {
+            "id": "bg_6_36",
+            "number": 36,
+            "sanskrit": "असंयतात्मना योगो दुष्प्राप इति मे मतिः |\nवश्यात्मना तु यतता शक्योऽवाप्तुमुपायतः",
+            "translation": "I think Yoga is hard to be attained by one of uncontrolled self, but the self-controlled and striving one can attain to it by the (proper) means.",
+            "transliteration": "asaṃyatātmanā yogo duṣprāpa iti me matiḥ \nvaśyātmanā tu yatatā śakyo.avāptumupāyataḥ",
+            "meaning": "असंयतात्मना by a man of uncontrolled self - योगः Yoga - दुष्प्रापः hard to attain - इति thus - मे My - मतिः opinion - वश्यात्मना by the selfcontrolled one - तु but - यतता by the striving one - शक्यः possible - अवाप्तुम् to obtain - उपायतः by (proper) means."
+        },
+        {
+            "id": "bg_6_37",
+            "number": 37,
+            "sanskrit": "अर्जुन उवाच |\nअयतिः श्रद्धयोपेतो योगाच्चलितमानसः |\nअप्राप्य योगसंसिद्धिं कां गतिं कृष्ण गच्छति",
+            "translation": "Arjuna said  He who is unable to control himself though he has the faith, and whose mind wanders away from Yoga, what end does he, having failed to attain perfection in Yoga, mee,t O Krishna?",
+            "transliteration": "arjuna uvāca \nayatiḥ śraddhayopeto yogāccalitamānasaḥ \naprāpya yogasaṃsiddhiṃ kāṃ gatiṃ kṛṣṇa gacchati",
+            "meaning": "अयतिः uncontrolled - श्रद्धया by faith - उपेतः possessed - योगात् from Yoga - चलितमानसः one whose mind wanders away - अप्राप्य not having attained - योगसंसिद्धिम् perfection in Yoga - काम् which - गतिम् end - कृष्ण O Krishna - गच्छति meets."
+        },
+        {
+            "id": "bg_6_38",
+            "number": 38,
+            "sanskrit": "कच्चिन्नोभयविभ्रष्टश्छिन्नाभ्रमिव नश्यति |\nअप्रतिष्ठो महाबाहो विमूढो ब्रह्मणः पथि",
+            "translation": "Swami Sivananda did not comment on this sloka",
+            "transliteration": "kaccinnobhayavibhraṣṭaśchinnābhramiva naśyati \napratiṣṭho mahābāho vimūḍho brahmaṇaḥ pathi",
+            "meaning": "Swami Sivananda did not comment on this sloka"
+        },
+        {
+            "id": "bg_6_39",
+            "number": 39,
+            "sanskrit": "एतन्मे संशयं कृष्ण छेत्तुमर्हस्यशेषतः |\nत्वदन्यः संशयस्यास्य छेत्ता न ह्युपपद्यते",
+            "translation": "This doubt of mine, O Krishna, do Thou dispel completely; because it is not possible for any but Thee to dispel this doubt.",
+            "transliteration": "etanme saṃśayaṃ kṛṣṇa chettumarhasyaśeṣataḥ \ntvadanyaḥ saṃśayasyāsya chettā na hyupapadyate",
+            "meaning": "एतत् this - मे my - संशयम् doubt - कृष्ण O Krishna - छेत्तुम् to dispel - अर्हसि oughtest - अशेषतः completely - त्वत् than Thou - अन्यः another - संशयस्य of doubt - अस्य of this - छेत्ता dispeller - न not - हि verily - उपपद्यते is fit."
+        },
+        {
+            "id": "bg_6_40",
+            "number": 40,
+            "sanskrit": "श्रीभगवानुवाच |\nपार्थ नैवेह नामुत्र विनाशस्तस्य विद्यते |\nन हि कल्याणकृत्कश्चिद् दुर्गतिं तात गच्छति",
+            "translation": "The Blessed Lord said  O Arjuna, neither in this world, nor in the next world is there destruction for him; none, verily, who does good, O My son, ever comes to grief.",
+            "transliteration": "śrībhagavānuvāca \npārtha naiveha nāmutra vināśastasya vidyate \nna hi kalyāṇakṛtkaścid durgatiṃ tāta gacchati",
+            "meaning": "पार्थ O Partha, न not, एव verily, इह here, न not, अमुत्र in the next world, विनाशः destruction, तस्य of him, विद्यते is, न not, हि verily, कल्याणकृत् he who does good, कश्चित् anyone, दुर्गतिम् bad state or grief, तात O My son, गच्छति goes."
+        },
+        {
+            "id": "bg_6_41",
+            "number": 41,
+            "sanskrit": "प्राप्य पुण्यकृतां लोकानुषित्वा शाश्वतीः समाः |\nशुचीनां श्रीमतां गेहे योगभ्रष्टोऽभिजायते",
+            "translation": "Having attained to the worlds of the righteous and having dwelt there for everlasting years, he who fell from Yoga is rorn in a house of the pure and wealthy.",
+            "transliteration": "prāpya puṇyakṛtāṃ lokānuṣitvā śāśvatīḥ samāḥ \nśucīnāṃ śrīmatāṃ gehe yogabhraṣṭo.abhijāyate",
+            "meaning": "प्राप्य having attained - पुण्यकृताम् of the righteous - लोकान् worlds - उषित्वा having dwelt - शाश्वतीः everlasting - समाः years - शुचीनाम् of the pure - श्रीमताम् of the wealty - गेहे in the house - योगभ्रष्टः one fallen from Yoga - अभिजायते is born."
+        },
+        {
+            "id": "bg_6_42",
+            "number": 42,
+            "sanskrit": "अथवा योगिनामेव कुले भवति धीमताम् |\nएतद्धि दुर्लभतरं लोके जन्म यदीदृशम्",
+            "translation": "Or he is born in a family of even the wise Yogis; verily a birth like this is very difficult to obtain in this world.",
+            "transliteration": "athavā yogināmeva kule bhavati dhīmatām \netaddhi durlabhataraṃ loke janma yadīdṛśam",
+            "meaning": "अथवा or - योगिनाम् of Yogis - एव even - कुले in the family - भवति is born - धीमताम् of the wise - एतत् this - ,हि verily - दुर्लभतरम् very difficult - लोके in the world - जन्म birth - यत् which - ईदृशम् like this."
+        },
+        {
+            "id": "bg_6_43",
+            "number": 43,
+            "sanskrit": "तत्र तं बुद्धिसंयोगं लभते पौर्वदेहिकम् |\nयतते च ततो भूयः संसिद्धौ कुरुनन्दन",
+            "translation": "Thee he comes in touch with the knowledge acired in his former body and strives more than before for perfection, O Arjuna.",
+            "transliteration": "tatra taṃ buddhisaṃyogaṃ labhate paurvadehikam \nyatate ca tato bhūyaḥ saṃsiddhau kurunandana",
+            "meaning": "तत्र there - तम् that - बुद्धिसंयोगम् union with knowledge - लभते obtains - पौर्वदेहिकम् acired in his fomer body - यतते strives - च and - ततः than that - भूयः more - संसिद्धौ for perfection - कुरुनन्दन O son of the Kurus."
+        },
+        {
+            "id": "bg_6_44",
+            "number": 44,
+            "sanskrit": "पूर्वाभ्यासेन तेनैव ह्रियते ह्यवशोऽपि सः |\nजिज्ञासुरपि योगस्य शब्दब्रह्मातिवर्तते",
+            "translation": "By that very former practice he is borne on in spite of himself. Even he who merely wishes to know Yoga goes beyond the Brahmic word.",
+            "transliteration": "pūrvābhyāsena tenaiva hriyate hyavaśo.api saḥ \njijñāsurapi yogasya śabdabrahmātivartate",
+            "meaning": "पूर्वाभ्यासेन former practice - तेन by that - एव verily - ह्रियते is borne - हि indeed - अवशः helpless - अपि even - सः he - जिज्ञासुः he who wishes to know Yoga - अपि even - योगस्य of Yoga - शब्दब्रह्म wordBrahman - अतिवर्तते goes beyond."
+        },
+        {
+            "id": "bg_6_45",
+            "number": 45,
+            "sanskrit": "प्रयत्नाद्यतमानस्तु योगी संशुद्धकिल्बिषः |\nअनेकजन्मसंसिद्धस्ततो याति परां गतिम्",
+            "translation": "But the Yogi who strives with assiduity, purified of sins and perfected gradually through many births, reaches the highest goal.",
+            "transliteration": "prayatnādyatamānastu yogī saṃśuddhakilbiṣaḥ \nanekajanmasaṃsiddhastato yāti parāṃ gatim",
+            "meaning": "प्रयत्नात् with assiduity - यतमानः striving - तु but - योगी the Yogi - संशुद्धकिल्बिषः purified from sins - अनेकजन्मसंसिद्धः perfected through many births - ततः then - याति reaches - पराम् the highest - गतिम् path."
+        },
+        {
+            "id": "bg_6_46",
+            "number": 46,
+            "sanskrit": "तपस्विभ्योऽधिको योगी ज्ञानिभ्योऽपि मतोऽधिकः |\nकर्मिभ्यश्चाधिको योगी तस्माद्योगी भवार्जुन",
+            "translation": "The Yogi is thought to be superior to the ascetics and even superior to men of knowledge (obtained through the study of scriptures); he is also superior to men of action; therefore be thou a Yogi, O Arjuna.",
+            "transliteration": "tapasvibhyo.adhiko yogī jñānibhyo.api mato.adhikaḥ \nkarmibhyaścādhiko yogī tasmādyogī bhavārjuna",
+            "meaning": "तपस्विभ्यः than ascetics - अधिकः superior - योगी the Yogi - ज्ञानिभ्यः than the wise - अपि even - मतः thought - अधिकः superior - कर्मिभ्यः than the men of action - च and - अधिकः superior - योगी the Yogi - तस्मात् therefore - योगी a Yogi - भव be - अर्जुन O Arjuna."
+        },
+        {
+            "id": "bg_6_47",
+            "number": 47,
+            "sanskrit": "योगिनामपि सर्वेषां मद्गतेनान्तरात्मना |\nश्रद्धावान्भजते यो मां स मे युक्ततमो मतः",
+            "translation": "And among all the Yogis he who, full of faith and with his inner self merged in Me, worships Me is deemed by Me to be the most devout.",
+            "transliteration": "yogināmapi sarveṣāṃ madgatenāntarātmanā \nśraddhāvānbhajate yo māṃ sa me yuktatamo mataḥ",
+            "meaning": "योगिनाम् of Yogis - अपि even - सर्वेषाम् of all - मद्गतेन merged in Me - अन्तरात्मना with inner Self - श्रद्धावान् endowed with faith - भजते worships - यः who - माम् Me - सः he - मे to Me - युक्ततमः most devout - मतः is deemed."
         }
     ]
 }
