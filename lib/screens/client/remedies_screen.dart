@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/cart_provider.dart';
-import '../../providers/api_providers.dart';
 import '../../core/config/env.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Widget _remedyCardImage(String path) {
   if (path.startsWith('http')) {
@@ -57,9 +57,6 @@ class RemediesScreen extends ConsumerStatefulWidget {
 
 class _RemediesScreenState extends ConsumerState<RemediesScreen> {
   final ScrollController _scrollController = ScrollController();
-  String _selectedCategory = 'All';
-
-  final List<String> _categories = ['All', 'Spiritual', 'Vastu', 'Healing', 'Cleansing', 'Jewelry', 'Accessories'];
 
   @override
   void dispose() {
@@ -69,14 +66,11 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productsAsync = ref.watch(productsProvider(_selectedCategory));
-
     return Scaffold(
       backgroundColor: AppTheme.divineBackground,
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(productsProvider(_selectedCategory));
-          await ref.read(productsProvider(_selectedCategory).future);
+          // No-op for now (Yoga-only screen)
         },
         child: SafeArea(
         bottom: true,
@@ -130,7 +124,7 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
                 title: Text(
-                  'Spiritual Remedies',
+                  'Yoga',
                   style: AppTheme.titleStyle.copyWith(
                         fontSize: 24,
                         color: AppTheme.neutralDark,
@@ -144,98 +138,24 @@ class _RemediesScreenState extends ConsumerState<RemediesScreen> {
               ),
             ),
 
-            // Category Filter
+            // Yoga Sutras entry
             SliverToBoxAdapter(
-              child: Container(
-                height: 60,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: _categories.length,
-                  itemBuilder: (context, index) {
-                    final category = _categories[index];
-                    final isSelected = _selectedCategory == category;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: FilterChip(
-                        label: Text(category),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setState(() => _selectedCategory = category);
-                        },
-                        selectedColor: AppTheme.primaryOrange,
-                        labelStyle: TextStyle(
-                          color: isSelected ? AppTheme.white : AppTheme.neutralDark,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                            color: isSelected
-                                ? AppTheme.primaryOrange
-                                : AppTheme.forestBackground,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _YogaCard(
+                      onTap: () => context.push(Uri(
+                        path: '/education/reader/yoga_sutras',
+                        queryParameters: {'title': 'Yoga Sutras', 'chapter': '1'},
+                      ).toString()),
+                    ),
+                  ],
                 ),
               ),
             ),
-
-            // Coming Soon Message
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppTheme.primaryOrange.withOpacity(0.1),
-                              AppTheme.yellowPrimary.withOpacity(0.1),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: const Icon(
-                          Icons.auto_awesome,
-                          size: 80,
-                          color: AppTheme.divineGold,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Coming Soon',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.neutralDark,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'We are preparing amazing spiritual remedies\nand products for you!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppTheme.textGrey,
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -414,7 +334,7 @@ class _RemedyCard extends ConsumerWidget {
                           onTap: () {
                              ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Buy feature coming soon!'),
+                                content: Text('Purchase is not available for this item.'),
                                 backgroundColor: AppTheme.primaryOrange,
                                 behavior: SnackBarBehavior.floating,
                               ),
@@ -450,4 +370,83 @@ class _RemedyCard extends ConsumerWidget {
     );
   }
 
+}
+
+class _YogaCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _YogaCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 140,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.black.withOpacity(0.06)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                'assets/images/services/vedic_astrology.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: AppTheme.divineGold.withOpacity(0.12)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.35),
+                      Colors.black.withOpacity(0.75),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Yoga Sutras',
+                      style: GoogleFonts.outfit(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Patanjali\'s Path',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -149,8 +149,17 @@ class AuthService {
 
   // Sign out
   Future<void> signOut() async {
+    final uid = _auth.currentUser?.uid;
     await _googleSignIn.signOut();
     await _auth.signOut();
+    if (uid != null) {
+      try {
+        await Supabase.instance.client
+            .from('users')
+            .update({'fcm_token': null, 'updated_at': DateTime.now().toIso8601String()})
+            .eq('id', uid);
+      } catch (_) {}
+    }
     await clearUserSession();
   }
 
@@ -217,6 +226,8 @@ class AuthService {
   }
 
   /// Verify OTP and update phone on current user. Returns true on success.
+  /// For email/Google/Apple users, Firebase updatePhoneNumber may fail (e.g. requires-recent-login);
+  /// caller can still update Supabase after OTP verification.
   Future<bool> verifyOTPAndUpdatePhone(String otp, String fullPhone) async {
     if (_phoneUpdateVerificationId == null) {
       throw Exception('Verification ID missing. Please request OTP again.');
@@ -227,10 +238,19 @@ class AuthService {
     );
     final user = _auth.currentUser;
     if (user == null) throw Exception('Not signed in');
-    await user.updatePhoneNumber(credential);
+
     _phoneUpdateVerificationId = null;
     _phoneUpdateResendToken = null;
-    return true;
+
+    try {
+      await user.updatePhoneNumber(credential);
+      return true;
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw Exception('For security, please sign out and sign in again, then try updating your phone.');
+      }
+      rethrow;
+    }
   }
 
   /// Check if email is taken by another user (exclude current user id)
@@ -267,17 +287,70 @@ class AuthService {
     }
   }
 
-  // Send OTP
+  // Send OTP - phone: digits only, assumed India (+91) unless starts with +
+  String _normalizeToE164India(String phone) {
+    final raw = phone.trim();
+    if (raw.isEmpty) return '';
+    if (raw.startsWith('+')) return raw;
+    String digits = raw.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('91') && digits.length > 10) {
+      digits = digits.substring(2);
+    }
+    if (digits.startsWith('0')) digits = digits.substring(1);
+    if (digits.length == 10) return '+91$digits';
+    // Fallback: if user pasted country code without plus
+    if (digits.startsWith('91') && digits.length >= 12) return '+$digits';
+    return '+$digits';
+  }
+
+  /// Find a user profile by phone (checks raw and E.164 formats). Returns row or null.
+  Future<Map<String, dynamic>?> findUserProfileByPhone(String phone) async {
+    try {
+      final e164 = _normalizeToE164India(phone);
+      final raw = phone.replaceAll(RegExp(r'\D'), '');
+      final res = await _supabase
+          .from('users')
+          .select()
+          .or('phone.eq.$e164,phone.eq.$raw,phone.eq.$phone')
+          .maybeSingle();
+      return res;
+    } catch (e) {
+      debugPrint('Error finding user by phone: $e');
+      return null;
+    }
+  }
+
+  /// Check if email exists in `users` table (case-insensitive).
+  Future<bool> isEmailAlreadyUsed(String email) async {
+    if (email.trim().isEmpty) return false;
+    try {
+      final normalized = email.trim().toLowerCase();
+      final res = await _supabase.from('users').select('id').ilike('email', normalized).maybeSingle();
+      return res != null;
+    } catch (e) {
+      debugPrint('Error checking email exists: $e');
+      // Fail safe: assume used to prevent duplicates
+      return true;
+    }
+  }
+
   Future<void> sendOTP(
-    String phone, 
+    String phone,
     String role, {
     required Function() onCodeSent,
     required Function(String) onError,
     required Function(firebase_auth.User) onVerificationCompleted,
   }) async {
     try {
+      final e164 = _normalizeToE164India(phone);
+      final onlyDigits = e164.replaceAll(RegExp(r'\D'), '');
+      if (onlyDigits.length < 10) {
+        onError('Please enter a valid phone number');
+        return;
+      }
+
       await _auth.verifyPhoneNumber(
-        phoneNumber: '+91$phone',
+        phoneNumber: e164,
         timeout: const Duration(seconds: 60),
         verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
           // Auto-verification (Android)
@@ -293,8 +366,10 @@ class AuthService {
         verificationFailed: (firebase_auth.FirebaseAuthException e) {
           if (e.code == 'invalid-phone-number') {
              onError('The provided phone number is not valid.');
+          } else if (e.code == 'too-many-requests') {
+             onError('Too many OTP attempts. Please wait a bit and try again.');
           } else {
-             onError(e.message ?? 'Verification failed');
+             onError('${e.message ?? 'Verification failed'} (code: ${e.code})');
           }
         },
         codeSent: (String verificationId, int? resendToken) {
@@ -312,13 +387,13 @@ class AuthService {
     }
   }
 
-  // Verify OTP
+  // Verify OTP - phone param is only for reference, credential comes from verificationId
   Future<firebase_auth.User?> verifyOTP(String otp, String phone, String role) async {
     if (_verificationId == null) throw Exception('Verification ID is missing. Request OTP again.');
 
     final credential = firebase_auth.PhoneAuthProvider.credential(
       verificationId: _verificationId!,
-      smsCode: otp,
+      smsCode: otp.trim(),
     );
 
     final userCredential = await _auth.signInWithCredential(credential);

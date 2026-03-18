@@ -24,12 +24,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _phoneOTPController = TextEditingController();
   final _authService = AuthService();
   bool _isLoading = false;
   CountryCode _selectedCountry = countryCodes.first;
   bool _hasExistingEmail = false; // True if user already has email (Firebase or Supabase)
   File? _selectedImage; // Selected image for profile picture
   bool _isUploadingImage = false; // Loading state for image upload
+  bool _phoneOTPSent = false; // OTP flow for phone update
 
   @override
   void initState() {
@@ -108,17 +110,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return '${_selectedCountry.dialCode}$digits';
   }
 
-  Future<void> _savePhone() async {
+  Future<void> _sendPhoneOTP() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    // Prevent guest users from changing phone
     if (user.isAnonymous) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Guest accounts cannot modify phone number'),
-          backgroundColor: AppTheme.errorRed,
-        ),
+        const SnackBar(content: Text('Guest accounts cannot modify phone number'), backgroundColor: AppTheme.errorRed),
       );
       return;
     }
@@ -145,7 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('This number is already in use with another account. Please use another number.'),
+            content: Text('This number is already registered to another account. Use a different number.'),
             backgroundColor: AppTheme.errorRed,
           ),
         );
@@ -153,18 +151,75 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
       if (!mounted) return;
 
-      await Supabase.instance.client.from('users').update({'phone': phone}).eq('id', user.uid);
+      await _authService.sendOTPForPhoneUpdate(phone,
+        onCodeSent: () {
+          if (mounted) {
+            setState(() {
+              _phoneOTPSent = true;
+              _phoneOTPController.clear();
+              _isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('OTP sent. Enter the code to verify.'), backgroundColor: AppTheme.successGreen),
+            );
+          }
+        },
+        onError: (msg) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(msg), backgroundColor: AppTheme.errorRed),
+            );
+          }
+        },
+      );
+    } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Phone number saved successfully!'), backgroundColor: AppTheme.successGreen),
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
+        );
+      }
+    }
+  }
+
+  Future<void> _verifyPhoneOTPAndSave() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final otp = _phoneOTPController.text.trim();
+    if (otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter valid 6-digit OTP'), backgroundColor: AppTheme.errorRed),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final phone = _fullPhone;
+      await _authService.verifyOTPAndUpdatePhone(otp, phone);
+
+      await Supabase.instance.client.from('users').update({
+        'phone': phone,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', user.uid);
+
+      if (mounted) {
+        setState(() {
+          _phoneOTPSent = false;
+          _phoneOTPController.clear();
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Phone number updated successfully!'), backgroundColor: AppTheme.successGreen),
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorRed),
+          SnackBar(content: Text(e.toString()), backgroundColor: AppTheme.errorRed),
         );
       }
     }
@@ -385,13 +440,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (!status.isGranted && !status.isLimited) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Photo permission is needed to choose a profile picture'),
+              const SnackBar(
+                content: Text('Photo access was denied. You can change this in your device Settings later if needed.'),
                 backgroundColor: AppTheme.errorRed,
-                action: SnackBarAction(
-                  label: 'Settings',
-                  onPressed: () => openAppSettings(),
-                ),
               ),
             );
           }
@@ -402,13 +453,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (!status.isGranted) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Camera permission is needed to take a profile picture'),
+              const SnackBar(
+                content: Text('Camera access was denied. You can change this in your device Settings later if needed.'),
                 backgroundColor: AppTheme.errorRed,
-                action: SnackBarAction(
-                  label: 'Settings',
-                  onPressed: () => openAppSettings(),
-                ),
               ),
             );
           }
@@ -434,7 +481,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } catch (e) {
       if (mounted) {
         final msg = e.toString().toLowerCase().contains('permission')
-            ? 'Please grant photo permission in device Settings'
+            ? 'Photo access was denied. You can change this in device Settings if needed.'
             : 'Could not open image picker. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -558,7 +605,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         setState(() => _isUploadingImage = false);
         final msg = e.toString().contains('Permission')
-            ? 'Please grant photo/camera permission in Settings'
+            ? 'Photo or camera access was denied. You can change this in device Settings if needed.'
             : 'Could not upload image. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -757,6 +804,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _phoneOTPController.dispose();
     super.dispose();
   }
 
@@ -956,12 +1004,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                               filled: user?.isAnonymous == true,
                               fillColor: user?.isAnonymous == true ? AppTheme.neutralSoft : null,
-                              suffixIcon: user?.isAnonymous == true ? null : IconButton(
-                                icon: const Icon(Icons.check_circle_outline, color: AppTheme.primaryOrange),
-                                onPressed: _isLoading ? null : _savePhone,
-                              ),
+                              suffixIcon: user?.isAnonymous == true
+                                  ? null
+                                  : (_phoneOTPSent
+                                      ? null
+                                      : IconButton(
+                                          icon: const Icon(Icons.send, color: AppTheme.primaryOrange),
+                                          onPressed: _isLoading ? null : _sendPhoneOTP,
+                                        )),
                             ),
-                            readOnly: user?.isAnonymous == true,
+                            readOnly: user?.isAnonymous == true || _phoneOTPSent,
                             enabled: user?.isAnonymous != true,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
@@ -973,12 +1025,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ],
                     ),
+                    if (_phoneOTPSent && user?.isAnonymous != true) ...[
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _phoneOTPController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        decoration: InputDecoration(
+                          labelText: 'Enter OTP',
+                          hintText: '000000',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          counterText: '',
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _verifyPhoneOTPAndSave,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryOrange,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                  : const Text('Verify & Save'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          TextButton(
+                            onPressed: () => setState(() => _phoneOTPSent = false),
+                            child: const Text('Change Number'),
+                          ),
+                        ],
+                      ),
+                    ],
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
-                        user?.isAnonymous == true 
+                        user?.isAnonymous == true
                             ? 'Phone number cannot be changed for guest accounts.'
-                            : 'Enter number and tap ✓ to save. Duplicate numbers will be rejected.',
+                            : (_phoneOTPSent
+                                ? 'OTP sent to your new number. Enter it above to verify.'
+                                : 'Enter new number, tap Send OTP, then verify. Number must not be registered to another account.'),
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ),

@@ -340,7 +340,7 @@ class WalletService {
 // RESTORED AI CHAT SERVICE (Local/Prefs based mostly, but uses WalletService)
 class AIChatService {
   static const String _sessionsKey = 'ai_chat_sessions';
-  final WalletService _walletService = WalletService();
+  // Wallet system disabled; keep sessions only.
 
   // Start a new AI chat session for a specific pandit
   Future<AIChatSession> startSession(String userId, String panditId) async {
@@ -413,24 +413,8 @@ class AIChatService {
 
       session.endTime = DateTime.now();
       session.isActive = false;
-      session.totalCost = session.calculateCost();
-
-      // Deduct money from wallet
-      final deducted = await _walletService.deductMoney(
-        userId,
-        session.totalCost,
-        'AI Pandit Chat - ${session.getDurationInMinutes().toStringAsFixed(2)} minutes',
-        referenceId: sessionId,
-      );
-
-      if (!deducted) {
-        return {
-          'success': false,
-          'message': 'Insufficient wallet balance',
-          'totalCost': session.totalCost,
-          'duration': session.getDurationInMinutes(),
-        };
-      }
+      // Free mode: no wallet deductions
+      session.totalCost = 0.0;
 
       await saveSession(session);
 

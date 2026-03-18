@@ -12,23 +12,7 @@ class PaymentWalletScreen extends ConsumerStatefulWidget {
 }
 
 class _PaymentWalletScreenState extends ConsumerState<PaymentWalletScreen> {
-  final TextEditingController _amountController = TextEditingController();
-  bool _isLoading = false;
-
   @override
-  void dispose() {
-    _amountController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _rechargeWallet() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Add money to wallet coming soon!'),
-        backgroundColor: AppTheme.primaryOrange,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,116 +80,6 @@ class _PaymentWalletScreenState extends ConsumerState<PaymentWalletScreen> {
             ),
           ),
 
-          // Quick Recharge
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Quick Recharge',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _QuickRechargeButton(amount: 500, onTap: () {
-                          _amountController.text = '500';
-                          _rechargeWallet();
-                        }),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _QuickRechargeButton(amount: 1000, onTap: () {
-                          _amountController.text = '1000';
-                          _rechargeWallet();
-                        }),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _QuickRechargeButton(amount: 2000, onTap: () {
-                          _amountController.text = '2000';
-                          _rechargeWallet();
-                        }),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-          // Custom Amount
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppTheme.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: AppTheme.softShadow,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Add Custom Amount',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _amountController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Amount (₹)',
-                        prefixIcon: const Icon(Icons.currency_rupee),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _rechargeWallet,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryOrange,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                                'Recharge Wallet',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
           // Transaction History
           SliverToBoxAdapter(
             child: Padding(
@@ -251,51 +125,6 @@ class _PaymentWalletScreenState extends ConsumerState<PaymentWalletScreen> {
 
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
-      ),
-    );
-  }
-}
-
-class _QuickRechargeButton extends StatelessWidget {
-  final double amount;
-  final VoidCallback onTap;
-
-  const _QuickRechargeButton({
-    required this.amount,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.primaryOrange, width: 2),
-        ),
-        child: Column(
-          children: [
-            Text(
-              '₹${amount.toStringAsFixed(0)}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryOrange,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Add',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppTheme.neutralMedium,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

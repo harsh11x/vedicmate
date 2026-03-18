@@ -60,8 +60,6 @@ class PanditListTile extends StatelessWidget {
     final desc = pandit.bio != null && pandit.bio!.isNotEmpty
         ? (pandit.bio!.length > 120 ? '${pandit.bio!.substring(0, 120)}...' : pandit.bio!)
         : pandit.specializations.take(3).join(', ');
-    final rate = pandit.ratePerMinute;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -179,28 +177,6 @@ class PanditListTile extends StatelessWidget {
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 12),
-                      // Price row
-                      Row(
-                        children: [
-                          Icon(Icons.currency_rupee, size: 14, color: AppTheme.textGrey),
-                          Text(
-                            '${rate.toInt()}/min',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.textBlack,
-                            ),
-                          ),
-                          Text(
-                            ' chat & call',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: AppTheme.textGrey,
-                            ),
-                          ),
-                        ],
                       ),
                       const SizedBox(height: 12),
                       // Chat & Call buttons

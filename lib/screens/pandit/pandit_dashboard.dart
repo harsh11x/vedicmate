@@ -143,7 +143,7 @@ class _DashboardTab extends StatelessWidget {
               ),
               child: IconButton(
                 icon: const Icon(Icons.wallet_outlined),
-                onPressed: () => context.push('/payment/wallet'),
+                onPressed: () {},
               ),
             ),
           ],

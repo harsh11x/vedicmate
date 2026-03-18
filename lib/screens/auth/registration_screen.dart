@@ -1,22 +1,26 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart' hide User;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/validators.dart';
 import '../../core/constants/app_constants.dart';
 import '../../services/auth_service.dart';
+import '../../services/notification_service.dart';
 import '../../widgets/abstract_background.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
-class RegistrationScreen extends StatefulWidget {
+class RegistrationScreen extends ConsumerStatefulWidget {
   const RegistrationScreen({super.key});
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  ConsumerState<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> with SingleTickerProviderStateMixin {
+class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   // Separate form keys
   final _phoneFormKey = GlobalKey<FormState>();
@@ -25,12 +29,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
   // Controllers
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController(); // For Phone Tab
+  final _phoneEmailController = TextEditingController(); // For Phone Tab (required)
   final _emailPhoneController = TextEditingController(); // For Email Tab (optional phone)
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _otpController = TextEditingController();
 
-  final _authService = AuthService();
+  late final AuthService _authService;
   bool _isLoading = false;
   bool _isOTPSent = false;
   bool _obscurePassword = true;
@@ -38,6 +43,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
   @override
   void initState() {
     super.initState();
+    _authService = ref.read(authServiceProvider);
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -51,6 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
     _tabController.dispose();
     _nameController.dispose();
     _phoneController.dispose();
+    _phoneEmailController.dispose();
     _emailPhoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -93,16 +100,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
       setState(() => _isLoading = true);
       
       final phone = _phoneController.text.trim();
-
-      // Check uniqueness
-      final isTaken = await _authService.isMobileNumberTaken(phone); // Check raw or +91
-      if (isTaken) {
-        if (mounted) {
-           setState(() => _isLoading = false);
-           _showSnackBar('This mobile number is already registered. Please login.', isError: true);
-        }
-        return;
-      }
 
       await _authService.sendOTP(
         phone, 
@@ -147,10 +144,54 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
       );
 
       if (mounted && user != null) {
-        // Update display name for phone users since we collected it
-        if (_nameController.text.isNotEmpty) {
-           await user.updateDisplayName(_nameController.text.trim());
+        final phoneInput = _phoneController.text.trim();
+        final existingProfile = await _authService.findUserProfileByPhone(phoneInput);
+
+        // If phone already registered in Supabase, treat as login.
+        if (existingProfile != null) {
+          await _navigateAfterAuth(user);
+          return;
         }
+
+        final name = _nameController.text.trim();
+        final email = _phoneEmailController.text.trim();
+
+        if (name.isEmpty || email.isEmpty) {
+          setState(() => _isLoading = false);
+          _showSnackBar('Please enter your full name and email to complete registration.', isError: true);
+          return;
+        }
+
+        final isEmailUsed = await _authService.isEmailAlreadyUsed(email);
+        if (isEmailUsed) {
+          setState(() => _isLoading = false);
+          _showSnackBar('This email is already used. Please use a different email.', isError: true);
+          return;
+        }
+
+        // Update Firebase display name (best effort)
+        try {
+          await user.updateDisplayName(name);
+        } catch (_) {}
+
+        // Create user profile in Supabase
+        await _authService.ensureUserProfile(user: user, name: name);
+        try {
+          await Supabase.instance.client.from('users').update({
+            'name': name,
+            'email': email.toLowerCase(),
+            'phone': _phoneController.text.trim().startsWith('+')
+                ? _phoneController.text.trim()
+                : '+91${_phoneController.text.trim().replaceAll(RegExp(r'\D'), '')}',
+            'updated_at': DateTime.now().toIso8601String(),
+          }).eq('id', user.uid);
+        } catch (e) {
+          // If update fails, user still has Firebase auth session; surface error
+          setState(() => _isLoading = false);
+          _showSnackBar('Could not save profile. Please try again. ($e)', isError: true);
+          return;
+        }
+
         await _navigateAfterAuth(user);
       }
     } catch (e) {
@@ -207,8 +248,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
 
   Future<void> _navigateAfterAuth(User user) async {
     await _authService.ensureUserProfile(user: user, name: _nameController.text.isNotEmpty ? _nameController.text : null);
-    
-    // MANUAL PERSISTENCE: Save session immediately
+
+    if (!user.isAnonymous) {
+      try {
+        await NotificationService.saveFCMTokenForUser(user.uid);
+      } catch (_) {}
+    }
+
     await _authService.saveUserSession();
 
     if (mounted) {
@@ -569,6 +615,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
             ),
             SizedBox(height: _spacingSmall),
             _buildField(
+              _phoneEmailController,
+              'Email Address',
+              Icons.email_outlined,
+              validator: Validators.validateEmail,
+              type: TextInputType.emailAddress,
+            ),
+            SizedBox(height: _spacingSmall),
+            _buildField(
               _phoneController,
               'Phone Number',
               Icons.phone_android_rounded,
@@ -612,9 +666,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> with SingleTick
               height: _buttonHeight,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _handleVerifyOTP,
-                child: _isLoading 
+                child: _isLoading
                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text('Verify & Create Account'),
+                  : const Text('Verify & Continue'),
               ),
             ),
             const SizedBox(height: 4),

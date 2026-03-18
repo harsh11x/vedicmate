@@ -58,7 +58,7 @@ class ServiceInfoCards extends StatelessWidget {
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Lal Kitab AI is coming soon!', style: TextStyle(color: Colors.white)),
+                        content: Text('Lal Kitab AI is not available yet.', style: TextStyle(color: Colors.white)),
                         backgroundColor: AppTheme.primaryOrange,
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -80,7 +80,7 @@ class ServiceInfoCards extends StatelessWidget {
                   onTap: () {
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
-                   content: Text('Palm Reading AI is coming soon!', style: TextStyle(color: Colors.white)),
+                   content: Text('Palm Reading AI is not available yet.', style: TextStyle(color: Colors.white)),
                    backgroundColor: AppTheme.primaryOrange,
                    behavior: SnackBarBehavior.floating,
                  ),
@@ -140,7 +140,7 @@ class ServiceInfoCards extends StatelessWidget {
             onTap: () {
                ScaffoldMessenger.of(context).showSnackBar(
                  SnackBar(
-                   content: Text('Vastu AI is coming soon!', style: TextStyle(color: Colors.white)),
+                   content: Text('Vastu AI is not available yet.', style: TextStyle(color: Colors.white)),
                    backgroundColor: AppTheme.primaryOrange,
                    behavior: SnackBarBehavior.floating,
                  ),
@@ -323,7 +323,7 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                               ),
                             ),
 
-                          // Coming Soon Tag (Overlay)
+                          // Unavailable Tag (Overlay)
                           if (widget.isComingSoon)
                             Positioned(
                               top: 12,
@@ -336,7 +336,7 @@ class _ServiceCardState extends State<_ServiceCard> with SingleTickerProviderSta
                                   border: Border.all(color: Colors.white.withOpacity(0.2)),
                                 ),
                                 child: const Text(
-                                  'Coming Soon',
+                                  'Not available',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,

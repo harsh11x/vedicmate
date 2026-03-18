@@ -14,7 +14,7 @@ class CustomRequestBanner extends StatelessWidget {
       child: Container(
         height: 180,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(28),
           image: const DecorationImage(
             image: AssetImage('assets/images/services/custom_request.png'),
             fit: BoxFit.cover,
@@ -22,7 +22,7 @@ class CustomRequestBanner extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(28),
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,

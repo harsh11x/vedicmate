@@ -52,7 +52,7 @@ class _LivePoojaBannerState extends State<LivePoojaBanner> with SingleTickerProv
             height: 200,
             decoration: BoxDecoration(
               color: Colors.black,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(28),
               boxShadow: [
                 BoxShadow(
                   color: AppTheme.divineGold.withOpacity(0.2 + _pulseAnimation.value * 0.01),

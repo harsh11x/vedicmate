@@ -386,14 +386,6 @@ class AIPanditProfileScreen extends StatelessWidget {
                           fontSize: 15,
                         ),
                       ),
-                      Text(
-                        '₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
-                        style: GoogleFonts.outfit(
-                          color: AppTheme.divineGold,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -426,14 +418,6 @@ class AIPanditProfileScreen extends StatelessWidget {
                             style: GoogleFonts.outfit(
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            '₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
-                            style: GoogleFonts.outfit(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
                             ),
                           ),
                         ],

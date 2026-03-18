@@ -47,6 +47,9 @@ dependencies:
   # PayU SDK
   payu_checkoutpro_flutter: ^1.4.0
   
+  # In-App Purchase (StoreKit / Play Billing)
+  in_app_purchase: ^3.2.0
+  
   # Voice & Speech
   speech_to_text: ^7.0.0
   flutter_tts: ^4.0.2

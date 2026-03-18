@@ -7,7 +7,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import '../../core/theme/app_theme.dart';
 import '../../services/auth_service.dart';
-import '../../services/wallet_service.dart';
 import '../../l10n/generated/app_localizations.dart';
 
 import '../../providers/auth_provider.dart';
@@ -30,7 +29,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String? _supabaseName;
   bool _isAdmin = false;
   // bool _isMigrating = false;
-  // final WalletService _walletService = WalletService();
+  // Wallet system removed for now
 
   @override
   void initState() {
@@ -249,15 +248,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   Expanded(
                     child: _QuickActionButton(
-                      icon: Icons.account_balance_wallet,
-                      label: 'Wallet',
-                      color: AppTheme.successGreen,
-                      onTap: () => context.push('/client/wallet'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _QuickActionButton(
                       icon: Icons.shopping_bag,
                       label: 'Orders',
                       color: AppTheme.primaryOrange,
@@ -290,7 +280,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: AppTheme.errorRed,
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Favorites coming soon')),
+                          const SnackBar(content: Text('Favorites are not available yet.')),
                         );
                       },
                     ),
@@ -492,7 +482,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         subtitle: 'Manage your security',
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Security settings coming soon')),
+                            const SnackBar(content: Text('Security settings are not available yet.')),
                 );
               },
             ),
@@ -503,7 +493,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         subtitle: 'Manage blocked accounts',
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Blocked users coming soon')),
+                            const SnackBar(content: Text('Blocked users feature is not available yet.')),
                           );
                         },
                       ),
@@ -569,7 +559,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         subtitle: 'Rate us on Play Store',
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Rate us feature coming soon')),
+                            const SnackBar(content: Text('Rate us is not available yet.')),
                           );
                         },
                       ),
@@ -1150,7 +1140,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _authService.signOut();
+              if (context.mounted) context.go('/login');
+            },
+            child: const Text('Sign Out'),
           ),
         ],
       ),

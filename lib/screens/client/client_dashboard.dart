@@ -16,7 +16,6 @@ import '../../widgets/ai_pandits_section.dart';
 import '../../widgets/staggered_list_animation.dart';
 import '../../widgets/abstract_background.dart';
 import '../../providers/api_providers.dart';
-import '../../providers/wallet_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -398,7 +397,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     final greeting = _getGreeting();
 
     return Scaffold(
-      backgroundColor: AppTheme.divineBackground,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         bottom: false,
         child: CustomScrollView(
@@ -459,45 +458,6 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                           children: [
                             Consumer(
                               builder: (context, ref, child) {
-                                final walletBalanceAsync = ref.watch(walletBalanceProvider);
-                                final balance = walletBalanceAsync.valueOrNull ?? 0.0;
-                                return GestureDetector(
-                                  onTap: () => context.push('/client/wallet'),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(color: AppTheme.divineGold.withOpacity(0.3)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.04),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.account_balance_wallet_rounded, size: 18, color: AppTheme.divineGold),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '₹${balance.toStringAsFixed(0)}',
-                                          style: GoogleFonts.outfit(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 14,
-                                            color: AppTheme.textBlack,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(width: 12),
-                            Consumer(
-                              builder: (context, ref, child) {
                                 final cartItems = ref.watch(cartProvider);
                                 final itemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
                                 return GestureDetector(
@@ -505,21 +465,19 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                                   child: Stack(
                                     clipBehavior: Clip.none,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: AppTheme.divineGold.withOpacity(0.3)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.04),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
+                                      ClipOval(
+                                        child: BackdropFilter(
+                                          filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(0.5),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
                                             ),
-                                          ],
+                                            child: Icon(Icons.shopping_bag_outlined, color: AppTheme.textBlack, size: 20),
+                                          ),
                                         ),
-                                        child: Icon(Icons.shopping_bag_outlined, color: AppTheme.textBlack, size: 20),
                                       ),
                                       if (itemCount > 0)
                                         Positioned(
@@ -554,38 +512,37 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    // Search Bar
-                    Container(
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                    // Search Bar - Frosted glass
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: BackdropFilter(
+                        filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                        child: Container(
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.45),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: Colors.white.withOpacity(0.7), width: 1.5),
                           ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: widget.searchController,
-                        onChanged: (value) => setState(() => _searchQuery = value),
-                        style: AppTheme.bodyStyle,
-                        decoration: InputDecoration(
-                          hintText: 'Search for guidance...',
-                          hintStyle: TextStyle(color: AppTheme.textLight),
-                          prefixIcon: const Icon(Icons.search, color: AppTheme.textGrey, size: 22),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.tune, color: AppTheme.textGrey, size: 20),
-                            onPressed: _showFilterModal,
+                          child: TextField(
+                            controller: widget.searchController,
+                            onChanged: (value) => setState(() => _searchQuery = value),
+                            style: AppTheme.bodyStyle,
+                            decoration: InputDecoration(
+                              hintText: 'Search for guidance...',
+                              hintStyle: TextStyle(color: AppTheme.textLight),
+                              prefixIcon: const Icon(Icons.search, color: AppTheme.textGrey, size: 22),
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.tune, color: AppTheme.textGrey, size: 20),
+                                onPressed: _showFilterModal,
+                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              fillColor: Colors.transparent,
+                            ),
                           ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          fillColor: Colors.transparent, // Handled by Container
                         ),
                       ),
                     ),
@@ -607,27 +564,29 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
               ).animate().fadeIn(delay: 100.ms, duration: 450.ms, curve: Curves.easeOutCubic).slideX(begin: 0.03, end: 0, duration: 450.ms, curve: Curves.easeOutCubic),
             ),
 
-            // 3. Live Pooja Banner (Moved Up)
+            // 3. Live Pooja Banner (Moved Up) - Soft glass container
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverToBoxAdapter(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                child: (ClipRRect(
+                  borderRadius: BorderRadius.circular(28),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                          spreadRadius: -4,
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: LivePoojaBanner(onTap: () => context.push('/live-pooja')),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: LivePoojaBanner(
-                     onTap: () => context.push('/live-pooja'),
-                  ),
-                ).animate().fadeIn(delay: 180.ms, duration: 450.ms, curve: Curves.easeOutCubic),
+                )).animate().fadeIn(delay: 180.ms, duration: 450.ms, curve: Curves.easeOutCubic),
               ),
             ),
 
@@ -663,23 +622,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-            // Yoga Sutras - Direct access on home
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverToBoxAdapter(
-                child: _ActionCardV2(
-                  title: 'Yoga Sutras',
-                  subtitle: 'Patanjali\'s Path',
-                  imagePath: 'assets/images/services/vedic_astrology.png',
-                  onTap: () => context.push(Uri(
-                    path: '/education/reader/yoga_sutras',
-                    queryParameters: {'title': 'Yoga Sutras', 'chapter': '1'},
-                  ).toString()),
-                ).animate().fadeIn(delay: 340.ms, duration: 480.ms, curve: Curves.easeOutCubic).slideY(begin: 0.03, end: 0, duration: 480.ms, curve: Curves.easeOutCubic),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+            // (Yoga moved to Remedies tab for now)
 
             // History & Knowledge Row
             SliverPadding(
@@ -711,27 +654,29 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-            // 5. Custom Request Banner (Large rectangular like Daily Pooja)
+            // 5. Custom Request Banner - Soft glass container
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverToBoxAdapter(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                child: (ClipRRect(
+                  borderRadius: BorderRadius.circular(28),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                          spreadRadius: -4,
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: CustomRequestBanner(onTap: () => context.push('/booking/custom')),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: CustomRequestBanner(
-                    onTap: () => context.push('/booking/custom'),
-                  ),
-                ).animate().fadeIn(delay: 500.ms, duration: 450.ms, curve: Curves.easeOutCubic),
+                )).animate().fadeIn(delay: 500.ms, duration: 450.ms, curve: Curves.easeOutCubic),
               ),
             ),
             
@@ -784,12 +729,6 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                   children: [
                     _buildQuickActionBtn(
                       context, 
-                      icon: Icons.account_balance_wallet_rounded, 
-                      label: 'Recharge', 
-                      onTap: () => context.push('/client/wallet')
-                    ),
-                    _buildQuickActionBtn(
-                      context, 
                       icon: Icons.history_rounded, 
                       label: 'History', 
                       onTap: () => context.push('/bookings/history')
@@ -816,35 +755,34 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
   Widget _buildQuickActionBtn(BuildContext context, {required IconData icon, required String label, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 100,
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppTheme.divineGold.withOpacity(0.25)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            width: 100,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.45),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: AppTheme.divineGold, size: 26),
-            const SizedBox(height: 10),
-            Text(
-              label,
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textBlack,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: AppTheme.divineGold, size: 26),
+                const SizedBox(height: 10),
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textBlack,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -878,24 +816,24 @@ class _ActionCardV2 extends StatelessWidget {
       child: Container(
         height: 160,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.divineGold.withOpacity(0.25), width: 1),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-              spreadRadius: -2,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+              spreadRadius: -4,
             ),
             BoxShadow(
-              color: AppTheme.divineGold.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
+              color: AppTheme.divineGold.withOpacity(0.06),
+              blurRadius: 28,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(28),
           child: Stack(
             fit: StackFit.expand,
             children: [

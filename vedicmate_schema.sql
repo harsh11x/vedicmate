@@ -16,6 +16,7 @@ CREATE TABLE public.users (
     name TEXT,
     role TEXT DEFAULT 'client', -- 'client' or 'pandit'
     avatar_url TEXT,
+    fcm_token TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

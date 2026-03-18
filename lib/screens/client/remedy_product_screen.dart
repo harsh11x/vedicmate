@@ -346,7 +346,7 @@ class RemedyProductScreen extends ConsumerWidget {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Buy feature coming soon!'),
+                        content: Text('Purchase is not available for this item.'),
                         backgroundColor: AppTheme.primaryOrange,
                         behavior: SnackBarBehavior.floating,
                       ),

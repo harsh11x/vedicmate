@@ -8,13 +8,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/ai_chat_model.dart';
-import '../../services/wallet_service.dart';
-import '../../providers/wallet_provider.dart';
+import '../../services/wallet_service.dart'; // contains AIChatService (wallet deductions disabled in service)
+import '../../providers/wallet_provider.dart'; // for currentUserIdProvider
 import '../../providers/api_providers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/ai_pandit_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/language_selector.dart';
+import '../../utils/profile_completeness.dart';
 
 class AIPanditVoiceCallScreen extends ConsumerStatefulWidget {
   final String? panditId;
@@ -26,7 +27,6 @@ class AIPanditVoiceCallScreen extends ConsumerStatefulWidget {
 }
 
 class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
-  final WalletService _walletService = WalletService();
   final AIChatService _chatService = AIChatService();
   
   // Speech services
@@ -43,13 +43,32 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   bool _isSpeakerOn = false;
   String _recognizedText = '';
   String _currentLanguage = 'en';
-  double _walletBalance = 0.0;
   AIChatSession? _currentSession;
-  Timer? _costTimer;
-  Timer? _walletCheckTimer; // Timer to check wallet balance during call
-  double _currentCost = 0.0;
+  Timer? _costTimer; // reused for duration ticking
   int _elapsedSeconds = 0;
-  static const double _minimumBalance = 50.0; // Minimum ₹50 required
+  static const String _bilingualStyleHint =
+      'Reply in casual bilingual Hinglish (Hindi+English mix). '
+      'Friendly, helpful, and practical. Not pure Hindi. Use simple everyday language.';
+  Map<String, dynamic>? _userProfile;
+
+  String _buildUserContextBlock() {
+    final p = _userProfile;
+    if (p == null || p.isEmpty) return '';
+    final name = (p['name'] ?? '').toString().trim();
+    final email = (p['email'] ?? '').toString().trim();
+    final phone = (p['phone'] ?? '').toString().trim();
+    final birth = (p['birth_details'] ?? p['birthDetails']);
+    final numerology = (p['numerology'] ?? p['numerologyProperties']);
+
+    return [
+      'USER_CONTEXT (use for personalization; do not ask again if present):',
+      if (name.isNotEmpty) '- Name: $name',
+      if (email.isNotEmpty) '- Email: $email',
+      if (phone.isNotEmpty) '- Phone: $phone',
+      if (birth != null) '- Birth details: $birth',
+      if (numerology != null) '- Numerology: $numerology',
+    ].join('\n');
+  }
   
   // Conversation history
   List<Map<String, String>> _conversationHistory = [];
@@ -91,6 +110,26 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
     'ru': 'Russian',
   };
 
+  String _sttLocaleFor(String code) {
+    switch (code) {
+      case 'hi':
+        return 'hi_IN';
+      case 'en':
+      default:
+        return 'en_IN';
+    }
+  }
+
+  String _ttsLanguageFor(String code) {
+    switch (code) {
+      case 'hi':
+        return 'hi-IN';
+      case 'en':
+      default:
+        return 'en-IN';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -102,43 +141,16 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Use microtask to defer initialization even further
       Future.microtask(() => _initializeVoiceCall());
-      _watchWalletBalance();
     });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Refresh wallet balance when app comes back to foreground
-    if (state == AppLifecycleState.resumed && _userId != null) {
-      _checkWalletBalance();
-    }
+    // No wallet refresh needed (free mode)
   }
 
-  void _watchWalletBalance() {
-    // Watch wallet provider for real-time updates
-    ref.listen<AsyncValue<double>>(walletBalanceProvider, (previous, next) {
-      next.whenData((balance) {
-        if (mounted && (_walletBalance != balance || previous?.value != balance)) {
-          setState(() {
-            _walletBalance = balance;
-          });
-          print('✅ Wallet balance updated from provider: ₹$_walletBalance');
-        }
-      });
-    });
-    
-    // Also get initial balance from provider
-    final balanceAsync = ref.read(walletBalanceProvider);
-    balanceAsync.whenData((balance) {
-      if (mounted) {
-        setState(() {
-          _walletBalance = balance;
-        });
-        print('✅ Initial wallet balance from provider: ₹$_walletBalance');
-      }
-    });
-  }
+  // Wallet system removed (free mode)
 
   void _setupAnimations() {
     _pulseController = AnimationController(
@@ -152,10 +164,40 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   }
 
   Future<void> _setupTTS() async {
-    await _flutterTts.setLanguage(_currentLanguage);
-    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setLanguage(_ttsLanguageFor(_currentLanguage));
+    await _flutterTts.setSpeechRate(0.52);
     await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.0);
+    await _flutterTts.setPitch(1.02);
+
+    // Best-effort: pick a nicer local voice (less robotic) if available
+    try {
+      final voices = await _flutterTts.getVoices;
+      if (voices is List) {
+        final target = _ttsLanguageFor(_currentLanguage).toLowerCase();
+        Map? best;
+        for (final v in voices) {
+          if (v is Map) {
+            final locale = (v['locale'] ?? v['language'] ?? '').toString().toLowerCase();
+            final name = (v['name'] ?? '').toString().toLowerCase();
+            if (locale.contains(target)) {
+              // Prefer Siri / enhanced / premium-ish voices when present
+              final looksGood = name.contains('siri') || name.contains('enhanced') || name.contains('premium');
+              best ??= v;
+              if (looksGood) {
+                best = v;
+                break;
+              }
+            }
+          }
+        }
+        if (best != null) {
+          await _flutterTts.setVoice({
+            if (best['name'] != null) 'name': best['name'],
+            if (best['locale'] != null) 'locale': best['locale'],
+          });
+        }
+      }
+    } catch (_) {}
     
     _flutterTts.setCompletionHandler(() {
       setState(() {
@@ -201,81 +243,18 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
     
     // Get or create session for this specific pandit
     _currentSession = await _chatService.getOrCreateSession(userId, widget.panditId ?? 'default');
-    
-    // Check wallet balance AFTER session is loaded
-    await _checkWalletBalance();
-    
-    // Also get balance from provider as backup
-    final balanceAsync = ref.read(walletBalanceProvider);
-    balanceAsync.whenData((balance) {
-      if (mounted) {
-        setState(() {
-          _walletBalance = balance;
-        });
-        print('✅ Wallet balance from provider on init: ₹$_walletBalance');
-      }
-    });
-    
+    // Fetch user profile once for personalization (best-effort)
+    try {
+      _userProfile = await ProfileCompleteness.getUserProfileForAI();
+    } catch (_) {}
+        
     // Don't start call automatically - wait for user to click Start button
   }
 
-  Future<void> _checkWalletBalance() async {
-    if (_userId == null) return;
-    
-    try {
-      // First, try to get balance from provider (most up-to-date)
-      final balanceAsync = ref.read(walletBalanceProvider);
-      balanceAsync.whenData((balance) {
-        if (mounted) {
-          setState(() {
-            _walletBalance = balance;
-          });
-          print('✅ Wallet balance from provider: ₹$_walletBalance');
-        }
-      });
-      
-      // Also use wallet service directly as backup
-      final balance = await _walletService.getBalance(_userId!);
-      
-      // Refresh the provider to ensure it's up-to-date
-      ref.invalidate(walletBalanceProvider);
-      
-      if (mounted) {
-        setState(() {
-          _walletBalance = balance;
-        });
-        print('✅ Wallet balance updated from service: ₹$_walletBalance');
-      }
-    } catch (e) {
-      print('⚠️ Wallet check failed: $e');
-      // Try to get balance from provider as fallback
-      try {
-        final balanceAsync = ref.read(walletBalanceProvider);
-        balanceAsync.whenData((balance) {
-          if (mounted) {
-            setState(() {
-              _walletBalance = balance;
-            });
-            print('✅ Wallet balance from provider fallback: ₹$_walletBalance');
-          }
-        });
-      } catch (e2) {
-        print('⚠️ Provider fallback also failed: $e2');
-        if (mounted) {
-          setState(() {
-            _walletBalance = 0.0;
-          });
-        }
-      }
-    }
-  }
+  // Wallet system removed (free mode)
 
   Future<void> _showStartCallDialog() async {
-    if (!mounted || _walletBalance < _minimumBalance) {
-      _showInsufficientFundsDialog();
-      return;
-    }
-
+    if (!mounted) return;
     final shouldStart = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -317,45 +296,6 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryOrange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.2)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, size: 18, color: AppTheme.primaryOrange),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Call charges: ₹25/minute\nMinimum balance required: ₹50',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.neutralDark,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.account_balance_wallet, size: 16, color: AppTheme.successGreen),
-                const SizedBox(width: 6),
-                Text(
-                  'Your balance: ₹${_walletBalance.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.successGreen,
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
         actions: [
@@ -387,13 +327,6 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   Future<void> _startCall() async {
     if (_currentSession == null || _userId == null) return;
 
-    // Check wallet balance immediately
-    await _checkWalletBalance();
-    if (_walletBalance < _minimumBalance) {
-      _showInsufficientFundsDialog();
-      return;
-    }
-
     // Mark session as started immediately
     _currentSession!.isStarted = true;
     _currentSession!.isActive = true;
@@ -404,217 +337,20 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
       _isCallActive = true;
     });
     
-    // Start timers immediately
-    _startCostTimer();
-    _startWalletCheckTimer();
-
     // Initialize call in background
     _initializeInBackground();
   }
 
   void _startWalletCheckTimer() {
-    _walletCheckTimer?.cancel();
-    _walletCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
-      if (!_isCallStarted || !_isCallActive) {
-        timer.cancel();
-        return;
-      }
-
-      await _checkWalletBalance();
-      
-      // Check if balance is insufficient (less than cost for 1 more minute)
-      if (_walletBalance < 25.0) {
-        timer.cancel();
-        _stopCallDueToInsufficientFunds();
-      }
-    });
+    // Wallet system removed (free mode)
   }
 
   Future<void> _stopCallDueToInsufficientFunds() async {
-    if (_currentSession == null) return;
-
-    // Stop timers
-    _costTimer?.cancel();
-    _walletCheckTimer?.cancel();
-    await _speech.stop();
-    await _flutterTts.stop();
-
-    // Mark session as inactive
-    _currentSession!.isActive = false;
-    _currentSession!.endTime = DateTime.now();
-    await _chatService.saveSession(_currentSession!);
-
-    setState(() {
-      _isCallStarted = false;
-      _isCallActive = false;
-      _isListening = false;
-      _isSpeaking = false;
-    });
-
-    if (mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.errorRed.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.error_outline, color: AppTheme.errorRed, size: 24),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Insufficient Funds',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Your wallet balance is insufficient to continue the call.',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: AppTheme.neutralMedium,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.errorRed.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Current Balance: ₹${_walletBalance.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.errorRed,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK', style: TextStyle(color: AppTheme.neutralMedium)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                context.push('/client/wallet');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryOrange,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Recharge Wallet'),
-            ),
-          ],
-        ),
-      );
-    }
+    // Wallet system removed (free mode)
   }
 
   void _showInsufficientFundsDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppTheme.errorRed.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.account_balance_wallet, color: AppTheme.errorRed, size: 24),
-            ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Text(
-                'Insufficient Balance',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'You need a minimum balance of ₹$_minimumBalance to start a chat or call with an AI Pandit.',
-              style: TextStyle(
-                fontSize: 15,
-                color: AppTheme.neutralMedium,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.errorRed.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Current Balance: ₹${_walletBalance.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.errorRed,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: AppTheme.neutralMedium)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.push('/client/wallet');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryOrange,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Recharge Wallet'),
-          ),
-        ],
-      ),
-    );
+    // Wallet system removed (free mode)
   }
 
   // All heavy operations happen here in background
@@ -683,7 +419,6 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
               'message': m.message,
             }).toList();
             _elapsedSeconds = activeSession.getDurationInSeconds();
-            _currentCost = activeSession.calculateCost();
           });
         }
       } catch (e) {
@@ -692,9 +427,6 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
       
       // Start welcome message
       _speakWelcomeMessage();
-      
-      // Check wallet balance
-      _checkWalletBalance();
       
     } catch (e) {
       print('⚠️ Background init error: $e');
@@ -705,12 +437,12 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
   // Remove duplicate - using the one defined earlier
 
   void _startCostTimer() {
+    // Cost timer removed (free mode); keep duration counter only
     _costTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted && _currentSession != null && _currentSession!.isActive) {
-        setState(() {
-          _elapsedSeconds++;
-          _currentCost = _currentSession!.calculateCost();
-        });
+      if (mounted && _isCallActive) {
+        setState(() => _elapsedSeconds++);
+      } else {
+        timer.cancel();
       }
     });
   }
@@ -783,7 +515,7 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
       },
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 3),
-      localeId: _currentLanguage,
+      localeId: _sttLocaleFor(_currentLanguage),
       listenMode: stt.ListenMode.confirmation,
     );
   }
@@ -805,7 +537,7 @@ class _AIPanditVoiceCallScreenState extends ConsumerState<AIPanditVoiceCallScree
     final detectedLang = _detectLanguage(userMessage);
     if (detectedLang != _currentLanguage) {
       setState(() => _currentLanguage = detectedLang);
-      await _flutterTts.setLanguage(detectedLang);
+      await _flutterTts.setLanguage(_ttsLanguageFor(detectedLang));
     }
     
     // Check if user is asking for Kundli - if so, try to get their birth details
@@ -870,40 +602,72 @@ Please use these details to generate my complete Kundli analysis.]
       _recognizedText = userMessage;
     });
     
-    // Get AI response: Local AI (via backend/ngrok) first, then Custom AI fallback
+    // Get AI response: Local AI first, then Gemini, then Custom AI fallback
     String aiResponse;
     try {
       final localAI = ref.read(localAIServiceProvider);
+      final context = _buildUserContextBlock();
+      final styledMessage = [
+        _bilingualStyleHint,
+        'Do NOT repeat "Welcome to Vedic Mate" or generic greetings unless the user greets you.',
+        if (context.isNotEmpty) context,
+        'User said: $enhancedMessage',
+      ].join('\n\n');
       aiResponse = await localAI.sendMessage(
-        enhancedMessage,
+        styledMessage,
         _conversationHistory,
         panditId: widget.panditId,
         userId: _userId,
+        targetLanguage: _currentLanguage,
+        userProfile: _userProfile,
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () => throw Exception('Timeout'),
       );
     } catch (e) {
-      print('Local AI failed ($e), using Custom AI fallback');
       try {
-        final customAI = ref.read(customAIServiceProvider);
-        aiResponse = await customAI.sendMessage(
-          enhancedMessage,
+        final gemini = ref.read(geminiServiceProvider);
+        print('Local AI failed ($e), trying Gemini');
+        final context = _buildUserContextBlock();
+        final styledMessage = [
+          _bilingualStyleHint,
+          'Do NOT repeat "Welcome to Vedic Mate" or generic greetings unless the user greets you.',
+          if (context.isNotEmpty) context,
+          'User said: $enhancedMessage',
+        ].join('\n\n');
+        aiResponse = await gemini.sendMessage(
+          styledMessage,
           _conversationHistory,
           panditId: widget.panditId,
-        );
+        ).timeout(const Duration(seconds: 30));
       } catch (e2) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('AI unavailable. Please try again.'),
-              backgroundColor: AppTheme.errorRed,
-            ),
+        print('Gemini failed ($e2), using Custom AI fallback');
+        try {
+          final customAI = ref.read(customAIServiceProvider);
+          final context = _buildUserContextBlock();
+          final styledMessage = [
+            _bilingualStyleHint,
+            if (context.isNotEmpty) context,
+            'User said: $enhancedMessage',
+          ].join('\n\n');
+          aiResponse = await customAI.sendMessage(
+            styledMessage,
+            _conversationHistory,
+            panditId: widget.panditId,
           );
+        } catch (e3) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('AI unavailable. Please try again.'),
+                backgroundColor: AppTheme.errorRed,
+              ),
+            );
+          }
+          print('AI Error: $e3');
+          _startListening();
+          return;
         }
-        print('AI Error: $e2');
-        _startListening();
-        return;
       }
     }
     
@@ -954,8 +718,7 @@ Please use these details to generate my complete Kundli analysis.]
     if (RegExp(r'[\u0B80-\u0BFF]').hasMatch(text)) return 'ta';
     // Check for Telugu
     if (RegExp(r'[\u0C00-\u0C7F]').hasMatch(text)) return 'te';
-    // Check for Marathi
-    if (RegExp(r'[\u0900-\u097F]').hasMatch(text)) return 'mr';
+    // Note: Marathi also uses Devanagari; keep Hindi as default for Devanagari in this app.
     // Check for Gujarati
     if (RegExp(r'[\u0A80-\u0AFF]').hasMatch(text)) return 'gu';
     // Check for Punjabi
@@ -979,17 +742,6 @@ Please use these details to generate my complete Kundli analysis.]
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Duration: ${(_elapsedSeconds / 60).toStringAsFixed(2)} minutes'),
-            const SizedBox(height: 8),
-            Text(
-              'Total Cost: ₹${_currentCost.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: AppTheme.primaryOrange,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text('Wallet Balance: ₹${_walletBalance.toStringAsFixed(2)}'),
           ],
         ),
         actions: [
@@ -999,7 +751,7 @@ Please use these details to generate my complete Kundli analysis.]
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('End & Pay'),
+            child: const Text('End Call'),
           ),
         ],
       ),
@@ -1022,7 +774,7 @@ Please use these details to generate my complete Kundli analysis.]
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Call ended. ₹${result['totalCost'].toStringAsFixed(2)} deducted from wallet.',
+              'Call ended.',
             ),
             backgroundColor: AppTheme.successGreen,
           ),
@@ -1034,7 +786,7 @@ Please use these details to generate my complete Kundli analysis.]
 
   void _changeLanguage(String languageCode) {
     setState(() => _currentLanguage = languageCode);
-    _flutterTts.setLanguage(languageCode);
+    _flutterTts.setLanguage(_ttsLanguageFor(languageCode));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1132,7 +884,6 @@ Please use these details to generate my complete Kundli analysis.]
     _speech.stop();
     _flutterTts.stop();
     _costTimer?.cancel();
-    _walletCheckTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
@@ -1356,53 +1107,35 @@ Please use these details to generate my complete Kundli analysis.]
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.account_balance_wallet,
-            size: 18,
-            color: _walletBalance >= _minimumBalance
-                ? AppTheme.successGreen
-                : AppTheme.errorRed,
-          ),
-          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Balance: ₹${_walletBalance.toStringAsFixed(2)}',
+                  'Free AI Voice Call',
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
                 ),
-                if (_walletBalance < _minimumBalance)
-                  Text(
-                    'Minimum ₹${_minimumBalance.toStringAsFixed(0)} required',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      color: AppTheme.errorRed,
-                    ),
-                  ),
+                Text(
+                  'No wallet needed',
+                  style: GoogleFonts.inter(fontSize: 11, color: Colors.white70),
+                ),
               ],
             ),
           ),
           ElevatedButton(
-            onPressed: _walletBalance >= _minimumBalance
-                ? () => _showStartCallDialog()
-                : () => _showInsufficientFundsDialog(),
+            onPressed: () => _showStartCallDialog(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _walletBalance >= _minimumBalance
-                  ? AppTheme.primaryOrange
-                  : Colors.white.withOpacity(0.2),
-              foregroundColor: _walletBalance >= _minimumBalance
-                  ? Colors.white
-                  : Colors.white.withOpacity(0.5),
+              backgroundColor: AppTheme.primaryOrange,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),
-              elevation: _walletBalance >= _minimumBalance ? 4 : 0,
+              elevation: 4,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

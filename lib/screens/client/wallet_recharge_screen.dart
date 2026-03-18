@@ -6,6 +6,7 @@ import '../../providers/wallet_provider.dart';
 import '../../services/wallet_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/payu_service.dart';
+import '../../services/iap_service.dart';
 import '../../widgets/abstract_background.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
@@ -19,17 +20,44 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   final WalletService _walletService = WalletService();
   final AuthService _authService = AuthService();
   final PayUService _payUService = PayUService();
+  final IAPService _iapService = IAPService();
 
   bool _isLoading = true;
+  bool _isRestoring = false;
   List<Map<String, dynamic>> _transactions = [];
-  
-  // Wallet credit amounts
-  final List<int> _rechargeAmounts = [50, 100, 200, 500, 1000, 2000, 5000];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchData());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchData();
+      _iapService.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _iapService.dispose();
+    super.dispose();
+  }
+
+  Future<void> _restorePurchases() async {
+    setState(() => _isRestoring = true);
+    try {
+      final result = await _iapService.restorePurchases();
+      if (mounted) {
+        ref.invalidate(walletBalanceProvider);
+        await _fetchData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message),
+            backgroundColor: result.restored ? AppTheme.successGreen : AppTheme.errorRed,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isRestoring = false);
+    }
   }
 
   Future<void> _fetchData() async {
@@ -53,15 +81,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         }
       }
     }
-  }
-
-  Future<void> _initiateRecharge(int amount) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Add money to wallet coming soon!'),
-        backgroundColor: AppTheme.primaryOrange,
-      ),
-    );
   }
 
   Future<void> _handlePaymentSuccess(String userId, double amount, String txnid) async {
@@ -131,8 +150,23 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         _buildBalanceCard(),
                         const SizedBox(height: 24),
 
-                        // Recharge Options
-                        _buildRechargeGrid(),
+                        // Restore Purchases
+                        OutlinedButton.icon(
+                          onPressed: _isRestoring ? null : _restorePurchases,
+                          icon: _isRestoring
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.restore),
+                          label: Text(_isRestoring ? 'Restoring...' : 'Restore Purchases'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.primaryOrange,
+                            side: const BorderSide(color: AppTheme.primaryOrange),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        ),
                         const SizedBox(height: 24),
 
                         // Transactions
@@ -208,76 +242,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildRechargeGrid() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: AppTheme.glassMorphism,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Add Money',
-            style: GoogleFonts.outfit(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.neutralDark,
-            ),
-          ),
-          const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.5,
-            ),
-            itemCount: _rechargeAmounts.length,
-            itemBuilder: (context, index) {
-              final amount = _rechargeAmounts[index];
-              return _buildRechargeCard(amount);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRechargeCard(int amount) {
-    return InkWell(
-      onTap: () => _initiateRecharge(amount),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.3)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '₹$amount',
-              style: GoogleFonts.outfit(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryOrange,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ import '../../widgets/abstract_background.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/notification_service.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -179,11 +180,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     // Ensure user profile exists (Auto-migrate existing users)
     await _authService.ensureUserProfile(user: user);
 
+    // Save FCM token for push notifications
+    if (!user.isAnonymous) {
+      try {
+        await NotificationService.saveFCMTokenForUser(user.uid);
+      } catch (_) {}
+    }
+
     // MANUAL PERSISTENCE: Save session immediately
     await _authService.saveUserSession();
 
     if (mounted) {
-      // Directly navigate to dashboard as per user request
       context.go('/client/dashboard');
     }
   }

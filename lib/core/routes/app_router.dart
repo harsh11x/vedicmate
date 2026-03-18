@@ -17,6 +17,8 @@ import '../../screens/shared/payment_wallet_screen.dart';
 import '../../screens/shared/settings_screen.dart';
 import '../../screens/client/ai_pandit_coming_soon_screen.dart';
 import '../../screens/client/ai_pandit_chat_list_screen.dart';
+import '../../screens/client/ai_pandit_chat_screen.dart';
+import '../../screens/client/ai_pandit_voice_call_screen.dart';
 import '../../screens/client/wallet_recharge_screen.dart';
 import '../../screens/client/kundli/kundli_details_screen.dart';
 import '../../screens/client/checkout_screen.dart';
@@ -253,14 +255,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final panditId = state.uri.queryParameters['panditId'];
           if (panditId != null && panditId.isNotEmpty) {
-            return const AIPanditComingSoonScreen(feature: 'chat');
+            return AIPanditChatScreen(panditId: panditId);
           }
-          return const AIPanditChatListScreen();
+          return const AIPanditChatListScreen(); // pick an AI pandit
         },
       ),
       GoRoute(
         path: '/ai-pandit/voice-call',
-        builder: (context, state) => const AIPanditComingSoonScreen(feature: 'voice-call'),
+        builder: (context, state) {
+          final panditId = state.uri.queryParameters['panditId'];
+          return AIPanditVoiceCallScreen(panditId: panditId);
+        },
       ),
       GoRoute(
         path: '/ai-pandits/all',

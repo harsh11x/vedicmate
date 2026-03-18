@@ -342,14 +342,6 @@ class _AIPanditItemState extends State<_AIPanditItem>
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Text(
-                              '₹${widget.pandit.ratePerMinute.toInt()}/min',
-                              style: GoogleFonts.outfit(
-                                fontSize: 10,
-                                color: AppTheme.primaryOrange,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                           ],
                         ),
                       ),
