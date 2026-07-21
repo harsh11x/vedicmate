@@ -30,16 +30,23 @@ const httpsOptions = {};
 const app = express();
 const httpServer = createServer(app); // Using HTTP for local dev compatibility
 
+const ALLOWED_ORIGINS = [
+  "http://13.60.233.237:3000", "https://13.60.233.237:3000",
+  "http://13.60.233.237:3001", "https://13.60.233.237:3001",
+  "http://localhost:3000", "https://localhost:3000",
+  "http://localhost:3001", "https://localhost:3001",
+];
+
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://13.60.233.237:3000", "http://localhost:3000", "https://localhost:3000", "https://13.60.233.237:3000"],
+    origin: ALLOWED_ORIGINS,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
 });
 
 app.use(cors({
-  origin: ["http://13.60.233.237:3000", "http://localhost:3000", "https://localhost:3000", "https://13.60.233.237:3000"],
+  origin: ALLOWED_ORIGINS,
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));

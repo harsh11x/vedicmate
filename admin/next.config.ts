@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   },
   */
   async rewrites() {
-    const backend = process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3001';
+    const backend = process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3000';
     const base = backend.replace(/\/+$/, '');
     return [
       { source: '/api/:path*', destination: `${base}/api/:path*` },
