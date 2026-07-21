@@ -65,7 +65,7 @@ app.prepare().then(() => {
     server.listen(PORT, (err) => {
         if (err) throw err;
         console.log(`> Ready on https://localhost:${PORT}`);
-        console.log(`> Ready on https://15.207.36.26:${PORT}`);
+        console.log(`> Ready on https://13.60.233.237:${PORT}`);
         console.log(`> Proxying /socket.io to ${API_URL}`);
     });
 });

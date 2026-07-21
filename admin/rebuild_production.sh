@@ -21,7 +21,7 @@ pm2 restart vedicmate-admin
 pm2 save
 
 echo "✅ Admin panel rebuilt and restarted!"
-echo "🌐 Available at: https://15.207.36.26:3000"
+echo "🌐 Available at: https://13.60.233.237:3000"
 
 # Show logs
 pm2 logs vedicmate-admin --lines 10

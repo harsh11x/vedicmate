@@ -604,7 +604,7 @@ class KundliPdfService {
   
   static pw.Widget _buildTableHeader(String text) => pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(text, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9, color: primaryColor)));
   static pw.Widget _buildTableCell(String text, {bool isBold = false}) => pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(text, style: pw.TextStyle(fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal, fontSize: 8)));
-  static pw.Widget _buildFooter() => pw.Column(children: [pw.Divider(color: PdfColors.grey300), pw.SizedBox(height: 3), pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text('Generated via Vedic Mate App', style: pw.TextStyle(fontSize: 7, color: PdfColors.grey500)), pw.Text('http://15.207.36.26:3000', style: pw.TextStyle(fontSize: 7, color: primaryColor))])]);
+  static pw.Widget _buildFooter() => pw.Column(children: [pw.Divider(color: PdfColors.grey300), pw.SizedBox(height: 3), pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [pw.Text('Generated via Vedic Mate App', style: pw.TextStyle(fontSize: 7, color: PdfColors.grey500)), pw.Text('https://13.60.233.237:3000', style: pw.TextStyle(fontSize: 7, color: primaryColor))])]);
   
   static Future<pw.MemoryImage?> _createLogoImage() async {
     try {

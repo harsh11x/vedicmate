@@ -28,7 +28,7 @@ tar -czf admin-deploy.tar.gz \
 # 3. Upload to server
 echo "⬆️  Uploading to server..."
 SERVER_USER="ubuntu"
-SERVER_IP="15.207.36.26"
+SERVER_IP="13.60.233.237"
 SERVER_PATH="/home/ubuntu/vedicmate"
 
 scp admin-deploy.tar.gz ${SERVER_USER}@${SERVER_IP}:${SERVER_PATH}/
@@ -49,4 +49,4 @@ echo "🧹 Cleaning up..."
 rm admin-deploy.tar.gz
 
 echo "✅ Deployment complete!"
-echo "🌐 Admin panel available at: https://15.207.36.26:3000"
+echo "🌐 Admin panel available at: https://13.60.233.237:3000"

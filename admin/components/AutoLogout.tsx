@@ -16,7 +16,8 @@ export default function AutoLogout() {
 
         // Check if Live Pooja is active before logging out
         try {
-            const response = await fetch('https://15.207.36.26:3001/api/admin/live-sessions/session_1768376801443');
+            // Use relative path via Next.js proxy instead of hardcoded IP
+            const response = await fetch('/api/admin/live-sessions/session_1768376801443');
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.data.isLive) {

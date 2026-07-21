@@ -1,5 +1,5 @@
 # COPY AND PASTE THESE COMMANDS ON YOUR SERVER
-# Run these commands on ubuntu@15.207.36.26
+# Run these commands on ubuntu@13.60.233.237
 
 # 1. Navigate to project
 cd ~/vedicmate
@@ -19,8 +19,8 @@ rm -rf .next
 # 6. Verify .env.local exists and has correct values
 cat .env.local
 # Should show:
-# NEXT_PUBLIC_API_URL=http://15.207.36.26:3001/api
-# NEXT_PUBLIC_API_BACKEND=http://15.207.36.26:3001
+# NEXT_PUBLIC_API_URL=http://13.60.233.237:3001/api
+# NEXT_PUBLIC_API_BACKEND=http://13.60.233.237:3001
 
 # 7. Install dependencies (in case any are missing)
 npm install --production
@@ -40,4 +40,4 @@ pm2 logs vedicmate-admin --lines 20
 # 12. Test the health endpoint
 curl http://localhost:3001/api/health
 
-# Done! Now refresh your browser at https://15.207.36.26:3000
+# Done! Now refresh your browser at https://13.60.233.237:3000

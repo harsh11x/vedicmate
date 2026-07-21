@@ -39,12 +39,12 @@ If you prefer server storage, ensure admin and app point to the **same backend**
 
 ### Admin `.env.local`
 ```env
-NEXT_PUBLIC_API_BACKEND=http://15.207.36.26:3001
+NEXT_PUBLIC_API_BACKEND=http://13.60.233.237:3001
 ```
 (Use your actual server URL)
 
 ### App
-- `EnvConfig.apiBaseUrl` or build with `--dart-define=API_BASE_URL=http://15.207.36.26:3001`
+- `EnvConfig.apiBaseUrl` or build with `--dart-define=API_BASE_URL=http://13.60.233.237:3001`
 
 ### On the server
 - Videos must be in `server/assets/videos/reels/`

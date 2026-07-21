@@ -153,7 +153,7 @@ export default function RootLayout({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Server Status</p>
-                  <p className="text-sm text-gray-500 mt-0.5">{process.env.NEXT_PUBLIC_API_URL?.split('/')[2] || "15.207.36.26:3001"}</p>
+                  <p className="text-sm text-gray-500 mt-0.5">{process.env.NEXT_PUBLIC_API_BACKEND?.replace('http://', '').replace('https://', '') || "13.60.233.237:3001"}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`w-3 h-3 rounded-full ${serverStatus === "connected" ? "bg-green-500 animate-pulse" :

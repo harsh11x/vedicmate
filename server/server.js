@@ -5,6 +5,7 @@
 
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { createServer } from 'http'; // Changing to HTTP for local dev
 import { readFileSync } from 'fs';
 import { Server } from 'socket.io';
@@ -30,15 +31,64 @@ const httpServer = createServer(app); // Using HTTP for local dev compatibility
 
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://15.207.36.26:3000", "http://localhost:3000", "https://localhost:3000", "https://15.207.36.26:3000", "*"],
+    origin: ["http://13.60.233.237:3000", "http://localhost:3000", "https://localhost:3000", "https://13.60.233.237:3000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://13.60.233.237:3000", "http://localhost:3000", "https://localhost:3000", "https://13.60.233.237:3000"],
+  credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// ============================================================================
+// RATE LIMITING
+// ============================================================================
+
+// General API rate limit: 100 requests per 15 minutes per IP
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { success: false, error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Strict rate limit for wallet endpoints (prevent abuse)
+const walletLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: { success: false, error: 'Too many wallet requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// AI chat rate limit: 20 requests per minute per IP
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  message: { success: false, error: 'Too many AI requests, please slow down.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Admin endpoints rate limit: 60 requests per minute
+const adminLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { success: false, error: 'Too many admin requests.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiters to routes
+app.use('/api/', apiLimiter);
+app.use('/api/wallet/', walletLimiter);
+app.use('/api/ai/', aiLimiter);
+app.use('/api/admin/', adminLimiter);
 
 // ============================================================================
 // FILE STORAGE SETUP
@@ -373,7 +423,7 @@ const WalletService = {
 
 const LocalAIService = {
   config: {
-    api_base_url: "https://eb1d2d0d4fc8.ngrok-free.app/v1", // Using ngrok tunnel for AI
+    api_base_url: "http://localhost:1234/v1", // Default: LM Studio local. Override via ai_engine/model_config.json
     model_name: "qwen2.5-1.5b-instruct",
     temperature: 0.7,
     max_tokens: 500
@@ -539,7 +589,10 @@ LocalAIService.loadPersonalities();
 // AI SERVICE (Inline)
 // ============================================================================
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBg3cN0LfQWuQ4-jhbEqRe5cciJEmrwono';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
+if (!process.env.GEMINI_API_KEY) {
+  console.warn('⚠️  GEMINI_API_KEY not set in environment. AI features may not work.');
+}
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 const OPENAI_BASE_URL = 'https://api.openai.com/v1/chat/completions';
@@ -1465,10 +1518,11 @@ app.post('/api/custom-requests', (req, res) => {
     const requests = readCustomRequests();
     const requestData = req.body;
 
+    const resolvedUserId = req.headers['x-user-id'] || requestData.userId || 'guest';
     const newRequest = {
       id: `request_${Date.now()}`,
       requestId: generateCustomRequestId(),
-      userId: req.headers['x-user-id'] || requestData.userId,
+      userId: resolvedUserId,
       type: requestData.type || 'puja', // puja, havan, homam, etc.
       serviceName: requestData.serviceName,
       description: requestData.description || '',
@@ -1478,7 +1532,6 @@ app.post('/api/custom-requests', (req, res) => {
       price: requestData.price || 0,
       paymentStatus: 'pending',
       paymentId: requestData.paymentId || null,
-      userId: req.headers['x-user-id'] || requestData.userId || 'guest',
       userName: requestData.userName || 'Guest',
       status: 'pending',
       amount: requestData.amount || 0,
@@ -2867,6 +2920,51 @@ app.post('/api/admin/custom-requests/update-status', (req, res) => {
 });
 
 // ============================================================================
+// EMAIL NOTIFICATION (SMTP via Nodemailer)
+// ============================================================================
+
+// Configure nodemailer transporter from env vars (optional)
+const EMAIL_HOST = process.env.EMAIL_HOST || '';
+const EMAIL_PORT = parseInt(process.env.EMAIL_PORT || '587');
+const EMAIL_USER = process.env.EMAIL_USER || '';
+const EMAIL_PASS = process.env.EMAIL_PASS || '';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@vedicmate.com';
+const EMAIL_TO = process.env.EMAIL_TO || 'vedicmate2025@gmail.com';
+
+let transporter = null;
+if (EMAIL_HOST && EMAIL_USER && EMAIL_PASS) {
+  transporter = nodemailer.createTransport({
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    secure: EMAIL_PORT === 465,
+    auth: {
+      user: EMAIL_USER,
+      pass: EMAIL_PASS,
+    },
+  });
+  console.log('📧 Email transporter configured');
+} else {
+  console.warn('⚠️  Email not configured — set EMAIL_HOST/USER/PASS env vars for order notifications');
+}
+
+function sendEmailNotification(subject, htmlBody) {
+  if (!transporter) {
+    console.log(`📧 Email skipped (no SMTP config): ${subject}`);
+    return;
+  }
+  transporter.sendMail({
+    from: EMAIL_FROM,
+    to: EMAIL_TO,
+    subject: subject,
+    html: htmlBody,
+  }).then(info => {
+    console.log(`📧 Email sent: ${subject} (ID: ${info.messageId})`);
+  }).catch(err => {
+    console.error(`📧 Email failed: ${subject}`, err.message);
+  });
+}
+
+// ============================================================================
 // START SERVER
 // ============================================================================
 
@@ -2879,7 +2977,7 @@ httpServer.listen(PORT, HOST, () => {
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
   console.log(`║  🚀 Server running on http://${HOST}:${PORT}                 ║`);
-  console.log(`║  🌐 Public URL: https://15.207.36.26:${PORT}                 ║`);
+  console.log(`║  🌐 Public URL: https://13.60.233.237:${PORT}                 ║`);
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');

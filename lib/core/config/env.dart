@@ -2,13 +2,13 @@ class EnvConfig {
   // AWS Server Configuration
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://15.207.36.26:3001',
+    defaultValue: 'http://13.60.233.237:3001',
   );
   
-  // AI Service Configuration (ngrok)
+  // AI Service Configuration (local LM Studio by default)
   static const String aiServiceUrl = String.fromEnvironment(
     'AI_SERVICE_URL',
-    defaultValue: 'https://eb1d2d0d4fc8.ngrok-free.app',
+    defaultValue: 'http://localhost:1234',
   );
   
   // Supabase Configuration
