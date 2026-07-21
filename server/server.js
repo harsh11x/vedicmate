@@ -17,6 +17,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
+import os from 'os';
 
 dotenv.config();
 
@@ -2971,13 +2972,37 @@ function sendEmailNotification(subject, htmlBody) {
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
+// Detect available network interfaces dynamically
+const getNetworkIPs = () => {
+  const interfaces = os.networkInterfaces();
+  const ips = [];
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name] || []) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        ips.push(iface.address);
+      }
+    }
+  }
+  return ips;
+};
+
 httpServer.listen(PORT, HOST, () => {
+  const networkIPs = getNetworkIPs();
+  const localURL = `http://localhost:${PORT}`;
+  const networkURLs = networkIPs.length > 0
+    ? networkIPs.map(ip => `http://${ip}:${PORT}`)
+    : ['(No network interface detected)'];
+
   console.log('');
   console.log('╔══════════════════════════════════════════════════════════════╗');
   console.log('║                 VEDIC MATE BACKEND SERVER                    ║');
   console.log('╠══════════════════════════════════════════════════════════════╣');
-  console.log(`║  🚀 Server running on http://${HOST}:${PORT}                 ║`);
-  console.log(`║  🌐 Public URL: https://13.60.233.237:${PORT}                 ║`);
+  console.log(`║  🚀 Server running on port: ${String(PORT).padEnd(44)}║`);
+  console.log(`║  📍 Local:   ${localURL.padEnd(52)}║`);
+  networkURLs.forEach((url, i) => {
+    const label = i === 0 ? '  🌐 Network:' : '  │           ';
+    console.log(`║${label} ${url.padEnd(52)}║`);
+  });
   console.log('║                                                              ║');
   console.log('║  📡 WebSocket: Real-time updates enabled                     ║');
   console.log('║  🛒 Orders: /api/orders, /api/admin/orders                   ║');
@@ -2987,8 +3012,13 @@ httpServer.listen(PORT, HOST, () => {
   console.log('║  📹 Live Sessions: /api/live-sessions                        ║');
   console.log('║  🤖 AI Chat: /api/ai/chat, /api/ai/welcome                   ║');
   console.log('║                                                              ║');
-  console.log(`║  🤖 AI: ${GEMINI_API_KEY ? 'Gemini' : OPENAI_API_KEY ? 'OpenAI' : 'Fallback Mode'}                                        ║`);
+  console.log(`║  🤖 AI: ${(GEMINI_API_KEY ? 'Gemini' : OPENAI_API_KEY ? 'OpenAI' : 'Fallback Mode').padEnd(55)}║`);
   console.log('╚══════════════════════════════════════════════════════════════╝');
   console.log('');
+
+  // Also log to stdout in a simple parseable format for pm2/logs
+  console.log(`[VedicMate] Server started on PORT=${PORT} HOST=${HOST}`);
+  console.log(`[VedicMate] Local: ${localURL}`);
+  networkURLs.forEach(url => console.log(`[VedicMate] Network: ${url}`));
 });
 

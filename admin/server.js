@@ -28,7 +28,7 @@ const httpsOptions = {
     cert: fs.readFileSync(path.join(certsDir, 'server.cert')),
 };
 
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const API_URL = process.env.NEXT_PUBLIC_API_BACKEND || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3001';
 
 const proxy = httpProxy.createProxyServer({
