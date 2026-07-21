@@ -11,7 +11,6 @@ import '../../screens/shared/booking_history_screen.dart';
 import '../../screens/shared/payment_wallet_screen.dart';
 import '../../screens/shared/settings_screen.dart';
 import '../../screens/client/ai_pandit_chat_screen.dart';
-import '../../screens/client/ai_pandit_voice_call_screen.dart';
 import '../../screens/client/wallet_recharge_screen.dart';
 import '../../screens/shared/kundli_generation_screen.dart';
 import '../../screens/shared/edit_profile_screen.dart';
@@ -126,13 +125,6 @@ class AppRouter {
         builder: (context, state) {
           final panditId = state.uri.queryParameters['panditId'] ?? (state.extra as Map<String, dynamic>?)?['panditId'];
           return AIPanditChatScreen(panditId: panditId);
-        },
-      ),
-      GoRoute(
-        path: '/ai-pandit/voice-call',
-        builder: (context, state) {
-          final panditId = state.uri.queryParameters['panditId'] ?? (state.extra as Map<String, dynamic>?)?['panditId'];
-          return AIPanditVoiceCallScreen(panditId: panditId);
         },
       ),
       GoRoute(

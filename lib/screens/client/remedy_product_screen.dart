@@ -27,14 +27,14 @@ class RemedyProductScreen extends ConsumerWidget {
     final productName = remedy['name'] ?? remedy['title'] ?? 'Product';
 
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: AppTheme.divineBackground,
       body: CustomScrollView(
         slivers: [
           // Image Header
           SliverAppBar(
             expandedHeight: 400,
             pinned: true,
-            backgroundColor: AppTheme.white,
+            backgroundColor: AppTheme.divineBackground,
             elevation: 0,
             leading: IconButton(
               icon: Container(
@@ -43,14 +43,16 @@ class RemedyProductScreen extends ConsumerWidget {
                   color: Colors.white.withOpacity(0.9),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.arrow_back, color: AppTheme.neutralDark),
+                child:
+                    const Icon(Icons.arrow_back, color: AppTheme.neutralDark),
               ),
               onPressed: () => context.pop(),
             ),
             actions: [
               Consumer(builder: (context, ref, _) {
                 final cartItems = ref.watch(cartProvider);
-                final itemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
+                final itemCount =
+                    cartItems.fold(0, (sum, item) => sum + item.quantity);
                 return Stack(
                   children: [
                     IconButton(
@@ -60,10 +62,11 @@ class RemedyProductScreen extends ConsumerWidget {
                           color: Colors.white.withOpacity(0.9),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.shopping_cart_outlined, color: AppTheme.neutralDark),
+                        child: const Icon(Icons.shopping_cart_outlined,
+                            color: AppTheme.neutralDark),
                       ),
                       onPressed: () {
-                         context.push('/cart');
+                        context.push('/cart');
                       },
                     ),
                     if (itemCount > 0)
@@ -119,7 +122,7 @@ class RemedyProductScreen extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
-                color: AppTheme.white,
+                color: AppTheme.divineBackground,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
               ),
               transform: Matrix4.translationValues(0, -20, 0),
@@ -138,27 +141,29 @@ class RemedyProductScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Category & Rating
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryOrange.withOpacity(0.1),
+                          color: AppTheme.divineGold.withOpacity(0.14),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          remedy['category'] ?? 'General',
-                          style: TextStyle(
-                            color: AppTheme.primaryOrange,
+                          _displayCategory(remedy['category']),
+                          style: const TextStyle(
+                            color: AppTheme.sacredCopper,
                             fontWeight: FontWeight.w600,
                             fontSize: 12,
                           ),
                         ),
                       ),
                       const Spacer(),
-                      const Icon(Icons.star_rounded, color: AppTheme.accentGold),
+                      const Icon(Icons.star_rounded,
+                          color: AppTheme.accentGold),
                       const SizedBox(width: 4),
                       Text(
                         '4.8 (120 reviews)',
@@ -192,7 +197,8 @@ class RemedyProductScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      if (remedy['originalPrice'] != null && remedy['originalPrice'] > remedy['price']) ...[
+                      if (remedy['originalPrice'] != null &&
+                          remedy['originalPrice'] > remedy['price']) ...[
                         Text(
                           '₹${remedy['originalPrice']}',
                           style: GoogleFonts.outfit(
@@ -203,7 +209,8 @@ class RemedyProductScreen extends ConsumerWidget {
                         ),
                         const SizedBox(width: 12),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.red.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -240,11 +247,12 @@ class RemedyProductScreen extends ConsumerWidget {
                       height: 1.6,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
 
                   // Benefits
-                  if (remedy['benefits'] != null && remedy['benefits'] is List) ...[
+                  if (remedy['benefits'] != null &&
+                      remedy['benefits'] is List) ...[
                     Text(
                       'Key Benefits',
                       style: GoogleFonts.outfit(
@@ -259,16 +267,19 @@ class RemedyProductScreen extends ConsumerWidget {
                       runSpacing: 12,
                       children: (remedy['benefits'] as List).map((benefit) {
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
                           decoration: BoxDecoration(
                             color: AppTheme.neutralSoft,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppTheme.forestBackground),
+                            border:
+                                Border.all(color: AppTheme.forestBackground),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.check_circle_outline, size: 16, color: AppTheme.successGreen),
+                              const Icon(Icons.check_circle_outline,
+                                  size: 16, color: AppTheme.successGreen),
                               const SizedBox(width: 8),
                               Text(
                                 benefit.toString(),
@@ -283,7 +294,7 @@ class RemedyProductScreen extends ConsumerWidget {
                       }).toList(),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 100), // Space for bottom bar
                 ],
               ),
@@ -294,7 +305,8 @@ class RemedyProductScreen extends ConsumerWidget {
       bottomSheet: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.elevatedSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -310,11 +322,11 @@ class RemedyProductScreen extends ConsumerWidget {
                 child: OutlinedButton(
                   onPressed: () {
                     ref.read(cartProvider.notifier).addToCart(
-                      remedy['id'],
-                      productName,
-                      (remedy['price'] as num).toDouble(),
-                      imageUrl,
-                    );
+                          remedy['id'],
+                          productName,
+                          (remedy['price'] as num).toDouble(),
+                          imageUrl,
+                        );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('$productName added to cart'),
@@ -344,13 +356,10 @@ class RemedyProductScreen extends ConsumerWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Purchase is not available for this item.'),
-                        backgroundColor: AppTheme.primaryOrange,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    context.push('/checkout', extra: {
+                      'item': remedy,
+                      'isDirectBuy': true,
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -377,9 +386,10 @@ class RemedyProductScreen extends ConsumerWidget {
       ),
     );
   }
+
   Widget _buildImage(String path) {
     if (path.isEmpty) return _buildPlaceholder();
-    
+
     if (path.startsWith('http')) {
       return Image.network(
         path,
@@ -387,32 +397,59 @@ class RemedyProductScreen extends ConsumerWidget {
         errorBuilder: (_, __, ___) => _buildPlaceholder(),
       );
     } else if (path.startsWith('assets/')) {
-        return Image.network(
+      return Image.network(
           // HARDCODING BASE URL FOR NOW TO ENSURE IT WORKS
-          '${EnvConfig.apiBaseUrl}/$path', 
+          '${EnvConfig.apiBaseUrl}/$path',
+          fit: BoxFit.cover, errorBuilder: (context, error, stack) {
+        return Image.asset(
+          path,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stack) {
-             return Image.asset(
-                path,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _buildPlaceholder(),
-             );
-          }
+          errorBuilder: (_, __, ___) => _buildPlaceholder(),
         );
-    } 
+      });
+    }
     return _buildPlaceholder();
   }
 
   Widget _buildPlaceholder() {
     return Container(
-      color: AppTheme.forestBackground,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.sandalwood.withOpacity(0.9),
+            AppTheme.divineSurface,
+            AppTheme.divineGold.withOpacity(0.18),
+          ],
+        ),
+      ),
       child: Center(
-        child: Icon(
-          Icons.spa,
-          size: 80,
-          color: AppTheme.primaryOrange.withOpacity(0.3),
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            color: AppTheme.divineInk,
+            shape: BoxShape.circle,
+            border: Border.all(color: AppTheme.divineGold.withOpacity(0.35)),
+          ),
+          child: const Icon(
+            Icons.spa_rounded,
+            size: 58,
+            color: AppTheme.divineGoldLight,
+          ),
         ),
       ),
     );
+  }
+
+  String _displayCategory(dynamic category) {
+    final raw = (category ?? 'General').toString();
+    return raw
+        .replaceAll('-', ' ')
+        .split(' ')
+        .where((part) => part.isNotEmpty)
+        .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
+        .join(' ');
   }
 }

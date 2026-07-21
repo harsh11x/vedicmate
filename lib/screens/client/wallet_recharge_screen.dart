@@ -5,8 +5,7 @@ import '../../core/theme/app_theme.dart';
 import '../../providers/wallet_provider.dart';
 import '../../services/wallet_service.dart';
 import '../../services/auth_service.dart';
-import '../../services/payu_service.dart';
-import '../../services/iap_service.dart';
+import '../../services/razorpay_payment_service.dart';
 import '../../widgets/abstract_background.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
@@ -19,45 +18,26 @@ class WalletScreen extends ConsumerStatefulWidget {
 class _WalletScreenState extends ConsumerState<WalletScreen> {
   final WalletService _walletService = WalletService();
   final AuthService _authService = AuthService();
-  final PayUService _payUService = PayUService();
-  final IAPService _iapService = IAPService();
+  final RazorpayPaymentService _razorpayService = RazorpayPaymentService();
 
   bool _isLoading = true;
-  bool _isRestoring = false;
+  bool _isProcessingRecharge = false;
   List<Map<String, dynamic>> _transactions = [];
+  
+  // Wallet credit amounts
+  final List<int> _rechargeAmounts = [50, 100, 200, 500, 1000, 2000, 5000];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchData();
-      _iapService.init();
-    });
+    _razorpayService.initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchData());
   }
 
   @override
   void dispose() {
-    _iapService.dispose();
+    _razorpayService.dispose();
     super.dispose();
-  }
-
-  Future<void> _restorePurchases() async {
-    setState(() => _isRestoring = true);
-    try {
-      final result = await _iapService.restorePurchases();
-      if (mounted) {
-        ref.invalidate(walletBalanceProvider);
-        await _fetchData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result.message),
-            backgroundColor: result.restored ? AppTheme.successGreen : AppTheme.errorRed,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isRestoring = false);
-    }
   }
 
   Future<void> _fetchData() async {
@@ -79,6 +59,51 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         if (mounted) {
           setState(() => _isLoading = false);
         }
+      }
+    }
+  }
+
+  Future<void> _initiateRecharge(int amount) async {
+    final user = _authService.currentUser;
+    if (user == null) {
+      _showError('Please login to recharge your wallet.');
+      return;
+    }
+
+    if (_isProcessingRecharge) return;
+    setState(() => _isProcessingRecharge = true);
+
+    try {
+      final result = await _razorpayService.pay(
+        amount: amount.toDouble(),
+        userId: user.uid,
+        userName: user.displayName ?? 'User',
+        userEmail: user.email ?? 'user@example.com',
+        userPhone: user.phoneNumber ?? '9999999999',
+        description: 'Wallet recharge',
+        purpose: 'wallet_recharge',
+        metadata: {'walletAmount': amount},
+      );
+
+      if (!mounted) return;
+
+      if (result.success) {
+        await _handlePaymentSuccess(
+          user.uid,
+          amount.toDouble(),
+          result.paymentId ??
+              result.orderId ??
+              'RAZORPAY_${DateTime.now().millisecondsSinceEpoch}',
+        );
+      } else {
+        _showError(result.error ?? 'Payment failed or was cancelled.');
+      }
+    } catch (e) {
+      _showError(
+          'Unable to start Razorpay. Add server keys and try again.\n$e');
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessingRecharge = false);
       }
     }
   }
@@ -109,9 +134,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       }
     } catch (e) {
       _showError('Error updating wallet: $e');
-    } finally {
-       if (mounted) setState(() => _isLoading = false);
-    }
+    } finally {}
   }
 
   void _showError(String message) {
@@ -150,23 +173,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         _buildBalanceCard(),
                         const SizedBox(height: 24),
 
-                        // Restore Purchases
-                        OutlinedButton.icon(
-                          onPressed: _isRestoring ? null : _restorePurchases,
-                          icon: _isRestoring
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.restore),
-                          label: Text(_isRestoring ? 'Restoring...' : 'Restore Purchases'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppTheme.primaryOrange,
-                            side: const BorderSide(color: AppTheme.primaryOrange),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                        ),
+                        // Recharge Options
+                        _buildRechargeGrid(),
                         const SizedBox(height: 24),
 
                         // Transactions
@@ -242,6 +250,99 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRechargeGrid() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: AppTheme.glassMorphism,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Add Money',
+            style: GoogleFonts.outfit(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.neutralDark,
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (_isProcessingRecharge)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Opening Razorpay checkout...',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      color: AppTheme.neutralMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.5,
+            ),
+            itemCount: _rechargeAmounts.length,
+            itemBuilder: (context, index) {
+              final amount = _rechargeAmounts[index];
+              return _buildRechargeCard(amount);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRechargeCard(int amount) {
+    return InkWell(
+      onTap: _isProcessingRecharge ? null : () => _initiateRecharge(amount),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: _isProcessingRecharge
+              ? AppTheme.white.withOpacity(0.7)
+              : AppTheme.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '₹$amount',
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryOrange,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

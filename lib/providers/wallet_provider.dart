@@ -12,7 +12,8 @@ final walletServiceProvider = Provider<WalletService>((ref) {
 final currentUserIdProvider = Provider<String?>((ref) {
   try {
     final user = FirebaseAuth.instance.currentUser;
-    return user?.uid;
+    if (user == null || user.isAnonymous) return null;
+    return user.uid;
   } catch (e) {
     return null;
   }
@@ -37,7 +38,8 @@ final walletProvider = FutureProvider<UserWallet>((ref) async {
 });
 
 // Wallet Transactions Provider
-final walletTransactionsProvider = FutureProvider<List<WalletTransaction>>((ref) async {
+final walletTransactionsProvider =
+    FutureProvider<List<WalletTransaction>>((ref) async {
   final walletService = ref.watch(walletServiceProvider);
   final userId = ref.watch(currentUserIdProvider);
   if (userId == null) return [];
@@ -46,7 +48,8 @@ final walletTransactionsProvider = FutureProvider<List<WalletTransaction>>((ref)
 
 // Notifier for wallet operations that refresh the balance
 class WalletNotifier extends StateNotifier<AsyncValue<double>> {
-  WalletNotifier(this._walletService, this._userId) : super(const AsyncValue.loading()) {
+  WalletNotifier(this._walletService, this._userId)
+      : super(const AsyncValue.loading()) {
     _loadBalance();
   }
 
@@ -54,6 +57,10 @@ class WalletNotifier extends StateNotifier<AsyncValue<double>> {
   final String _userId;
 
   Future<void> _loadBalance() async {
+    if (_userId.isEmpty) {
+      state = const AsyncValue.data(0.0);
+      return;
+    }
     state = const AsyncValue.loading();
     try {
       final balance = await _walletService.getBalance(_userId);
@@ -65,6 +72,7 @@ class WalletNotifier extends StateNotifier<AsyncValue<double>> {
 
   Future<bool> addMoney(double amount, String paymentId) async {
     try {
+      if (_userId.isEmpty) return false;
       final success = await _walletService.addMoney(_userId, amount, paymentId);
       if (success) {
         await _loadBalance();
@@ -75,9 +83,12 @@ class WalletNotifier extends StateNotifier<AsyncValue<double>> {
     }
   }
 
-  Future<bool> deductMoney(double amount, String description, {String? referenceId}) async {
+  Future<bool> deductMoney(double amount, String description,
+      {String? referenceId}) async {
     try {
-      final success = await _walletService.deductMoney(_userId, amount, description, referenceId: referenceId);
+      if (_userId.isEmpty) return false;
+      final success = await _walletService
+          .deductMoney(_userId, amount, description, referenceId: referenceId);
       if (success) {
         await _loadBalance();
       }
@@ -93,13 +104,15 @@ class WalletNotifier extends StateNotifier<AsyncValue<double>> {
 }
 
 // Wallet Notifier Provider
-final walletNotifierProvider = StateNotifierProvider<WalletNotifier, AsyncValue<double>>((ref) {
+final walletNotifierProvider =
+    StateNotifierProvider<WalletNotifier, AsyncValue<double>>((ref) {
   final walletService = ref.watch(walletServiceProvider);
   final userId = ref.watch(currentUserIdProvider);
-  
-  // Handle guest users
-  final finalUserId = userId ?? 'anonymous';
-  
-  return WalletNotifier(walletService, finalUserId);
-});
 
+  if (userId == null) {
+    return WalletNotifier(
+        walletService, ''); // Will fail closed in WalletService usage
+  }
+
+  return WalletNotifier(walletService, userId);
+});

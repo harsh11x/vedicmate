@@ -17,7 +17,6 @@ class PanditRatesScreen extends StatefulWidget {
 
 class _PanditRatesScreenState extends State<PanditRatesScreen> {
   final _videoCallController = TextEditingController();
-  final _audioCallController = TextEditingController();
   final _chatController = TextEditingController();
   bool _isLoading = false;
 
@@ -26,21 +25,18 @@ class _PanditRatesScreenState extends State<PanditRatesScreen> {
     super.initState();
     // Load existing rates if any
     _videoCallController.text = '5';
-    _audioCallController.text = '3';
     _chatController.text = '2';
   }
 
   @override
   void dispose() {
     _videoCallController.dispose();
-    _audioCallController.dispose();
     _chatController.dispose();
     super.dispose();
   }
 
   void _saveRates() {
     if (_videoCallController.text.isEmpty ||
-        _audioCallController.text.isEmpty ||
         _chatController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -143,14 +139,6 @@ class _PanditRatesScreenState extends State<PanditRatesScreen> {
               title: 'Video Call',
               subtitle: 'Rate per minute for video consultations',
               controller: _videoCallController,
-            ),
-            const SizedBox(height: 12),
-            // Audio Call Rate
-            _RateInputCard(
-              icon: Icons.phone,
-              title: 'Voice Call',
-              subtitle: 'Rate per minute for audio consultations',
-              controller: _audioCallController,
             ),
             const SizedBox(height: 12),
             // Chat Rate

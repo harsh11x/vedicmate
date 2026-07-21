@@ -10,6 +10,10 @@ final authStateProvider = StreamProvider<User?>((ref) async* {
   final authService = ref.watch(authServiceProvider);
   // Yield current user immediately to prevent "Loading" state from blocking routes
   // This ensures we start with AsyncData(user) or AsyncData(null), not AsyncLoading
-  yield authService.currentUser;
-  yield* authService.userChanges();
+  final currentUser = authService.currentUser;
+  yield currentUser?.isAnonymous == true ? null : currentUser;
+  yield* authService.userChanges().map((user) {
+    if (user?.isAnonymous == true) return null;
+    return user;
+  });
 });

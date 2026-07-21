@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../widgets/abstract_background.dart';
 import 'widgets/kundli_chart_widgets.dart';
@@ -10,8 +11,6 @@ import 'dart:io';
 import 'package:printing/printing.dart';
 import '../../../../services/astronomy/astronomy_service.dart';
 import '../../../../services/insights/insight_service.dart';
-import '../../../../services/wallet_pass_service.dart';
-import 'package:add_to_google_wallet/widgets/add_to_google_wallet_button.dart';
 
 class KundliDetailsScreen extends StatefulWidget {
   final String name;
@@ -97,19 +96,19 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
+      backgroundColor: AppTheme.divineBackground,
       appBar: AppBar(
-        title: const Text('Your Kundli', style: TextStyle(color: AppTheme.neutralDark, fontWeight: FontWeight.bold)),
+        title: Text('Your Kundli', style: GoogleFonts.cormorantGaramond(color: AppTheme.divineInk, fontSize: 26, fontWeight: FontWeight.w600)),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: BackButton(color: AppTheme.neutralDark),
+        leading: BackButton(color: AppTheme.divineInk),
         actions: [
           IconButton(
-            icon: Icon(Icons.download_rounded, color: AppTheme.primaryOrange),
+            icon: Icon(Icons.download_rounded, color: AppTheme.divineGold),
             onPressed: () => _showDownloadOptions(context),
           ),
           IconButton(
-            icon: Icon(Icons.chat_bubble_outline_rounded, color: AppTheme.primaryOrange),
+            icon: Icon(Icons.chat_bubble_outline_rounded, color: AppTheme.divineGold),
             onPressed: () {
               // Open Chat
               showModalBottomSheet(
@@ -123,10 +122,12 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
         ],
         bottom: TabBar(
           controller: _tabController,
-          labelColor: AppTheme.primaryOrange,
-          unselectedLabelColor: AppTheme.neutralMedium,
-          indicatorColor: AppTheme.primaryOrange,
+          labelColor: AppTheme.divineGold,
+          unselectedLabelColor: AppTheme.textGrey,
+          indicatorColor: AppTheme.divineGold,
           isScrollable: true,
+          labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14),
+          unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.normal, fontSize: 14),
           tabs: const [
             Tab(text: "Basic"),
             Tab(text: "Charts"),
@@ -136,8 +137,7 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
           ],
         ),
       ),
-      body: AbstractBackground(
-        child: TabBarView(
+      body: TabBarView(
           controller: _tabController,
           children: [
             _buildBasicDetailsTab(),
@@ -147,7 +147,6 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
             _buildReportTab(),
           ],
         ),
-      ),
     );
   }
 
@@ -203,32 +202,32 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.divineSurface,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: AppTheme.softShadow,
+              border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 const Text("Planetary Strength (Shadbala)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                 Text("Planetary Strength (Shadbala)", style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.divineInk)),
                  const SizedBox(height: 12),
                  ...shadbala.entries.map((e) {
                    return Padding(
                      padding: const EdgeInsets.symmetric(vertical: 4),
                      child: Row(
                        children: [
-                         SizedBox(width: 80, child: Text(e.key, style: const TextStyle(fontWeight: FontWeight.w500))),
+                         SizedBox(width: 80, child: Text(e.key, style: TextStyle(fontWeight: FontWeight.w500, color: AppTheme.textGrey))),
                          Expanded(
                            child: LinearProgressIndicator(
                              value: e.value / 100, 
-                             backgroundColor: Colors.grey[200],
+                             backgroundColor: AppTheme.divineBackground,
                              color: _getStrengthColor(e.value),
                              minHeight: 8,
                              borderRadius: BorderRadius.circular(4),
                            ),
                          ),
                          const SizedBox(width: 12),
-                         Text("${e.value.toStringAsFixed(1)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                         Text("${e.value.toStringAsFixed(1)}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.divineInk)),
                        ],
                      ),
                    );
@@ -376,14 +375,14 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
           _buildInfoCard("Your Basic Nature (Lagna)", [
              Padding(
                padding: const EdgeInsets.symmetric(vertical: 8.0),
-               child: Text(nature, style: const TextStyle(fontSize: 16)),
+               child: Text(nature, style: TextStyle(fontSize: 16, color: AppTheme.textGrey)),
              ),
           ]),
           const SizedBox(height: 16),
           _buildInfoCard("Emotional Mindset (Moon)", [
              Padding(
                padding: const EdgeInsets.symmetric(vertical: 8.0),
-               child: Text(mindset, style: const TextStyle(fontSize: 16)),
+               child: Text(mindset, style: TextStyle(fontSize: 16, color: AppTheme.textGrey)),
              ),
           ]),
           const SizedBox(height: 16),
@@ -400,16 +399,16 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
   Widget _buildListCard(String title, List<String> items) {
      return _buildInfoCard(title, [
         if (items.isEmpty) 
-          const Padding(padding: EdgeInsets.all(8.0), child: Text("No specific indicators found."))
+          Padding(padding: const EdgeInsets.all(8.0), child: Text("No specific indicators found.", style: TextStyle(color: AppTheme.textGrey)))
         else
           ...items.map((item) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.circle, size: 8, color: AppTheme.primaryOrange),
+                const Icon(Icons.circle, size: 8, color: AppTheme.divineGold),
                 const SizedBox(width: 8),
-                Expanded(child: Text(item, style: const TextStyle(fontSize: 15))),
+                Expanded(child: Text(item, style: TextStyle(fontSize: 15, color: AppTheme.textGrey))),
               ],
             ),
           )),
@@ -429,18 +428,18 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("General Predictions", style: Theme.of(context).textTheme.headlineSmall),
+          Text("General Predictions", style: GoogleFonts.cormorantGaramond(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.divineInk)),
           const SizedBox(height: 10),
           Text(
             "Your chart indicates a strong personality with leadership qualities. The placement of Sun in the 5th house brings creativity and intelligence...",
-            style: TextStyle(height: 1.5, color: AppTheme.neutralDark),
+            style: TextStyle(height: 1.5, color: AppTheme.textGrey),
           ),
           const SizedBox(height: 20),
-          Text("Health", style: Theme.of(context).textTheme.titleLarge),
-          const Text("Generally good health, but watch out for stomach related issues."),
+          Text("Health", style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.divineInk)),
+          Text("Generally good health, but watch out for stomach related issues.", style: TextStyle(color: AppTheme.textGrey)),
           const SizedBox(height: 20),
-          Text("Career", style: Theme.of(context).textTheme.titleLarge),
-          const Text("Great prospects in management, administration or any creative field."),
+          Text("Career", style: GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.divineInk)),
+          Text("Great prospects in management, administration or any creative field.", style: TextStyle(color: AppTheme.textGrey)),
         ],
       ),
     );
@@ -450,15 +449,15 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: AppTheme.divineSurface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.softShadow,
+        border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppTheme.primaryOrange)),
-          const Divider(),
+          Text(title, style: GoogleFonts.cormorantGaramond(fontWeight: FontWeight.bold, fontSize: 22, color: AppTheme.divineInk)),
+          Divider(color: AppTheme.divineGold.withOpacity(0.2)),
           ...children,
         ],
       ),
@@ -471,8 +470,8 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: AppTheme.neutralMedium, fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(color: AppTheme.textGrey, fontWeight: FontWeight.w500)),
+          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.divineInk)),
         ],
       ),
     );
@@ -515,24 +514,16 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
                 },
               ),
             if (Platform.isAndroid)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: AddToGoogleWalletButton(
-                  pass: WalletPassService().generateGoogleWalletPassJson(
-                    name: widget.name,
-                    dob: "${widget.dateOfBirth.day}/${widget.dateOfBirth.month}/${widget.dateOfBirth.year}",
-                    tob: widget.timeOfBirth,
-                    pob: widget.placeOfBirth,
-                    rashi: _lagnaData?['rashi'] ?? 'Unknown',
-                    nakshatra: 'Rohini',
-                  ),
-                  onSuccess: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Successfully added to Google Wallet!'), backgroundColor: Colors.green),
-                  ),
-                  onError: (error) => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Google Wallet Error: $error'), backgroundColor: Colors.red),
-                  ),
-                ),
+              ListTile(
+                leading: const Icon(Icons.wallet, color: Colors.black),
+                title: const Text('Add to Google Wallet'),
+                subtitle: const Text('Coming soon'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Google Wallet support is coming soon.')),
+                  );
+                },
               ),
           ],
         ),
@@ -566,7 +557,7 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: const BoxDecoration(
-                      color: AppTheme.primaryOrange,
+                      color: AppTheme.divineGold,
                       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Row(
@@ -754,9 +745,9 @@ class _KundliDetailsScreenState extends State<KundliDetailsScreen> with SingleTi
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppTheme.divineBackground,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: KundliChatWidget(
         contextTopic: topic,

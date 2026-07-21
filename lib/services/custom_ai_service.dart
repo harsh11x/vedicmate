@@ -9,7 +9,7 @@ class CustomAIService {
   /// Get welcome message based on pandit personality
   Future<String> getWelcomeMessage({String? panditId}) async {
     if (panditId == null) {
-      return 'Namaste! Welcome to Vedic Mate. I\'m here to help you with Vedic astrology and spiritual guidance. How may I assist you today? 🙏';
+      return 'Namaste! Welcome to Vedic Mate. I\'m here to help with cultural wellness, reflection, rituals, and spiritual guidance. How may I assist you today? 🙏';
     }
 
     final pandit = AIPandits.getById(panditId);
@@ -18,7 +18,7 @@ class CustomAIService {
     }
 
     final name = pandit.name;
-    final specializations = pandit.specializations.first;
+    final specializations = pandit.publicSpecializations.first;
     final experience = pandit.experienceYears;
 
     // Personalized greetings based on pandit characteristics
@@ -39,7 +39,7 @@ class CustomAIService {
     }
 
     if (pandit.gender == 'female') {
-      return 'Namaste! I\'m $name, specializing in $specializations. I\'m here to help you with Vedic guidance. What can I assist you with today? 🙏';
+      return 'Namaste! I\'m $name, specializing in $specializations. I\'m here to help you with reflective Vedic guidance. What can I assist you with today? 🙏';
     }
 
     return 'Namaste! I\'m $name, specializing in $specializations. With $experience years of experience, I\'m here to help you. What would you like to know?';
@@ -127,8 +127,10 @@ class CustomAIService {
       return _getRemedyResponse(pandit, isFormal, isSpiritual, isWarm);
     }
 
-    if (lowerMessage.contains('future') || lowerMessage.contains('prediction') || lowerMessage.contains('what will happen')) {
-      return _getPredictionResponse(pandit, isFormal, isSpiritual, isWarm);
+    if (lowerMessage.contains('future') ||
+        lowerMessage.contains('prediction') ||
+        lowerMessage.contains('what will happen')) {
+      return _getReflectionResponse(pandit, isFormal, isSpiritual, isWarm);
     }
 
     // Greeting responses
@@ -148,12 +150,12 @@ class CustomAIService {
   String _getKundliResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isFormal)
-        'I understand you\'re asking about Kundli analysis. As an expert in ${pandit.specializations.first}, I can help you understand your birth chart. Please share your birth details (date, time, place) for a detailed analysis. The planetary positions at the time of your birth reveal important insights about your life path.',
+        'I understand you\'re asking for a personal profile. As an expert in ${pandit.publicSpecializations.first}, I can help you reflect on patterns and routines. Please share your details so I can personalize the guidance.',
       if (isSpiritual)
-        'Kundli, or Janam Patrika, is a divine map of your soul\'s journey. The planets and their positions at your birth time reveal your karmic patterns. Share your birth details, and I will help you understand the cosmic influences shaping your destiny.',
+        'A traditional birth profile can be used as a reflective cultural tool. Share your details, and I will help you explore themes, rituals, and practical next steps without treating them as guaranteed outcomes.',
       if (isWarm)
-        'I\'d be happy to help you with your Kundli! Your birth chart is like a blueprint of your life. To give you accurate guidance, please share your birth date, time, and place. I\'ll analyze it with care and compassion. 🙏',
-      'Kundli analysis is one of my specialties. Your birth chart reveals your planetary positions and their effects on your life. Please share your complete birth details (date, time, place) so I can provide you with accurate insights.',
+        'I\'d be happy to help with your personal profile. Please share your birth date, time, and place, and I\'ll respond with care, context, and practical reflection prompts. 🙏',
+      'Personal profile guidance is one of my specialties. Please share your complete details so I can provide culturally rooted, reflective guidance.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -163,8 +165,8 @@ class CustomAIService {
       if (isWarm)
         'Relationships are beautiful aspects of life that need care and understanding. I\'m here to help you with love and relationship guidance. Could you share more details about your situation? Whether it\'s about compatibility, timing, or challenges, I\'ll guide you with empathy. 💕',
       if (isSpiritual)
-        'Love is a divine connection between souls. The planets influence our relationships and compatibility. Share your concerns, and I will guide you through the cosmic wisdom to find harmony in your relationships.',
-      'Relationship guidance is important. Based on my experience in ${pandit.specializations.first}, I can help you understand compatibility, timing, and remedies. Please share more details about your relationship situation.',
+        'Love is a meaningful connection that benefits from patience, communication, and self-awareness. Share your concerns, and I will help you reflect on harmony in your relationship.',
+      'Relationship guidance is important. Based on my experience in ${pandit.publicSpecializations.first}, I can help you reflect on compatibility, communication, and supportive routines. Please share more details.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -172,8 +174,8 @@ class CustomAIService {
   String _getCareerResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isFormal)
-        'Career guidance is one of my specialties. The planets in your chart influence your professional life. To provide accurate guidance, I need to analyze your birth chart. Please share your birth details, and I\'ll help you understand the best career path and timing for opportunities.',
-      'Career and profession are influenced by planetary positions. I can help you understand the best career direction, timing for job changes, and remedies for professional growth. Share your birth details for a detailed analysis.',
+        'Career guidance is one of my specialties. I can help you reflect on strengths, timing, routines, and decision-making. Share your details and current situation for personalized guidance.',
+      'I can help you think through career direction, job changes, and practical steps for professional growth. Share your details for a reflective session.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -181,16 +183,16 @@ class CustomAIService {
   String _getHealthResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (pandit.specializations.any((s) => s.contains('Health') || s.contains('Medical')))
-        'As a medical astrologer, I combine Ayurvedic wisdom with Jyotish to understand health patterns. The planets influence our physical and mental well-being. Please share your birth details and health concerns, and I\'ll guide you with appropriate remedies.',
-      'Health is influenced by planetary positions. While I can provide astrological guidance, please also consult medical professionals for serious health issues. Share your birth details and concerns, and I\'ll help you understand the astrological factors.',
+        'I can discuss Ayurveda-inspired wellness patterns and reflective routines. Please also consult qualified medical professionals for health concerns.',
+      'For wellness questions, I can suggest reflective routines and cultural practices. Please consult medical professionals for diagnosis, treatment, or serious symptoms.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
 
   String _getMoneyResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
-      'Financial prosperity is influenced by planets like Jupiter and Venus. I can help you understand the timing for financial gains, remedies for wealth, and ways to improve your financial situation. Share your birth details for personalized guidance.',
-      'Money and wealth are governed by specific planets in your chart. Through astrological analysis, I can guide you on auspicious times for investments, remedies for financial growth, and ways to attract prosperity.',
+      'I can help you reflect on money habits, discipline, and practical routines for financial wellbeing. This is not financial advice.',
+      'For finance questions, I can offer reflective prompts and cultural practices for focus and discipline. Please consult a qualified financial advisor before making investment decisions.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -198,8 +200,8 @@ class CustomAIService {
   String _getEducationResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isWarm)
-        'Education is a precious gift! I\'d be happy to help you with educational guidance. The planets influence learning, memory, and academic success. Share your birth details or your child\'s details, and I\'ll provide guidance on studies, exams, and career choices. 📚',
-      'Educational success is influenced by Mercury and Jupiter in your chart. I can help you understand the best subjects, timing for exams, and remedies for academic excellence. Please share birth details for analysis.',
+        'Education is a precious gift! I\'d be happy to help with study routines, focus, and reflective planning for exams or subject choices. 📚',
+      'I can help you plan study habits, focus rituals, and reflective routines for academic growth.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -216,8 +218,8 @@ class CustomAIService {
   String _getNumerologyResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (pandit.specializations.any((s) => s.contains('Numerology')))
-        'Numerology is my expertise! Numbers have deep spiritual significance. I can analyze your name, birth date, and life path number to provide guidance. Please share your full name and date of birth for a detailed numerological analysis.',
-      'Numerology reveals insights through numbers. Your name and birth date carry numerical vibrations that influence your life. Share your details, and I\'ll help you understand your numerological profile.',
+        'Life planning is my expertise. I can use your name and date as reflective prompts to discuss routines, priorities, and planning.',
+      'Your name and date can be used as a reflective framework. Share your details, and I\'ll help you build a practical planning profile.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -225,19 +227,19 @@ class CustomAIService {
   String _getRemedyResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isSpiritual)
-        'Remedies are powerful tools to balance planetary influences. Based on your chart, I can suggest mantras, gemstones, pujas, and other remedies. Please share your birth details and the specific issue you\'re facing, and I\'ll provide personalized remedies.',
-      'Vedic remedies can help balance planetary energies and resolve issues. I can suggest appropriate remedies like gemstones, mantras, pujas, or lifestyle changes. Share your birth details and concerns for personalized guidance.',
+        'Remedies can be meaningful cultural routines for reflection and discipline. Share the issue you\'re facing, and I\'ll suggest suitable mantras, puja practices, or lifestyle steps.',
+      'I can suggest cultural remedies such as mantras, puja practices, or lifestyle changes for reflective support. Share your concern for personalized guidance.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
 
-  String _getPredictionResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
+  String _getReflectionResponse(AIPanditModel pandit, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isFormal)
-        'Future predictions require detailed analysis of your birth chart and current planetary transits. Please share your complete birth details (date, time, place), and I\'ll provide insights about upcoming periods in your life.',
+        'I can help you reflect on possibilities and prepare for upcoming decisions, but I cannot guarantee future outcomes. Share your context and I\'ll guide you thoughtfully.',
       if (isSpiritual)
-        'The future is written in the stars, but it\'s not fixed. Through your birth chart, I can see the patterns and possibilities ahead. Share your birth details, and I\'ll guide you on what the planets reveal about your future.',
-      'I can provide predictions based on your birth chart and planetary movements. For accurate insights, please share your complete birth details (date, time, place of birth).',
+        'The future is shaped by choices, habits, and circumstances. I can help you reflect on patterns and prepare with clarity.',
+      'I can offer reflective guidance about possibilities and next steps, not guaranteed predictions. Please share more about your situation.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -255,12 +257,12 @@ class CustomAIService {
   String _getQuestionResponse(AIPanditModel pandit, String message, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isFormal)
-        'That\'s an interesting question. To provide you with accurate guidance, I would need to analyze your birth chart. Please share your birth details (date, time, place), and I\'ll give you a detailed answer based on Vedic astrology principles.',
+        'That\'s an interesting question. Please share some context, and I\'ll offer reflective guidance using Vedic wellness principles.',
       if (isSpiritual)
-        'A thoughtful question indeed. The answer lies in understanding your karmic patterns and planetary influences. Share your birth details, and I\'ll help you find clarity through cosmic wisdom.',
+        'A thoughtful question indeed. We can explore your patterns, choices, and supportive practices to help you find clarity.',
       if (isWarm)
-        'I\'d be happy to help you with that! To give you the best guidance, I\'ll need your birth details. Please share your date, time, and place of birth, and I\'ll provide you with personalized insights. 🙏',
-      'To answer your question accurately, I need to analyze your birth chart. Please share your complete birth details (date, time, place), and I\'ll provide you with detailed guidance.',
+        'I\'d be happy to help you with that! Share a little more context, and I\'ll provide thoughtful, personalized guidance. 🙏',
+      'To answer well, I need a little more context about your situation. I\'ll provide reflective guidance and practical next steps.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -268,12 +270,12 @@ class CustomAIService {
   String _getDefaultResponse(AIPanditModel pandit, String message, bool isFormal, bool isSpiritual, bool isWarm) {
     final responses = [
       if (isWarm)
-        'Thank you for sharing that with me. As ${pandit.name}, I specialize in ${pandit.specializations.first}. To provide you with the best guidance, could you share your birth details (date, time, place)? This will help me give you personalized insights. 🙏',
+        'Thank you for sharing that with me. As ${pandit.name}, I specialize in ${pandit.publicSpecializations.first}. Could you share a little more context so I can personalize the guidance? 🙏',
       if (isFormal)
-        'I understand. Based on my ${pandit.experienceYears} years of experience in ${pandit.specializations.first}, I can help you. Please share your birth details for a detailed analysis, and I\'ll provide you with accurate guidance.',
+        'I understand. Based on my ${pandit.experienceYears} years of experience in ${pandit.publicSpecializations.first}, I can help you reflect on this and choose practical next steps.',
       if (isSpiritual)
-        'I hear you, seeker. The cosmos has answers for your concerns. Share your birth details, and I\'ll help you understand the divine plan for your life through Vedic wisdom.',
-      'Thank you for your message. I specialize in ${pandit.specializations.first} and would be happy to help. Please share your birth details (date, time, place) so I can provide you with personalized astrological guidance.',
+        'I hear you, seeker. Let us approach this with calm reflection, cultural wisdom, and practical steps.',
+      'Thank you for your message. I specialize in ${pandit.publicSpecializations.first} and would be happy to help with reflective Vedic guidance.',
     ];
     return responses[Random().nextInt(responses.length)];
   }
@@ -282,18 +284,18 @@ class CustomAIService {
     final lowerMessage = message.toLowerCase();
     
     if (lowerMessage.contains('kundli') || lowerMessage.contains('birth chart')) {
-      return 'I can help you with Kundli analysis. Please share your birth details (date, time, place) for a detailed reading.';
+      return 'I can help you with a personal profile for reflection. Please share your details for culturally rooted guidance.';
     }
     
     if (lowerMessage.contains('love') || lowerMessage.contains('relationship')) {
-      return 'I can help you with relationship guidance. Share your birth details and concerns, and I\'ll provide insights.';
+      return 'I can help you with relationship guidance. Share your concerns, and I\'ll provide reflective prompts and practical next steps.';
     }
     
     if (lowerMessage.contains('career') || lowerMessage.contains('job')) {
-      return 'Career guidance is available. Please share your birth details for personalized advice.';
+      return 'Career guidance is available. Share your current situation for reflective planning support.';
     }
     
-    return 'I\'m here to help you with Vedic astrology and spiritual guidance. Please share your birth details (date, time, place) so I can provide you with accurate insights.';
+    return 'I\'m here to help with cultural wellness, reflection, rituals, and spiritual guidance. Share what you need help with, and I\'ll respond thoughtfully.';
   }
 
   String _getSpeakingStyle(AIPanditModel pandit) {

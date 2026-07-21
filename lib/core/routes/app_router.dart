@@ -13,9 +13,7 @@ import '../../screens/shared/booking_scheduling_screen.dart';
 import '../../screens/shared/video_call_screen.dart';
 import '../../screens/shared/chat_screen.dart';
 import '../../screens/shared/booking_history_screen.dart';
-import '../../screens/shared/payment_wallet_screen.dart';
 import '../../screens/shared/settings_screen.dart';
-import '../../screens/client/ai_pandit_coming_soon_screen.dart';
 import '../../screens/client/ai_pandit_chat_list_screen.dart';
 import '../../screens/client/ai_pandit_chat_screen.dart';
 import '../../screens/client/ai_pandit_voice_call_screen.dart';
@@ -32,7 +30,6 @@ import '../../screens/services/palm_reading_input_screen.dart';
 import '../../screens/services/vastu_input_screen.dart';
 import '../../screens/client/remedy_product_screen.dart';
 import '../../screens/client/cart_screen.dart';
-import '../../screens/client/checkout_screen.dart';
 import '../../screens/client/custom_booking_screen.dart';
 import '../../screens/auth/splash_screen.dart';
 import '../../screens/client/kundli/create_kundli_screen.dart';
@@ -57,20 +54,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 final initialRouteProvider = Provider<String>((ref) => '/splash');
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
-  final initialRoute = ref.watch(initialRouteProvider);
-  
-  // Create a listenable that notifies when auth state changes
-  final authListenable = ValueNotifier<AsyncValue<User?>>(authState);
+  // Do not watch authState here — rebuilding GoRouter resets the nav stack to splash/home.
+  final initialRoute = ref.read(initialRouteProvider);
+
+  final authListenable = ValueNotifier<AsyncValue<User?>>(ref.read(authStateProvider));
   ref.listen(authStateProvider, (_, next) {
-      authListenable.value = next;
+    authListenable.value = next;
   });
 
   return GoRouter(
-    initialLocation: '/splash',
+    initialLocation: initialRoute,
     debugLogDiagnostics: true,
     refreshListenable: authListenable,
     redirect: (context, state) async {
+      final authState = ref.read(authStateProvider);
       final isLoading = authState.isLoading;
       final hasError = authState.hasError;
       final user = authState.value;
@@ -261,13 +258,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/ai-pandit/voice-call',
-        builder: (context, state) {
-          final panditId = state.uri.queryParameters['panditId'];
-          return AIPanditVoiceCallScreen(panditId: panditId);
-        },
-      ),
-      GoRoute(
         path: '/ai-pandits/all',
         builder: (context, state) => const AllAIPanditsScreen(),
       ),
@@ -276,6 +266,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final panditId = state.pathParameters['id']!;
           return AIPanditProfileScreen(panditId: panditId);
+        },
+      ),
+      GoRoute(
+        path: '/ai-pandit/voice-call',
+        builder: (context, state) {
+          final panditId = state.uri.queryParameters['panditId'];
+          return AIPanditVoiceCallScreen(panditId: panditId ?? 'default');
         },
       ),
 

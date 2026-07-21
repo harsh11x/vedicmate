@@ -11,7 +11,6 @@ import '../../services/notification_service.dart';
 import '../../widgets/abstract_background.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
 class RegistrationScreen extends ConsumerStatefulWidget {
   const RegistrationScreen({super.key});
@@ -20,48 +19,30 @@ class RegistrationScreen extends ConsumerStatefulWidget {
   ConsumerState<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   // Separate form keys
-  final _phoneFormKey = GlobalKey<FormState>();
   final _emailFormKey = GlobalKey<FormState>();
 
   // Controllers
   final _nameController = TextEditingController();
-  final _phoneController = TextEditingController(); // For Phone Tab
-  final _phoneEmailController = TextEditingController(); // For Phone Tab (required)
-  final _emailPhoneController = TextEditingController(); // For Email Tab (optional phone)
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _otpController = TextEditingController();
 
   late final AuthService _authService;
   bool _isLoading = false;
-  bool _isOTPSent = false;
   bool _obscurePassword = true;
 
   @override
   void initState() {
     super.initState();
     _authService = ref.read(authServiceProvider);
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        setState(() {}); // Rebuild to update slider UI
-      }
-    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _nameController.dispose();
-    _phoneController.dispose();
-    _phoneEmailController.dispose();
-    _emailPhoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _otpController.dispose();
     super.dispose();
   }
 
@@ -95,140 +76,15 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with Si
     }
   }
 
-  void _handleSendOTP() async {
-    if (_phoneFormKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      
-      final phone = _phoneController.text.trim();
-
-      await _authService.sendOTP(
-        phone, 
-        AppConstants.roleClient,
-        onCodeSent: () {
-          if (mounted) {
-            setState(() {
-              _isOTPSent = true;
-              _isLoading = false;
-            });
-            _showSnackBar('OTP sent to +91 $phone', isSuccess: true);
-          }
-        },
-        onVerificationCompleted: (User user) async {
-           if (mounted) {
-             _showSnackBar('Phone verified verification complete!', isSuccess: true);
-             await _navigateAfterAuth(user);
-           }
-        },
-        onError: (message) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            _showSnackBar(message, isError: true);
-          }
-        },
-      );
-    }
-  }
-
-  void _handleVerifyOTP() async {
-    if (_otpController.text.length != 6) {
-      _showSnackBar('Please enter valid 6-digit OTP', isError: true);
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      User? user = await _authService.verifyOTP(
-        _otpController.text,
-        _phoneController.text,
-        AppConstants.roleClient,
-      );
-
-      if (mounted && user != null) {
-        final phoneInput = _phoneController.text.trim();
-        final existingProfile = await _authService.findUserProfileByPhone(phoneInput);
-
-        // If phone already registered in Supabase, treat as login.
-        if (existingProfile != null) {
-          await _navigateAfterAuth(user);
-          return;
-        }
-
-        final name = _nameController.text.trim();
-        final email = _phoneEmailController.text.trim();
-
-        if (name.isEmpty || email.isEmpty) {
-          setState(() => _isLoading = false);
-          _showSnackBar('Please enter your full name and email to complete registration.', isError: true);
-          return;
-        }
-
-        final isEmailUsed = await _authService.isEmailAlreadyUsed(email);
-        if (isEmailUsed) {
-          setState(() => _isLoading = false);
-          _showSnackBar('This email is already used. Please use a different email.', isError: true);
-          return;
-        }
-
-        // Update Firebase display name (best effort)
-        try {
-          await user.updateDisplayName(name);
-        } catch (_) {}
-
-        // Create user profile in Supabase
-        await _authService.ensureUserProfile(user: user, name: name);
-        try {
-          await Supabase.instance.client.from('users').update({
-            'name': name,
-            'email': email.toLowerCase(),
-            'phone': _phoneController.text.trim().startsWith('+')
-                ? _phoneController.text.trim()
-                : '+91${_phoneController.text.trim().replaceAll(RegExp(r'\D'), '')}',
-            'updated_at': DateTime.now().toIso8601String(),
-          }).eq('id', user.uid);
-        } catch (e) {
-          // If update fails, user still has Firebase auth session; surface error
-          setState(() => _isLoading = false);
-          _showSnackBar('Could not save profile. Please try again. ($e)', isError: true);
-          return;
-        }
-
-        await _navigateAfterAuth(user);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _showSnackBar(e.toString(), isError: true);
-      }
-    }
-  }
-
   void _handleEmailRegister() async {
     if (_emailFormKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      
-      final phoneInput = _emailPhoneController.text.trim();
-      String phoneToSave = '';
-
-      if (phoneInput.isNotEmpty) {
-        // Enforce +91 prefix for saving
-        phoneToSave = '+91$phoneInput'; 
-        
-        // Check uniqueness
-        final isTaken = await _authService.isMobileNumberTaken(phoneInput);
-        if (isTaken) {
-          if (mounted) {
-             setState(() => _isLoading = false);
-             _showSnackBar('This mobile number is already registered.', isError: true);
-          }
-          return;
-        }
-      }
 
       try {
         User? user = await _authService.register(
           _nameController.text.trim(),
           _emailController.text.trim(),
-          phoneToSave, // Pass formatted phone
+          '',
           _passwordController.text,
           AppConstants.roleClient,
         );
@@ -340,87 +196,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with Si
                   ),
                   SizedBox(height: _spacingLarge),
 
-                  // Premium Segmented Control
-                  Container(
-                    height: _buttonHeight,
-                    decoration: BoxDecoration(
-                      color: AppTheme.white.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.forestBackground),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        AnimatedAlign(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeOutCubic,
-                          alignment: _tabController.index == 0 ? Alignment.centerLeft : Alignment.centerRight,
-                          child: FractionallySizedBox(
-                            widthFactor: 0.5,
-                            child: Container(
-                              margin: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                gradient: AppTheme.primaryGradient,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.primaryOrange.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => _tabController.animateTo(0),
-                                behavior: HitTestBehavior.opaque,
-                                child: Center(
-                                  child: Text(
-                                    'Phone',
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: _isIOS ? 14 : 16,
-                                      color: _tabController.index == 0 ? Colors.white : AppTheme.neutralMedium,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => _tabController.animateTo(1),
-                                behavior: HitTestBehavior.opaque,
-                                child: Center(
-                                  child: Text(
-                                    'Email',
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: _isIOS ? 14 : 16,
-                                      color: _tabController.index == 1 ? Colors.white : AppTheme.neutralMedium,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  SizedBox(height: _spacingLarge),
-
                   // Form Container
                   AnimatedSize(
                     duration: const Duration(milliseconds: 300),
@@ -430,7 +205,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with Si
                       padding: EdgeInsets.all(_isIOS ? 16 : 24),
                       child: Column(
                         children: [
-                          [_buildPhoneForm(), _buildEmailForm()][_tabController.index],
+                          _buildEmailForm(),
                         ],
                       ),
                     ),
@@ -599,89 +374,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with Si
     );
   }
 
-  Widget _buildPhoneForm() {
-    return Form(
-      key: _phoneFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (!_isOTPSent) ...[
-            _buildField(
-              _nameController,
-              'Full Name', 
-              Icons.person_outline_rounded,
-              validator: Validators.validateName,
-              type: TextInputType.name,
-            ),
-            SizedBox(height: _spacingSmall),
-            _buildField(
-              _phoneEmailController,
-              'Email Address',
-              Icons.email_outlined,
-              validator: Validators.validateEmail,
-              type: TextInputType.emailAddress,
-            ),
-            SizedBox(height: _spacingSmall),
-            _buildField(
-              _phoneController,
-              'Phone Number',
-              Icons.phone_android_rounded,
-              type: TextInputType.phone,
-              validator: Validators.validatePhone,
-              prefixText: '+91 ',
-            ),
-            SizedBox(height: _spacingMedium),
-            SizedBox(
-              height: _buttonHeight,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleSendOTP,
-                child: _isLoading 
-                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text('Send Verification Code'),
-              ),
-            ),
-          ] else ...[
-             Text(
-              'Enter the code sent to +91 ${_phoneController.text}',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(color: AppTheme.neutralMedium, fontSize: 14),
-            ),
-            SizedBox(height: _spacingMedium),
-             TextFormField(
-              controller: _otpController,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              maxLength: 6,
-              style: GoogleFonts.outfit(fontSize: 20, letterSpacing: 8, fontWeight: FontWeight.bold, color: AppTheme.primaryOrange),
-              decoration: InputDecoration(
-                hintText: '••••••',
-                counterText: '',
-                fillColor: AppTheme.neutralSoft,
-                isDense: _isDense,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-            SizedBox(height: _spacingMedium),
-            SizedBox(
-              height: _buttonHeight,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleVerifyOTP,
-                child: _isLoading
-                  ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text('Verify & Continue'),
-              ),
-            ),
-            const SizedBox(height: 4),
-            TextButton(
-              onPressed: () => setState(() => _isOTPSent = false),
-              child: const Text('Change Phone Number'),
-            ),
-          ]
-        ],
-      ),
-    );
-  }
-
   Widget _buildEmailForm() {
     return Form(
       key: _emailFormKey,
@@ -703,15 +395,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> with Si
             validator: Validators.validateEmail,
             type: TextInputType.emailAddress,
           ),
-          const SizedBox(height: 12),
-           _buildField(
-            _emailPhoneController,
-            'Phone Number (Optional)',
-            Icons.phone_outlined,
-            type: TextInputType.phone,
-            prefixText: '+91 ',
-          ),
-          const SizedBox(height: 12),
           _buildField(
             _passwordController,
             'Password', 

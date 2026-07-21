@@ -4,7 +4,7 @@
 
 class PaymentService {
   // Placeholder for Payment service implementation
-  // In production, this would integrate with PayU or other payment gateways
+  // In production, this integrates with Razorpay or other payment gateways
 
   Future<bool> addMoneyToWallet(double amount) async {
     // Implement wallet top-up logic

@@ -93,8 +93,7 @@ class _AppInitializationWrapperState extends State<AppInitializationWrapper> {
     });
     print('✅ AppInit: Supabase initialized');
 
-    // 3. RevenueCat - Removed
-    // PayU is initialized on demand.
+    // 3. Payment checkout is initialized on demand.
 
     // 4. Notifications (often slow/hanging in simulator; skip if takes too long)
     print('🔔 AppInit: Initializing NotificationService...');

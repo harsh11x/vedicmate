@@ -147,40 +147,20 @@ class _AIPanditSelectionCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      context.push('/ai-pandit/chat', extra: {'panditId': pandit.id});
-                    },
-                    icon: const Icon(Icons.chat_bubble_outline_rounded),
-                    label: const Text('Chat'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.accentGold,
-                      side: const BorderSide(color: AppTheme.accentGold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  context.push('/ai-pandit/chat', extra: {'panditId': pandit.id});
+                },
+                icon: const Icon(Icons.chat_bubble_outline_rounded),
+                label: const Text('Start Chat'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.accentGold,
+                  side: const BorderSide(color: AppTheme.accentGold),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      context.push('/ai-pandit/voice-call', extra: {'panditId': pandit.id});
-                    },
-                    icon: const Icon(Icons.call),
-                    label: const Text('Call'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryOrange,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      elevation: 4,
-                      shadowColor: AppTheme.primaryOrange.withOpacity(0.4),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

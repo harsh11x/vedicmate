@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class KundliTablesSection extends StatelessWidget {
@@ -47,22 +48,22 @@ class KundliTablesSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.divineSurface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: AppTheme.softShadow,
+        border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(title, style: GoogleFonts.cormorantGaramond(fontWeight: FontWeight.bold, fontSize: 22, color: AppTheme.divineInk)),
           const SizedBox(height: 12),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              headingRowColor: MaterialStateProperty.all(AppTheme.primaryOrange.withOpacity(0.1)),
-              columns: data[0].map((e) => DataColumn(label: Text(e, style: const TextStyle(fontWeight: FontWeight.bold)))).toList(),
+              headingRowColor: MaterialStateProperty.all(AppTheme.divineGold.withOpacity(0.1)),
+              columns: data[0].map((e) => DataColumn(label: Text(e, style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.divineInk)))).toList(),
               rows: data.sublist(1).map((row) {
-                return DataRow(cells: row.map((cell) => DataCell(Text(cell))).toList());
+                return DataRow(cells: row.map((cell) => DataCell(Text(cell, style: TextStyle(color: AppTheme.textGrey)))).toList());
               }).toList(),
             ),
           ),

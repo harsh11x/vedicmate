@@ -15,8 +15,5 @@ class EnvConfig {
   static const String supabaseUrl = 'https://huudzivjspjfljiqoquh.supabase.com';
   static const String supabaseAnonKey = 'sb_publishable_0fsJbek0e13wD0MWcFin5w_muQr2gKI';
 
-  // PayU Configuration
-  static const String payUMerchantKey = String.fromEnvironment('PAYU_KEY', defaultValue: 'YourMerchantKey');
-  static const String payUMerchantSalt = String.fromEnvironment('PAYU_SALT', defaultValue: 'YourMerchantSalt');
-  static const bool payUProduction = bool.fromEnvironment('PAYU_PROD', defaultValue: false);
+  // Razorpay keys stay on the backend. The app requests checkout orders from API_BASE_URL.
 }

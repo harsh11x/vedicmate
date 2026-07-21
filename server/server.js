@@ -1966,7 +1966,15 @@ try {
 // Create Order (Simulated for verification)
 app.post('/api/payment/create-order', async (req, res) => {
   try {
-    const { amount, currency = 'INR', receipt } = req.body;
+    const {
+      amount,
+      currency = 'INR',
+      receipt,
+      userId,
+      purpose = 'payment',
+      description = '',
+      metadata = {}
+    } = req.body;
 
     if (!amount) {
       return res.status(400).json({ success: false, error: 'Amount is required' });
@@ -1976,6 +1984,12 @@ app.post('/api/payment/create-order', async (req, res) => {
       amount: Math.round(amount * 100), // Convert to paise
       currency,
       receipt: receipt || `receipt_${Date.now()}`,
+      notes: {
+        userId: userId || '',
+        purpose,
+        description,
+        ...metadata
+      }
     };
 
     if (!razorpay) {
@@ -1983,7 +1997,11 @@ app.post('/api/payment/create-order', async (req, res) => {
     }
 
     const order = await razorpay.orders.create(options);
-    res.json({ success: true, order });
+    res.json({
+      success: true,
+      order,
+      keyId: process.env.RAZORPAY_KEY_ID
+    });
   } catch (error) {
     console.error('Razorpay Order Error:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -1993,7 +2011,14 @@ app.post('/api/payment/create-order', async (req, res) => {
 // Verify Payment
 app.post('/api/payment/verify', async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      userId,
+      amount,
+      purpose
+    } = req.body;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
@@ -2002,10 +2027,26 @@ app.post('/api/payment/verify', async (req, res) => {
       .digest('hex');
 
     if (expectedSignature === razorpay_signature) {
-      // Payment verified!
-      // In a real app, you would update the database here (e.g., mark order as paid, add wallet balance)
       console.log(`Payment Verified: ${razorpay_payment_id}`);
-      res.json({ success: true, message: 'Payment verified successfully' });
+      let walletResult = null;
+      if (purpose === 'wallet_recharge' && userId && amount) {
+        walletResult = WalletService.addMoney(
+          userId,
+          Number(amount),
+          'recharge',
+          `Wallet recharge via Razorpay (${razorpay_payment_id})`
+        );
+        io.to(`user-${userId}`).emit('balance-update', {
+          userId,
+          balance: walletResult.newBalance
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Payment verified successfully',
+        wallet: walletResult
+      });
     } else {
       res.status(400).json({ success: false, error: 'Invalid signature' });
     }
@@ -2697,7 +2738,6 @@ app.post('/api/custom-requests/verify-payment', (req, res) => {
     }
 
     // Verify signature
-    const crypto = require('crypto');
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpayOrderId}|${razorpayPaymentId}`)

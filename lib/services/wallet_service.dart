@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../models/ai_chat_model.dart';
+import '../models/ai_pandit_model.dart';
 
 class WalletService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -114,7 +115,8 @@ class WalletService {
         'type': 'credit',
         'category': 'recharge',
         'description': isGuest ? 'Guest Welcome Bonus' : 'Signup Bonus',
-        'reference_id': '${isGuest ? "GUEST" : "SIGNUP"}_BONUS_${DateTime.now().millisecondsSinceEpoch}',
+        'reference_id':
+            '${isGuest ? "GUEST" : "SIGNUP"}_BONUS_${DateTime.now().millisecondsSinceEpoch}',
         'status': 'completed',
         'created_at': DateTime.now().toIso8601String(),
       });
@@ -137,7 +139,8 @@ class WalletService {
       debugPrint('WalletService: Error fetching detailed txns -> $e');
       return [];
     }
-  
+  }
+
   /// Grant signup bonus to all existing users who haven't received it
   Future<Map<String, dynamic>> grantSignupBonusToExistingUsers() async {
     try {
@@ -145,11 +148,12 @@ class WalletService {
       int errorCount = 0;
 
       // 1. Get all wallets
-      final wallets = await _supabase.from('wallets').select('user_id, balance');
+      final wallets =
+          await _supabase.from('wallets').select('user_id, balance');
 
       for (final wallet in wallets) {
         final uid = wallet['user_id'] as String;
-        
+
         // 2. Check if user already has a signup bonus
         final existingBonus = await _supabase
             .from('transactions')
@@ -175,7 +179,8 @@ class WalletService {
               'type': 'credit',
               'category': 'recharge',
               'description': 'Signup Bonus (Late)',
-              'reference_id': 'MIGRATION_BONUS_${uid}_${DateTime.now().millisecondsSinceEpoch}',
+              'reference_id':
+                  'MIGRATION_BONUS_${uid}_${DateTime.now().millisecondsSinceEpoch}',
               'status': 'completed',
               'created_at': DateTime.now().toIso8601String(),
             });
@@ -199,7 +204,6 @@ class WalletService {
       return {'success': false, 'error': e.toString()};
     }
   }
-}
 
   // Public method matching WalletProvider expectation
   Future<List<WalletTransaction>> getRecentTransactions(String userId,
@@ -246,7 +250,7 @@ class WalletService {
         'amount': amount,
         'type': 'credit',
         'category': 'recharge',
-        'description': 'Wallet Recharge via PayU',
+        'description': 'Wallet Recharge via Razorpay',
         'reference_id': paymentId,
         'status': 'completed',
         'created_at': DateTime.now().toIso8601String(),
@@ -344,12 +348,13 @@ class AIChatService {
 
   // Start a new AI chat session for a specific pandit
   Future<AIChatSession> startSession(String userId, String panditId) async {
+    final pandit = AIPandits.getById(panditId);
     final session = AIChatSession(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       userId: userId,
       panditId: panditId,
       startTime: DateTime.now(),
-      ratePerMinute: 25.0,
+      ratePerMinute: pandit?.ratePerMinute ?? 50.0,
       messages: [],
       isActive: true,
       isStarted: false, // Not started until user confirms
@@ -413,8 +418,21 @@ class AIChatService {
 
       session.endTime = DateTime.now();
       session.isActive = false;
-      // Free mode: no wallet deductions
-      session.totalCost = 0.0;
+      if (session.isStarted) {
+        final billableMinutes = session.getDurationInMinutes().ceil();
+        session.totalCost =
+            (billableMinutes < 1 ? 1 : billableMinutes) * session.ratePerMinute;
+
+        await WalletService().deductMoney(
+          userId,
+          session.totalCost,
+          'AI Pandit chat (${session.panditId})',
+          referenceId: session.id,
+          category: 'ai_chat',
+        );
+      } else {
+        session.totalCost = 0.0;
+      }
 
       await saveSession(session);
 

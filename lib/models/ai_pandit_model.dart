@@ -64,6 +64,61 @@ class AIPanditModel {
       'rate_per_minute': ratePerMinute,
     };
   }
+
+  String get publicCategory {
+    final lower = category.toLowerCase();
+    if (lower.contains('palm')) return 'Personal Guidance';
+    if (lower.contains('numerology')) return 'Life Planning';
+    if (lower.contains('vastu')) return 'Home Harmony';
+    if (lower.contains('lal kitab')) return 'Remedy Guidance';
+    if (lower.contains('astrology')) return 'Vedic Wellness';
+    return category;
+  }
+
+  List<String> get publicSpecializations {
+    return specializations.map((item) {
+      final lower = item.toLowerCase();
+      if (lower.contains('kundli') || lower.contains('birth chart')) {
+        return 'Personal Profile';
+      }
+      if (lower.contains('astrology') ||
+          lower.contains('jyotish') ||
+          lower.contains('prashna')) {
+        return 'Vedic Wellness';
+      }
+      if (lower.contains('numerology') || lower.contains('name correction')) {
+        return 'Life Planning';
+      }
+      if (lower.contains('palm') ||
+          lower.contains('palmistry') ||
+          lower.contains('face reading')) {
+        return 'Personal Guidance';
+      }
+      if (lower.contains('prediction') || lower.contains('past life')) {
+        return 'Reflective Guidance';
+      }
+      if (lower.contains('lal kitab')) return 'Remedy Guidance';
+      if (lower.contains('marriage matching')) return 'Relationship Guidance';
+      if (lower.contains('business astrology') ||
+          lower.contains('stock market')) {
+        return 'Business Guidance';
+      }
+      if (lower.contains('medical astrology') ||
+          lower.contains('health astrology') ||
+          lower.contains('ayurveda astrology')) {
+        return 'Wellness Guidance';
+      }
+      if (lower.contains('child astrology')) return 'Family Guidance';
+      return item;
+    }).toSet().toList();
+  }
+
+  String get publicBio {
+    final specs = publicSpecializations.take(3).join(', ');
+    return bio == null || bio!.trim().isEmpty
+        ? 'An experienced guide focused on $specs through practical routines, reflective conversation, and culturally rooted wellness practices.'
+        : 'An experienced guide focused on $specs. Sessions emphasize practical routines, reflective conversation, and culturally rooted wellness practices rather than guaranteed predictions.';
+  }
 }
 
 // Pre-defined AI Pandits with authentic Indian names and profiles

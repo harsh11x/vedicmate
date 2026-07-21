@@ -44,17 +44,21 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
     final partner = widget.data['partner'];
 
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: AppTheme.divineBackground,
       appBar: AppBar(
         title: Text(
           'Compatibility Report',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.neutralDark),
+          style: GoogleFonts.cormorantGaramond(
+              fontWeight: FontWeight.w600, 
+              color: AppTheme.divineInk,
+              fontSize: 26,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.neutralDark),
+          icon: const Icon(Icons.arrow_back, color: AppTheme.divineInk),
           onPressed: () => context.pop(),
         ),
       ),
@@ -67,7 +71,7 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                children: [
                  _buildProfile(user['name'], user['gender'], true),
-                 const Icon(Icons.favorite_rounded, color: Colors.pink, size: 40),
+                 const Icon(Icons.favorite_rounded, color: AppTheme.divineGold, size: 40),
                  _buildProfile(partner['name'], partner['gender'], false),
                ],
              ),
@@ -81,13 +85,13 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
                  return Stack(
                    alignment: Alignment.center,
                    children: [
-                     SizedBox(
+                      SizedBox(
                        width: 200,
                        height: 200,
                        child: CircularProgressIndicator(
                          value: _scoreAnimation.value / 100,
                          strokeWidth: 15,
-                         backgroundColor: AppTheme.forestBackground,
+                         backgroundColor: AppTheme.divineGold.withOpacity(0.2),
                          color: _getScoreColor(_scoreAnimation.value),
                          strokeCap: StrokeCap.round,
                        ),
@@ -100,14 +104,14 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
                            style: GoogleFonts.outfit(
                              fontSize: 48,
                              fontWeight: FontWeight.bold,
-                             color: AppTheme.neutralDark,
+                             color: AppTheme.divineInk,
                            ),
                          ),
                          Text(
                            'Compatibility',
                            style: GoogleFonts.outfit(
                              fontSize: 16,
-                             color: AppTheme.neutralMedium,
+                             color: AppTheme.textGrey,
                            ),
                          ),
                        ],
@@ -163,25 +167,25 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.primaryOrange, width: 2),
+            border: Border.all(color: AppTheme.divineGold, width: 2),
           ),
           child: CircleAvatar(
             radius: 36,
-            backgroundColor: AppTheme.neutralSoft,
+            backgroundColor: AppTheme.divineSurface,
             child: Text(
               name[0].toUpperCase(),
-              style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.primaryOrange),
+              style: GoogleFonts.cormorantGaramond(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.divineInk),
             ),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           name,
-          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.neutralDark),
+          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.divineInk),
         ),
         Text(
           gender, // Should be date, but showing gender for now
-          style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.neutralMedium),
+          style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.textGrey),
         ),
       ],
     );
@@ -203,7 +207,7 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
             children: [
               Text(
                 title,
-                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.neutralDark),
+                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.divineInk),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -221,7 +225,7 @@ class _RelationshipResultScreenState extends State<RelationshipResultScreen> wit
           const SizedBox(height: 8),
           Text(
             description,
-            style: const TextStyle(fontSize: 14, color: AppTheme.neutralMedium, height: 1.5),
+            style: TextStyle(fontSize: 14, color: AppTheme.textGrey, height: 1.5),
           ),
         ],
       ),

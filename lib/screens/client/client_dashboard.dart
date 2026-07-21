@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,37 +6,15 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/ai_pandit_model.dart';
-import '../../widgets/daily_horoscope_card.dart';
-import '../../widgets/quick_stats_widget.dart';
-import '../../widgets/auspicious_timings_widget.dart';
-import '../../widgets/special_offers_widget.dart';
-import '../../widgets/numerology_widget.dart';
-import '../../widgets/astronomy_widget.dart';
-import '../../widgets/service_info_cards.dart';
-import '../../widgets/ai_pandits_section.dart';
-import '../../widgets/staggered_list_animation.dart';
-import '../../widgets/abstract_background.dart';
 import '../../providers/api_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../providers/cart_provider.dart';
 import 'reels_screen.dart';
 import '../../providers/auth_provider.dart'; // Correctly placed import
 import 'remedies_screen.dart';
-import 'ai_pandit_chat_screen.dart';
 import 'ai_pandit_chat_list_screen.dart';
-import '../../widgets/live_pooja_banner.dart';
-import '../../widgets/custom_request_banner.dart';
-import '../shared/booking_scheduling_screen.dart';
-import '../shared/chat_screen.dart';
-import '../shared/video_call_screen.dart';
-import '../shared/payment_wallet_screen.dart';
 import '../shared/settings_screen.dart';
-import '../shared/booking_history_screen.dart';
-import '../../widgets/live_pooja_banner.dart';
-import '../../widgets/action_box.dart';
-import 'remedies_screen.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});
@@ -76,129 +55,160 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: statusBarStyle.copyWith(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: isDarkBackground ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness:
+            isDarkBackground ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         extendBody: true,
         body: Stack(
-        children: [
-          // Background - richer gradient with depth
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [
-                          const Color(0xFF2D2D2D),
-                          const Color(0xFF1A1A1A),
-                        ]
-                      : [
-                          const Color(0xFFFFF8ED), // Warmer cream
-                          const Color(0xFFFFF5E0),
-                          const Color(0xFFFFF9E6),
-                          const Color(0xFFFDF6E8),
-                        ],
-                  stops: const [0.0, 0.35, 0.7, 1.0],
-                ),
-              ),
-            ),
-          ),
-          
-          PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            onPageChanged: (index) => setState(() => _currentIndex = index),
-            children: [
-              _HomeTab(
-                searchController: _searchController,
-                onNavigateToTab: _navigateToTab,
-              ),
-              _ChatTab(),
-              ReelsScreen(
-                onBack: () => _navigateToTab(0),
-                isReelsTabActive: _currentIndex == 2,
-              ),
-              const RemediesScreen(),
-              _ProfileTab(),
-            ],
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(36),
-              child: BackdropFilter(
-                filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                child: Container(
-                  decoration: isDark
-                      ? BoxDecoration(
-                          color: AppTheme.divinePrimary.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(36),
-                          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
-                        )
-                      : BoxDecoration(
-                          color: AppTheme.divineSurface.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(36),
-                          border: Border.all(color: AppTheme.textBlack, width: 2),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
+          children: [
+            // Parchment editorial background inspired by the reference.
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: isDark
+                        ? [
+                            const Color(0xFF0D0C0A),
+                            const Color(0xFF17130F),
+                            const Color(0xFF211B16),
+                          ]
+                        : [
+                            const Color(0xFFF7F1E8),
+                            const Color(0xFFF0E6D8),
                           ],
-                        ),
-                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 22),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildNavItem(Icons.home_rounded, 'Home', 0),
-                      _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
-                      _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
-                      _buildNavItem(Icons.shopping_bag_rounded, 'Remedies', 3),
-                      _buildNavItem(Icons.person_rounded, 'Profile', 4),
-                    ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: CustomPaint(painter: _ScribblePainter(isDark: isDark)),
+              ),
+            ),
+
+            PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              children: [
+                _HomeTab(
+                  searchController: _searchController,
+                  onNavigateToTab: _navigateToTab,
+                ),
+                _ChatTab(),
+                ReelsScreen(
+                  onBack: () => _navigateToTab(0),
+                  isReelsTabActive: _currentIndex == 2,
+                ),
+                const RemediesScreen(),
+                _ProfileTab(),
+              ],
+            ),
+            Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(36),
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppTheme.darkSurfaceRaised.withOpacity(0.84)
+                          : AppTheme.elevatedSurface.withOpacity(0.76),
+                      borderRadius: BorderRadius.circular(34),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.10)
+                            : AppTheme.divineInk.withOpacity(0.10),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(isDark ? 0.36 : 0.12),
+                          blurRadius: 34,
+                          offset: const Offset(0, 18),
+                          spreadRadius: -10,
+                        ),
+                        if (!isDark)
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.8),
+                            blurRadius: 1,
+                            offset: const Offset(0, 1),
+                          ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildNavItem(Icons.home_rounded, 'Home', 0),
+                        _buildNavItem(Icons.chat_bubble_rounded, 'Chat', 1),
+                        _buildNavItem(Icons.video_library_rounded, 'Reels', 2),
+                        _buildNavItem(
+                            Icons.shopping_bag_rounded, 'Remedies', 3),
+                        _buildNavItem(Icons.person_rounded, 'Profile', 4),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _currentIndex == index;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () => _navigateToTab(index),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 8, vertical: 8),
+        duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOutCubic,
+        padding: EdgeInsets.symmetric(
+            horizontal: isSelected ? 14 : 10, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryOrange.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected
+              ? (isDark ? AppTheme.divineGoldLight : AppTheme.divineInk)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isSelected
+                ? Colors.transparent
+                : (isDark
+                    ? Colors.white.withOpacity(0.08)
+                    : AppTheme.divineInk.withOpacity(0.06)),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralMedium,
-              size: 24,
+              color: isSelected
+                  ? (isDark ? AppTheme.divineInk : AppTheme.divineSurface)
+                  : (isDark
+                      ? AppTheme.darkTextSecondary
+                      : AppTheme.neutralMedium),
+              size: 22,
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: AppTheme.primaryOrange,
+                  color: isDark ? AppTheme.divineInk : AppTheme.divineSurface,
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
                 ),
               ),
             ],
@@ -230,24 +240,32 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
 
   List<AIPanditModel> get _filteredPandits {
     var pandits = AIPandits.allPandits;
-    
+
     // Search
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      pandits = pandits.where((p) => 
-        p.name.toLowerCase().contains(query) || 
-        p.specializations.any((s) => s.toLowerCase().contains(query))
-      ).toList();
+      pandits = pandits
+          .where((p) =>
+              p.name.toLowerCase().contains(query) ||
+              p.specializations.any((s) => s.toLowerCase().contains(query)))
+          .toList();
     }
 
     // Language
     if (_selectedLanguages.isNotEmpty) {
-      pandits = pandits.where((p) => p.languages.any((l) => _selectedLanguages.contains(l))).toList();
+      pandits = pandits
+          .where((p) => p.languages.any((l) => _selectedLanguages.contains(l)))
+          .toList();
     }
 
     // Category
     if (_selectedCategories.isNotEmpty) {
-      pandits = pandits.where((p) => _selectedCategories.contains(p.category) || p.specializations.any((s) => _selectedCategories.contains(s))).toList();
+      pandits = pandits
+          .where((p) =>
+              _selectedCategories.contains(p.publicCategory) ||
+              p.publicSpecializations
+                  .any((s) => _selectedCategories.contains(s)))
+          .toList();
     }
 
     // Rate Sort
@@ -282,8 +300,14 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Filters', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
-                    IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+                    Text('Filters',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context)),
                   ],
                 ),
                 const Divider(),
@@ -294,12 +318,14 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                         FilterChip(
                           label: const Text('Low to High'),
                           selected: _rateSort == 'low_high',
-                          onSelected: (b) => setModalState(() => setState(() => _rateSort = b ? 'low_high' : '')),
+                          onSelected: (b) => setModalState(() =>
+                              setState(() => _rateSort = b ? 'low_high' : '')),
                         ),
                         FilterChip(
                           label: const Text('High to Low'),
                           selected: _rateSort == 'high_low',
-                          onSelected: (b) => setModalState(() => setState(() => _rateSort = b ? 'high_low' : '')),
+                          onSelected: (b) => setModalState(() =>
+                              setState(() => _rateSort = b ? 'high_low' : '')),
                         ),
                       ]),
                       const SizedBox(height: 16),
@@ -311,45 +337,64 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: FilterChip(
                                 label: const Text('Check All'),
-                                selected: _selectedLanguages.length == AIPandits.allLanguages.length,
-                                onSelected: (b) => setModalState(() => setState(() {
-                                  if (b) {
-                                    _selectedLanguages = List.from(AIPandits.allLanguages);
-                                  } else {
-                                    _selectedLanguages.clear();
-                                  }
-                                })),
+                                selected: _selectedLanguages.length ==
+                                    AIPandits.allLanguages.length,
+                                onSelected: (b) =>
+                                    setModalState(() => setState(() {
+                                          if (b) {
+                                            _selectedLanguages = List.from(
+                                                AIPandits.allLanguages);
+                                          } else {
+                                            _selectedLanguages.clear();
+                                          }
+                                        })),
                               ),
                             ),
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
-                              children: AIPandits.allLanguages.map((l) => FilterChip(
-                                label: Text(l),
-                                selected: _selectedLanguages.contains(l),
-                                onSelected: (b) => setModalState(() => setState(() {
-                                  if (b) {
-                                    _selectedLanguages.add(l);
-                                  } else {
-                                    _selectedLanguages.remove(l);
-                                  }
-                                })),
-                              )).toList(),
+                              children: AIPandits.allLanguages
+                                  .map((l) => FilterChip(
+                                        label: Text(l),
+                                        selected:
+                                            _selectedLanguages.contains(l),
+                                        onSelected: (b) =>
+                                            setModalState(() => setState(() {
+                                                  if (b) {
+                                                    _selectedLanguages.add(l);
+                                                  } else {
+                                                    _selectedLanguages
+                                                        .remove(l);
+                                                  }
+                                                })),
+                                      ))
+                                  .toList(),
                             ),
                           ],
                         )
                       ]),
                       const SizedBox(height: 16),
-                      _buildFilterSection('Categories', [
-                        'Vedic Astrology', 'Numerology', 'Tarot', 'Palm Reading', 'Vastu Shastra'
-                      ].map((c) => FilterChip(
-                        label: Text(c),
-                        selected: _selectedCategories.contains(c),
-                        onSelected: (b) => setModalState(() => setState(() {
-                          if (b) _selectedCategories.add(c);
-                          else _selectedCategories.remove(c);
-                        })),
-                      )).toList()),
+                      _buildFilterSection(
+                          'Categories',
+                          [
+                            'Vedic Wellness',
+                            'Life Planning',
+                            'Home Harmony',
+                            'Relationship Guidance',
+                            'Remedy Guidance'
+                          ]
+                              .map((c) => FilterChip(
+                                    label: Text(c),
+                                    selected: _selectedCategories.contains(c),
+                                    onSelected: (b) =>
+                                        setModalState(() => setState(() {
+                                              if (b)
+                                                _selectedCategories.add(c);
+                                              else
+                                                _selectedCategories.remove(c);
+                                            })),
+                                  ))
+                              .toList()),
                     ],
                   ),
                 ),
@@ -362,7 +407,8 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       backgroundColor: AppTheme.primaryOrange,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
                     ),
                     child: const Text('Apply Filters'),
                   ),
@@ -379,22 +425,31 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+        Text(title,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
         const SizedBox(height: 8),
         Wrap(spacing: 8, runSpacing: 8, children: children),
       ],
     );
   }
 
+  void _showComingSoon(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppTheme.divineInk,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     // Watch auth state for reactive updates
     final authState = ref.watch(authStateProvider);
     final user = authState.valueOrNull;
-    final userName = user?.displayName ?? 
-                     (user?.email?.split('@').first ?? 'User');
-    final greeting = _getGreeting();
+    final userName =
+        user?.displayName ?? (user?.email?.split('@').first ?? 'User');
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -403,344 +458,100 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // 1. Header with greeting and actions
+            SliverToBoxAdapter(
+              child: _EditorialHomeHeader(
+                userName: userName.split(' ').first,
+                onWalletTap: () => context.push('/payment/wallet'),
+                onProfileTap: () => context.push('/settings'),
+              )
+                  .animate()
+                  .fadeIn(duration: 520.ms, curve: Curves.easeOutCubic)
+                  .slideY(begin: -0.035, end: 0),
+            ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
               sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Decorative top accent
-                    Container(
-                      height: 4,
-                      width: 48,
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(2),
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.divineGold,
-                            AppTheme.divineGold.withOpacity(0.6),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                greeting,
-                                style: GoogleFonts.outfit(
-                                  color: AppTheme.textGrey,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                userName.split(' ').first,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.textBlack,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Consumer(
-                              builder: (context, ref, child) {
-                                final cartItems = ref.watch(cartProvider);
-                                final itemCount = cartItems.fold(0, (sum, item) => sum + item.quantity);
-                                return GestureDetector(
-                                  onTap: () => context.push('/cart'),
-                                  child: Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      ClipOval(
-                                        child: BackdropFilter(
-                                          filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(0.5),
-                                              shape: BoxShape.circle,
-                                              border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
-                                            ),
-                                            child: Icon(Icons.shopping_bag_outlined, color: AppTheme.textBlack, size: 20),
-                                          ),
-                                        ),
-                                      ),
-                                      if (itemCount > 0)
-                                        Positioned(
-                                          right: -2,
-                                          top: -2,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(4),
-                                            decoration: const BoxDecoration(
-                                              color: AppTheme.divineGold,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-                                            child: Center(
-                                              child: Text(
-                                                '$itemCount',
-                                                style: GoogleFonts.outfit(
-                                                  fontSize: 10,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    // Search Bar - Frosted glass
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: BackdropFilter(
-                        filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                        child: Container(
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.45),
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(color: Colors.white.withOpacity(0.7), width: 1.5),
-                          ),
-                          child: TextField(
-                            controller: widget.searchController,
-                            onChanged: (value) => setState(() => _searchQuery = value),
-                            style: AppTheme.bodyStyle,
-                            decoration: InputDecoration(
-                              hintText: 'Search for guidance...',
-                              hintStyle: TextStyle(color: AppTheme.textLight),
-                              prefixIcon: const Icon(Icons.search, color: AppTheme.textGrey, size: 22),
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.tune, color: AppTheme.textGrey, size: 20),
-                                onPressed: _showFilterModal,
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                              fillColor: Colors.transparent,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ).animate().fadeIn(duration: 500.ms, curve: Curves.easeOutCubic).slideY(begin: -0.05, end: 0, duration: 500.ms, curve: Curves.easeOutCubic),
+                child: _ReferenceHeroCard(
+                  onTap: () => context.push('/live-pooja'),
+                )
+                    .animate()
+                    .fadeIn(
+                        delay: 120.ms,
+                        duration: 520.ms,
+                        curve: Curves.easeOutCubic)
+                    .slideY(begin: 0.025, end: 0),
               ),
             ),
-
-            // 2. Featured / AI Pandits Section (Horizontal Scroll)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: AIPanditsSection(
-                  title: 'Divine Consultation',
-                  pandits: _filteredPandits,
-                  backgroundColor: AppTheme.divineSurface,
-                  titleStyle: AppTheme.titleStyle.copyWith(color: AppTheme.textBlack),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 0.82,
                 ),
-              ).animate().fadeIn(delay: 100.ms, duration: 450.ms, curve: Curves.easeOutCubic).slideX(begin: 0.03, end: 0, duration: 450.ms, curve: Curves.easeOutCubic),
-            ),
-
-            // 3. Live Pooja Banner (Moved Up) - Soft glass container
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverToBoxAdapter(
-                child: (ClipRRect(
-                  borderRadius: BorderRadius.circular(28),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 24,
-                          offset: const Offset(0, 8),
-                          spreadRadius: -4,
-                        ),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: LivePoojaBanner(onTap: () => context.push('/live-pooja')),
+                delegate: SliverChildListDelegate.fixed([
+                  _ReferenceServiceTile(
+                    title: 'Daily\nPractice',
+                    imagePath: 'assets/images/home_cards/temple_bg.png',
+                    onTap: () => context.push('/lifestyle/habits'),
                   ),
-                )).animate().fadeIn(delay: 180.ms, duration: 450.ms, curve: Curves.easeOutCubic),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-            // 4. Main Actions (Grid) - Below Live Pooja
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _ActionCardV2(
-                        title: 'Kundli',
-                        subtitle: 'Birth Chart',
-                        imagePath: 'assets/images/services/kundli_box.png',
-                        onTap: () => context.push('/kundli/create'),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _ActionCardV2(
-                        title: 'Match Making',
-                        subtitle: 'Compatiblity',
-                        imagePath: 'assets/images/services/matchmaking_box.png',
-                        onTap: () => context.push('/relationship/form'),
-                      ),
-                    ),
-                  ],
-                ).animate().fadeIn(delay: 260.ms, duration: 480.ms, curve: Curves.easeOutCubic).slideY(begin: 0.03, end: 0, duration: 480.ms, curve: Curves.easeOutCubic),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-            // (Yoga moved to Remedies tab for now)
-
-            // History & Knowledge Row
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _ActionCardV2(
-                        title: 'Vedic Timeline',
-                        subtitle: 'History',
-                        imagePath: 'assets/images/services/vedic_astrology.png',
-                        onTap: () => context.push('/history/timeline'),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _ActionCardV2(
-                        title: 'Sacred Texts',
-                        subtitle: 'Library',
-                        imagePath: 'assets/images/services/numerology.png', 
-                        onTap: () => context.push('/education/library'),
-                      ),
-                    ),
-                  ],
-                ).animate().fadeIn(delay: 420.ms, duration: 480.ms, curve: Curves.easeOutCubic).slideY(begin: 0.03, end: 0, duration: 480.ms, curve: Curves.easeOutCubic),
-              ),
-            ),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-            // 5. Custom Request Banner - Soft glass container
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverToBoxAdapter(
-                child: (ClipRRect(
-                  borderRadius: BorderRadius.circular(28),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 24,
-                          offset: const Offset(0, 8),
-                          spreadRadius: -4,
-                        ),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: CustomRequestBanner(onTap: () => context.push('/booking/custom')),
+                  _ReferenceServiceTile(
+                    title: 'Scripture\nLibrary',
+                    imagePath: 'assets/images/home_cards/vedic_books.png',
+                    onTap: () => context.push('/education/library'),
                   ),
-                )).animate().fadeIn(delay: 500.ms, duration: 450.ms, curve: Curves.easeOutCubic),
+                  _ReferenceServiceTile(
+                    title: 'Yoga\nWellness',
+                    imagePath: 'assets/images/home_cards/vastu.png',
+                    onTap: () => context.push('/education/yoga-poses'),
+                  ),
+                  _ReferenceServiceTile(
+                    title: 'Reflection\nJournal',
+                    imagePath: 'assets/images/home_cards/kundli.png',
+                    onTap: () => context.push('/lifestyle/journal'),
+                  ),
+                  _ReferenceServiceTile(
+                    title: 'Relationship\nGuide',
+                    imagePath: 'assets/images/home_cards/zodiac_match.png',
+                    onTap: () => context.push('/relationship/form'),
+                  ),
+                  _ReferenceServiceTile(
+                    title: 'Remedy\nShop',
+                    imagePath: 'assets/images/home_cards/lal_kitab.png',
+                    onTap: () => context.push('/remedies'),
+                  ),
+                  _ReferenceServiceTile(
+                    title: 'Culture\nTimeline',
+                    imagePath: 'assets/images/home_cards/numerology.png',
+                    onTap: () => context.push('/history/timeline'),
+                  ),
+                  _ReferenceServiceTile(
+                    title: 'Live\nGuides',
+                    imagePath: 'assets/images/home_cards/vedic_astrology.png',
+                    onTap: () => context.push('/ai-pandits/all'),
+                  ),
+                  _ReferenceServiceTile(
+                    title: 'More\nTools',
+                    imagePath: 'assets/images/home_cards/more_services.png',
+                    onTap: () => context.push('/ai-pandits/all'),
+                  ),
+                ]),
               ),
             ),
-            
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-            // 5. Explore Services (Grid)
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 4,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            color: AppTheme.divineGold,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Text(
-                          'Explore Services',
-                          style: GoogleFonts.outfit(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.textBlack,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ServiceInfoCards(), 
-                ],
-              ).animate().fadeIn(delay: 580.ms, duration: 480.ms, curve: Curves.easeOutCubic),
-            ),
-            
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-            // 6. Quick Actions (Restored)
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
               sliver: SliverToBoxAdapter(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildQuickActionBtn(
-                      context, 
-                      icon: Icons.history_rounded, 
-                      label: 'History', 
-                      onTap: () => context.push('/bookings/history')
-                    ),
-                    _buildQuickActionBtn(
-                      context, 
-                      icon: Icons.settings_rounded, 
-                      label: 'Settings', 
-                      onTap: () => context.push('/settings')
-                    ),
-                  ],
-                ).animate().fadeIn(delay: 660.ms, duration: 500.ms, curve: Curves.easeOutCubic).slideY(begin: 0.05, end: 0, duration: 500.ms, curve: Curves.easeOutCubic),
+                child: _ReferenceConsultStrip(
+                  onTap: () => context.push('/ai-pandits/all'),
+                )
+                    .animate()
+                    .fadeIn(
+                        delay: 300.ms,
+                        duration: 520.ms,
+                        curve: Curves.easeOutCubic)
+                    .slideY(begin: 0.025, end: 0),
               ),
             ),
 
@@ -752,7 +563,10 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     );
   }
 
-  Widget _buildQuickActionBtn(BuildContext context, {required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildQuickActionBtn(BuildContext context,
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -765,7 +579,8 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.45),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+              border:
+                  Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -796,6 +611,650 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
   }
 }
 
+class _HomeSectionHeader extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+
+  const _HomeSectionHeader({
+    required this.title,
+    this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 4,
+          height: 42,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(99),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppTheme.divineGold, AppTheme.sacredCopper],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.outfit(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.divineInk,
+                  letterSpacing: -0.35,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle!,
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    color: AppTheme.textGrey,
+                    height: 1.25,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EditorialHomeHeader extends StatelessWidget {
+  final String userName;
+  final VoidCallback onWalletTap;
+  final VoidCallback onProfileTap;
+
+  const _EditorialHomeHeader({
+    required this.userName,
+    required this.onWalletTap,
+    required this.onProfileTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+      child: SizedBox(
+        height: 316,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+                child: CustomPaint(painter: _EditorialLinePainter())),
+            Positioned(
+              right: -18,
+              top: 44,
+              child: Container(
+                width: 128,
+                height: 128,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFC99A4A).withOpacity(0.42),
+                ),
+              ),
+            ),
+            Positioned(
+              right: -50,
+              bottom: -10,
+              top: -10,
+              width: 320,
+              child: Opacity(
+                opacity: 0.95,
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return RadialGradient(
+                      center: const Alignment(0.3, 0.0),
+                      radius: 0.65,
+                      colors: [Colors.white, Colors.white.withOpacity(0.0)],
+                      stops: const [0.4, 1.0],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: Image.asset(
+                    'assets/images/home_cards/temple_bg.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 0,
+              top: 10,
+              child: Row(
+                children: [
+                  _HeaderIconButton(
+                      icon: Icons.account_balance_wallet_outlined,
+                      onTap: onWalletTap),
+                  const SizedBox(width: 12),
+                  _HeaderIconButton(
+                      icon: Icons.person_outline_rounded, onTap: onProfileTap),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.58,
+                  height: 52,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Welcome, $userName',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.cormorantGaramond(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                        fontStyle: FontStyle.italic,
+                        letterSpacing: -0.3,
+                        color: const Color(0xFF1B1712),
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: 'Ancient ', style: _headlineStyle()),
+                      TextSpan(
+                          text: 'wisdom.\n',
+                          style: _headlineStyle(italic: true)),
+                      TextSpan(text: 'Modern ', style: _headlineStyle()),
+                      TextSpan(
+                          text: 'connections.',
+                          style: _headlineStyle(italic: true)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Container(
+                  width: 60,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFC79A52),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Discover yourself.\nFind your perfect match.\nLive in harmony.',
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    color: const Color(0xFF5F574D),
+                    height: 1.62,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  TextStyle _headlineStyle({bool italic = false}) {
+    return GoogleFonts.cormorantGaramond(
+      fontSize: 36,
+      fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+      fontWeight: italic ? FontWeight.w500 : FontWeight.w600,
+      color: italic ? const Color(0xFFC79A52) : const Color(0xFF1B1712),
+      height: 1.04,
+    );
+  }
+}
+
+class _HeaderIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeaderIconButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.7),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.32)),
+        ),
+        child: Icon(icon, size: 22, color: const Color(0xFF1E1914)),
+      ),
+    );
+  }
+}
+
+class _ReferenceHeroCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _ReferenceHeroCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 224,
+        decoration: BoxDecoration(
+          color: const Color(0xFF111111),
+          borderRadius: BorderRadius.circular(34),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 30,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(child: CustomPaint(painter: _ZodiacLinePainter())),
+            Positioned(
+              right: -40,
+              top: -20,
+              bottom: -20,
+              width: 280,
+              child: ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Colors.transparent, Colors.white],
+                    stops: [0.0, 0.3],
+                  ).createShader(bounds);
+                },
+                blendMode: BlendMode.dstIn,
+                child: Image.asset(
+                  'assets/images/home_cards/live_pooja.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              right: 28,
+              top: 36,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: Center(
+                  child: Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF1B1915),
+                      border: Border.all(
+                          color: const Color(0xFFC79A4D).withOpacity(0.42)),
+                    ),
+                    child: const Icon(Icons.temple_hindu_rounded,
+                        color: Color(0xFFC79A4D), size: 20),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Live',
+                      style: GoogleFonts.caveat(
+                          fontSize: 28,
+                          color: const Color(0xFFC79A52),
+                          height: 0.94)),
+                  const SizedBox(height: 10),
+                  Text(
+                    'POOJA',
+                    style: GoogleFonts.outfit(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: 190,
+                    child: Text(
+                      'Join sacred rituals live\nwith Vedic blessings.',
+                      style: GoogleFonts.outfit(
+                        fontSize: 15,
+                        color: Colors.white70,
+                        height: 1.55,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 22, vertical: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(99),
+                      border: Border.all(
+                          color: const Color(0xFFC79A52).withOpacity(0.86)),
+                      color: Colors.white.withOpacity(0.04),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Join Live Pooja',
+                          style: GoogleFonts.outfit(
+                            color: const Color(0xFFC79A52),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Icon(Icons.arrow_forward_rounded,
+                            color: Color(0xFFC79A52), size: 18),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReferenceServiceTile extends StatelessWidget {
+  final String title;
+  final String imagePath;
+  final VoidCallback onTap;
+
+  const _ReferenceServiceTile({
+    required this.title,
+    required this.imagePath,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8F0E4).withOpacity(0.70),
+          borderRadius: BorderRadius.circular(11),
+          border: Border.all(
+              color: const Color(0xFFB8A88E).withOpacity(0.34), width: 0.8),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: Opacity(
+                opacity: 0.95,
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return RadialGradient(
+                      center: Alignment.center,
+                      radius: 0.55,
+                      colors: [Colors.white, Colors.white.withOpacity(0.0)],
+                      stops: const [0.5, 1.0],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: Image.asset(
+                    imagePath,
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            Positioned.fill(child: CustomPaint(painter: _TileSketchPainter())),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 8, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title.toUpperCase(),
+                    style: GoogleFonts.outfit(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.28,
+                      color: const Color(0xFF1F1B16),
+                      height: 1.08,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.arrow_forward_rounded,
+                      size: 14, color: Color(0xFF8A6A38)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReferenceConsultStrip extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _ReferenceConsultStrip({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 52,
+        padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8F0E4).withOpacity(0.66),
+          borderRadius: BorderRadius.circular(99),
+          border: Border.all(color: const Color(0xFFB8A88E).withOpacity(0.42)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: const BoxDecoration(
+                  color: Color(0xFF181511), shape: BoxShape.circle),
+              child: const Icon(Icons.auto_awesome_rounded,
+                  color: Color(0xFFC79A4D), size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: RichText(
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'YOUR JOURNEY WRITTEN IN THE STARS.\n',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10,
+                        letterSpacing: 1.3,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF534A40),
+                      ),
+                    ),
+                    TextSpan(
+                      text: "Let's walk it together.",
+                      style: GoogleFonts.caveat(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFB5833A)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFC79A4D),
+                  borderRadius: BorderRadius.circular(99)),
+              child: Row(
+                children: [
+                  Text(
+                    'CONSULT NOW',
+                    style: GoogleFonts.outfit(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward_rounded,
+                      color: Colors.white, size: 14),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScribblePainter extends CustomPainter {
+  final bool isDark;
+
+  const _ScribblePainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = (isDark ? Colors.white : Colors.black).withOpacity(0.10)
+      ..strokeWidth = 1.2
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..moveTo(size.width * 0.1, 100)
+      ..quadraticBezierTo(size.width * 0.4, 20, size.width * 0.9, 160)
+      ..moveTo(size.width * 0.2, 500)
+      ..quadraticBezierTo(size.width * 0.6, 400, size.width * 0.95, 650)
+      ..moveTo(0, 900)
+      ..quadraticBezierTo(size.width * 0.5, 760, size.width, 1000);
+
+    canvas.drawPath(path, paint);
+
+    final finePaint = Paint()
+      ..color = (isDark ? Colors.white : Colors.black).withOpacity(0.06)
+      ..strokeWidth = 0.65
+      ..style = PaintingStyle.stroke;
+
+    for (var i = 0; i < 7; i++) {
+      final y = 190.0 + (i * 112);
+      canvas.drawLine(
+        Offset(size.width * 0.62, y),
+        Offset(size.width * 0.98, y + 76),
+        finePaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ScribblePainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
+  }
+}
+
+class _EditorialLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFF1F1B16).withOpacity(0.10)
+      ..strokeWidth = 0.7
+      ..style = PaintingStyle.stroke;
+    for (var i = 0; i < 9; i++) {
+      final startX = size.width * (0.34 + i * 0.045);
+      canvas.drawLine(
+        Offset(startX, 0),
+        Offset(size.width * (0.56 + i * 0.06), size.height * 0.74),
+        paint,
+      );
+    }
+    canvas.drawCircle(Offset(size.width * 0.62, size.height * 0.24), 62, paint);
+    canvas.drawLine(Offset(size.width * 0.48, size.height * 0.06),
+        Offset(size.width * 0.88, size.height * 0.04), paint);
+    canvas.drawLine(Offset(size.width * 0.54, size.height * 0.36),
+        Offset(size.width * 0.94, size.height * 0.28), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _ZodiacLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width * 0.72, size.height * 0.52);
+    final paint = Paint()
+      ..color = const Color(0xFFC79A4D).withOpacity(0.22)
+      ..strokeWidth = 0.8
+      ..style = PaintingStyle.stroke;
+    for (final radius in [40.0, 62.0, 84.0]) {
+      canvas.drawCircle(center, radius, paint);
+    }
+    for (var i = 0; i < 12; i++) {
+      final angle = i * math.pi / 6;
+      final p1 = center + Offset(math.cos(angle) * 40, math.sin(angle) * 40);
+      final p2 = center + Offset(math.cos(angle) * 88, math.sin(angle) * 88);
+      canvas.drawLine(p1, p2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _TileSketchPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFF1F1B16).withOpacity(0.055)
+      ..strokeWidth = 0.55
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(Offset(size.width * 0.78, size.height * 0.25), 34, paint);
+    canvas.drawLine(Offset(size.width * 0.45, 0),
+        Offset(size.width, size.height * 0.58), paint);
+    canvas.drawLine(Offset(size.width * 0.08, size.height),
+        Offset(size.width * 0.88, size.height * 0.10), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class _ActionCardV2 extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -814,84 +1273,134 @@ class _ActionCardV2 extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 160,
+        height: 168,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+          borderRadius: BorderRadius.circular(26),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.92),
+              AppTheme.sandalwood.withOpacity(0.42),
+            ],
+          ),
+          border: Border.all(color: Colors.white.withOpacity(0.86), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-              spreadRadius: -4,
+              color: AppTheme.divineInk.withOpacity(0.12),
+              blurRadius: 22,
+              offset: const Offset(0, 14),
+              spreadRadius: -12,
             ),
             BoxShadow(
-              color: AppTheme.divineGold.withOpacity(0.06),
-              blurRadius: 28,
-              offset: const Offset(0, 6),
+              color: AppTheme.divineGold.withOpacity(0.14),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+              spreadRadius: -14,
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: AppTheme.divineGold.withOpacity(0.2),
-                  child: Icon(Icons.image_not_supported, size: 40, color: AppTheme.divineGold),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.5),
-                      Colors.black.withOpacity(0.85),
-                    ],
-                    stops: const [0.2, 0.6, 1.0],
-                  ),
-                ),
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.outfit(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: -0.3,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 4,
-                            offset: const Offset(0, 1),
-                          ),
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.sandalwood.withOpacity(0.8),
+                          AppTheme.divineGold.withOpacity(0.22),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                    ),
-                  ],
+                    child: const Icon(Icons.auto_awesome,
+                        size: 40, color: AppTheme.divineGold),
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppTheme.divineInk.withOpacity(0.08),
+                        AppTheme.sacredCopper.withOpacity(0.12),
+                        Colors.black.withOpacity(0.62),
+                      ],
+                      stops: const [0.0, 0.45, 1.0],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.74),
+                      borderRadius: BorderRadius.circular(99),
+                      border: Border.all(color: Colors.white.withOpacity(0.7)),
+                    ),
+                    child: Icon(Icons.auto_awesome_rounded,
+                        size: 14, color: AppTheme.sacredCopper),
+                  ),
+                ),
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  bottom: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: -0.35,
+                          height: 1.05,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.32),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.18),
+                          borderRadius: BorderRadius.circular(99),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.24)),
+                        ),
+                        child: Text(
+                          subtitle,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white.withOpacity(0.94),
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -926,7 +1435,8 @@ class _AIServiceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: (gradient.colors.firstOrNull ?? Colors.black).withOpacity(0.3),
+              color: (gradient.colors.firstOrNull ?? Colors.black)
+                  .withOpacity(0.3),
               blurRadius: 12,
               offset: const Offset(0, 6),
               spreadRadius: -2,
@@ -972,7 +1482,6 @@ class _AIServiceCard extends StatelessWidget {
     );
   }
 }
-
 
 // Celestial Glassmorphic AI Pandit Card
 class _AIPanditCard extends StatelessWidget {
@@ -1056,7 +1565,8 @@ class _AIPanditCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             gradient: AppTheme.primaryGradient,
                             borderRadius: BorderRadius.circular(20),
@@ -1065,7 +1575,8 @@ class _AIPanditCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.auto_awesome, size: 12, color: Colors.white),
+                              const Icon(Icons.auto_awesome,
+                                  size: 12, color: Colors.white),
                               const SizedBox(width: 4),
                               Text(
                                 'AI',
@@ -1079,15 +1590,18 @@ class _AIPanditCard extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.white.withOpacity(0.2)),
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.2)),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.star_rounded, color: AppTheme.accentGold, size: 14),
+                              const Icon(Icons.star_rounded,
+                                  color: AppTheme.accentGold, size: 14),
                               const SizedBox(width: 4),
                               Text(
                                 '${pandit.rating}',
@@ -1103,27 +1617,27 @@ class _AIPanditCard extends StatelessWidget {
                       ],
                     ),
                     const Spacer(),
-                    
+
                     // Name
                     Text(
                       pandit.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // Specialization
                     Text(
                       pandit.specializations.firstOrNull ?? 'Astrologer',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 12,
-                      ),
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 12,
+                          ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1254,8 +1768,12 @@ class _ChatTab extends ConsumerWidget {
                       final pandit = AIPandits.allPandits[index];
                       return PanditListTile(
                         pandit: pandit,
-                        onChatTap: () => context.push('/ai-pandit/chat?panditId=${pandit.id}'),
-                        onCallTap: () => context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
+                        onProfileTap: () =>
+                            context.push('/ai-pandit/profile/${pandit.id}'),
+                        onChatTap: () => context
+                            .push('/ai-pandit/chat?panditId=${pandit.id}'),
+                        onCallTap: () => context.push(
+                            '/ai-pandit/voice-call?panditId=${pandit.id}'),
                       );
                     },
                     childCount: AIPandits.allPandits.length,
@@ -1282,25 +1800,32 @@ class _ChatTab extends ConsumerWidget {
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final chatRoom = chatRooms[index];
-                        final participants = chatRoom['participantNames'] as Map<String, dynamic>? ?? {};
-                        final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+                        final participants = chatRoom['participantNames']
+                                as Map<String, dynamic>? ??
+                            {};
+                        final currentUserId =
+                            FirebaseAuth.instance.currentUser?.uid ?? '';
                         final otherParticipantName = participants.entries
-                            .firstWhere(
-                              (e) => e.key != currentUserId,
-                              orElse: () => MapEntry('', 'Pandit'),
-                            )
-                            .value as String? ?? 'Pandit';
+                                .firstWhere(
+                                  (e) => e.key != currentUserId,
+                                  orElse: () => MapEntry('', 'Pandit'),
+                                )
+                                .value as String? ??
+                            'Pandit';
 
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: AppTheme.primaryOrange.withOpacity(0.2),
-                              child: Icon(Icons.person, color: AppTheme.primaryOrange),
+                              backgroundColor:
+                                  AppTheme.primaryOrange.withOpacity(0.2),
+                              child: Icon(Icons.person,
+                                  color: AppTheme.primaryOrange),
                             ),
                             title: Text(
                               otherParticipantName,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
                             ),
                             subtitle: Text(
                               chatRoom['lastMessage'] ?? 'No messages yet',
@@ -1308,7 +1833,8 @@ class _ChatTab extends ConsumerWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             trailing: Icon(Icons.chevron_right),
-                            onTap: () => context.push('/chat/${chatRoom['id']}'),
+                            onTap: () =>
+                                context.push('/chat/${chatRoom['id']}'),
                           ),
                         );
                       },
@@ -1321,44 +1847,6 @@ class _ChatTab extends ConsumerWidget {
             ],
           );
         },
-      ),
-    );
-  }
-}
-
-class _CallTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Calls'),
-        backgroundColor: AppTheme.white,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.phone_outlined, size: 64, color: AppTheme.forestBackground),
-            const SizedBox(height: 16),
-            Text(
-              'No calls yet',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start a voice call with an AI Pandit',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.neutralMedium,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => context.push('/ai-pandits/all'),
-              child: const Text('Browse AI Pandits'),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -1436,7 +1924,8 @@ class _OldProfileTab extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: AppTheme.white,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppTheme.white, width: 4),
+                                border:
+                                    Border.all(color: AppTheme.white, width: 4),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.2),
@@ -1459,7 +1948,8 @@ class _OldProfileTab extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   color: AppTheme.yellowPrimary,
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: AppTheme.white, width: 2),
+                                  border: Border.all(
+                                      color: AppTheme.white, width: 2),
                                 ),
                                 child: const Icon(
                                   Icons.edit,
@@ -1474,29 +1964,36 @@ class _OldProfileTab extends StatelessWidget {
                         Builder(
                           builder: (context) {
                             final user = FirebaseAuth.instance.currentUser;
-                            final userName = user?.displayName ?? 
-                                             (user?.email?.split('@').first ?? 'User');
+                            final userName = user?.displayName ??
+                                (user?.email?.split('@').first ?? 'User');
                             return Text(
                               userName,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: AppTheme.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.copyWith(
+                                    color: AppTheme.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             );
                           },
                         ),
                         const SizedBox(height: 4),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             '+91 98765 43210',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.white.withOpacity(0.9),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: AppTheme.white.withOpacity(0.9),
+                                ),
                           ),
                         ),
                         const SizedBox(height: 40), // Added spacing at bottom
@@ -1507,7 +2004,7 @@ class _OldProfileTab extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Dashboard Stats Card
           SliverToBoxAdapter(
             child: Transform.translate(
@@ -1530,11 +2027,24 @@ class _OldProfileTab extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildStatItem(context, 'Wallet', '₹500', Icons.account_balance_wallet, AppTheme.successGreen),
-                      Container(width: 1, height: 40, color: AppTheme.forestBackground),
-                      _buildStatItem(context, 'Bookings', '12', Icons.calendar_today, AppTheme.primaryOrange),
-                      Container(width: 1, height: 40, color: AppTheme.forestBackground),
-                      _buildStatItem(context, 'Minutes', '450', Icons.timer, AppTheme.infoBlue),
+                      _buildStatItem(context, 'Bookings', '12',
+                          Icons.calendar_today, AppTheme.primaryOrange),
+                      Container(
+                          width: 1,
+                          height: 40,
+                          color: AppTheme.forestBackground),
+                      _buildStatItem(context, 'Minutes', '450', Icons.timer,
+                          AppTheme.infoBlue),
+                      Container(
+                          width: 1,
+                          height: 40,
+                          color: AppTheme.forestBackground),
+                      _buildStatItem(
+                          context,
+                          'Streak',
+                          '7 days',
+                          Icons.local_fire_department_outlined,
+                          AppTheme.successGreen),
                     ],
                   ),
                 ),
@@ -1552,9 +2062,9 @@ class _OldProfileTab extends StatelessWidget {
                   Text(
                     'Account',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.neutralDark,
+                        ),
                   ),
                   const SizedBox(height: 12),
                   Container(
@@ -1573,12 +2083,6 @@ class _OldProfileTab extends StatelessWidget {
                           isFirst: true,
                         ),
                         _ProfileMenuItem(
-                          icon: Icons.account_balance_wallet_outlined,
-                          title: 'Wallet & Payments',
-                          subtitle: 'Manage your wallet and transactions',
-                          onTap: () => context.push('/payment/wallet'),
-                        ),
-                        _ProfileMenuItem(
                           icon: Icons.history,
                           title: 'Booking History',
                           subtitle: 'View your past consultations',
@@ -1588,15 +2092,15 @@ class _OldProfileTab extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   Text(
                     'Preferences',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.neutralDark,
+                        ),
                   ),
                   const SizedBox(height: 12),
                   Container(
@@ -1630,15 +2134,15 @@ class _OldProfileTab extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   Text(
                     'Support',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.neutralDark,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.neutralDark,
+                        ),
                   ),
                   const SizedBox(height: 12),
                   Container(
@@ -1666,9 +2170,9 @@ class _OldProfileTab extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Logout Button
                   Container(
                     width: double.infinity,
@@ -1705,7 +2209,8 @@ class _OldProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(BuildContext context, String label, String value,
+      IconData icon, Color color) {
     return Column(
       children: [
         Container(
@@ -1720,15 +2225,15 @@ class _OldProfileTab extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
         ),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: AppTheme.neutralMedium,
-          ),
+                color: AppTheme.neutralMedium,
+              ),
         ),
       ],
     );
@@ -1749,13 +2254,17 @@ class _CustomBookingBanner extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF1E293B), Color(0xFF0F172A)], // Cosmic Void gradient
+            colors: [
+              Color(0xFF1E293B),
+              Color(0xFF0F172A)
+            ], // Cosmic Void gradient
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: AppTheme.mediumShadow,
-          border: Border.all(color: AppTheme.accentGold.withOpacity(0.3), width: 1),
+          border:
+              Border.all(color: AppTheme.accentGold.withOpacity(0.3), width: 1),
         ),
         child: Row(
           children: [
@@ -1764,11 +2273,13 @@ class _CustomBookingBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppTheme.accentGold.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.accentGold.withOpacity(0.5)),
+                      border: Border.all(
+                          color: AppTheme.accentGold.withOpacity(0.5)),
                     ),
                     child: Text(
                       'CUSTOM REQUEST',
@@ -1800,7 +2311,8 @@ class _CustomBookingBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryOrange,
                       borderRadius: BorderRadius.circular(20),
@@ -1818,7 +2330,8 @@ class _CustomBookingBanner extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.arrow_forward_rounded, color: AppTheme.white, size: 14),
+                        const Icon(Icons.arrow_forward_rounded,
+                            color: AppTheme.white, size: 14),
                       ],
                     ),
                   ),
@@ -1894,16 +2407,16 @@ class _ProfileMenuItem extends StatelessWidget {
                     Text(
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.neutralMedium,
-                      ),
+                            color: AppTheme.neutralMedium,
+                          ),
                     ),
                   ],
                 ),
@@ -1938,7 +2451,9 @@ class _FeaturedAIPanditCard extends StatelessWidget {
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isTopRated ? AppTheme.yellowPrimary : AppTheme.yellowPrimary.withOpacity(0.3),
+            color: isTopRated
+                ? AppTheme.yellowPrimary
+                : AppTheme.yellowPrimary.withOpacity(0.3),
             width: isTopRated ? 2.5 : 1.5,
           ),
           boxShadow: [
@@ -1980,7 +2495,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                               width: double.infinity,
                               height: 150,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Icon(
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
                                 Icons.person,
                                 size: 60,
                                 color: AppTheme.yellowPrimary,
@@ -1991,7 +2507,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                               width: double.infinity,
                               height: 150,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Icon(
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
                                 Icons.person,
                                 size: 60,
                                 color: AppTheme.yellowPrimary,
@@ -2005,7 +2522,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                     top: 8,
                     left: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
@@ -2016,7 +2534,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.star, size: 16, color: AppTheme.textDark),
+                          const Icon(Icons.star,
+                              size: 16, color: AppTheme.textDark),
                           const SizedBox(width: 4),
                           const Text(
                             'Top Rated',
@@ -2034,7 +2553,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
@@ -2045,7 +2565,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.auto_awesome, color: AppTheme.textDark, size: 12),
+                        const Icon(Icons.auto_awesome,
+                            color: AppTheme.textDark, size: 12),
                         const SizedBox(width: 4),
                         const Text(
                           'AI',
@@ -2063,7 +2584,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                   bottom: 8,
                   left: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(10),
@@ -2090,7 +2612,8 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                     bottom: 8,
                     right: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppTheme.successGreen,
                         borderRadius: BorderRadius.circular(10),
@@ -2115,9 +2638,9 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                   Text(
                     pandit.name,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -2125,9 +2648,9 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                   Text(
                     pandit.specializations.take(2).join(', '),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutralMedium,
-                      fontSize: 11,
-                    ),
+                          color: AppTheme.neutralMedium,
+                          fontSize: 11,
+                        ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -2136,20 +2659,25 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                            colors: [
+                              AppTheme.yellowPrimary,
+                              AppTheme.goldAccent
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           '${pandit.experienceYears}+ Yrs',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: AppTheme.textDark,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: AppTheme.textDark,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 11,
+                                  ),
                         ),
                       ),
                       Row(
@@ -2170,21 +2698,6 @@ class _FeaturedAIPanditCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 6),
-                          GestureDetector(
-                            onTap: () => context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: AppTheme.successGreen.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.phone,
-                                color: AppTheme.successGreen,
-                                size: 18,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ],
@@ -2244,9 +2757,9 @@ class _QuickActionCard extends StatelessWidget {
               child: Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
-                ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
               ),
@@ -2303,12 +2816,13 @@ class _CreateKundliBox extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
@@ -2317,7 +2831,8 @@ class _CreateKundliBox extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.star_rounded, color: Colors.amberAccent, size: 16),
+                      Icon(Icons.star_rounded,
+                          color: Colors.amberAccent, size: 16),
                       const SizedBox(width: 6),
                       Text(
                         'Most Popular',
@@ -2351,7 +2866,8 @@ class _CreateKundliBox extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -2384,4 +2900,3 @@ class _CreateKundliBox extends StatelessWidget {
     );
   }
 }
-

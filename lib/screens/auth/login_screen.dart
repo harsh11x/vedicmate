@@ -4,11 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/utils/validators.dart';
 import '../../core/constants/app_constants.dart';
 import '../../services/auth_service.dart';
-import '../../services/user_preferences_service.dart';
-import '../../widgets/abstract_background.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -23,13 +20,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
-  final _otpController = TextEditingController();
   late final AuthService _authService; // Use provider
-  final _prefsService = UserPreferencesService();
 
-  bool _isOTPSent = false;
   bool _isLoading = false;
   // Client-only app - no role selection needed
   static const String _userRole = AppConstants.roleClient;
@@ -56,109 +48,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
       _animationController.forward();
     } catch (e) {
       debugPrint('Animation error: $e');
-    }
-  }
-
-  void _handleSendOTP() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      
-      await _authService.sendOTP(
-        _phoneController.text, 
-        _userRole,
-        onCodeSent: () {
-          if (mounted) {
-            setState(() {
-              _isOTPSent = true;
-              _isLoading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(Icons.check_circle, color: Colors.white),
-                    const SizedBox(width: 8),
-                    Text('OTP sent to +91 ${_phoneController.text}'),
-                  ],
-                ),
-                backgroundColor: AppTheme.successGreen,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            );
-          }
-        },
-        onVerificationCompleted: (User user) async {
-          if (mounted) {
-             setState(() => _isLoading = false);
-             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Row(
-                  children: [
-                    Icon(Icons.check_circle, color: Colors.white),
-                    SizedBox(width: 8),
-                    Expanded(child: Text('Phone verified automatically!')),
-                  ],
-                ),
-                backgroundColor: AppTheme.successGreen,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            );
-            await _navigateAfterLogin(user);
-          }
-        },
-        onError: (message) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: AppTheme.errorRed,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
-        },
-      );
-    }
-  }
-
-  void _handleVerifyOTP() async {
-    if (_otpController.text.isEmpty || _otpController.text.length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please enter valid 6-digit OTP'),
-          backgroundColor: AppTheme.errorRed,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      User? user = await _authService.verifyOTP(
-        _otpController.text,
-        _phoneController.text,
-        _userRole,
-      );
-
-      if (mounted && user != null) {
-        await _navigateAfterLogin(user);
-        if (mounted) setState(() => _isLoading = false);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: AppTheme.errorRed,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
     }
   }
 
@@ -226,8 +115,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
   @override
   void dispose() {
     _animationController.dispose();
-    _phoneController.dispose();
-    _otpController.dispose();
     super.dispose();
   }
 
@@ -237,11 +124,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
     final isIOS = Platform.isIOS;
     final double logoHeight = isIOS ? 160 : 220;
     final double titleSize = isIOS ? 28 : 34; // Larger title for Android
-    final double buttonHeight = isIOS ? 48 : 56; // Standard touch target
-    final double spacingSmall = isIOS ? 8 : 16;
     final double spacingMedium = isIOS ? 16 : 24;
     final double spacingLarge = isIOS ? 24 : 40;
-    final bool isDense = isIOS; // True for IOS (Compact), False for Android (Spacious)
 
     return Scaffold(
       backgroundColor: AppTheme.divineBackground,
@@ -296,82 +180,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                     
                     SizedBox(height: spacingLarge * 1.5),
 
-                    // 3. Form Section (Clean, no heavy glass box)
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (!_isOTPSent) ...[
-                            TextFormField(
-                              controller: _phoneController,
-                              keyboardType: TextInputType.phone,
-                              validator: Validators.validatePhone,
-                              style: AppTheme.bodyStyle.copyWith(fontWeight: FontWeight.w600),
-                              decoration: InputDecoration(
-                                labelText: 'Phone Number',
-                                hintText: '9876543210',
-                                prefixText: '+91 ',
-                                prefixIcon: const Icon(Icons.phone_outlined, color: AppTheme.textGrey),
-                              ),
-                            ).animate().fadeIn(delay: 800.ms).slideX(begin: -0.1, end: 0),
-                            
-                            SizedBox(height: spacingMedium),
-                            
-                            ElevatedButton(
-                              onPressed: _isLoading ? null : _handleSendOTP,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                minimumSize: const Size(double.infinity, 50),
-                              ),
-                              child: _isLoading
-                                ? const SizedBox(
-                                      height: 24, 
-                                      width: 24, 
-                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                                    )
-                                  : Text('Send OTP', style: TextStyle(letterSpacing: 1.0)),
-                            ).animate().fadeIn(delay: 1000.ms).slideX(begin: 0.1, end: 0),
-                          ] else ...[
-                            // OTP Input
-                            TextFormField(
-                              controller: _otpController,
-                              keyboardType: TextInputType.number,
-                              maxLength: 6,
-                              textAlign: TextAlign.center,
-                              style: AppTheme.titleStyle.copyWith(
-                                fontSize: 28,
-                                letterSpacing: 12,
-                                color: AppTheme.divinePrimary,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: '••••••',
-                                counterText: '',
-                                fillColor: AppTheme.divineSurface,
-                              ),
-                            ).animate().fadeIn(),
-                            
-                            SizedBox(height: spacingMedium),
-                            
-                            ElevatedButton(
-                              onPressed: _isLoading ? null : _handleVerifyOTP,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                minimumSize: const Size(double.infinity, 50),
-                              ),
-                              child: _isLoading
-                                ? const CircularProgressIndicator(color: Colors.white)
-                                : const Text('Verify & Login'),
-                            ).animate().fadeIn(delay: 200.ms),
-                            
-                            TextButton(
-                              onPressed: () => setState(() => _isOTPSent = false),
-                              child: Text('Change Phone Number', style: TextStyle(color: AppTheme.textGrey)),
-                            ).animate().fadeIn(delay: 400.ms),
-                          ],
-                        ],
+                    // 3. Email entry point
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _isLoading ? null : () => context.push('/login/email'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          minimumSize: const Size(double.infinity, 52),
+                        ),
+                        icon: const Icon(Icons.email_outlined, size: 20),
+                        label: const Text('Continue with Email'),
                       ),
-                    ),
+                    ).animate().fadeIn(delay: 800.ms).slideY(begin: 0.15, end: 0),
                     
                     SizedBox(height: spacingLarge),
                     
@@ -421,72 +242,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderSt
                         ),
                       ).animate().fadeIn(delay: 1300.ms),
 
-                    // 6. Social Buttons (Google, Email)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: _isLoading ? null : _handleGoogleSignIn,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Image.asset('assets/images/google_logo.png', height: 20),
-                                const Icon(Icons.g_mobiledata, size: 32, color: AppTheme.primaryOrange),
-                                const SizedBox(width: 8),
-                                const Text('Google'),
-                              ],
-                            ),
-                          ),
+                    // 6. Google Sign In
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: _isLoading ? null : _handleGoogleSignIn,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        const SizedBox(width: 16),
-                         Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => context.push('/login/email'),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.email_outlined, size: 20),
-                                SizedBox(width: 8),
-                                Text('Email'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ).animate().fadeIn(delay: 1400.ms).slideY(begin: 0.2, end: 0),
-                    
-                    SizedBox(height: spacingMedium),
-                    
-                    // 6. Guest Mode Button
-                    TextButton(
-                      onPressed: () async {
-                         setState(() => _isLoading = true);
-                         try {
-                           final user = await _authService.signInAsGuest();
-                           if (mounted && user != null) {
-                             await _navigateAfterLogin(user);
-                           }
-                         } catch (e) {
-                           _handleAuthError(e);
-                         } finally {
-                           if (mounted) setState(() => _isLoading = false);
-                         }
-                      },
-                      child: Text(
-                        'Continue as Guest', 
-                        style: AppTheme.bodyStyle.copyWith(
-                          color: AppTheme.divineGold,
-                          fontWeight: FontWeight.w600,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.g_mobiledata, size: 32, color: AppTheme.primaryOrange),
+                            SizedBox(width: 8),
+                            Text('Continue with Google'),
+                          ],
                         ),
                       ),
-                    ).animate().fadeIn(delay: 1600.ms),
-
+                    ).animate().fadeIn(delay: 1400.ms).slideY(begin: 0.2, end: 0),
+                    
                     SizedBox(height: spacingLarge * 2),
 
                     // 6. Registration Link

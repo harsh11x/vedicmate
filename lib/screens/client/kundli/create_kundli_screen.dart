@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:country_state_city_pro/country_state_city_pro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,10 +60,10 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         return Theme(
           data: AppTheme.lightTheme.copyWith(
             colorScheme: ColorScheme.light(
-              primary: AppTheme.primaryOrange,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: AppTheme.neutralDark,
+              primary: AppTheme.divineGold,
+              onPrimary: AppTheme.divineInk,
+              surface: AppTheme.divineSurface,
+              onSurface: AppTheme.divineInk,
             ),
           
           ),
@@ -85,18 +86,18 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         return Theme(
           data: AppTheme.lightTheme.copyWith(
             colorScheme: ColorScheme.light(
-              primary: AppTheme.primaryOrange,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: AppTheme.neutralDark,
+              primary: AppTheme.divineGold,
+              onPrimary: AppTheme.divineInk,
+              surface: AppTheme.divineSurface,
+              onSurface: AppTheme.divineInk,
             ),
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: Colors.white,
+              backgroundColor: AppTheme.divineSurface,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-              hourMinuteColor: AppTheme.forestBackground,
-              hourMinuteTextColor: AppTheme.primaryOrange,
-              dialHandColor: AppTheme.primaryOrange,
-              dialBackgroundColor: AppTheme.forestBackground,
+              hourMinuteColor: AppTheme.divineBackground,
+              hourMinuteTextColor: AppTheme.divineInk,
+              dialHandColor: AppTheme.divineGold,
+              dialBackgroundColor: AppTheme.divineBackground,
             ),
           ),
           child: child!,
@@ -169,7 +170,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.forestBackground,
+      backgroundColor: AppTheme.divineBackground,
       body: AbstractBackground(
         child: Column(
           children: [
@@ -208,20 +209,21 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         right: 20,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.divineSurface,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
-        boxShadow: AppTheme.softShadow,
+        border: Border(bottom: BorderSide(color: AppTheme.divineGold.withOpacity(0.3))),
       ),
       child: Row(
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppTheme.forestBackground,
+              color: AppTheme.divineBackground,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppTheme.divineGold.withOpacity(0.3)),
             ),
             child: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-              color: AppTheme.neutralDark,
+              color: AppTheme.divineInk,
               onPressed: () => context.pop(),
             ),
           ),
@@ -229,8 +231,10 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
           Expanded(
             child: Text(
               "Create New Kundli",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.cormorantGaramond(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.divineInk,
               ),
             ),
           ),
@@ -243,38 +247,45 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: AppTheme.primaryGradient,
+        color: AppTheme.divineInk,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: AppTheme.glowShadow,
+        border: Border.all(color: AppTheme.divineGold.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: AppTheme.divineGold.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.auto_awesome, color: Colors.white, size: 28),
+            child: const Icon(Icons.auto_awesome, color: AppTheme.divineGold, size: 28),
           ),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Discover Your Destiny",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.cormorantGaramond(
+                    color: AppTheme.divineSurface,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   "Enter birth details to generate accurate charts.",
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: AppTheme.divineSurface.withOpacity(0.7),
                     fontSize: 13,
                   ),
                 ),
@@ -289,13 +300,13 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   Widget _buildFormCard() {
     return SketchyContainer(
       backgroundColor: AppTheme.divineSurface,
-      borderColor: AppTheme.textBlack,
+      borderColor: AppTheme.divineGold,
       borderRadius: 24,
       padding: 24,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Personal Information", style: Theme.of(context).textTheme.titleMedium),
+          Text("Personal Information", style: GoogleFonts.cormorantGaramond(fontSize: 24, fontWeight: FontWeight.w600, color: AppTheme.divineInk)),
           const SizedBox(height: 20),
           _buildModernTextField(
             controller: _nameController,
@@ -333,9 +344,9 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
           // Birth Place Section
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, color: AppTheme.primaryOrange, size: 20),
+              const Icon(Icons.location_on_outlined, color: AppTheme.divineGold, size: 20),
               const SizedBox(width: 8),
-              Text("Birth Place", style: Theme.of(context).textTheme.titleMedium),
+              Text("Birth Place", style: GoogleFonts.cormorantGaramond(fontSize: 22, fontWeight: FontWeight.w600, color: AppTheme.divineInk)),
             ],
           ),
           const SizedBox(height: 16),
@@ -349,20 +360,20 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: AppTheme.forestBackground.withOpacity(0.5),
+        color: AppTheme.divineBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.neutralMedium.withOpacity(0.2)),
+        border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
       ),
       child: CountryStateCityPicker(
         country: _countryController,
         state: _stateController,
         city: _cityController,
-        dialogColor: Colors.white,
+        dialogColor: AppTheme.divineSurface,
         textFieldDecoration: InputDecoration(
           border: InputBorder.none,
           hintText: "Select Location",
-          hintStyle: TextStyle(color: AppTheme.neutralMedium),
-          prefixIcon: Icon(Icons.location_on_outlined, color: AppTheme.primaryOrange, size: 20),
+          hintStyle: TextStyle(color: AppTheme.textGrey),
+          prefixIcon: Icon(Icons.location_on_outlined, color: AppTheme.divineGold, size: 20),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
@@ -378,21 +389,25 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
     return TextFormField(
       controller: controller,
       validator: validator,
-      style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.neutralDark),
+      style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.divineInk),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: AppTheme.neutralMedium, fontWeight: FontWeight.normal),
-        prefixIcon: Icon(icon, color: AppTheme.primaryOrange),
+        labelStyle: TextStyle(color: AppTheme.textGrey, fontWeight: FontWeight.normal),
+        prefixIcon: Icon(icon, color: AppTheme.divineGold),
         filled: true,
-        fillColor: AppTheme.forestBackground,
+        fillColor: AppTheme.divineBackground,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppTheme.primaryOrange, width: 2),
+          borderSide: const BorderSide(color: AppTheme.divineGold, width: 2),
         ),
       ),
     );
@@ -410,20 +425,20 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppTheme.forestBackground,
+          color: AppTheme.divineBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.transparent),
+          border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(icon, size: 16, color: AppTheme.primaryOrange),
+                Icon(icon, size: 16, color: AppTheme.divineGold),
                 const SizedBox(width: 8),
                 Text(
                   label,
-                  style: TextStyle(fontSize: 11, color: AppTheme.neutralMedium, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 11, color: AppTheme.textGrey, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -433,7 +448,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
               style: TextStyle(
                 fontSize: 14, 
                 fontWeight: FontWeight.w600,
-                color: isPlaceholder ? AppTheme.neutralMedium : AppTheme.neutralDark,
+                color: isPlaceholder ? AppTheme.textGrey : AppTheme.divineInk,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -447,8 +462,9 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
   Widget _buildGenderSelector() {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.forestBackground,
+        color: AppTheme.divineBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
@@ -468,8 +484,9 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? AppTheme.divineSurface : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
+          border: isSelected ? Border.all(color: AppTheme.divineGold.withOpacity(0.5)) : Border.all(color: Colors.transparent),
           boxShadow: isSelected ? [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -484,7 +501,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
             Icon(
               icon,
               size: 18,
-              color: isSelected ? AppTheme.primaryOrange : AppTheme.neutralMedium,
+              color: isSelected ? AppTheme.divineGold : AppTheme.textGrey,
             ),
             const SizedBox(width: 8),
             Text(
@@ -492,7 +509,7 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: isSelected ? AppTheme.neutralDark : AppTheme.neutralMedium,
+                color: isSelected ? AppTheme.divineInk : AppTheme.textGrey,
               ),
             ),
           ],
@@ -511,20 +528,20 @@ class _CreateKundliScreenState extends ConsumerState<CreateKundliScreen> {
         onPressed: _generateKundli,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 20),
-          backgroundColor: AppTheme.primaryOrange,
+          backgroundColor: AppTheme.divineInk,
            shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Generate Full Kundli",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.divineSurface),
             ),
-            SizedBox(width: 12),
-            Icon(Icons.arrow_forward_rounded),
+            const SizedBox(width: 12),
+            const Icon(Icons.arrow_forward_rounded, color: AppTheme.divineSurface),
           ],
         ),
       ),

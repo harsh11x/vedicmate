@@ -20,31 +20,31 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> with 
 
   final List<CategoryData> _categories = [
     CategoryData(
-      name: 'Lal Kitab',
-      description: 'Traditional Lal Kitab astrology with simple and effective remedies',
+      name: 'Remedy Guidance',
+      description: 'Practical cultural remedies and daily wellbeing routines',
       icon: Icons.auto_stories,
       gradient: const LinearGradient(
         colors: [Color(0xFFFF6B6B), Color(0xFFEE5A6F)],
       ),
     ),
     CategoryData(
-      name: 'Palm Reading',
-      description: 'Palmistry and hand analysis to reveal your destiny',
+      name: 'Personal Guidance',
+      description: 'Reflective conversations for personal clarity and next steps',
       icon: Icons.back_hand,
       gradient: const LinearGradient(
         colors: [Color(0xFFFD79A8), Color(0xFFFF7979)],
       ),
     ),
     CategoryData(
-      name: 'Vedic Astrology',
-      description: 'Classical Vedic astrology for life predictions and guidance',
+      name: 'Vedic Wellness',
+      description: 'Culturally rooted guidance for balance, rituals, and reflection',
       icon: Icons.stars,
       gradient: const LinearGradient(
         colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
       ),
     ),
     CategoryData(
-      name: 'Vastu Shastra',
+      name: 'Home Harmony',
       description: 'Architectural harmony and spatial energy balance',
       icon: Icons.home_work,
       gradient: const LinearGradient(
@@ -52,8 +52,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> with 
       ),
     ),
     CategoryData(
-      name: 'Numerology',
-      description: 'Number-based predictions and life path analysis',
+      name: 'Life Planning',
+      description: 'Name, date, and habit-based reflection for planning ahead',
       icon: Icons.calculate,
       gradient: const LinearGradient(
         colors: [Color(0xFF6C5CE7), Color(0xFFA29BFE)],

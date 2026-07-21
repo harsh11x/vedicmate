@@ -45,6 +45,8 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      # WebRTC xcframework: required for device builds with flutter_webrtc
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
       # Suppress warnings from third-party pods (C/ObjC)
       config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
       # Generate dSYM for Release/Profile to fix "Upload Symbols Failed" warnings
@@ -61,29 +63,35 @@ post_install do |installer|
   frameworks_script = File.join(installer.sandbox.root, 'Target Support Files', 'Pods-Runner', 'Pods-Runner-frameworks.sh')
   if File.exist?(frameworks_script)
     script_content = File.read(frameworks_script)
-    unless script_content.include?('Install dSYMs for XCFrameworks')
-      # Insert dSYM block before the final "if [ COCOAPODS_PARALLEL_CODE_SIGN ]... wait fi" (must be after install_framework calls)
-      dsym_block = "\n# Install dSYMs for XCFrameworks (fixes Upload Symbols Failed warnings)\n"
-      dsym_block += "if [[ \"\$CONFIGURATION\" == \"Release\" ]] || [[ \"\$CONFIGURATION\" == \"Profile\" ]]; then\n"
-      dsym_block += "  # Razorpay dSYMs\n"
-      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM\"\n"
-      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
-      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM\"\n"
-      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
-      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/razorpay-pod/Pod/RazorpayStandard.xcframework/ios-arm64/dSYMs/RazorpayStandard.framework.dSYM\"\n"
-      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
-      dsym_block += "  # WebRTC dSYM\n"
-      dsym_block += "  DSYM_SRC=\"\${PODS_ROOT}/WebRTC-SDK/WebRTC.xcframework/ios-arm64/dSYMs/WebRTC.framework.dSYM\"\n"
-      dsym_block += "  [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
-      dsym_block += "fi\n\n"
-      
-      # Match: before final "if [ COCOAPODS_PARALLEL ]... wait fi" at end
-      # We look for the last occurrence of the parallel code sign block
-      target_block_regex = /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\n  wait\nfi\s*\z/m
-      if script_content.match?(target_block_regex)
-        script_content.sub!(target_block_regex) { |m| "#{dsym_block}#{m}" }
-        File.write(frameworks_script, script_content)
-      end
+    script_content.gsub!(
+      /\n# Install dSYMs for XCFrameworks \(fixes Upload Symbols Failed warnings\).*?\nfi\n\n/m,
+      "\n"
+    )
+
+    dsym_block = "\n# Install dSYMs for XCFrameworks (fixes Upload Symbols Failed warnings)\n"
+    dsym_block += "if [[ \"\$CONFIGURATION\" == \"Release\" ]] || [[ \"\$CONFIGURATION\" == \"Profile\" ]]; then\n"
+    dsym_block += "  for DSYM_SRC in \\\n"
+    dsym_block += "    \"\${PODS_ROOT}/WebRTC-SDK/WebRTC.xcframework/ios-arm64/dSYMs/WebRTC.framework.dSYM\" \\\n"
+    dsym_block += "    \"\${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM\" \\\n"
+    dsym_block += "    \"\${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM\" \\\n"
+    dsym_block += "    \"\${PODS_ROOT}/razorpay-pod/Pod/RazorpayStandard.xcframework/ios-arm64/dSYMs/RazorpayStandard.framework.dSYM\"; do\n"
+    dsym_block += "    [[ -r \"\$DSYM_SRC\" ]] && install_dsym \"\$DSYM_SRC\"\n"
+    dsym_block += "  done\n"
+    dsym_block += "\n"
+    dsym_block += "  WEBRTC_BINARY=\"\${PODS_ROOT}/WebRTC-SDK/WebRTC.xcframework/ios-arm64/WebRTC.framework/WebRTC\"\n"
+    dsym_block += "  WEBRTC_DSYM=\"\${TARGET_TEMP_DIR}/GeneratedWebRTCDSYMs/WebRTC.framework.dSYM\"\n"
+    dsym_block += "  if [[ -r \"\$WEBRTC_BINARY\" && ! -r \"\${PODS_ROOT}/WebRTC-SDK/WebRTC.xcframework/ios-arm64/dSYMs/WebRTC.framework.dSYM\" ]]; then\n"
+    dsym_block += "    rm -rf \"\$WEBRTC_DSYM\"\n"
+    dsym_block += "    mkdir -p \"$(dirname \"\$WEBRTC_DSYM\")\"\n"
+    dsym_block += "    dsymutil \"\$WEBRTC_BINARY\" -o \"\$WEBRTC_DSYM\" || true\n"
+    dsym_block += "    [[ -r \"\$WEBRTC_DSYM\" ]] && install_dsym \"\$WEBRTC_DSYM\"\n"
+    dsym_block += "  fi\n"
+    dsym_block += "fi\n\n"
+
+    target_block_regex = /if \[ "\$\{COCOAPODS_PARALLEL_CODE_SIGN\}" == "true" \]; then\n  wait\nfi\s*\z/m
+    if script_content.match?(target_block_regex)
+      script_content.sub!(target_block_regex) { |m| "#{dsym_block}#{m}" }
+      File.write(frameworks_script, script_content)
     end
   end
 end

@@ -153,34 +153,6 @@ class _BookingSchedulingScreenState extends ConsumerState<BookingSchedulingScree
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                // Call Type
-                Text(
-                  'Call Type',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _CallTypeCard(
-                        icon: Icons.videocam,
-                        label: 'Video Call',
-                        isSelected: _selectedCallType == 'video',
-                        onTap: () => setState(() => _selectedCallType = 'video'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _CallTypeCard(
-                        icon: Icons.phone,
-                        label: 'Voice Call',
-                        isSelected: _selectedCallType == 'audio',
-                        onTap: () => setState(() => _selectedCallType = 'audio'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
                 // Price Breakdown
                 Card(
                   child: Padding(
@@ -345,55 +317,6 @@ final _settingsProvider = FutureProvider<AppSettings>((ref) async {
   final svc = ref.read(settingsServiceProvider);
   return svc.getSettings();
 });
-
-class _CallTypeCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _CallTypeCard({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.yellowPrimary : AppTheme.creamPrimary,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? AppTheme.yellowPrimary : Colors.grey[300]!,
-            width: 2,
-          ),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 32,
-              color: isSelected ? AppTheme.white : AppTheme.yellowPrimary,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? AppTheme.white : AppTheme.textDark,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _PriceRow extends StatelessWidget {
   final String label;

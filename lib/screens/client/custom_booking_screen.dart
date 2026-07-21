@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/custom_request_service.dart';
-import '../../services/payu_service.dart';
+import '../../services/razorpay_payment_service.dart';
 import '../../widgets/elegant_dropdown.dart';
 
 class CustomBookingScreen extends StatefulWidget {
@@ -31,21 +31,20 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
   String? _selectedTimeSlot;
   final TextEditingController _requirementsController = TextEditingController();
   
-  // Method is fixed to Video Call as per requirements
-  final String _method = 'Video Call';
-  
   // Payment
   bool _isProcessing = false;
-  final PayUService _payUService = PayUService();
+  final RazorpayPaymentService _razorpayService = RazorpayPaymentService();
 
   @override
   void initState() {
     super.initState();
+    _razorpayService.initialize();
   }
 
   @override
   void dispose() {
     _requirementsController.dispose();
+    _razorpayService.dispose();
     super.dispose();
   }
 
@@ -95,33 +94,30 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
         throw Exception(orderRes['error'] ?? 'Failed to create order');
       }
 
-      final orderId = orderRes['orderId'];
-      final txnid = orderRes['txnid'] ?? 'TXN_${DateTime.now().millisecondsSinceEpoch}'; // Backup txnid if not from backend
+      final orderId = orderRes['orderId'] as String;
+      final razorpayOrderId = orderRes['razorpayOrderId'] as String;
+      final razorpayKeyId = orderRes['razorpayKeyId'] as String;
 
-      // 2. Open PayU Checkout
-      _payUService.openCheckout(
-        txnid: txnid,
-        amount: amount.toString(),
-        productInfo: _selectedType,
-        firstName: user.displayName?.split(' ').first ?? 'User',
-        email: user.email ?? 'user@example.com',
-        phone: user.phoneNumber ?? '9999999999',
-        onPaymentSuccess: (response) async {
-          debugPrint('PayU Success: $response');
-          await _handlePaymentSuccess(orderId, response, amount);
-        },
-        onPaymentFailure: (response) {
-          debugPrint('PayU Failure: $response');
-          _showRetryDialog('Payment Failed: ${response['error_Message'] ?? 'Unknown error'}');
-          setState(() => _isProcessing = false);
-        },
-        onPaymentCancel: (response) {
-          debugPrint('PayU Cancelled: $response');
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payment Cancelled')));
-          setState(() => _isProcessing = false);
-        },
+      // 2. Open Razorpay Checkout
+      final payment = await _razorpayService.payExistingOrder(
+        keyId: razorpayKeyId,
+        orderId: razorpayOrderId,
+        amount: amount.toDouble(),
+        userId: user.uid,
+        userName: user.displayName ?? 'User',
+        userEmail: user.email ?? 'user@example.com',
+        userPhone: user.phoneNumber ?? '9999999999',
+        description: _selectedType,
+        metadata: {'customRequestId': orderId},
       );
 
+      if (!payment.success) {
+        _showRetryDialog(payment.error ?? 'Payment failed or was cancelled');
+        setState(() => _isProcessing = false);
+        return;
+      }
+
+      await _handlePaymentSuccess(orderId, payment);
     } catch (e) {
       debugPrint('Booking Error: $e');
       if (mounted) {
@@ -133,15 +129,14 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
     }
   }
 
-  Future<void> _handlePaymentSuccess(String orderId, Map<String, dynamic> response, int amount) async {
+  Future<void> _handlePaymentSuccess(String orderId, RazorpayPaymentResult response) async {
     try {
       // 3. Verify Payment
       final verifyRes = await CustomRequestService.verifyPayment(
         orderId: orderId,
-        txnid: response['txnid'] ?? '',
-        paymentMode: response['mode'] ?? 'PayU',
-        status: 'success',
-        amount: amount.toString(),
+        razorpayPaymentId: response.paymentId ?? '',
+        razorpayOrderId: response.orderId ?? '',
+        razorpaySignature: response.signature ?? '',
       );
 
       if (verifyRes['success'] == true) {
@@ -699,31 +694,32 @@ class _CustomBookingScreenState extends State<CustomBookingScreen> {
             ),
             const SizedBox(width: 24),
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primaryOrange.withOpacity(0.2),
-                      AppTheme.yellowPrimary.withOpacity(0.2),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: AppTheme.divineGold.withOpacity(0.3),
-                    width: 2,
+              child: ElevatedButton(
+                onPressed: _isProcessing ? null : _processPayment,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryOrange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'Coming Soon',
-                    style: GoogleFonts.outfit(
-                      color: AppTheme.divineGold,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                child: _isProcessing
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        priceValue == 'TBD' ? 'Submit Request' : 'Pay & Book',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ),
           ],

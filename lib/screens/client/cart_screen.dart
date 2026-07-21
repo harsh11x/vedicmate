@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/config/env.dart';
 import '../../providers/cart_provider.dart';
 
 class CartScreen extends ConsumerWidget {
@@ -14,9 +15,10 @@ class CartScreen extends ConsumerWidget {
     final totalAmount = ref.read(cartProvider.notifier).totalAmount;
 
     return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
+      backgroundColor: AppTheme.divineBackground,
       appBar: AppBar(
-        title: Text('My Cart', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text('My Cart',
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -27,38 +29,66 @@ class CartScreen extends ConsumerWidget {
       ),
       body: cartItems.isEmpty
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   Icon(Icons.shopping_cart_outlined, size: 100, color: AppTheme.neutralMedium.withOpacity(0.5)),
-                   const SizedBox(height: 16),
-                   Text(
-                     'Your cart is empty',
-                     style: GoogleFonts.inter(
-                       fontSize: 18,
-                       color: AppTheme.neutralMedium,
-                       fontWeight: FontWeight.w500,
-                     ),
-                   ),
-                   const SizedBox(height: 24),
-                   ElevatedButton(
-                     onPressed: () => context.push('/remedies'),
-                     style: ElevatedButton.styleFrom(
-                       backgroundColor: AppTheme.primaryOrange,
-                       foregroundColor: Colors.white,
-                       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                     ),
-                     child: const Text('Shop Remedies'),
-                   ),
-                ],
+              child: Container(
+                margin: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(28),
+                decoration: AppTheme.glassMorphism,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 96,
+                      height: 96,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.divineInk,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.shopping_bag_outlined,
+                        size: 42,
+                        color: AppTheme.divineGoldLight,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      'Your cart is empty',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 22,
+                        color: AppTheme.divineInk,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add mala, puja kits, crystals or remedies to begin checkout.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(color: AppTheme.textGrey),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => context.push('/remedies'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.divineInk,
+                        foregroundColor: AppTheme.divineGoldLight,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: const Text('Shop Remedies'),
+                    ),
+                  ],
+                ),
               ),
             )
           : Column(
               children: [
                 Expanded(
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                     itemCount: cartItems.length,
                     itemBuilder: (context, index) {
                       final item = cartItems[index];
@@ -66,8 +96,11 @@ class CartScreen extends ConsumerWidget {
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          color: AppTheme.elevatedSurface,
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                            color: AppTheme.divineInk.withOpacity(0.08),
+                          ),
                           boxShadow: AppTheme.softShadow,
                         ),
                         child: Row(
@@ -78,10 +111,29 @@ class CartScreen extends ConsumerWidget {
                               child: Container(
                                 width: 80,
                                 height: 80,
-                                decoration: BoxDecoration(color: Colors.grey[100]),
-                                child: item.image.startsWith('http') 
-                                    ? Image.network(item.image, fit: BoxFit.cover, errorBuilder: (_,__,___) => const Icon(Icons.broken_image))
-                                    : Image.asset(item.image, fit: BoxFit.cover, errorBuilder: (_,__,___) => const Icon(Icons.image_not_supported)),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.divineSurface,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: item.image.startsWith('http')
+                                    ? Image.network(item.image,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            const Icon(Icons.broken_image))
+                                    : item.image.startsWith('assets/')
+                                        ? Image.network(
+                                            '${EnvConfig.apiBaseUrl}/${item.image}',
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, __, ___) =>
+                                                Image.asset(
+                                              item.image,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) =>
+                                                  const Icon(Icons
+                                                      .image_not_supported),
+                                            ),
+                                          )
+                                        : const Icon(Icons.image_not_supported),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -112,8 +164,11 @@ class CartScreen extends ConsumerWidget {
                             // Quantity Controls
                             Container(
                               decoration: BoxDecoration(
-                                color: AppTheme.neutralSoft,
+                                color: AppTheme.divineSurface,
                                 borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppTheme.divineInk.withOpacity(0.08),
+                                ),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -122,25 +177,37 @@ class CartScreen extends ConsumerWidget {
                                     icon: const Icon(Icons.remove, size: 18),
                                     onPressed: () {
                                       if (item.quantity > 1) {
-                                        ref.read(cartProvider.notifier).updateQuantity(item.id, item.quantity - 1);
+                                        ref
+                                            .read(cartProvider.notifier)
+                                            .updateQuantity(
+                                                item.id, item.quantity - 1);
                                       } else {
-                                        ref.read(cartProvider.notifier).removeFromCart(item.id);
+                                        ref
+                                            .read(cartProvider.notifier)
+                                            .removeFromCart(item.id);
                                       }
                                     },
                                     padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                    constraints: const BoxConstraints(
+                                        minWidth: 32, minHeight: 32),
                                   ),
                                   Text(
                                     '${item.quantity}',
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.add, size: 18),
                                     onPressed: () {
-                                      ref.read(cartProvider.notifier).addToCart(item.id, item.title, item.price, item.image);
+                                      ref.read(cartProvider.notifier).addToCart(
+                                          item.id,
+                                          item.title,
+                                          item.price,
+                                          item.image);
                                     },
                                     padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                    constraints: const BoxConstraints(
+                                        minWidth: 32, minHeight: 32),
                                   ),
                                 ],
                               ),
@@ -155,8 +222,9 @@ class CartScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                    color: AppTheme.elevatedSurface,
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(30)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
@@ -193,14 +261,15 @@ class CartScreen extends ConsumerWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             context.push('/checkout', extra: {
-                              'isDirectBuy': false, 
+                              'isDirectBuy': false,
                             });
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.primaryOrange,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
                             elevation: 4,
                           ),
                           child: Text(

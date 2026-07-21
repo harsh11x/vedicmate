@@ -97,7 +97,7 @@ class KundliChartWidget extends StatelessWidget {
   Color _getBorderColor() {
     switch (chartType) {
       case 'Lagna':
-        return AppTheme.primaryOrange;
+        return AppTheme.divineGold;
       case 'Navamsha':
         return AppTheme.mysticalPurple;
       case 'Moon':
@@ -105,7 +105,7 @@ class KundliChartWidget extends StatelessWidget {
       case 'Chalit':
         return const Color(0xFF2E7D32); // Chalit Green
       default:
-        return AppTheme.primaryOrange;
+        return AppTheme.divineGold;
     }
   }
 

@@ -6,8 +6,8 @@ import '../../providers/cart_provider.dart';
 import '../../providers/wallet_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/user_preferences_service.dart';
-import '../../services/payu_service.dart';
 import '../../services/wallet_service.dart';
+import '../../services/razorpay_payment_service.dart';
 import '../../services/order_service.dart';
 import '../../models/order_model.dart';
 import '../../services/auth_service.dart';
@@ -38,8 +38,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   final _zipController = TextEditingController();
 
   final _prefsService = UserPreferencesService();
-  final _payUService = PayUService();
   final _walletService = WalletService();
+  final _razorpayService = RazorpayPaymentService();
   final _orderService = OrderService();
   final _authService = AuthService();
 
@@ -51,6 +51,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
+    _razorpayService.initialize();
     _loadSavedDetails();
     _userId = _authService.currentUser?.uid; // Init user ID
   }
@@ -79,6 +80,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     _cityController.dispose();
     _stateController.dispose();
     _zipController.dispose();
+    _razorpayService.dispose();
     super.dispose();
   }
 
@@ -151,34 +153,26 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 
   Future<void> _processOnlinePayment(double totalAmount) async {
-    final txnid = 'TXN_PAYU_${DateTime.now().millisecondsSinceEpoch}';
     final productInfo = widget.item != null ? (widget.item!['title'] ?? 'Product') : 'Cart Items';
 
-    _payUService.openCheckout(
-      txnid: txnid,
-      amount: totalAmount.toString(),
-      productInfo: productInfo,
-      firstName: _nameController.text.split(' ').first,
-      email: _emailController.text,
-      phone: _phoneController.text,
-      onPaymentSuccess: (response) async {
-         debugPrint('PayU Success: $response');
-         // PayU success might return a different txnid if specified, 
-         // but usually we use the one we sent or the PayU ID.
-         // Let's use the one we sent or what PayU returned.
-         final payuTxnId = response['txnid'] ?? txnid;
-         await _createOrder(totalAmount, payuTxnId);
-      },
-      onPaymentFailure: (response) {
-         debugPrint('PayU Failure: $response');
-         _handleError('Payment Failed: ${response['error_Message'] ?? 'Unknown error'}');
-         if (mounted) setState(() => _isProcessing = false);
-      },
-      onPaymentCancel: (response) {
-         debugPrint('PayU Cancelled: $response');
-         _handleError('Payment Cancelled');
-         if (mounted) setState(() => _isProcessing = false);
-      },
+    final result = await _razorpayService.pay(
+      amount: totalAmount,
+      userId: _userId!,
+      userName: _nameController.text.trim(),
+      userEmail: _emailController.text.trim(),
+      userPhone: _phoneController.text.trim(),
+      description: productInfo,
+      purpose: 'product_order',
+      metadata: {'productInfo': productInfo},
+    );
+
+    if (!result.success) {
+      throw Exception(result.error ?? 'Payment failed or was cancelled');
+    }
+
+    await _createOrder(
+      totalAmount,
+      result.paymentId ?? result.orderId ?? 'RAZORPAY_${DateTime.now().millisecondsSinceEpoch}',
     );
   }
 
@@ -449,7 +443,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       title: Text('Online Payment',
                           style:
                               GoogleFonts.outfit(fontWeight: FontWeight.w600)),
-                      subtitle: const Text('Credit/Debit Card, UPI / PayU'),
+                      subtitle: const Text('Credit/Debit Card, UPI / Razorpay'),
                       secondary: const Icon(Icons.payment,
                           color: AppTheme.primaryOrange),
                       activeColor: AppTheme.primaryOrange,

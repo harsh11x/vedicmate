@@ -67,16 +67,12 @@ class _PanditSelectionScreenState extends State<PanditSelectionScreen> with Tick
     super.dispose();
   }
 
-  void _handlePanditSelection(AIPanditModel pandit, String action) async {
+  void _handlePanditSelection(AIPanditModel pandit) async {
     await _prefsService.savePreferredPandit(pandit.id);
     await _prefsService.setOnboardingComplete(true);
 
     if (mounted) {
-      if (action == 'chat') {
-        context.go('/ai-pandit/chat?panditId=${pandit.id}');
-      } else {
-        context.go('/ai-pandit/voice-call?panditId=${pandit.id}');
-      }
+      context.go('/ai-pandit/chat?panditId=${pandit.id}');
     }
   }
 
@@ -251,8 +247,7 @@ class _PanditSelectionScreenState extends State<PanditSelectionScreen> with Tick
                             padding: const EdgeInsets.only(bottom: 16),
                             child: _PanditProfileCard(
                               pandit: pandit,
-                              onChat: () => _handlePanditSelection(pandit, 'chat'),
-                              onCall: () => _handlePanditSelection(pandit, 'call'),
+                              onChat: () => _handlePanditSelection(pandit),
                             ),
                           );
                         },
@@ -294,12 +289,10 @@ class _PanditSelectionScreenState extends State<PanditSelectionScreen> with Tick
 class _PanditProfileCard extends StatelessWidget {
   final AIPanditModel pandit;
   final VoidCallback onChat;
-  final VoidCallback onCall;
 
   const _PanditProfileCard({
     required this.pandit,
     required this.onChat,
-    required this.onCall,
   });
 
   @override
@@ -537,82 +530,40 @@ class _PanditProfileCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.yellowPrimary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: onChat,
-                          icon: const Icon(Icons.chat_bubble, size: 18, color: AppTheme.textDark),
-                          label: const Text(
-                            'Chat',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.textDark,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppTheme.yellowPrimary, AppTheme.goldAccent],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.yellowPrimary.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: onChat,
+                    icon: const Icon(Icons.chat_bubble, size: 18, color: AppTheme.textDark),
+                    label: const Text(
+                      'Start Chat',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textDark,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.successGreen, Color(0xFF4CAF50)],
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.successGreen.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: onCall,
-                          icon: const Icon(Icons.phone, size: 18, color: AppTheme.white),
-                          label: const Text(
-                            'Call',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.white,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),

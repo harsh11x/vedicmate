@@ -254,32 +254,16 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
               ),
             ),
 
-            // 3. AI Features (Chat & Call)
+            // 3. AI Feature
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _CosmicActionCard(
-                        title: 'Vedic AI Chat',
-                        subtitle: 'Ask about your destiny',
-                        icon: Icons.auto_awesome,
-                        color: AppTheme.primaryOrange,
-                        onTap: () => context.push('/ai-pandit/chat'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _CosmicActionCard(
-                        title: 'Voice Call',
-                        subtitle: 'Speak to the stars',
-                        icon: Icons.mic_none,
-                        color: AppTheme.successGreen,
-                         onTap: () => context.push('/ai-pandit/voice-call'),
-                      ),
-                    ),
-                  ],
+                child: _CosmicActionCard(
+                  title: 'Vedic AI Chat',
+                  subtitle: 'Ask about your destiny',
+                  icon: Icons.auto_awesome,
+                  color: AppTheme.primaryOrange,
+                  onTap: () => context.push('/ai-pandit/chat'),
                 ),
               ),
             ),

@@ -7,7 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User, OAuthProvider;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    hide User, OAuthProvider;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'email_service.dart';
 
@@ -15,7 +16,7 @@ class AuthService {
   firebase_auth.FirebaseAuth get _auth => firebase_auth.FirebaseAuth.instance;
   GoogleSignIn get _googleSignIn => GoogleSignIn();
   FirebaseFirestore get _firestore => FirebaseFirestore.instance;
-  
+
   // Safe Supabase client access
   SupabaseClient get _supabase {
     try {
@@ -37,17 +38,20 @@ class AuthService {
   firebase_auth.User? get currentUser => _auth.currentUser;
 
   // Ensure user profile exists (Auto-register if missing)
-  Future<void> ensureUserProfile({firebase_auth.User? user, String? name}) async {
+  Future<void> ensureUserProfile(
+      {firebase_auth.User? user, String? name}) async {
     user ??= currentUser;
     if (user == null) return;
+    if (user.isAnonymous) {
+      await _auth.signOut();
+      throw Exception('Guest mode is disabled. Please sign in to continue.');
+    }
 
     final isRegistered = await isUserRegistered(user.uid);
     if (!isRegistered) {
       final displayName = name ?? user.displayName ?? 'User';
-      // Guest/anonymous users: use default email and phone
-      final isGuest = user.isAnonymous;
-      final email = isGuest ? 'demo@vedicmate.com' : (user.email ?? '');
-      final phone = isGuest ? '9999999999' : (user.phoneNumber ?? '');
+      final email = user.email ?? '';
+      final phone = user.phoneNumber ?? '';
 
       await _supabase.from('users').insert({
         'id': user.uid,
@@ -58,32 +62,48 @@ class AuthService {
         'created_at': DateTime.now().toIso8601String(),
       });
 
+      await _ensureSignupWallet(user.uid);
+
       try {
-        if (email.isNotEmpty && !isGuest) {
-           await EmailService.sendOnboardingEmail(name: displayName, email: email);
+        if (email.isNotEmpty) {
+          await EmailService.sendOnboardingEmail(
+              name: displayName, email: email);
         }
       } catch (e) {
         debugPrint('Failed email: $e');
       }
-    } else if (user.isAnonymous) {
-      // Backfill guest defaults for existing profiles with empty email/phone
-      try {
-        final row = await _supabase.from('users').select('email, phone').eq('id', user.uid).maybeSingle();
-        if (row != null) {
-          final dbEmail = row['email'] as String?;
-          final dbPhone = row['phone'] as String?;
-          final needsEmail = dbEmail == null || dbEmail.isEmpty;
-          final needsPhone = dbPhone == null || dbPhone.isEmpty;
-          if (needsEmail || needsPhone) {
-            final updateData = <String, dynamic>{};
-            if (needsEmail) updateData['email'] = 'demo@vedicmate.com';
-            if (needsPhone) updateData['phone'] = '9999999999';
-            await _supabase.from('users').update(updateData).eq('id', user.uid);
-          }
-        }
-      } catch (e) {
-        debugPrint('Failed to backfill guest profile: $e');
-      }
+    }
+  }
+
+  Future<void> _ensureSignupWallet(String uid) async {
+    try {
+      final existingWallet = await _supabase
+          .from('wallets')
+          .select('user_id')
+          .eq('user_id', uid)
+          .maybeSingle();
+
+      if (existingWallet != null) return;
+
+      const initialBalance = 50.0;
+      await _supabase.from('wallets').insert({
+        'user_id': uid,
+        'balance': initialBalance,
+        'currency': 'INR',
+      });
+
+      await _supabase.from('transactions').insert({
+        'wallet_id': uid,
+        'amount': initialBalance,
+        'type': 'credit',
+        'category': 'recharge',
+        'description': 'Signup Bonus',
+        'reference_id': 'SIGNUP_BONUS_${DateTime.now().millisecondsSinceEpoch}',
+        'status': 'completed',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      debugPrint('Failed to create signup wallet bonus: $e');
     }
   }
 
@@ -93,7 +113,8 @@ class AuthService {
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser == null) return null; // User canceled
 
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
     final credential = firebase_auth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
@@ -110,7 +131,11 @@ class AuthService {
   static String _generateNonce([int length = 32]) {
     final random = Random.secure();
     final values = List<int>.generate(length, (_) => random.nextInt(256));
-    return base64Url.encode(values).replaceAll('=', '').replaceAll('+', '-').replaceAll('/', '_');
+    return base64Url
+        .encode(values)
+        .replaceAll('=', '')
+        .replaceAll('+', '-')
+        .replaceAll('/', '_');
   }
 
   static String _sha256ofString(String input) {
@@ -139,8 +164,10 @@ class AuthService {
 
     final userCredential = await _auth.signInWithCredential(oauthCredential);
     if (userCredential.user != null) {
-      final name = appleCredential.givenName != null || appleCredential.familyName != null
-          ? '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim()
+      final name = appleCredential.givenName != null ||
+              appleCredential.familyName != null
+          ? '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'
+              .trim()
           : null;
       await ensureUserProfile(user: userCredential.user, name: name);
     }
@@ -154,10 +181,10 @@ class AuthService {
     await _auth.signOut();
     if (uid != null) {
       try {
-        await Supabase.instance.client
-            .from('users')
-            .update({'fcm_token': null, 'updated_at': DateTime.now().toIso8601String()})
-            .eq('id', uid);
+        await Supabase.instance.client.from('users').update({
+          'fcm_token': null,
+          'updated_at': DateTime.now().toIso8601String()
+        }).eq('id', uid);
       } catch (_) {}
     }
     await clearUserSession();
@@ -187,6 +214,27 @@ class AuthService {
 
   String? _verificationId;
   int? _resendToken;
+  static const String _pendingOtpPhoneKey = 'pending_otp_phone';
+
+  /// Persist phone when starting OTP flow so we can restore OTP screen after captcha.
+  Future<void> _savePendingOtpPhone(String e164) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_pendingOtpPhoneKey, e164);
+  }
+
+  /// Clear persisted pending OTP state.
+  Future<void> clearPendingOtpState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_pendingOtpPhoneKey);
+  }
+
+  /// Get persisted phone if we're in a pending OTP flow (e.g. returned from captcha).
+  Future<String?> getPendingOtpPhone() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_pendingOtpPhoneKey);
+  }
+
+  bool get hasPendingOtpVerification => _verificationId != null;
 
   // Separate verification state for profile phone update (avoid conflict with login OTP)
   String? _phoneUpdateVerificationId;
@@ -203,7 +251,8 @@ class AuthService {
       await _auth.verifyPhoneNumber(
         phoneNumber: normalized,
         timeout: const Duration(seconds: 60),
-        verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
+        verificationCompleted:
+            (firebase_auth.PhoneAuthCredential credential) async {
           // Auto-verification (Android) - handled via codeSent flow, user will verify manually
           debugPrint('Phone verification auto-completed');
         },
@@ -247,14 +296,16 @@ class AuthService {
       return true;
     } on firebase_auth.FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
-        throw Exception('For security, please sign out and sign in again, then try updating your phone.');
+        throw Exception(
+            'For security, please sign out and sign in again, then try updating your phone.');
       }
       rethrow;
     }
   }
 
   /// Check if email is taken by another user (exclude current user id)
-  Future<bool> isEmailTakenByOtherUser(String email, String excludeUserId) async {
+  Future<bool> isEmailTakenByOtherUser(
+      String email, String excludeUserId) async {
     if (email.isEmpty) return false;
     try {
       final normalized = email.trim().toLowerCase();
@@ -272,14 +323,25 @@ class AuthService {
   }
 
   /// Check if phone is taken by another user (exclude current user id)
-  Future<bool> isPhoneTakenByOtherUser(String fullPhone, String excludeUserId) async {
+  Future<bool> isPhoneTakenByOtherUser(
+      String fullPhone, String excludeUserId) async {
     try {
       final normalized = fullPhone.startsWith('+') ? fullPhone : '+$fullPhone';
       final raw = fullPhone.replaceAll(RegExp(r'\D'), '');
       // Check E.164 and raw formats - any user other than current
-      final res1 = await _supabase.from('users').select('id').eq('phone', normalized).neq('id', excludeUserId).maybeSingle();
+      final res1 = await _supabase
+          .from('users')
+          .select('id')
+          .eq('phone', normalized)
+          .neq('id', excludeUserId)
+          .maybeSingle();
       if (res1 != null) return true;
-      final res2 = await _supabase.from('users').select('id').eq('phone', raw).neq('id', excludeUserId).maybeSingle();
+      final res2 = await _supabase
+          .from('users')
+          .select('id')
+          .eq('phone', raw)
+          .neq('id', excludeUserId)
+          .maybeSingle();
       return res2 != null;
     } catch (e) {
       debugPrint('Error checking phone: $e');
@@ -325,7 +387,11 @@ class AuthService {
     if (email.trim().isEmpty) return false;
     try {
       final normalized = email.trim().toLowerCase();
-      final res = await _supabase.from('users').select('id').ilike('email', normalized).maybeSingle();
+      final res = await _supabase
+          .from('users')
+          .select('id')
+          .ilike('email', normalized)
+          .maybeSingle();
       return res != null;
     } catch (e) {
       debugPrint('Error checking email exists: $e');
@@ -349,10 +415,14 @@ class AuthService {
         return;
       }
 
+      // Persist phone so we can restore OTP screen if user returns after captcha
+      await _savePendingOtpPhone(e164);
+
       await _auth.verifyPhoneNumber(
         phoneNumber: e164,
         timeout: const Duration(seconds: 60),
-        verificationCompleted: (firebase_auth.PhoneAuthCredential credential) async {
+        verificationCompleted:
+            (firebase_auth.PhoneAuthCredential credential) async {
           // Auto-verification (Android)
           try {
             final userCredential = await _auth.signInWithCredential(credential);
@@ -363,13 +433,14 @@ class AuthService {
             onError(e.toString());
           }
         },
-        verificationFailed: (firebase_auth.FirebaseAuthException e) {
+        verificationFailed: (firebase_auth.FirebaseAuthException e) async {
+          await clearPendingOtpState();
           if (e.code == 'invalid-phone-number') {
-             onError('The provided phone number is not valid.');
+            onError('The provided phone number is not valid.');
           } else if (e.code == 'too-many-requests') {
-             onError('Too many OTP attempts. Please wait a bit and try again.');
+            onError('Too many OTP attempts. Please wait a bit and try again.');
           } else {
-             onError('${e.message ?? 'Verification failed'} (code: ${e.code})');
+            onError('${e.message ?? 'Verification failed'} (code: ${e.code})');
           }
         },
         codeSent: (String verificationId, int? resendToken) {
@@ -383,13 +454,16 @@ class AuthService {
         forceResendingToken: _resendToken,
       );
     } catch (e) {
+      await clearPendingOtpState();
       onError(e.toString());
     }
   }
 
   // Verify OTP - phone param is only for reference, credential comes from verificationId
-  Future<firebase_auth.User?> verifyOTP(String otp, String phone, String role) async {
-    if (_verificationId == null) throw Exception('Verification ID is missing. Request OTP again.');
+  Future<firebase_auth.User?> verifyOTP(
+      String otp, String phone, String role) async {
+    if (_verificationId == null)
+      throw Exception('Verification ID is missing. Request OTP again.');
 
     final credential = firebase_auth.PhoneAuthProvider.credential(
       verificationId: _verificationId!,
@@ -397,12 +471,14 @@ class AuthService {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
+    _verificationId = null;
+    _resendToken = null;
+    await clearPendingOtpState();
     return userCredential.user;
   }
 
   Future<firebase_auth.User?> signInAsGuest() async {
-    await _auth.signInAnonymously();
-    return _auth.currentUser;
+    throw Exception('Guest mode is disabled. Please sign in to continue.');
   }
 
   // Supabase client is now a getter
@@ -411,11 +487,8 @@ class AuthService {
   // Check if user is registered in Supabase
   Future<bool> isUserRegistered(String uid) async {
     try {
-      final response = await _supabase
-          .from('users')
-          .select()
-          .eq('id', uid)
-          .maybeSingle();
+      final response =
+          await _supabase.from('users').select().eq('id', uid).maybeSingle();
       return response != null;
     } catch (e) {
       // If table doesn't exist or other error, assume not registered
@@ -427,15 +500,16 @@ class AuthService {
   Future<bool> isMobileNumberTaken(String phone) async {
     try {
       // Normalize: check both raw (98...) and formatted (+9198...)
-      final String rawPhone = phone.replaceAll(RegExp(r'\D'), ''); // Strip non-digits
+      final String rawPhone =
+          phone.replaceAll(RegExp(r'\D'), ''); // Strip non-digits
       final String formattedPhone = phone.startsWith('+') ? phone : '+91$phone';
-      
+
       final response = await _supabase
           .from('users')
           .select('id')
           .or('phone.eq.$rawPhone,phone.eq.$formattedPhone,phone.eq.$phone')
           .maybeSingle(); // Returns null if no match found
-          
+
       return response != null;
     } catch (e) {
       debugPrint('Error checking mobile number: $e');
@@ -445,9 +519,9 @@ class AuthService {
 
   Future<firebase_auth.User?> register(
     String name,
-    String email, 
-    String phone, 
-    String password, 
+    String email,
+    String phone,
+    String password,
     String role,
   ) async {
     try {
@@ -458,7 +532,7 @@ class AuthService {
       );
 
       final user = userCredential.user;
-      
+
       if (user != null) {
         // Update display name in Firebase
         await user.updateDisplayName(name);
@@ -472,7 +546,9 @@ class AuthService {
           'role': role,
           'created_at': DateTime.now().toIso8601String(),
         });
-        
+
+        await _ensureSignupWallet(user.uid);
+
         // Send E-mail verification
         try {
           await user.sendEmailVerification();
@@ -490,19 +566,18 @@ class AuthService {
           debugPrint('Failed to trigger email: $e');
         }
       }
-      
+
       return user;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<firebase_auth.User?> signInWithEmailAndPassword(String email, String password) async {
+  Future<firebase_auth.User?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
-        email: email, 
-        password: password
-      );
+          email: email, password: password);
       return userCredential.user;
     } catch (e) {
       rethrow;

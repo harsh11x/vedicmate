@@ -47,7 +47,7 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: AppTheme.primaryOrange),
+            colorScheme: const ColorScheme.light(primary: AppTheme.divineGold),
           ),
           child: child!,
         );
@@ -68,7 +68,7 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: AppTheme.primaryOrange),
+            colorScheme: const ColorScheme.light(primary: AppTheme.divineGold),
           ),
           child: child!,
         );
@@ -117,17 +117,21 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.neutralSoft,
+      backgroundColor: AppTheme.divineBackground,
       appBar: AppBar(
         title: Text(
           'Relationship Check',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppTheme.neutralDark),
+          style: GoogleFonts.cormorantGaramond(
+              fontWeight: FontWeight.w600, 
+              color: AppTheme.divineInk,
+              fontSize: 26,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.neutralDark),
+          icon: const Icon(Icons.arrow_back, color: AppTheme.divineInk),
           onPressed: () => context.pop(),
         ),
       ),
@@ -139,7 +143,7 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
             children: [
               _buildPersonSection(
                 title: 'Your Details',
-                color: const Color(0xFFFFF4E6),
+                color: AppTheme.divineGold.withOpacity(0.2),
                 nameController: _userNameController,
                 placeController: _userPlaceController,
                 dob: _userDob,
@@ -150,11 +154,11 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
                 onGenderChanged: (v) => setState(() => _userGender = v!),
               ),
               const SizedBox(height: 24),
-              const Icon(Icons.favorite, color: Colors.pink, size: 32),
+              const Icon(Icons.favorite, color: AppTheme.divineGold, size: 32),
               const SizedBox(height: 24),
               _buildPersonSection(
                 title: 'Partner Details',
-                color: const Color(0xFFFFEDF2),
+                color: AppTheme.divineGold.withOpacity(0.2),
                 nameController: _partnerNameController,
                 placeController: _partnerPlaceController,
                 dob: _partnerDob,
@@ -171,12 +175,12 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: AppTheme.primaryOrange,
+                    backgroundColor: AppTheme.divineInk,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
                     'Analyze Compatibility',
-                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.divineSurface),
                   ),
                 ),
               ),
@@ -202,23 +206,32 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.divineSurface,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: AppTheme.softShadow,
-        border: Border.all(color: color, width: 2),
+        border: Border.all(color: color, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(title, style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.divineInk)),
           const SizedBox(height: 16),
           TextFormField(
             controller: nameController,
             decoration: InputDecoration(
               labelText: 'Name',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelStyle: TextStyle(color: AppTheme.textGrey),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold, width: 1.5)),
               filled: true,
-              fillColor: AppTheme.neutralSoft,
+              fillColor: AppTheme.divineSurface,
             ),
             validator: (v) => v!.isEmpty ? 'Required' : null,
           ),
@@ -232,10 +245,13 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         labelText: dob == null ? 'DOB' : DateFormat('dd MMM yyyy').format(dob),
-                        prefixIcon: const Icon(Icons.calendar_today, size: 18),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        labelStyle: TextStyle(color: AppTheme.textGrey),
+                        prefixIcon: const Icon(Icons.calendar_today, size: 18, color: AppTheme.divineGold),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold, width: 1.5)),
                         filled: true,
-                        fillColor: AppTheme.neutralSoft,
+                        fillColor: AppTheme.divineSurface,
                       ),
                     ),
                   ),
@@ -249,10 +265,13 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         labelText: time == null ? 'Time' : time.format(context),
-                        prefixIcon: const Icon(Icons.access_time, size: 18),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        labelStyle: TextStyle(color: AppTheme.textGrey),
+                        prefixIcon: const Icon(Icons.access_time, size: 18, color: AppTheme.divineGold),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold, width: 1.5)),
                         filled: true,
-                        fillColor: AppTheme.neutralSoft,
+                        fillColor: AppTheme.divineSurface,
                       ),
                     ),
                   ),
@@ -265,10 +284,13 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
             controller: placeController,
             decoration: InputDecoration(
               labelText: 'Place of Birth',
-              prefixIcon: const Icon(Icons.location_on_outlined, size: 18),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelStyle: TextStyle(color: AppTheme.textGrey),
+              prefixIcon: const Icon(Icons.location_on_outlined, size: 18, color: AppTheme.divineGold),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.2))),
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.divineGold, width: 1.5)),
               filled: true,
-              fillColor: AppTheme.neutralSoft,
+              fillColor: AppTheme.divineSurface,
             ),
             validator: (v) => v!.isEmpty ? 'Required' : null,
           ),
@@ -283,7 +305,7 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
                   groupValue: gender,
                   onChanged: onGenderChanged,
                   contentPadding: EdgeInsets.zero,
-                  activeColor: AppTheme.primaryOrange,
+                  activeColor: AppTheme.divineGold,
                 ),
               ),
               Expanded(
@@ -293,7 +315,7 @@ class _RelationshipFormScreenState extends State<RelationshipFormScreen> {
                   groupValue: gender,
                   onChanged: onGenderChanged,
                   contentPadding: EdgeInsets.zero,
-                  activeColor: AppTheme.primaryOrange,
+                  activeColor: AppTheme.divineGold,
                 ),
               ),
             ],

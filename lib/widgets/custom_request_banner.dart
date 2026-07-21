@@ -14,7 +14,7 @@ class CustomRequestBanner extends StatelessWidget {
       child: Container(
         height: 180,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(24),
           image: const DecorationImage(
             image: AssetImage('assets/images/services/custom_request.png'),
             fit: BoxFit.cover,
@@ -22,13 +22,13 @@ class CustomRequestBanner extends StatelessWidget {
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                Colors.black.withOpacity(0.75),
-                Colors.black.withOpacity(0.35),
+                Colors.black.withOpacity(0.7),
+                Colors.black.withOpacity(0.3),
                 Colors.transparent,
               ],
             ),
@@ -63,11 +63,11 @@ class CustomRequestBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppTheme.divineGold,
-                  borderRadius: BorderRadius.circular(20),
+                  gradient: AppTheme.primaryGradient,
+                  borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.divineGold.withOpacity(0.35),
+                      color: AppTheme.primaryOrange.withOpacity(0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),

@@ -355,11 +355,19 @@ class _AIPanditGridCard extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            Text(
+                              '₹${pandit.ratePerMinute.toInt()}/min',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.primaryOrange,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          pandit.specializations.first,
+                          pandit.publicSpecializations.first,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.outfit(

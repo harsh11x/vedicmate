@@ -119,7 +119,8 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
   }
 
   void _handleContinue() async {
-    bool isNumerology = widget.selectedCategory == 'Numerology';
+    bool isNumerology = widget.selectedCategory == 'Numerology' ||
+        widget.selectedCategory == 'Life Planning';
     bool hasFullDate = _selectedDate != null;
     bool hasDay = _dayController.text.isNotEmpty;
     bool hasName = _nameController.text.isNotEmpty;
@@ -191,12 +192,18 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
         
         switch (widget.selectedCategory) {
           case 'Numerology':
+          case 'Life Planning':
             targetPanditId = 'ai_pandit_2'; // Suresh Joshi
             break;
           case 'Lal Kitab':
+          case 'Remedy Guidance':
             targetPanditId = 'ai_pandit_15'; // Acharya Dinesh Bhatt
             break;
+          case 'Personal Guidance':
+            targetPanditId = 'ai_pandit_3'; // Vijay Sharma
+            break;
           case 'Vedic Astrology':
+          case 'Vedic Wellness':
           default:
             targetPanditId = 'ai_pandit_1';
             break;
@@ -213,7 +220,8 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
 
   @override
   Widget build(BuildContext context) {
-    bool isNumerology = widget.selectedCategory == 'Numerology';
+    bool isNumerology = widget.selectedCategory == 'Numerology' ||
+        widget.selectedCategory == 'Life Planning';
 
     return Scaffold(
       backgroundColor: AppTheme.white,
@@ -226,7 +234,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
           onPressed: () => context.pop(),
         ),
         title: const Text(
-          'Birth Details',
+          'Personal Details',
           style: TextStyle(
             color: AppTheme.textDark,
             fontWeight: FontWeight.bold,
@@ -313,7 +321,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    isNumerology ? 'Numerology Details' : 'Birth Details',
+                                    isNumerology ? 'Planning Details' : 'Personal Details',
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -631,7 +639,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> with TickerProv
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  'Optional fields help provide more accurate predictions',
+                                  'Optional fields help personalize your guidance',
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                         color: AppTheme.infoBlue,
                                       ),

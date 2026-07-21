@@ -6,9 +6,10 @@ class RazorpayService {
   late Razorpay _razorpay;
   final WalletService _walletService = WalletService();
   
-  // Razorpay Test Credentials
-  static const String _razorpayKeyId = 'rzp_test_RgI11B14JouAQQ';
-  static const String _razorpayKeySecret = 'g1xgpVfDcSrHnJsKT2J1u1O1';
+  static const String _razorpayKeyId = String.fromEnvironment(
+    'RAZORPAY_KEY_ID',
+    defaultValue: '',
+  );
 
   void initialize({
     required Function(PaymentSuccessResponse) onSuccess,

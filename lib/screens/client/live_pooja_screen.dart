@@ -18,7 +18,7 @@ class LivePoojaScreen extends ConsumerStatefulWidget {
   ConsumerState<LivePoojaScreen> createState() => _LivePoojaScreenState();
 }
 
-class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTickerProviderStateMixin {
+class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> {
   late IO.Socket _socket;
   final RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
   RTCPeerConnection? _peerConnection;
@@ -28,36 +28,10 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
   bool _isFullscreen = false;
   final List<Map<String, dynamic>> _messages = [];
   final TextEditingController _chatController = TextEditingController();
-  
-  // Gift animation
-  Map<String, dynamic>? _activeGift;
-  late AnimationController _giftAnimController;
-  late Animation<double> _giftScaleAnim;
 
   @override
   void initState() {
     super.initState();
-    
-    // Initialize gift animation
-    _giftAnimController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-    
-    _giftScaleAnim = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.5).chain(CurveTween(curve: Curves.elasticOut)), weight: 20),
-      TweenSequenceItem(tween: Tween(begin: 1.5, end: 1.0), weight: 10),
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeInBack)), weight: 20),
-    ]).animate(_giftAnimController);
-
-    _giftAnimController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() => _activeGift = null);
-        _giftAnimController.reset();
-      }
-    });
-    
     _initializeEverything();
   }
 
@@ -165,33 +139,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
       }
     });
     
-    _socket.on('gift-received', (data) {
-      print('🎁 Gift received: ${data['giftName']} from ${data['senderName']}');
-      if (mounted) {
-        setState(() {
-          _activeGift = data;
-          _messages.add({
-            'type': 'gift',
-            'senderName': data['senderName'],
-            'message': 'Sent ${data['giftName']}',
-            'timestamp': DateTime.now().millisecondsSinceEpoch,
-          });
-        });
-        _giftAnimController.forward(from: 0.0);
-      }
-    });
-
-    // Handle Gift Errors (Insufficient Funds)
-    _socket.on('gift-error', (data) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? 'Gift failed'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    });
   }
 
   Future<void> _handleOffer(dynamic sdp, String senderId) async {
@@ -318,89 +265,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     _chatController.clear();
   }
 
-  void _showGiftSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.grey[900],
-      isScrollControlled: true,
-      builder: (context) {
-        final gifts = [
-          {'name': '🙏 Blessing', 'price': 11},
-          {'name': '🌺 Flower', 'price': 21},
-          {'name': '🪔 Diya', 'price': 51},
-          {'name': '🔔 Bell', 'price': 101},
-          {'name': '🕉️ Om', 'price': 151},
-          {'name': '🌸 Lotus', 'price': 201},
-          {'name': '🪷 Sacred Lotus', 'price': 251},
-          {'name': '📿 Mala', 'price': 301},
-          {'name': '🎋 Bamboo', 'price': 351},
-          {'name': '🍃 Tulsi', 'price': 401},
-          {'name': '⭐ Star', 'price': 501},
-          {'name': '🌙 Moon', 'price': 551},
-          {'name': '☀️ Sun', 'price': 701},
-          {'name': '💎 Diamond', 'price': 851},
-          {'name': '👑 Crown', 'price': 1001},
-        ];
-
-        return Container(
-          padding: const EdgeInsets.all(20),
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.7,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Send a Gift',
-                style: GoogleFonts.outfit(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: gifts.map((gift) => ListTile(
-                    leading: Text(
-                      gift['name'].toString().split(' ')[0],
-                      style: const TextStyle(fontSize: 32),
-                    ),
-                    title: Text(
-                      gift['name'].toString().split(' ').sublist(1).join(' '),
-                      style: GoogleFonts.outfit(color: Colors.white),
-                    ),
-                    trailing: Text(
-                      '₹${gift['price']}',
-                      style: GoogleFonts.outfit(
-                        color: AppTheme.yellowPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onTap: () {
-                      final user = ref.read(authStateProvider).value;
-                      if (user == null) return;
-                      
-                      _socket.emit('send-gift', {
-                        'userId': user.uid, // Add User ID for wallet deduction
-                        'giftName': gift['name'],
-                        'giftIcon': gift['name'].toString().split(' ')[0],
-                        'senderName': user.displayName ?? 'User',
-                        'amount': gift['price'],
-                      });
-                      Navigator.pop(context);
-                    },
-                  )).toList(),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   void dispose() {
     print('🚪 Leaving Live Pooja screen...');
@@ -413,7 +277,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
     
     _socket.emit('leave-pooja');
     _chatController.dispose();
-    _giftAnimController.dispose();
     _socket.disconnect();
     _socket.dispose();
     _closePeerConnection();
@@ -498,43 +361,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                                   onPressed: () => context.pop(),
                                 ),
                               ),
-                              // Gift Animation
-                              if (_activeGift != null)
-                                Positioned.fill(
-                                  child: Center(
-                                    child: ScaleTransition(
-                                      scale: _giftScaleAnim,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            _activeGift!['giftIcon'],
-                                            style: const TextStyle(fontSize: 100),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black54,
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  '${_activeGift!['senderName']}',
-                                                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                                                ),
-                                                Text(
-                                                  'sent ${_activeGift!['giftName']}',
-                                                  style: GoogleFonts.outfit(fontSize: 16, color: AppTheme.yellowPrimary),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
                             ],
                           )
                         : Center(
@@ -593,11 +419,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.card_giftcard, color: AppTheme.yellowPrimary),
-                            onPressed: _showGiftSheet,
                           ),
                         ],
                       ),
@@ -728,43 +549,6 @@ class _LivePoojaScreenState extends ConsumerState<LivePoojaScreen> with SingleTi
               onPressed: _exitFullscreen,
             ),
           ),
-          // Gift animation in fullscreen
-          if (_activeGift != null)
-            Positioned.fill(
-              child: Center(
-                child: ScaleTransition(
-                  scale: _giftScaleAnim,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _activeGift!['giftIcon'],
-                        style: const TextStyle(fontSize: 150),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              '${_activeGift!['senderName']}',
-                              style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
-                            Text(
-                              'sent ${_activeGift!['giftName']}',
-                              style: GoogleFonts.outfit(fontSize: 18, color: AppTheme.yellowPrimary),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

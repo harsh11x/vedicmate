@@ -1561,10 +1561,6 @@ class _AIPanditChatScreenState extends ConsumerState<AIPanditChatScreen> with Ti
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.phone, color: AppTheme.primaryOrange),
-          onPressed: () => context.push('/ai-pandit/voice-call?panditId=$_panditId'),
-        ),
-        IconButton(
           icon: const Icon(Icons.more_vert, color: AppTheme.neutralDark),
           onPressed: _endSession,
         ),

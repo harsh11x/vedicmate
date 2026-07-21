@@ -465,9 +465,10 @@ class _ReelPlayerItemState extends ConsumerState<ReelPlayerItem> {
       isScrollControlled: true,
       builder: (_) => Container(
         height: MediaQuery.of(context).size.height * 0.7,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: AppTheme.divineSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          border: Border.all(color: AppTheme.divineGold.withOpacity(0.2)),
         ),
         child: CommentsSheet(reel: widget.reel),
       ),
@@ -501,7 +502,7 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text("Comments (${reel.comments.length})", style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
+          child: Text("Comments (${reel.comments.length})", style: GoogleFonts.cormorantGaramond(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.divineInk)),
         ),
         Expanded(
           child: ListView.builder(
@@ -515,8 +516,8 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      backgroundColor: AppTheme.primaryOrange.withOpacity(0.1),
-                      child: Text(comment.name[0].toUpperCase(), style: TextStyle(color: AppTheme.primaryOrange)),
+                      backgroundColor: AppTheme.divineGold.withOpacity(0.1),
+                      child: Text(comment.name[0].toUpperCase(), style: const TextStyle(color: AppTheme.divineGold)),
                       radius: 16,
                     ),
                     const SizedBox(width: 12),
@@ -524,8 +525,8 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                           Text(comment.name, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13)),
-                           Text(comment.text, style: GoogleFonts.outfit(color: Colors.grey[800], fontSize: 13)),
+                           Text(comment.name, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.divineInk)),
+                           Text(comment.text, style: GoogleFonts.outfit(color: AppTheme.textGrey, fontSize: 13)),
                            Text(
                              "${comment.timestamp.day}/${comment.timestamp.month}", 
                              style: TextStyle(color: Colors.grey, fontSize: 10)
@@ -547,11 +548,15 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
               Expanded(
                 child: TextField(
                   controller: _controller,
+                  style: const TextStyle(color: AppTheme.divineInk),
                   decoration: InputDecoration(
                     hintText: "Add a comment...",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+                    hintStyle: TextStyle(color: AppTheme.textGrey),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.3))),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: AppTheme.divineGold.withOpacity(0.3))),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: const BorderSide(color: AppTheme.divineGold)),
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: AppTheme.divineBackground,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                   ),
                 ),
@@ -564,7 +569,7 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                     _controller.clear();
                   }
                 },
-                icon: const Icon(Icons.send, color: AppTheme.primaryOrange),
+                icon: const Icon(Icons.send, color: AppTheme.divineGold),
               ),
             ],
           ),

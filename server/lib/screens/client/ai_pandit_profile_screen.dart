@@ -213,38 +213,20 @@ class AIPanditProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            context.push('/ai-pandit/chat?panditId=${pandit.id}');
-                          },
-                          icon: const Icon(Icons.chat_bubble_outline),
-                          label: const Text('Chat'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: BorderSide(color: AppTheme.primaryOrange, width: 2),
-                          ),
-                        ),
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        context.push('/ai-pandit/chat?panditId=${pandit.id}');
+                      },
+                      icon: const Icon(Icons.chat_bubble_outline),
+                      label: const Text('Start Chat'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        side: BorderSide(color: AppTheme.primaryOrange, width: 2),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            context.push('/ai-pandit/voice-call?panditId=${pandit.id}');
-                          },
-                          icon: const Icon(Icons.phone),
-                          label: const Text('Voice Call'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryOrange,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 40),
                 ],

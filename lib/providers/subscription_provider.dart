@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// 
 /// Returns true if user has an active Pro subscription
 final hasProAccessProvider = FutureProvider<bool>((ref) async {
-  // TODO: Implement actual pro check via your backend or PayU subscription status
+  // TODO: Implement actual pro check via your backend or Razorpay subscription status
   return false;
 });
 

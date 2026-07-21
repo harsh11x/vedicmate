@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/ai_pandit_model.dart';
+
 class AIPanditChatListScreen extends StatelessWidget {
   const AIPanditChatListScreen({super.key});
 
@@ -14,7 +15,7 @@ class AIPanditChatListScreen extends StatelessWidget {
       backgroundColor: AppTheme.divineBackground,
       appBar: AppBar(
         title: Text(
-          'AI Pandit Chat',
+          'Chat and Call',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.bold,
             color: AppTheme.textBlack,
@@ -35,8 +36,11 @@ class AIPanditChatListScreen extends StatelessWidget {
           final pandit = pandits[index];
           return PanditListTile(
             pandit: pandit,
-            onChatTap: () => context.push('/ai-pandit/chat?panditId=${pandit.id}'),
-            onCallTap: () => context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
+            onProfileTap: () => context.push('/ai-pandit/profile/${pandit.id}'),
+            onChatTap: () =>
+                context.push('/ai-pandit/chat?panditId=${pandit.id}'),
+            onCallTap: () =>
+                context.push('/ai-pandit/voice-call?panditId=${pandit.id}'),
           );
         },
       ),
@@ -46,11 +50,13 @@ class AIPanditChatListScreen extends StatelessWidget {
 
 class PanditListTile extends StatelessWidget {
   final AIPanditModel pandit;
+  final VoidCallback onProfileTap;
   final VoidCallback onChatTap;
   final VoidCallback onCallTap;
 
   const PanditListTile({
     required this.pandit,
+    required this.onProfileTap,
     required this.onChatTap,
     required this.onCallTap,
   });
@@ -58,8 +64,10 @@ class PanditListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final desc = pandit.bio != null && pandit.bio!.isNotEmpty
-        ? (pandit.bio!.length > 120 ? '${pandit.bio!.substring(0, 120)}...' : pandit.bio!)
-        : pandit.specializations.take(3).join(', ');
+        ? (pandit.publicBio.length > 116
+            ? '${pandit.publicBio.substring(0, 116)}...'
+            : pandit.publicBio)
+        : pandit.publicSpecializations.take(3).join(', ');
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -78,7 +86,7 @@ class PanditListTile extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onChatTap,
+          onTap: onProfileTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -98,7 +106,8 @@ class PanditListTile extends StatelessWidget {
                             width: 72,
                             height: 72,
                             color: AppTheme.primaryOrange.withOpacity(0.2),
-                            child: const Icon(Icons.person, color: AppTheme.primaryOrange, size: 36),
+                            child: const Icon(Icons.person,
+                                color: AppTheme.primaryOrange, size: 36),
                           ),
                         )
                       : Image.network(
@@ -110,7 +119,8 @@ class PanditListTile extends StatelessWidget {
                             width: 72,
                             height: 72,
                             color: AppTheme.primaryOrange.withOpacity(0.2),
-                            child: const Icon(Icons.person, color: AppTheme.primaryOrange, size: 36),
+                            child: const Icon(Icons.person,
+                                color: AppTheme.primaryOrange, size: 36),
                           ),
                         ),
                 ),
@@ -135,7 +145,8 @@ class PanditListTile extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: AppTheme.accentGold.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
@@ -143,7 +154,8 @@ class PanditListTile extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.star_rounded, color: AppTheme.accentGold, size: 14),
+                                const Icon(Icons.star_rounded,
+                                    color: AppTheme.accentGold, size: 14),
                                 const SizedBox(width: 4),
                                 Text(
                                   pandit.rating.toStringAsFixed(1),
@@ -160,7 +172,7 @@ class PanditListTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        pandit.category,
+                        pandit.publicCategory,
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -179,31 +191,65 @@ class PanditListTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 12),
-                      // Chat & Call buttons
                       Row(
                         children: [
                           Expanded(
-                            child: OutlinedButton.icon(
+                            child: OutlinedButton(
                               onPressed: onChatTap,
-                              icon: const Icon(Icons.chat_bubble_outline, size: 18),
-                              label: const Text('Chat'),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.chat_bubble_outline, size: 16),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      'Chat ₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.primaryOrange,
-                                side: const BorderSide(color: AppTheme.primaryOrange),
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                side: const BorderSide(
+                                    color: AppTheme.primaryOrange),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 8),
                           Expanded(
-                            child: OutlinedButton.icon(
+                            child: ElevatedButton(
                               onPressed: onCallTap,
-                              icon: const Icon(Icons.phone, size: 18),
-                              label: const Text('Call'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppTheme.primaryOrange,
-                                side: const BorderSide(color: AppTheme.primaryOrange),
-                                padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.call_rounded, size: 16),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      'Call ₹${pandit.ratePerMinute.toStringAsFixed(0)}/min',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryOrange,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                             ),
                           ),

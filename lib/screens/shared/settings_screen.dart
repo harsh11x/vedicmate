@@ -20,13 +20,11 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  bool _notificationsEnabled = true;
-  bool _emailNotifications = true;
   bool _pushNotifications = true;
   final AuthService _authService = AuthService();
-  String? _supabasePhone;
   String? _supabaseEmail;
   String? _supabaseName;
+  String? _supabaseAvatarUrl;
   bool _isAdmin = false;
   // bool _isMigrating = false;
   // Wallet system removed for now
@@ -43,14 +41,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final data = await Supabase.instance.client
           .from('users')
-          .select('phone, email, name, role')
+          .select('email, name, role, avatar_url')
           .eq('id', user.uid)
           .maybeSingle();
       if (mounted && data != null) {
         setState(() {
-          _supabasePhone = data['phone'] as String?;
           _supabaseEmail = data['email'] as String?;
           _supabaseName = data['name'] as String?;
+          _supabaseAvatarUrl = data['avatar_url'] as String?;
           _isAdmin = (data['role'] as String?) == 'admin';
         });
       }
@@ -82,19 +80,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   color: theme.colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface, size: 20),
+                child: Icon(Icons.arrow_back,
+                    color: theme.colorScheme.onSurface, size: 20),
               ),
               onPressed: () => context.pop(),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
+              titlePadding:
+                  const EdgeInsets.only(left: 16, bottom: 16, right: 16),
               title: Text(
-          AppLocalizations.of(context)!.settings,
+                AppLocalizations.of(context)!.settings,
                 style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
               ),
               background: Container(
                 decoration: BoxDecoration(
@@ -114,7 +114,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           // Enhanced Profile Card
           SliverToBoxAdapter(
             child: Padding(
-        padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -152,10 +152,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                         ],
                       ),
-                      child: user?.photoURL != null
+                      child: (_supabaseAvatarUrl != null &&
+                                  _supabaseAvatarUrl!.isNotEmpty) ||
+                              user?.photoURL != null
                           ? ClipOval(
                               child: Image.network(
-                                user!.photoURL!,
+                                (_supabaseAvatarUrl != null &&
+                                        _supabaseAvatarUrl!.isNotEmpty)
+                                    ? _supabaseAvatarUrl!
+                                    : user!.photoURL!,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) => const Icon(
                                   Icons.person,
@@ -196,7 +201,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(20),
@@ -204,7 +210,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.verified, size: 14, color: Colors.white.withOpacity(0.9)),
+                                Icon(Icons.verified,
+                                    size: 14,
+                                    color: Colors.white.withOpacity(0.9)),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Verified Account',
@@ -227,7 +235,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           color: Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.edit, color: AppTheme.white, size: 20),
+                        child: const Icon(Icons.edit,
+                            color: AppTheme.white, size: 20),
                       ),
                       onPressed: () async {
                         await context.push('/profile/edit');
@@ -248,24 +257,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   Expanded(
                     child: _QuickActionButton(
-                      icon: Icons.shopping_bag,
-                      label: 'Orders',
-                      color: AppTheme.primaryOrange,
-                      onTap: () => context.push('/orders'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _QuickActionButton(
-                      icon: Icons.handshake_outlined,
-                      label: 'Requests',
-                      color: AppTheme.accentGold,
-                      onTap: () => context.push('/custom-requests/orders'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _QuickActionButton(
                       icon: Icons.history,
                       label: 'History',
                       color: AppTheme.infoBlue,
@@ -280,7 +271,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: AppTheme.errorRed,
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Favorites are not available yet.')),
+                          const SnackBar(
+                              content:
+                                  Text('Favorites are not available yet.')),
                         );
                       },
                     ),
@@ -302,7 +295,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   _SectionHeader(title: 'Account Settings'),
                   const SizedBox(height: 12),
                   _SettingsCard(
-        children: [
+                    children: [
                       _SettingsTile(
                         icon: Icons.person_outline,
                         title: 'Edit Profile',
@@ -314,33 +307,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       _Divider(),
                       _SettingsTile(
-              icon: Icons.lock_outline,
+                        icon: Icons.lock_outline,
                         title: 'Change Password',
                         subtitle: 'Update your account password',
                         onTap: () {
                           _showPasswordChangeDialog(context);
                         },
                       ),
-                      _Divider(),
                       _SettingsTile(
-                        icon: Icons.phone_outlined,
-                        title: 'Phone Number',
-                        subtitle: (_supabasePhone != null && _supabasePhone!.isNotEmpty) ? _supabasePhone! : (user?.phoneNumber ?? 'Not set'),
+                        icon: Icons.email_outlined,
+                        title: 'Email Address',
+                        subtitle: (_supabaseEmail != null &&
+                                _supabaseEmail!.isNotEmpty)
+                            ? _supabaseEmail!
+                            : (user?.email ?? 'Not set'),
                         onTap: () async {
                           await context.push('/profile/edit');
                           _loadProfileFromSupabase();
                         },
                       ),
-                      _Divider(),
-                      _SettingsTile(
-                        icon: Icons.email_outlined,
-                        title: 'Email Address',
-                        subtitle: (_supabaseEmail != null && _supabaseEmail!.isNotEmpty) ? _supabaseEmail! : (user?.email ?? 'Not set'),
-              onTap: () async {
-                await context.push('/profile/edit');
-                _loadProfileFromSupabase();
-              },
-            ),
                     ],
                   ),
                 ],
@@ -368,21 +353,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         trailing: Consumer(
                           builder: (context, ref, _) {
                             final fontScale = ref.watch(fontScaleProvider);
-                            final preset = ref.read(fontScaleProvider.notifier).preset;
-                            final notifier = ref.read(fontScaleProvider.notifier);
+                            final preset =
+                                ref.read(fontScaleProvider.notifier).preset;
+                            final notifier =
+                                ref.read(fontScaleProvider.notifier);
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.remove_circle_outline, size: 20),
-                                  onPressed: fontScale > 0.85 ? () => notifier.decrement() : null,
-                                  color: fontScale > 0.85 ? AppTheme.primaryOrange : AppTheme.neutralMedium,
+                                  icon: const Icon(Icons.remove_circle_outline,
+                                      size: 20),
+                                  onPressed: fontScale > 0.85
+                                      ? () => notifier.decrement()
+                                      : null,
+                                  color: fontScale > 0.85
+                                      ? AppTheme.primaryOrange
+                                      : AppTheme.neutralMedium,
                                 ),
-                                Text(preset.label, style: const TextStyle(fontSize: 12)),
+                                Text(preset.label,
+                                    style: const TextStyle(fontSize: 12)),
                                 IconButton(
-                                  icon: const Icon(Icons.add_circle_outline, size: 20),
-                                  onPressed: fontScale < 1.3 ? () => notifier.increment() : null,
-                                  color: fontScale < 1.3 ? AppTheme.primaryOrange : AppTheme.neutralMedium,
+                                  icon: const Icon(Icons.add_circle_outline,
+                                      size: 20),
+                                  onPressed: fontScale < 1.3
+                                      ? () => notifier.increment()
+                                      : null,
+                                  color: fontScale < 1.3
+                                      ? AppTheme.primaryOrange
+                                      : AppTheme.neutralMedium,
                                 ),
                               ],
                             );
@@ -421,32 +419,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           activeColor: AppTheme.primaryOrange,
                         ),
                       ),
-                      _Divider(),
-                      _SettingsTile(
-                        icon: Icons.email,
-                        title: 'Email Notifications',
-                        subtitle: 'Receive email updates',
-                        trailing: Switch(
-                          value: _emailNotifications,
-                          onChanged: (value) {
-                            setState(() => _emailNotifications = value);
-                          },
-                          activeColor: AppTheme.primaryOrange,
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsTile(
-                        icon: Icons.vibration,
-                        title: 'Vibration',
-                        subtitle: 'Vibrate on notifications',
-                        trailing: Switch(
-                          value: _notificationsEnabled,
-                          onChanged: (value) {
-                            setState(() => _notificationsEnabled = value);
-                          },
-                          activeColor: AppTheme.primaryOrange,
-                        ),
-                      ),
                     ],
                   ),
                 ],
@@ -480,20 +452,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.security,
                         title: 'Security Settings',
                         subtitle: 'Manage your security',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Security settings are not available yet.')),
-                );
-              },
-            ),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Security settings are not available yet.')),
+                          );
+                        },
+                      ),
                       _Divider(),
                       _SettingsTile(
                         icon: Icons.block,
                         title: 'Blocked Users',
                         subtitle: 'Manage blocked accounts',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Blocked users feature is not available yet.')),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Blocked users feature is not available yet.')),
                           );
                         },
                       ),
@@ -518,15 +494,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   _SettingsCard(
                     children: [
                       _SettingsTile(
-                        icon: Icons.card_membership,
-                        title: 'Manage Subscription',
-                        subtitle: 'View and manage your subscription',
-                        onTap: () {
-                          context.push('/subscription/customer-center');
-                        },
-                      ),
-                      _Divider(),
-                      _SettingsTile(
                         icon: Icons.help_outline,
                         title: 'Help Center',
                         subtitle: 'Get help and support',
@@ -536,8 +503,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       _Divider(),
                       _SettingsTile(
-              icon: Icons.description_outlined,
-              title: 'Terms of Service',
+                        icon: Icons.description_outlined,
+                        title: 'Terms of Service',
                         subtitle: 'Read our terms and conditions',
                         onTap: () {
                           _showTermsOfService(context);
@@ -548,7 +515,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.info_outline,
                         title: 'About Vedic Mate',
                         subtitle: 'Version 1.0.0',
-              onTap: () {
+                        onTap: () {
                           _showAboutDialog(context);
                         },
                       ),
@@ -557,9 +524,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.star_outline,
                         title: 'Rate Us',
                         subtitle: 'Rate us on Play Store',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Rate us is not available yet.')),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Rate us is not available yet.')),
                           );
                         },
                       ),
@@ -589,10 +557,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     //       icon: Icons.auto_fix_high,
                     //       title: 'Grant Signup Bonus',
                     //       subtitle: 'Give ₹50 to all older accounts',
-                    //       trailing: _isMigrating 
+                    //       trailing: _isMigrating
                     //           ? const SizedBox(
-                    //               width: 20, 
-                    //               height: 20, 
+                    //               width: 20,
+                    //               height: 20,
                     //               child: CircularProgressIndicator(strokeWidth: 2),
                     //             )
                     //           : const Icon(Icons.arrow_forward_ios, size: 14),
@@ -660,24 +628,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.errorRed.withOpacity(0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.errorRed.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
                 child: ElevatedButton(
                   onPressed: () => _showLogoutDialog(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.errorRed,
                     foregroundColor: AppTheme.white,
                     padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 0,
                   ),
@@ -760,7 +728,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Logout', style: TextStyle(fontWeight: FontWeight.bold)),
+        title:
+            const Text('Logout', style: TextStyle(fontWeight: FontWeight.bold)),
         content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
@@ -839,12 +808,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 24),
             _HelpItem(
-              icon: Icons.phone,
-              title: 'Call Us',
-              subtitle: '+91 1800-123-4567',
-              onTap: () {},
-            ),
-            _HelpItem(
               icon: Icons.email,
               title: 'Email Us',
               subtitle: 'support@vedicmate.com',
@@ -876,7 +839,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text('Terms of Service'),
         content: const SingleChildScrollView(
-          child: Text('Terms of service will be available soon.'),
+          child: Text(
+            'Vedic Mate provides cultural wellness content, live guidance tools, spiritual education, journaling, habit tracking, live pooja booking, and physical remedy products.\n\n'
+            'Payments: Wallet recharge and product checkout are processed through Razorpay where available. Wallet balance is used only inside Vedic Mate for live guidance sessions and eligible services. Physical products are purchased separately through checkout and delivered to the shipping address provided by the user.\n\n'
+            'Subscriptions: This build does not sell an active auto-renewable subscription. Any subscription screen shown in earlier builds has been disabled until a compliant in-app purchase flow is configured.\n\n'
+            'Guidance Disclaimer: Content and guide conversations are for cultural, educational, reflective, and wellness purposes. Vedic Mate does not guarantee future outcomes and should not be used as a substitute for medical, financial, legal, or emergency advice.\n\n'
+            'Support: For billing, product delivery, account, or privacy questions, contact support@vedicmate.com.',
+          ),
         ),
         actions: [
           TextButton(
@@ -904,7 +873,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         child: const Icon(Icons.spa, color: AppTheme.white, size: 30),
       ),
-      applicationLegalese: '© 2024 Vedic Mate. All rights reserved.\\n\\nVedic Mate is your trusted companion for spiritual guidance and astrological consultations. Connect with verified AI Pandits and get personalized insights.',
+      applicationLegalese:
+          '© 2024 Vedic Mate. All rights reserved.\\n\\nVedic Mate combines cultural wellness, live guidance, spiritual education, journaling, habit tracking, live pooja booking, and remedy commerce. Guidance is for reflective and educational use only.',
     );
   }
 
@@ -916,9 +886,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            Icon(Icons.warning_amber_rounded, color: AppTheme.errorRed, size: 28),
+            Icon(Icons.warning_amber_rounded,
+                color: AppTheme.errorRed, size: 28),
             const SizedBox(width: 12),
-            const Text('Delete Account?', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Delete Account?',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         content: const Text(
@@ -956,10 +928,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       barrierDismissible: false,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text(
             'Final Confirmation',
-            style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.errorRed),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: AppTheme.errorRed),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -986,7 +960,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.errorRed, width: 2),
+                    borderSide:
+                        const BorderSide(color: AppTheme.errorRed, width: 2),
                   ),
                 ),
                 textCapitalization: TextCapitalization.characters,
@@ -1000,12 +975,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: (deleteController.text.trim() == 'DELETE' && !isLoading)
-                  ? () async {
-                      setState(() => isLoading = true);
-                      await _performAccountDeletion(dialogContext);
-                    }
-                  : null,
+              onPressed:
+                  (deleteController.text.trim() == 'DELETE' && !isLoading)
+                      ? () async {
+                          setState(() => isLoading = true);
+                          await _performAccountDeletion(dialogContext);
+                        }
+                      : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.errorRed,
                 disabledBackgroundColor: AppTheme.neutralMedium,
@@ -1087,7 +1063,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // 4. Close dialog and navigate to login
       if (dialogContext.mounted) {
         Navigator.pop(dialogContext);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -1102,7 +1078,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } on FirebaseAuthException catch (e) {
       if (dialogContext.mounted) {
         Navigator.pop(dialogContext);
-        
+
         if (e.code == 'requires-recent-login') {
           _showReauthenticationRequired(context);
         } else {
@@ -1117,7 +1093,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } catch (e) {
       if (dialogContext.mounted) {
         Navigator.pop(dialogContext);
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
@@ -1279,7 +1255,7 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveIconColor = iconColor ?? AppTheme.primaryOrange;
     final effectiveTitleColor = titleColor ?? AppTheme.neutralDark;
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1310,26 +1286,27 @@ class _SettingsTile extends StatelessWidget {
                     Text(
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w600,
                             fontSize: 16,
-                        color: effectiveTitleColor,
-                      ),
+                            color: effectiveTitleColor,
+                          ),
                     ),
                     const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.neutralMedium,
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.neutralMedium,
                             fontSize: 13,
-                        ),
-                      ),
+                          ),
+                    ),
                   ],
                 ),
               ),
               if (trailing != null)
                 trailing!
               else if (onTap != null)
-                Icon(Icons.chevron_right, color: AppTheme.forestBackground, size: 22),
+                Icon(Icons.chevron_right,
+                    color: AppTheme.forestBackground, size: 22),
             ],
           ),
         ),

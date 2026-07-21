@@ -106,7 +106,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
         return Theme(
           data: AppTheme.lightTheme.copyWith(
             colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryOrange,
+              primary: AppTheme.divineGold,
             ),
           ),
           child: child!,
@@ -126,7 +126,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
         return Theme(
           data: AppTheme.lightTheme.copyWith(
             colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryOrange,
+              primary: AppTheme.divineGold,
             ),
           ),
           child: child!,
@@ -196,7 +196,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
     if (_isLoading) {
       return const SizedBox(
         height: 300,
-        child: Center(child: CircularProgressIndicator(color: AppTheme.primaryOrange)),
+        child: Center(child: CircularProgressIndicator(color: AppTheme.divineGold)),
       );
     }
 
@@ -230,7 +230,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                           style: GoogleFonts.outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.neutralDark,
+                            color: AppTheme.divineInk,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -274,7 +274,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                             onTap: () => _selectDate(context),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: AppTheme.forestBackground.withOpacity(0.5),
+                                color: AppTheme.divineBackground.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(color: AppTheme.neutralMedium.withOpacity(0.2)),
                               ),
@@ -287,12 +287,12 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                                         ? 'mm/dd/yyyy'
                                         : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                                       style: GoogleFonts.inter(
-                                        color: _selectedDate == null ? AppTheme.neutralMedium : AppTheme.neutralDark,
+                                        color: _selectedDate == null ? AppTheme.neutralMedium : AppTheme.divineInk,
                                         fontSize: 14,
                                       ),
                                     ),
                                   ),
-                                  const Icon(Icons.calendar_today_outlined, size: 18, color: AppTheme.neutralDark),
+                                  const Icon(Icons.calendar_today_outlined, size: 18, color: AppTheme.divineInk),
                                 ],
                               ),
                             ),
@@ -316,7 +316,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                             onTap: () => _selectTime(context),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: AppTheme.forestBackground.withOpacity(0.5),
+                                color: AppTheme.divineBackground.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(color: AppTheme.neutralMedium.withOpacity(0.2)),
                               ),
@@ -329,12 +329,12 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                                         ? '--:-- --'
                                         : _selectedTime!.format(context),
                                       style: GoogleFonts.inter(
-                                        color: _selectedTime == null ? AppTheme.neutralMedium : AppTheme.neutralDark,
+                                        color: _selectedTime == null ? AppTheme.neutralMedium : AppTheme.divineInk,
                                         fontSize: 14,
                                       ),
                                     ),
                                   ),
-                                  const Icon(Icons.access_time, size: 18, color: AppTheme.neutralDark),
+                                  const Icon(Icons.access_time, size: 18, color: AppTheme.divineInk),
                                 ],
                               ),
                             ),
@@ -357,7 +357,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: AppTheme.forestBackground.withOpacity(0.5),
+                    color: AppTheme.divineBackground.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppTheme.neutralMedium.withOpacity(0.2)),
                   ),
@@ -383,7 +383,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
                   child: ElevatedButton(
                     onPressed: _saveAndShare,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryOrange,
+                      backgroundColor: AppTheme.divineGold,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -427,7 +427,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
       hintText: hint,
       hintStyle: GoogleFonts.inter(color: AppTheme.neutralMedium),
       filled: true,
-      fillColor: AppTheme.forestBackground.withOpacity(0.5),
+      fillColor: AppTheme.divineBackground.withOpacity(0.5),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -439,7 +439,7 @@ class _KundliDetailsSheetState extends ConsumerState<KundliDetailsSheet> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppTheme.primaryOrange),
+        borderSide: const BorderSide(color: AppTheme.divineGold),
       ),
     );
   }

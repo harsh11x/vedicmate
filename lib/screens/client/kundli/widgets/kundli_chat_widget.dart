@@ -108,14 +108,14 @@ class _KundliChatWidgetState extends ConsumerState<KundliChatWidget> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: const BoxDecoration(
-            color: AppTheme.primaryOrange,
+            color: AppTheme.divineGold,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Row(
             children: [
               const CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Icon(Icons.auto_awesome, color: AppTheme.primaryOrange),
+                child: Icon(Icons.auto_awesome, color: AppTheme.divineGold),
               ),
               const SizedBox(width: 12),
               Column(
@@ -143,7 +143,7 @@ class _KundliChatWidgetState extends ConsumerState<KundliChatWidget> {
         // Chat Area
         Expanded(
           child: Container(
-            color: AppTheme.neutralSoft,
+            color: AppTheme.divineBackground,
             child: ListView.builder(
               controller: _scrollController,
               padding: const EdgeInsets.all(16),
@@ -199,7 +199,7 @@ class _KundliChatWidgetState extends ConsumerState<KundliChatWidget> {
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor: AppTheme.neutralSoft,
+                      fillColor: AppTheme.divineBackground,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     ),
                     onSubmitted: (_) => _handleSend(),
@@ -208,7 +208,7 @@ class _KundliChatWidgetState extends ConsumerState<KundliChatWidget> {
                 const SizedBox(width: 8),
                 FloatingActionButton(
                   onPressed: _handleSend,
-                  backgroundColor: AppTheme.primaryOrange,
+                  backgroundColor: AppTheme.divineGold,
                   mini: true,
                   elevation: 2,
                   child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
@@ -229,7 +229,7 @@ class _KundliChatWidgetState extends ConsumerState<KundliChatWidget> {
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isUser ? AppTheme.primaryOrange : Colors.white,
+          color: isUser ? AppTheme.divineGold : Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -241,7 +241,7 @@ class _KundliChatWidgetState extends ConsumerState<KundliChatWidget> {
         child: Text(
           text,
           style: TextStyle(
-            color: isUser ? Colors.white : AppTheme.neutralDark,
+            color: isUser ? Colors.white : AppTheme.divineInk,
             fontSize: 14,
           ),
         ),
