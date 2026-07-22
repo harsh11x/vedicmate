@@ -1,0 +1,32 @@
+workflows:
+  ios-release-build:
+    name: iOS Release IPA
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles --workspace ios/Runner.xcworkspace --scheme Runner
+
+      - name: Build release IPA
+        script: |
+          # Get version from pubspec.yaml
+          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+          BUILD_NUMBER=$PROJECT_BUILD_NUMBER
+
+          echo "Building v$VERSION (build $BUILD_NUMBER)"
+          flutter build ipa --release \
+            --export-options-plist=ios/export-options.plist \
+            --build-name=$VERSION \
+            --build-number=$BUILD_NUMBER
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/*.xcarchive
+
+    publishing:
+      email:
+        recipients:
+          - harshdevsingh2004@gmail.com
