@@ -10,17 +10,13 @@ workflows:
         script: |
           xcode-project use-profiles
 
-      - name: Remove Shorebird from PATH
-        script: |
-          # Remove Shorebird's wrapper from PATH so flutter uses the real Flutter
-          export PATH=$(echo "$PATH" | tr ':' $'\n' | grep -v shorebird | tr $'\n' ':')
-          echo "shoredird removed - using real flutter at $(which flutter)"
-
-      - name: Build release IPA with flutter (without Shorebird)
+      - name: Build release IPA
         script: |
           set -e
-          # Remove Shorebird from PATH
+
+          # Remove Shorebird's wrapper from PATH
           export PATH=$(echo "$PATH" | tr ':' $'\n' | grep -v shorebird | tr $'\n' ':')
+          echo "Using Flutter at: $(which flutter)"
 
           # Get version from pubspec.yaml
           VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
