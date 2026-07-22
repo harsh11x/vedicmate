@@ -20,6 +20,10 @@ workflows:
           BUILD_NUMBER=${PROJECT_BUILD_NUMBER:-1}
           echo "Building v$VERSION (build $BUILD_NUMBER)"
 
+          # Update build number in Info.plist before archiving
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
+
           # Archive
           xcodebuild archive \
             -workspace Runner.xcworkspace \
