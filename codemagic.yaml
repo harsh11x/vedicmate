@@ -10,11 +10,13 @@ workflows:
         script: |
           xcode-project use-profiles --workspace ios/Runner.xcworkspace --scheme Runner
 
+      - name: Remove Shorebird (not needed for this project)
+        script: |
+          rm -rf /Users/builder/.shorebird 2>/dev/null || true
+          echo "Shorebird removed from build environment"
+
       - name: Build release IPA
         script: |
-          # Remove Shorebird from build (not needed for this project)
-          rm -rf /Users/builder/.shorebird 2>/dev/null || true
-
           # Get version from pubspec.yaml
           VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
           BUILD_NUMBER=$PROJECT_BUILD_NUMBER
