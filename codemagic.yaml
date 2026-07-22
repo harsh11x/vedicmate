@@ -12,15 +12,14 @@ workflows:
 
       - name: Build release IPA
         script: |
+          # Remove Shorebird from build (not needed for this project)
+          rm -rf /Users/builder/.shorebird 2>/dev/null || true
+
           # Get version from pubspec.yaml
           VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
           BUILD_NUMBER=$PROJECT_BUILD_NUMBER
 
           echo "Building v$VERSION (build $BUILD_NUMBER)"
-
-          # Disable Shorebird (not needed for this project)
-          export PATH=$(echo $PATH | tr ':' '\\n' | grep -v shorebird | tr '\\n' ':')
-
           flutter build ipa --release \
             --export-options-plist=ios/export-options.plist \
             --build-name=$VERSION \
