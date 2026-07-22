@@ -8,7 +8,7 @@ workflows:
     scripts:
       - name: Set up code signing
         script: |
-          xcode-project use-profiles --workspace ios/Runner.xcworkspace --scheme Runner
+          xcode-project use-profiles
 
       - name: Build release IPA with xcodebuild (bypasses Shorebird)
         script: |
