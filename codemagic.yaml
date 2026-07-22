@@ -16,6 +16,13 @@ workflows:
 
           # Remove Shorebird's wrapper from PATH
           export PATH=$(echo "$PATH" | tr ':' $'\n' | grep -v shorebird | tr $'\n' ':')
+
+          # Fallback: find Flutter at standard Codemagic locations
+          if ! command -v flutter &>/dev/null; then
+            export PATH="/Users/builder/flutter/bin:/usr/local/bin:$PATH"
+            echo "Flutter not on PATH after removing Shorebird. Trying standard paths."
+          fi
+
           echo "Using Flutter at: $(which flutter)"
 
           # Get version from pubspec.yaml
