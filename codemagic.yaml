@@ -10,30 +10,31 @@ workflows:
         script: |
           xcode-project use-profiles --workspace ios/Runner.xcworkspace --scheme Runner
 
-      - name: Build release IPA
+      - name: Build release IPA with xcodebuild (bypasses Shorebird)
         script: |
-          # Get version from pubspec.yaml
-          VERSION=$(grep '^version: ' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+          cd ios
+
+          # Build version from pubspec.yaml
+          VERSION=$(grep '^version: ' ../pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
           BUILD_NUMBER=$PROJECT_BUILD_NUMBER
-
           echo "Building v$VERSION (build $BUILD_NUMBER)"
-          flutter build ipa --release \
-            --export-options-plist=ios/export-options.plist \
-            --build-name=$VERSION \
-            --build-number=$BUILD_NUMBER
 
-    artifacts:
-      - build/ios/ipa/*.ipa
+          # Archive
+          xcodebuild archive \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath /tmp/Runner.xcarchive \
+            -allowProvisioningUpdates 2>&1
 
-    publishing:
-      email:
-        recipients:
-          - harshdevsingh2004@gmail.com
+          # Export IPA
+          xcodebuild -exportArchive \
+            -archivePath /tmp/Runner.xcarchive \
+            -exportPath /tmp/ipa \
+            -exportOptionsPlist ../ios/export-options.plist \
+            -allowProvisioningUpdates 2>&1
 
-      app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        submit_to_testflight: true
-        beta_groups: []
-        submit_to_app_store: false
+          # Copy IPA to artifacts directory
+          mkdir -p ../build/ios/ipa
+          cp /tmp/ipa/*.ipa ../build/ios/ipa/ 2>/dev/null || true
+          ls -la ../build/ios/ipa/
