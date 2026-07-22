@@ -12,11 +12,12 @@ workflows:
 
       - name: Build release IPA with xcodebuild (bypasses Shorebird)
         script: |
+          set -e
           cd ios
 
           # Build version from pubspec.yaml
           VERSION=$(grep '^version: ' ../pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
-          BUILD_NUMBER=$PROJECT_BUILD_NUMBER
+          BUILD_NUMBER=${PROJECT_BUILD_NUMBER:-1}
           echo "Building v$VERSION (build $BUILD_NUMBER)"
 
           # Archive
@@ -25,16 +26,17 @@ workflows:
             -scheme Runner \
             -configuration Release \
             -archivePath /tmp/Runner.xcarchive \
-            -allowProvisioningUpdates 2>&1
+            -allowProvisioningUpdates
 
           # Export IPA
           xcodebuild -exportArchive \
             -archivePath /tmp/Runner.xcarchive \
             -exportPath /tmp/ipa \
-            -exportOptionsPlist ../ios/export-options.plist \
-            -allowProvisioningUpdates 2>&1
+            -exportOptionsPlist export-options.plist \
+            -allowProvisioningUpdates
 
           # Copy IPA to artifacts directory
           mkdir -p ../build/ios/ipa
           cp /tmp/ipa/*.ipa ../build/ios/ipa/ 2>/dev/null || true
+          echo "✅ IPA built successfully"
           ls -la ../build/ios/ipa/
