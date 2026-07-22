@@ -1,0 +1,3 @@
+# Shorebird configuration
+# Required by Codemagic's build system - project does not use Shorebird
+app_id: com.vedicmate.app

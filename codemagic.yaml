@@ -10,11 +10,6 @@ workflows:
         script: |
           xcode-project use-profiles --workspace ios/Runner.xcworkspace --scheme Runner
 
-      - name: Remove Shorebird (not needed for this project)
-        script: |
-          rm -rf /Users/builder/.shorebird 2>/dev/null || true
-          echo "Shorebird removed from build environment"
-
       - name: Build release IPA
         script: |
           # Get version from pubspec.yaml
