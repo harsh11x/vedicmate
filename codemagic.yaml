@@ -17,6 +17,10 @@ workflows:
           BUILD_NUMBER=$PROJECT_BUILD_NUMBER
 
           echo "Building v$VERSION (build $BUILD_NUMBER)"
+
+          # Disable Shorebird (not needed for this project)
+          export PATH=$(echo $PATH | tr ':' '\\n' | grep -v shorebird | tr '\\n' ':')
+
           flutter build ipa --release \
             --export-options-plist=ios/export-options.plist \
             --build-name=$VERSION \
